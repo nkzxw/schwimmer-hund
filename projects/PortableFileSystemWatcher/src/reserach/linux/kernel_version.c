@@ -5,7 +5,7 @@
 // TODO: testear en Linux < 2.6 y Win9x
 // TODO: testear en freebsd que no soporte
 
-// boost::config 
+// boost::config
 // BOOST_WINDOWS
 // BOOST_LINUX
 //#elif defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
@@ -21,16 +21,16 @@
 //#error "This platform is not BSD"
 //#endif
 //#elif defined(__FreeBSD__) && (__FreeBSD__ <= 4) || defined(__osf__)
-#if defined(__hpux) || defined(__osf__) || defined(__vms) || (defined(__FreeBSD__) && (__FreeBSD__ < 8)) 
+#if defined(__hpux) || defined(__osf__) || defined(__vms) || (defined(__FreeBSD__) && (__FreeBSD__ < 8))
 
-int main( int argc, char **argv ) 
+int main( int argc, char **argv )
 {
 
-#if LINUX_VERSION_CODE >= KERNEL_VERSION (2,6,13) 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION (2,6,13)
 #define BOOST_FILESYSTEMMONITOR_HAS_OS_NOTIFICATION 1
-	printf( "Kernel Version >= 2.6.13.\n");       
+	printf( "Kernel Version >= 2.6.13.\n");
 #else
-	printf( "Kernel Version < 2.6.13.\n");       
+	printf( "Kernel Version < 2.6.13.\n");
 #endif
 	exit( 0 );
 }
