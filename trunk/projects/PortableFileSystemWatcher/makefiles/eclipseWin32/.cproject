@@ -42,7 +42,7 @@
 <listOptionValue builtIn="false" value="&quot;${BOOST_ROOT}\stage\lib&quot;"/>
 </option>
 <option id="gnu.cpp.link.option.libs.818162460" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
-<listOptionValue builtIn="false" value="libboost_thread-vc90-mt-gd-1_41"/>
+<listOptionValue builtIn="false" value="libboost_thread-mgw44-mt-d-1_41"/>
 </option>
 <inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.281493048" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 <additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>

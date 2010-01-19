@@ -58,7 +58,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalLibraryDirectories=""
+				AdditionalLibraryDirectories="&quot;$(BOOST_ROOT)\stage\lib&quot;"
 				GenerateDebugInformation="true"
 				TargetMachine="1"
 			/>

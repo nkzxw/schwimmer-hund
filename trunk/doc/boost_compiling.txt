@@ -114,6 +114,19 @@ http://www.boost.org/doc/libs/1_41_0/more/getting_started/windows.html
 
 - MinGW (gcc)
 
+
+	- 1.41
+	  cd C:\Program Files\boost\boost_1_41_0
+		REM bjam --build-dir="C:\Program Files\boost\boost_1_41_0" --toolset=gcc --build-type=complete stage
+		REM bjam --build-dir="C:\Program Files\boost\boost_1_41_0" --toolset=gcc --build-type=minimal stage
+		
+		bjam --build-dir="C:\Program Files\boost\boost_1_41_0" --toolset=gcc --build-type=complete --with-serialization stage
+		bjam --build-dir="C:\Program Files\boost\boost_1_41_0" --toolset=gcc --build-type=complete --with-system stage
+		bjam --build-dir="C:\Program Files\boost\boost_1_41_0" --toolset=gcc --build-type=complete --with-date_time stage
+		bjam --build-dir="C:\Program Files\boost\boost_1_41_0" --toolset=gcc --build-type=complete --with-regex stage
+		bjam --build-dir="C:\Program Files\boost\boost_1_41_0" --toolset=gcc --build-type=complete --with-thread stage
+		bjam --build-dir="C:\Program Files\boost\boost_1_41_0" --toolset=gcc --build-type=complete --with-filesystem stage
+
 	- 1.39
 	   
 	  cd C:\Program Files\boost\boost_1_39_0
