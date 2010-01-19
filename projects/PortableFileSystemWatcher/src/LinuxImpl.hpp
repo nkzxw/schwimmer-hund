@@ -14,6 +14,9 @@
 #include <boost/smart_ptr.hpp>
 #include <boost/thread.hpp>
 
+#include "EventArgs.hpp"
+#include "EventHandlers.hpp"
+#include "NotifyFilters.hpp"
 
 
 #define EVENT_SIZE  ( sizeof (struct inotify_event) )
