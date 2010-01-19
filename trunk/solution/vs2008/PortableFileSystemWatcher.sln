@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PortableFileSystemWatcher", "PortableFileSystemWatcher\PortableFileSystemWatcher.vcproj", "{B546A348-4F33-48AD-942C-0E8E96868DD7}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PortableFileSystemWatcher", "..\..\projects\PortableFileSystemWatcher\makefiles\vs2008\PortableFileSystemWatcher.vcproj", "{B546A348-4F33-48AD-942C-0E8E96868DD7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

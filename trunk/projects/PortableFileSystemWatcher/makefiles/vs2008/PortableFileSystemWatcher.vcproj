@@ -164,49 +164,13 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\test_FileSystemMonitor.cpp"
+				RelativePath="..\..\src\test_FileSystemMonitor.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\test_generic_implementation.cpp"
+				RelativePath="..\..\src\test_generic_implementation.cpp"
 				>
 			</File>
-			<Filter
-				Name="Olds"
-				>
-				<File
-					RelativePath=".\example_dotnet_cs.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\example_freebsd.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\example_linux.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\example_win32.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\file_system_watcher.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\FWatch.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\FWatch_CPP.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\inotify-cxx.cpp"
-					>
-				</File>
-			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -214,105 +178,85 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\Config.hpp"
+				RelativePath="..\..\src\Config.hpp"
 				>
 			</File>
 			<File
-				RelativePath=".\EventArgs.hpp"
+				RelativePath="..\..\src\EventArgs.hpp"
 				>
 			</File>
 			<File
-				RelativePath=".\EventHandlers.hpp"
+				RelativePath="..\..\src\EventHandlers.hpp"
 				>
 			</File>
 			<File
-				RelativePath=".\FileSystemMonitor.hpp"
+				RelativePath="..\..\src\FileSystemMonitor.hpp"
 				>
 			</File>
 			<File
-				RelativePath=".\FileSystemMonitorImpl.hpp"
+				RelativePath="..\..\src\FileSystemMonitorGeneric.hpp"
 				>
 			</File>
 			<File
-				RelativePath=".\FileSystemMonitorLinuxImpl.hpp"
+				RelativePath="..\..\src\FileSystemMonitorGenericImpl.hpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Leer.txt"
+				RelativePath="..\..\src\FileSystemMonitorImpl.hpp"
 				>
 			</File>
 			<File
-				RelativePath=".\NotifyFilters.hpp"
+				RelativePath="..\..\src\FileSystemMonitorLinuxImpl.hpp"
 				>
 			</File>
 			<File
-				RelativePath=".\OSVersion.hpp"
+				RelativePath="..\..\src\FreeBSDImpl.hpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Utils.hpp"
+				RelativePath="..\..\src\ImplementationSelector.hpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Win32ApiWrapper.hpp"
+				RelativePath="..\..\src\LinuxImpl.hpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Win32Legacy.hpp"
+				RelativePath="..\..\src\MacOSXImpl.hpp"
 				>
 			</File>
-			<Filter
-				Name="Olds"
+			<File
+				RelativePath="..\..\src\NotifyFilters.hpp"
 				>
-				<File
-					RelativePath=".\inotify-cxx.h"
-					>
-				</File>
-				<File
-					RelativePath=".\simple_test_win32.cpp"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="Generic"
+			</File>
+			<File
+				RelativePath="..\..\src\OSVersion.hpp"
 				>
-				<File
-					RelativePath=".\FileSystemMonitorGeneric.hpp"
-					>
-				</File>
-				<File
-					RelativePath=".\FileSystemMonitorGenericImpl.hpp"
-					>
-				</File>
-				<File
-					RelativePath=".\FreeBSDImpl.hpp"
-					>
-				</File>
-				<File
-					RelativePath=".\ImplementationSelector.hpp"
-					>
-				</File>
-				<File
-					RelativePath=".\LinuxImpl.hpp"
-					>
-				</File>
-				<File
-					RelativePath=".\MacOSXImpl.hpp"
-					>
-				</File>
-				<File
-					RelativePath=".\StaticOSSelector.hpp"
-					>
-				</File>
-				<File
-					RelativePath=".\UnsupportedImpl.hpp"
-					>
-				</File>
-				<File
-					RelativePath=".\WinNT32Impl.hpp"
-					>
-				</File>
-			</Filter>
+			</File>
+			<File
+				RelativePath="..\..\src\StaticOSSelector.hpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\UnsupportedImpl.hpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\Utils.hpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\Win32ApiWrapper.hpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\Win32Legacy.hpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\WinNT32Impl.hpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
