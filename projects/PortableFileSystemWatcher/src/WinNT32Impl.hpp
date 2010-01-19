@@ -114,7 +114,8 @@ public:
 	FileSystemEventHandler Deleted;
 	RenamedEventHandler Renamed;
 
-private:
+public: //private:  //TODO:
+
 	//static void WINAPI HandleDirectoryChange( unsigned long completionPort )
 	//static void WINAPI HandleDirectoryChange( ThreadObjectParameter* threadObject )
 	//static void WINAPI HandleDirectoryChange( void* tempObject )

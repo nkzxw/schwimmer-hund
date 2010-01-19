@@ -57,21 +57,85 @@
 
 
 
+static void OnChanged(FileSystemEventArgs e) // object source, 
+{
+	std::cout << "Changed: " << e.Name << std::endl;
+
+	// Specify what is done when a file is changed, created, or deleted.
+	//Console.WriteLine("File: " + e.FullPath + " " + e.ChangeType);
+}
+
+static void OnCreated(FileSystemEventArgs e) // object source, 
+{
+	std::cout << "Created: " << e.Name << std::endl;
+
+	// Specify what is done when a file is changed, created, or deleted.
+	//Console.WriteLine("File: " + e.FullPath + " " + e.ChangeType);
+}
+
+static void OnDeleted(FileSystemEventArgs e) // object source, 
+{
+	std::cout << "Deleted: " << e.Name << std::endl;
+
+	// Specify what is done when a file is changed, created, or deleted.
+	//Console.WriteLine("File: " + e.FullPath + " " + e.ChangeType);
+}
+
+static void OnRenamed(RenamedEventArgs e) // object source, 
+{
+	std::cout << "Renamed: " << e.Name << std::endl;
+	// Specify what is done when a file is renamed.
+	//Console.WriteLine("File: {0} renamed to {1}", e.OldFullPath, e.FullPath);
+}
 
 
 
 
 int main(int argc, char** argv)
 {
+	std::string path = "D:\\temp1";
+	//	std::string path = "C:\\temp1";
+
+
+	FileSystemMonitorGeneric* monitor;
+
+
+	try
+	{
+		monitor = new FileSystemMonitorGeneric(path);
+
+		monitor->setNotifyFilters( NotifyFilters::LastAccess | NotifyFilters::LastWrite | NotifyFilters::FileName | NotifyFilters::DirectoryName );
+		monitor->setFilter("*.txt"); //TODO: implementar este filtro
+		monitor->setChangedEventHandler(OnChanged);
+		monitor->setCreatedEventHandler(OnCreated);
+		monitor->setDeletedEventHandler(OnDeleted);
+		monitor->setRenamedEventHandler(OnRenamed);
+
+		//monitor->setEnableRaisingEvents(true); //TODO: cambiar, no está bueno este diseño. Crear un método Start.
+		monitor->startMonitoring();
+		monitor->startMonitoring();	//TODO: esto crearia otro Thread... si lo implementamos como un Setter "EnableRaisingEvents" podemos manejarlo de otra manera...
+
+	}
+	catch (std::runtime_error re)
+	{
+		std::cout << re.what() << std::endl;
+	}
+
+	std::cin.get();
+
+	delete monitor;
+
+
+
+
+
+
 	//StaticOSSelector::type oss;
 	//oss.start();
 
 	//FileSystemMonitorGenericImpl<PLATFORM_IMPL_CLASS> monitor;
 	//FileSystemMonitorGenericImpl<PlatformImpl> monitor;
 	//monitor.start();
-	FileSystemMonitorGeneric monitor;
-	//monitor.start();
-	monitor.startMonitoring();
 
 
 
@@ -83,10 +147,10 @@ int main(int argc, char** argv)
 	//std::cout << "_WIN32_WINNT: '" << _WIN32_WINNT << "'" << std::endl;
 	//std::cout << "WINVER: '" << WINVER << "'" << std::endl;
 
-#if defined(WINVER)
-	std::cout << "_WIN32_WINNT: '" << _WIN32_WINNT << "'" << std::endl;
-	std::cout << "WINVER: '" << WINVER << "'" << std::endl;
-#endif
+//#if defined(WINVER)
+//	std::cout << "_WIN32_WINNT: '" << _WIN32_WINNT << "'" << std::endl;
+//	std::cout << "WINVER: '" << WINVER << "'" << std::endl;
+//#endif
 
 
 	//std::cout << "__WIN32__: '" << __WIN32__ << "'" << std::endl;
