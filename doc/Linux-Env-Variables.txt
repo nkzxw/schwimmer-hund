@@ -1,6 +1,6 @@
-Editar /etc/profile :
+Editar /etc/environment :
 
 	BOOST_ROOT="$HOME/boost_dir"
 
 Refrescar las variables de entorno
-	. /etc/profile
+	. /etc/environment
