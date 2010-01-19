@@ -69,7 +69,8 @@ public:
 	FileSystemEventHandler Deleted;
 	RenamedEventHandler Renamed;
 
-private:
+public: //private:  //TODO:
+
 	void HandleDirectoryChange() //TODO: rename
 	{
 		int i = 0;
@@ -180,6 +181,11 @@ private:
 	int fileDescriptor_; // file descriptor
 	int watchDescriptor_;
 	bool closing_;
+
+
+	int notifyFilters_;									//TODO: deber�a ser un enum
+	std::string filter_;
+	bool includeSubdirectories_;
 
 };
 
