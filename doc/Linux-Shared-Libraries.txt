@@ -24,3 +24,29 @@ sudo ln -s ~/programs/boost_1_41_0/stage/lib/libboost_thread-gcc44-mt-1_41.so.1.
 sudo ln -s ~/programs/boost_1_41_0/stage/lib/libboost_thread-gcc44-mt-1_41.so.1.41.0 /usr/lib/libboost_thread-gcc44-mt.so
 sudo ln -s ~/programs/boost_1_41_0/stage/lib/libboost_thread-gcc44-mt-1_41.so.1.41.0 /usr/lib/libboost_thread-gcc44-mt-1_41.so.1.41.0
 
+
+------------------------------------------------------------------------------------------------------------------------
+
+sudo ln -s ~/programs/boost_1_41_0/stage/lib/libboost_filesystem-gcc44-mt-d-1_41.so.1.41.0 /usr/lib/libboost_filesystem-gcc44-mt-d-1_41.so.1.41.0sudo ln -s ~/programs/boost_1_41_0/stage/lib/libboost_filesystem-gcc44-mt-d-1_41.so.1.41.0 /usr/lib/libboost_filesystem-gcc44-mt-d-1_41.sosudo ln -s ~/programs/boost_1_41_0/stage/lib/libboost_filesystem-gcc44-mt-d-1_41.so.1.41.0 /usr/lib/libboost_filesystem-gcc44-mt-d.so
+
+sudo ln -s ~/programs/boost_1_41_0/stage/lib/libboost_filesystem-gcc44-mt-1_41.so.1.41.0 /usr/lib/libboost_filesystem-gcc44-mt-1_41.so.1.41.0sudo ln -s ~/programs/boost_1_41_0/stage/lib/libboost_filesystem-gcc44-mt-1_41.so.1.41.0 /usr/lib/libboost_filesystem-gcc44-mt-1_41.sosudo ln -s ~/programs/boost_1_41_0/stage/lib/libboost_filesystem-gcc44-mt-1_41.so.1.41.0 /usr/lib/libboost_filesystem-gcc44-mt.so
+
+sudo ln -s ~/programs/boost_1_41_0/stage/lib/libboost_filesystem-gcc44-d-1_41.so.1.41.0 /usr/lib/libboost_filesystem-gcc44-d-1_41.so.1.41.0sudo ln -s ~/programs/boost_1_41_0/stage/lib/libboost_filesystem-gcc44-d-1_41.so.1.41.0 /usr/lib/libboost_filesystem-gcc44-d-1_41.sosudo ln -s ~/programs/boost_1_41_0/stage/lib/libboost_filesystem-gcc44-d-1_41.so.1.41.0 /usr/lib/libboost_filesystem-gcc44-d.so
+
+sudo ln -s ~/programs/boost_1_41_0/stage/lib/libboost_filesystem-gcc44-1_41.so.1.41.0 /usr/lib/libboost_filesystem-gcc44-1_41.so.1.41.0sudo ln -s ~/programs/boost_1_41_0/stage/lib/libboost_filesystem-gcc44-1_41.so.1.41.0 /usr/lib/libboost_filesystem-gcc44-1_41.sosudo ln -s ~/programs/boost_1_41_0/stage/lib/libboost_filesystem-gcc44-1_41.so.1.41.0 /usr/lib/libboost_filesystem-gcc44.so
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------
+
+
+sudo ln -s ~/programs/boost_1_41_0/stage/lib/libboost_system-gcc44-mt-d-1_41.so.1.41.0 /usr/lib/libboost_system-gcc44-mt-d-1_41.so.1.41.0sudo ln -s ~/programs/boost_1_41_0/stage/lib/libboost_system-gcc44-mt-d-1_41.so.1.41.0 /usr/lib/libboost_system-gcc44-mt-d-1_41.sosudo ln -s ~/programs/boost_1_41_0/stage/lib/libboost_system-gcc44-mt-d-1_41.so.1.41.0 /usr/lib/libboost_system-gcc44-mt-d.so
+sudo ln -s ~/programs/boost_1_41_0/stage/lib/libboost_system-gcc44-mt-1_41.so.1.41.0 /usr/lib/libboost_system-gcc44-mt-1_41.so.1.41.0sudo ln -s ~/programs/boost_1_41_0/stage/lib/libboost_system-gcc44-mt-1_41.so.1.41.0 /usr/lib/libboost_system-gcc44-mt-1_41.sosudo ln -s ~/programs/boost_1_41_0/stage/lib/libboost_system-gcc44-mt-1_41.so.1.41.0 /usr/lib/libboost_system-gcc44-mt.so
+sudo ln -s ~/programs/boost_1_41_0/stage/lib/libboost_system-gcc44-d-1_41.so.1.41.0 /usr/lib/libboost_system-gcc44-d-1_41.so.1.41.0sudo ln -s ~/programs/boost_1_41_0/stage/lib/libboost_system-gcc44-d-1_41.so.1.41.0 /usr/lib/libboost_system-gcc44-d-1_41.sosudo ln -s ~/programs/boost_1_41_0/stage/lib/libboost_system-gcc44-d-1_41.so.1.41.0 /usr/lib/libboost_system-gcc44-d.so
+sudo ln -s ~/programs/boost_1_41_0/stage/lib/libboost_system-gcc44-1_41.so.1.41.0 /usr/lib/libboost_system-gcc44-1_41.so.1.41.0sudo ln -s ~/programs/boost_1_41_0/stage/lib/libboost_system-gcc44-1_41.so.1.41.0 /usr/lib/libboost_system-gcc44-1_41.sosudo ln -s ~/programs/boost_1_41_0/stage/lib/libboost_system-gcc44-1_41.so.1.41.0 /usr/lib/libboost_system-gcc44.so
+
+
+
+------------------------------------------------------------------------------------------------------------------------
+

@@ -41,6 +41,8 @@
 </option>
 <option id="gnu.cpp.link.option.libs.1914776841" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
 <listOptionValue builtIn="false" value="boost_thread-gcc44-mt-d-1_41"/>
+<listOptionValue builtIn="false" value="boost_system-gcc44-mt-d-1_41"/>
+<listOptionValue builtIn="false" value="boost_filesystem-gcc44-mt-d-1_41"/>
 </option>
 <inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.1745080123" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 <additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
