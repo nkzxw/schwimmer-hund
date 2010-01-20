@@ -37,7 +37,11 @@ public:
 		// Wait for the Directory thread to finish before exiting
 		//WaitForSingleObject( thread_, INFINITE );
 		//CloseHandle( thread_ );
-		thread_->join();
+
+		if ( thread_ )
+		{
+			thread_->join();
+		}
 		
 
 		//for (int i=0; i<numDirs; ++i)

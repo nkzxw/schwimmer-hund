@@ -93,46 +93,54 @@ static void OnRenamed(RenamedEventArgs e) // object source,
 
 int main(int argc, char** argv)
 {
-	std::string path = "/home/fernando";
-	//	std::string path = "D:\\temp1";			// Da error en Linux.
-	//	std::string path = "C:\\temp1";
+	//std::string path = "/home/fernando";
+	//std::string path = "D:\\temp1";			// Da error en Linux.
+	//std::string path = "C:\\temp1";
+	std::string path = "J:\\temp1";			// Error al hacer DELETE de monitor si no fue bien construido...
 
-	FileSystemMonitorGeneric* monitor;
-
-
-	try
 	{
-		monitor = new FileSystemMonitorGeneric(path);
 
-		monitor->setNotifyFilters( NotifyFilters::LastAccess | NotifyFilters::LastWrite | NotifyFilters::FileName | NotifyFilters::DirectoryName );
-		monitor->setFilter("*.txt"); //TODO: implementar este filtro
-		monitor->setChangedEventHandler(OnChanged);
-		monitor->setCreatedEventHandler(OnCreated);
-		monitor->setDeletedEventHandler(OnDeleted);
-		monitor->setRenamedEventHandler(OnRenamed);
+		FileSystemMonitorGeneric* monitor = 0; // Es importante el "= 0" ya que sino el puntero puede quedar asignado a una posición de memoria erronea si el Constructor de File... lanza una excepcion...
+		//boost::shared_ptr<FileSystemMonitorGeneric> monitor;
 
-		//monitor->setEnableRaisingEvents(true); //TODO: cambiar, no est� bueno este dise�o. Crear un m�todo Start.
-		monitor->startMonitoring();
-		//monitor->startMonitoring();	//TODO: esto crearia otro Thread... si lo implementamos como un Setter "EnableRaisingEvents" podemos manejarlo de otra manera...
+		try
+		{
+			monitor = new FileSystemMonitorGeneric(path);
+			//monitor.reset( new FileSystemMonitorGeneric(path) );
+
+			monitor->setNotifyFilters( NotifyFilters::LastAccess | NotifyFilters::LastWrite | NotifyFilters::FileName | NotifyFilters::DirectoryName );
+			monitor->setFilter("*.txt"); //TODO: implementar este filtro
+			monitor->setChangedEventHandler(OnChanged);
+			monitor->setCreatedEventHandler(OnCreated);
+			monitor->setDeletedEventHandler(OnDeleted);
+			monitor->setRenamedEventHandler(OnRenamed);
+
+			//monitor->setEnableRaisingEvents(true); //TODO: cambiar, no est� bueno este dise�o. Crear un m�todo Start.
+			monitor->startMonitoring();
+			//monitor->startMonitoring();	//TODO: esto crearia otro Thread... si lo implementamos como un Setter "EnableRaisingEvents" podemos manejarlo de otra manera...
+
+		}
+		catch (std::runtime_error re)
+		{
+			std::cout << "EXCEPTION" << std::endl;
+			std::cout << re.what() << std::endl;
+		}
+
+
+		std::cin.clear();
+		std::cin.sync();
+		std::cin.get();
+
+		std::cout << "DELETING" << std::endl;
+
+		//std::cout << "monitor: '" << monitor << "'" << std::endl;
+
+		//if ( monitor != 0)
+		//{
+			delete monitor;	//TODO: este delete, en caso de error en el constructor da error...
+		//}
 
 	}
-	catch (std::runtime_error re)
-	{
-		std::cout << "EXCEPTION" << std::endl;
-		std::cout << re.what() << std::endl;
-	}
-
-
-	std::cin.clear();
-	std::cin.sync();
-	std::cin.get();
-
-	std::cout << "DELETING" << std::endl;
-
-	std::cout << "monitor: '" << monitor << "'" << std::endl;
-
-//	delete monitor;	//TODO: este delete, en caso de error en el constructor da error...
-
 
 
 
