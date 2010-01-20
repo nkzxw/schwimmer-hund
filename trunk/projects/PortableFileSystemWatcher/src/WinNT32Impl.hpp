@@ -7,6 +7,7 @@
 #include <boost/smart_ptr.hpp>
 #include <boost/thread.hpp>
 
+#include "BaseImpl.hpp"
 #include "EventArgs.hpp"
 #include "EventHandlers.hpp"
 #include "NotifyFilters.hpp"
@@ -18,42 +19,35 @@ namespace detail
 
 typedef boost::shared_ptr<boost::thread> HeapThread;
 
-class WinNT32Impl
+class WinNT32Impl : public BaseImpl
 {
 public:
 	WinNT32Impl()
 		: completionPortHandle_(0)
 	{
-		//threadObject_ = new detail::ThreadObjectParameter;
 	}
 
 	virtual ~WinNT32Impl()
 	{
-
-		// Si hubo algun error al tratar de monitorear el directorio, estos pasos no hay que hacerlos...
-
-		PostQueuedCompletionStatus( completionPortHandle_, 0, 0, NULL );
-
-		// Wait for the Directory thread to finish before exiting
-		//WaitForSingleObject( thread_, INFINITE );
-		//CloseHandle( thread_ );
+		if ( completionPortHandle_ != 0 )
+		{
+			PostQueuedCompletionStatus( completionPortHandle_, 0, 0, NULL );
+		}
 
 		if ( thread_ )
 		{
 			thread_->join();
 		}
 		
+		if ( directoryInfo.directoryHandle != 0 )
+		{
+			CloseHandle( directoryInfo.directoryHandle );
+		}
 
-		//for (int i=0; i<numDirs; ++i)
-		//{
-		CloseHandle( directoryInfo.directoryHandle );
-		//}
-
-		CloseHandle( completionPortHandle_ );
-
-		//delete threadObject_;
-
-
+		if ( completionPortHandle_ != 0 )
+		{
+			CloseHandle( completionPortHandle_ );
+		}
 	}
 
 	void startMonitoring(const std::string& path)
@@ -103,14 +97,7 @@ public:
 			);      
 
 
-		//threadObject_->This = this;
-		//threadObject_->CompletionPortHandle = completionPortHandle_; //TODO: dato redundante
-
-
 		thread_.reset( new boost::thread( boost::bind(&WinNT32Impl::HandleDirectoryChange, this) ) );
-		//thread_ = ::CreateThread( NULL, 0, (LPTHREAD_START_ROUTINE) HandleDirectoryChange, threadObject_, 0, &tid );
-
-
 	}
 
 	// Event Handlers
@@ -121,13 +108,8 @@ public:
 
 public: //private:  //TODO:
 
-	//static void WINAPI HandleDirectoryChange( unsigned long completionPort )
-	//static void WINAPI HandleDirectoryChange( ThreadObjectParameter* threadObject )
-	//static void WINAPI HandleDirectoryChange( void* tempObject )
 	void HandleDirectoryChange()
 	{
-		//detail::ThreadObjectParameter* threadObject = static_cast<detail::ThreadObjectParameter*>(tempObject);
-
 		unsigned long numBytes;
 		unsigned long cbOffset;
 		LPDIRECTORY_INFO directoryInfo;
@@ -137,22 +119,13 @@ public: //private:  //TODO:
 
 		do
 		{
-			//threadObject->This->completionPortHandle_,
-
-			GetQueuedCompletionStatus
-				( 
-				this->completionPortHandle_,
-				&numBytes,
-				(LPDWORD) &directoryInfo,      // This is the DIRECTORY_INFO structure that was passed in the call to CreateIoCompletionPort below.
-				&overlapped,
-				INFINITE
-				);
+			GetQueuedCompletionStatus( this->completionPortHandle_, &numBytes, (LPDWORD) &directoryInfo, &overlapped, INFINITE );
 
 			if ( directoryInfo )
 			{
 				//fni = (PFILE_NOTIFY_INFORMATION)di->lpBuffer;
-				//notifyInformation = static_cast<PFILE_NOTIFY_INFORMATION>(directoryInfo->buffer);
-				notifyInformation = (PFILE_NOTIFY_INFORMATION)directoryInfo->buffer;
+				//notifyInformation = (PFILE_NOTIFY_INFORMATION)directoryInfo->buffer;
+				notifyInformation = static_cast<PFILE_NOTIFY_INFORMATION>(directoryInfo->buffer);
 
 				do
 				{
@@ -164,90 +137,74 @@ public: //private:  //TODO:
 					//
 					switch ( notifyInformation->Action )
 					{
-						//if (threadObject->This->Created)
+						case FILE_ACTION_ADDED:
+							if (this->Created)
+							{
+								std::string fileName(notifyInformation->FileName, notifyInformation->FileName + (notifyInformation->FileNameLength/sizeof(WCHAR)) ); 
+								FileSystemEventArgs temp;
+								temp.Name = fileName;
 
-					case FILE_ACTION_ADDED:
-						if (this->Created)
-						{
-							std::string fileName(notifyInformation->FileName, notifyInformation->FileName + (notifyInformation->FileNameLength/sizeof(WCHAR)) ); 
-							FileSystemEventArgs temp;
-							temp.Name = fileName;
+								//threadObject->This->Created(temp);
+								this->Created(temp);
+							}
 
-							//threadObject->This->Created(temp);
-							this->Created(temp);
-						}
+							break;
+						case FILE_ACTION_REMOVED:
+							//std::cout << "file deleted: ";
+							//if (threadObject->This->Deleted)
+							if (this->Deleted)
+							{
+								std::string fileName(notifyInformation->FileName, notifyInformation->FileName + (notifyInformation->FileNameLength/sizeof(WCHAR)) ); 
+								FileSystemEventArgs temp;
+								temp.Name = fileName;
 
-						break;
-					case FILE_ACTION_REMOVED:
-						//std::cout << "file deleted: ";
-						//if (threadObject->This->Deleted)
-						if (this->Deleted)
-						{
-							std::string fileName(notifyInformation->FileName, notifyInformation->FileName + (notifyInformation->FileNameLength/sizeof(WCHAR)) ); 
-							FileSystemEventArgs temp;
-							temp.Name = fileName;
+								//threadObject->This->Deleted(temp);
+								this->Deleted(temp);
+							}
 
-							//threadObject->This->Deleted(temp);
-							this->Deleted(temp);
-						}
+							break;
+						case FILE_ACTION_MODIFIED:
+							//if (threadObject->This->Changed)
+							if (this->Changed)
+							{
+								std::string fileName(notifyInformation->FileName, notifyInformation->FileName + (notifyInformation->FileNameLength/sizeof(WCHAR)) ); 
 
-						break;
-					case FILE_ACTION_MODIFIED:
-						//if (threadObject->This->Changed)
-						if (this->Changed)
-						{
-							std::string fileName(notifyInformation->FileName, notifyInformation->FileName + (notifyInformation->FileNameLength/sizeof(WCHAR)) ); 
+								FileSystemEventArgs temp;
+								temp.Name = fileName;
 
-							FileSystemEventArgs temp;
-							temp.Name = fileName;
+								//threadObject->This->Changed(temp);
+								this->Changed(temp);
+							}
 
-							//threadObject->This->Changed(temp);
-							this->Changed(temp);
-						}
+							break;
+						case FILE_ACTION_RENAMED_OLD_NAME:
 
-						break;
-					case FILE_ACTION_RENAMED_OLD_NAME:
+							//if (threadObject->This->Renamed)
+							if (this->Renamed)
+							{
+								std::string fileName(notifyInformation->FileName, notifyInformation->FileName + (notifyInformation->FileNameLength/sizeof(WCHAR)) ); 
 
-						//if (threadObject->This->Renamed)
-						if (this->Renamed)
-						{
-							std::string fileName(notifyInformation->FileName, notifyInformation->FileName + (notifyInformation->FileNameLength/sizeof(WCHAR)) ); 
+								RenamedEventArgs temp;
+								temp.Name = fileName;
 
-							RenamedEventArgs temp;
-							temp.Name = fileName;
+								//threadObject->This->Renamed(temp);
+								this->Renamed(temp);
+							}
 
-							//threadObject->This->Renamed(temp);
-							this->Renamed(temp);
-						}
-
-						break;
-					case FILE_ACTION_RENAMED_NEW_NAME:
-						break;
-					default: 
-						std::cout << "unknown event: ";
-						break;
+							break;
+						case FILE_ACTION_RENAMED_NEW_NAME:
+							break;
+						default: 
+							std::cout << "unknown event: ";
+							break;
 					}
-
-					//std::string fileName(notifyInformation->FileName, notifyInformation->FileName + (notifyInformation->FileNameLength/sizeof(WCHAR)) ); 
-					//std::cout << fileName << std::endl;
 
 					notifyInformation = (PFILE_NOTIFY_INFORMATION)((LPBYTE) notifyInformation + cbOffset);
 
 				} while( cbOffset );
 
-
-				::ReadDirectoryChangesW
-					( 
-					directoryInfo->directoryHandle,						
-					directoryInfo->buffer,                                
-					MAX_BUFFER,                               
-					this->includeSubdirectories_ ? 1 : 0,		//TRUE,                                     
-					this->notifyFilters_,						//FILE_NOTIFY_CHANGE_LAST_WRITE,            
-					&directoryInfo->bufferLength,                        
-					&directoryInfo->overlapped,                          
-					NULL
-					);      
-
+				// this->notifyFilters_ = //FILE_NOTIFY_CHANGE_LAST_WRITE,            
+				::ReadDirectoryChangesW ( directoryInfo->directoryHandle, directoryInfo->buffer, MAX_BUFFER, this->includeSubdirectories_ ? 1 : 0, this->notifyFilters_,	&directoryInfo->bufferLength, &directoryInfo->overlapped, NULL );
 			}
 
 		} while( directoryInfo );
@@ -255,14 +212,10 @@ public: //private:  //TODO:
 
 	}
 
-	int notifyFilters_;									//TODO: debería ser un enum
-	std::string filter_;
-	bool includeSubdirectories_;
-	void* completionPortHandle_;
+	// Datos comunes...
 
+	void* completionPortHandle_;
 	HeapThread thread_;
-	//HANDLE  thread_;									//TODO:
-	//detail::ThreadObjectParameter* threadObject_;		//TODO: shared_ptr
 };
 
 typedef WinNT32Impl PlatformImpl;

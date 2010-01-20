@@ -1,10 +1,12 @@
 #ifndef MacOSXImpl_h__
 #define MacOSXImpl_h__
 
+#include "BaseImpl.hpp"
+
 namespace detail
 {
 
-struct MacOSXImpl
+struct MacOSXImpl : public BaseImpl
 {
 	void start()
 	{

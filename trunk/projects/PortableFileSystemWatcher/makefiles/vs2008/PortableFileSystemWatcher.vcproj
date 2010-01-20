@@ -210,19 +210,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\FreeBSDImpl.hpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\ImplementationSelector.hpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\LinuxImpl.hpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\MacOSXImpl.hpp"
 				>
 			</File>
 			<File
@@ -238,10 +226,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\UnsupportedImpl.hpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\Utils.hpp"
 				>
 			</File>
@@ -253,10 +237,34 @@
 				RelativePath="..\..\src\Win32Legacy.hpp"
 				>
 			</File>
-			<File
-				RelativePath="..\..\src\WinNT32Impl.hpp"
+			<Filter
+				Name="ImplementationClasses"
 				>
-			</File>
+				<File
+					RelativePath=".\BaseImpl.hpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\FreeBSDImpl.hpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\LinuxImpl.hpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\MacOSXImpl.hpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\UnsupportedImpl.hpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\WinNT32Impl.hpp"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Resource Files"

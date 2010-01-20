@@ -16,6 +16,7 @@
 #include <boost/smart_ptr.hpp>
 #include <boost/thread.hpp>
 
+#include "BaseImpl.hpp"
 #include "EventArgs.hpp"
 #include "EventHandlers.hpp"
 #include "NotifyFilters.hpp"
@@ -29,7 +30,7 @@ namespace detail
 
 typedef boost::shared_ptr<boost::thread> HeapThread;
 
-class LinuxImpl
+class LinuxImpl : public BaseImpl
 {
 public:
 

@@ -1,10 +1,12 @@
 #ifndef FreeBSDImpl_h__
 #define FreeBSDImpl_h__
 
+#include "BaseImpl.hpp"
+
 namespace detail
 {
 
-struct FreeBSDImpl
+struct FreeBSDImpl : public BaseImpl
 {
 	void start()
 	{
