@@ -12,7 +12,7 @@
 #include "EventHandlers.hpp"
 #include "NotifyFilters.hpp"
 #include "Win32ApiWrapper.hpp"
-#include "Win32Legacy.hpp"
+#include "Win32Legacy.hpp"			// directoryInfo
 
 namespace detail
 {
@@ -24,8 +24,7 @@ class WinNT32Impl : public BaseImpl
 public:
 	WinNT32Impl()
 		: completionPortHandle_(0)
-	{
-	}
+	{}
 
 	virtual ~WinNT32Impl()
 	{
@@ -52,16 +51,7 @@ public:
 
 	void startMonitoring(const std::string& path)
 	{
-		directoryInfo.directoryHandle = Win32ApiWrapper::CreateFile
-			( 
-			path,
-			FILE_LIST_DIRECTORY,
-			FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
-			NULL,
-			OPEN_EXISTING,
-			FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OVERLAPPED,
-			NULL
-			);
+		directoryInfo.directoryHandle = Win32ApiWrapper::CreateFile( path, FILE_LIST_DIRECTORY, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OVERLAPPED, NULL );
 
 		if ( directoryInfo.directoryHandle == INVALID_HANDLE_VALUE )
 		{
@@ -75,27 +65,22 @@ public:
 		unsigned long addr = (unsigned long) &directoryInfo;
 
 		// Set up a key(directory info) for each directory
-		completionPortHandle_ = CreateIoCompletionPort
-			( 
-			directoryInfo.directoryHandle,
-			completionPortHandle_,
-			(unsigned long) addr,
-			0
-			);
+		completionPortHandle_ = CreateIoCompletionPort ( directoryInfo.directoryHandle, completionPortHandle_, (unsigned long) addr, 0 );
 
 
-		ReadDirectoryChangesW
-			( 
-			directoryInfo.directoryHandle,		// HANDLE TO DIRECTORY
-			directoryInfo.buffer,               // Formatted buffer into which read results are returned.  This is a
-			MAX_BUFFER,                         // Length of previous parameter, in bytes
-			this->includeSubdirectories_ ? 1 : 0,	//TRUE,  // Monitor sub trees?
-			this->notifyFilters_,						// FILE_NOTIFY_CHANGE_LAST_WRITE,      // What we are watching for
-			&directoryInfo.bufferLength,        // Number of bytes returned into second parameter
-			&directoryInfo.overlapped,          // OVERLAPPED structure that supplies data to be used during an asynchronous operation.  If this is NULL, ReadDirectoryChangesW does not return immediately.
-			NULL								// Completion routine
-			);      
+		//ReadDirectoryChangesW
+		//	( 
+		//	directoryInfo.directoryHandle,		// HANDLE TO DIRECTORY
+		//	directoryInfo.buffer,               // Formatted buffer into which read results are returned.  This is a
+		//	MAX_BUFFER,                         // Length of previous parameter, in bytes
+		//	this->includeSubdirectories_ ? 1 : 0,	//TRUE,  // Monitor sub trees?
+		//	this->notifyFilters_,						// FILE_NOTIFY_CHANGE_LAST_WRITE,      // What we are watching for
+		//	&directoryInfo.bufferLength,        // Number of bytes returned into second parameter
+		//	&directoryInfo.overlapped,          // OVERLAPPED structure that supplies data to be used during an asynchronous operation.  If this is NULL, ReadDirectoryChangesW does not return immediately.
+		//	NULL								// Completion routine
+		//	);      
 
+		ReadDirectoryChangesW ( directoryInfo.directoryHandle, directoryInfo.buffer, MAX_BUFFER, this->includeSubdirectories_ ? 1 : 0, this->notifyFilters_, &directoryInfo.bufferLength,&directoryInfo.overlapped, NULL);
 
 		thread_.reset( new boost::thread( boost::bind(&WinNT32Impl::HandleDirectoryChange, this) ) );
 	}
@@ -124,8 +109,8 @@ public: //private:  //TODO:
 			if ( directoryInfo )
 			{
 				//fni = (PFILE_NOTIFY_INFORMATION)di->lpBuffer;
-				//notifyInformation = (PFILE_NOTIFY_INFORMATION)directoryInfo->buffer;
-				notifyInformation = static_cast<PFILE_NOTIFY_INFORMATION>(directoryInfo->buffer);
+				notifyInformation = (PFILE_NOTIFY_INFORMATION)directoryInfo->buffer;
+				//notifyInformation = static_cast<PFILE_NOTIFY_INFORMATION>(directoryInfo->buffer);
 
 				do
 				{
@@ -211,8 +196,6 @@ public: //private:  //TODO:
 
 
 	}
-
-	// Datos comunes...
 
 	void* completionPortHandle_;
 	HeapThread thread_;
