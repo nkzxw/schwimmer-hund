@@ -70,7 +70,7 @@ public:
 
 		
 		//watchDescriptor_ = inotify_add_watch( fileDescriptor_, "/home/fernando/temp1", IN_MODIFY | IN_CREATE | IN_DELETE );
-		watchDescriptor_ = inotify_add_watch( fileDescriptor_, path.c_str(), IN_MODIFY | IN_CREATE | IN_DELETE );
+		watchDescriptor_ = inotify_add_watch( fileDescriptor_, path.c_str(), IN_MODIFY | IN_CREATE | IN_DELETE ); //TODO: IN_MOVED ??
 
 
 		thread_.reset( new boost::thread( boost::bind(&LinuxImpl::HandleDirectoryChange, this) ) );
