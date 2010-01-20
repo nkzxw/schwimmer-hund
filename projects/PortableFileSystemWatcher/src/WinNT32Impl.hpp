@@ -80,7 +80,7 @@ public:
 		//	NULL								// Completion routine
 		//	);      
 
-		ReadDirectoryChangesW ( directoryInfo.directoryHandle, directoryInfo.buffer, MAX_BUFFER, this->includeSubdirectories_ ? 1 : 0, this->notifyFilters_, &directoryInfo.bufferLength,&directoryInfo.overlapped, NULL);
+		ReadDirectoryChangesW ( directoryInfo.directoryHandle, directoryInfo.buffer, MAX_BUFFER, this->includeSubdirectories_ ? 1 : 0, this->notifyFilters_, &directoryInfo.bufferLength, &directoryInfo.overlapped, NULL);
 
 		thread_.reset( new boost::thread( boost::bind(&WinNT32Impl::HandleDirectoryChange, this) ) );
 	}

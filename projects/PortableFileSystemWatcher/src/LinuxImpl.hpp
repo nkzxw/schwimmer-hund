@@ -122,6 +122,8 @@ public: //private:  //TODO:
 	//				printf("inside the 'while'\n");
 
 					struct inotify_event *event = ( struct inotify_event * ) &buffer[ i ]; //TODO:
+					inotify_event = reinterpret_cast<struct inotify_event*> (buffer_ + bytes_processed);
+
 
 	//				printf("event: %d\n", (void*)event);
 	//				printf("event->len: %d\n", event->len);
