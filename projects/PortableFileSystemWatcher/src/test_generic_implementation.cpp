@@ -31,7 +31,7 @@
 
 //#include "FileSystemMonitorImplTestGeneric.hpp"
 #include "FileSystemMonitorGeneric.hpp"
-#include "StaticOSSelector.hpp"
+//#include "StaticOSSelector.hpp"
 
 //#include "windows.h"
 //#include "winuser.h"
@@ -93,10 +93,10 @@ static void OnRenamed(RenamedEventArgs e) // object source,
 
 int main(int argc, char** argv)
 {
-	std::string path = "C:\\temp1";
+	//std::string path = "C:\\temp1";
 	//std::string path = "D:\\temp1";
 	//std::string path = "J:\\temp1";
-	//std::string path = "/home/fernando";
+	std::string path = "/home/fernando/temp1";
 
 	{
 

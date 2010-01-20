@@ -40,16 +40,16 @@ public:
 
 		if ( watchDescriptor_ != 0 )
 		{
-			printf("removing watch...\n");
+//			printf("removing watch...\n");
 			int retRMWatch = inotify_rm_watch( fileDescriptor_, watchDescriptor_ );
-			printf("retRMWatch: %d\n", retRMWatch);
+//			printf("retRMWatch: %d\n", retRMWatch);
 		}
 
 		if ( fileDescriptor_ != 0 )
 		{
-			printf("closing file descriptor...\n");
+//			printf("closing file descriptor...\n");
 			int retClose =  close( fileDescriptor_ );
-			printf("retClose: %d\n", retClose);
+//			printf("retClose: %d\n", retClose);
 		}
 
 		if ( thread_ )
@@ -93,88 +93,115 @@ public: //private:  //TODO:
 		//TODO: while
 		//TODO: boost asio buffer
 
-
-		printf("reading in file descriptor\n");
-		int length = read( fileDescriptor_, buffer, BUF_LEN );
-		printf("end reading on file descriptor\n");
-
-		if (! closing_)
+		while (! closing_ )
 		{
+	//		printf("reading in file descriptor\n");
+			int length = read( fileDescriptor_, buffer, BUF_LEN );
+	//		printf("end reading on file descriptor\n");
 
-			printf("length: %d\n", length);
-
-			if ( length < 0 ) 
+			if (! closing_)
 			{
-				perror( "read" );
-			}  
 
+	//			printf("length: %d\n", length);
 
-			//int j;
-			//for (j = 0; j<length; j++)
-			//{
-			//	printf("buffer[j]: %d\n", buffer[j]);
-			//}
-
-			printf("i: %d\n", i);
-			while ( i < length ) 
-			{
-				printf("inside the 'while'\n");
-
-				struct inotify_event *event = ( struct inotify_event * ) &buffer[ i ]; //TODO:
-
-				printf("event: %d\n", (void*)event);
-				printf("event->len: %d\n", event->len);
-
-				if ( event->len ) 
+				if ( length < 0 )
 				{
-					if ( event->mask & IN_CREATE ) 
-					{
-						if (this->Created)
-						{
-							//std::string fileName( event->name ); 
-							FileSystemEventArgs temp;
-							temp.Name = event->name; //fileName;
-
-							//threadObject->This->Created(temp);
-							this->Created(temp);
-						}
-
-						//if ( event->mask & IN_ISDIR ) 
-						//{
-						//	printf( "The directory '%s' was created.\n", event->name );       
-						//}
-						//else 
-						//{
-						//	printf( "The file '%s' was created.\n", event->name );
-						//}
-					}
-					else if ( event->mask & IN_DELETE ) 
-					{
-						if ( event->mask & IN_ISDIR ) 
-						{
-							printf( "The directory '%s' was deleted.\n", event->name );       
-						}
-						else 
-						{
-							printf( "The file '%s' was deleted.\n", event->name );
-						}
-					}
-					else if ( event->mask & IN_MODIFY ) 
-					{
-						if ( event->mask & IN_ISDIR ) 
-						{
-							printf( "The directory '%s' was modified.\n", event->name );
-						}
-						else 
-						{
-							printf( "The file '%s' was modified.\n", event->name );
-						}
-					}
+					perror( "read" );
 				}
 
-				i += EVENT_SIZE + event->len;
 
-				printf("i: %d\n", i);
+				//int j;
+				//for (j = 0; j<length; j++)
+				//{
+				//	printf("buffer[j]: %d\n", buffer[j]);
+				//}
+
+	//			printf("i: %d\n", i);
+				while ( i < length )
+				{
+	//				printf("inside the 'while'\n");
+
+					struct inotify_event *event = ( struct inotify_event * ) &buffer[ i ]; //TODO:
+
+	//				printf("event: %d\n", (void*)event);
+	//				printf("event->len: %d\n", event->len);
+
+					if ( event->len )
+					{
+						if ( event->mask & IN_CREATE )
+						{
+							if (this->Created)
+							{
+	//							std::cout << "ESTOOOOYYY ACAA" << std::endl;
+								//std::string fileName( event->name );
+								FileSystemEventArgs temp;
+								temp.Name = event->name; //fileName;
+
+								//threadObject->This->Created(temp);
+								this->Created(temp);
+							}
+
+							//if ( event->mask & IN_ISDIR )
+							//{
+							//	printf( "The directory '%s' was created.\n", event->name );
+							//}
+							//else
+							//{
+							//	printf( "The file '%s' was created.\n", event->name );
+							//}
+						}
+						else if ( event->mask & IN_DELETE )
+						{
+							if (this->Deleted)
+							{
+								//std::string fileName( event->name );
+								FileSystemEventArgs temp;
+								temp.Name = event->name; //fileName;
+
+								this->Deleted(temp);
+							}
+
+	//						if ( event->mask & IN_ISDIR )
+	//						{
+	//							printf( "The directory '%s' was deleted.\n", event->name );
+	//						}
+	//						else
+	//						{
+	//							printf( "The file '%s' was deleted.\n", event->name );
+	//						}
+						}
+						else if ( event->mask & IN_MODIFY )
+						{
+
+							if (this->Changed)
+							{
+								//std::string fileName( event->name );
+								FileSystemEventArgs temp;
+								temp.Name = event->name; //fileName;
+
+								this->Changed(temp);
+							}
+
+
+
+
+	//						if ( event->mask & IN_ISDIR )
+	//						{
+	//							printf( "The directory '%s' was modified.\n", event->name );
+	//						}
+	//						else
+	//						{
+	//							printf( "The file '%s' was modified.\n", event->name );
+	//						}
+						}
+
+						//TODO: renaming
+					}
+
+					i += EVENT_SIZE + event->len;
+
+	//				printf("i: %d\n", i);
+				}
 			}
 		}
 
@@ -196,9 +223,9 @@ public: //private:  //TODO:
 	bool closing_;
 
 
-	int notifyFilters_;									//TODO: deber�a ser un enum
-	std::string filter_;
-	bool includeSubdirectories_;
+//	int notifyFilters_;									//TODO: deber�a ser un enum
+//	std::string filter_;
+//	bool includeSubdirectories_;
 
 };
 
