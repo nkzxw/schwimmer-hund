@@ -233,15 +233,11 @@
 				RelativePath="..\..\src\Win32ApiWrapper.hpp"
 				>
 			</File>
-			<File
-				RelativePath="..\..\src\Win32Legacy.hpp"
-				>
-			</File>
 			<Filter
 				Name="ImplementationClasses"
 				>
 				<File
-					RelativePath=".\BaseImpl.hpp"
+					RelativePath="..\..\src\BaseImpl.hpp"
 					>
 				</File>
 				<File
@@ -258,6 +254,10 @@
 				</File>
 				<File
 					RelativePath="..\..\src\UnsupportedImpl.hpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\Win32Legacy.hpp"
 					>
 				</File>
 				<File
