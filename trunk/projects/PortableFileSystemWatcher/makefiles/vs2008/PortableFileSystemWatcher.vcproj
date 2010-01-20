@@ -164,6 +164,14 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath="..\..\src\reserach\dir_monitor.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\reserach\dir_monitor_test.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\test_FileSystemMonitor.cpp"
 				>
 			</File>
@@ -179,6 +187,10 @@
 			>
 			<File
 				RelativePath="..\..\src\Config.hpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\reserach\dir_monitor.hpp"
 				>
 			</File>
 			<File
