@@ -38,6 +38,7 @@ public:
 		//WaitForSingleObject( thread_, INFINITE );
 		//CloseHandle( thread_ );
 		thread_->join();
+		
 
 		//for (int i=0; i<numDirs; ++i)
 		//{
