@@ -1,3 +1,5 @@
+//TODO: hacer build que no dependa de la librería dinamica
+
 #ifndef LinuxImpl_h__
 #define LinuxImpl_h__
 
@@ -42,7 +44,10 @@ public:
 		int retClose =  close( fileDescriptor_ );
 		printf("retClose: %d\n", retClose);
 
-		thread_->join();
+		if ( thread_ )
+		{
+			thread_->join();
+		}
 	
 	}
 

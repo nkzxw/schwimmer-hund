@@ -31,7 +31,6 @@ public:
 		}
 
 		this->directory_ = path;
-
 	}
 
 
@@ -210,7 +209,7 @@ public:
 	void setEnableRaisingEvents(bool val) 
 	{ 
 		enableRaisingEvents_ = val; 
-		//TODO: acá va el código
+		//TODO: acï¿½ va el cï¿½digo
 	}
 
 	void startMonitoring()
@@ -274,7 +273,7 @@ private:
 
 
 	std::string directory_;
-	int notifyFilters_;									//TODO: debería ser un enum
+	int notifyFilters_;									//TODO: deberï¿½a ser un enum
 	std::string filter_;
 	bool enableRaisingEvents_;
 	bool includeSubdirectories_;
