@@ -93,10 +93,10 @@ static void OnRenamed(RenamedEventArgs e) // object source,
 
 int main(int argc, char** argv)
 {
+	std::string path = "C:\\temp1";
+	//std::string path = "D:\\temp1";
+	//std::string path = "J:\\temp1";
 	//std::string path = "/home/fernando";
-	//std::string path = "D:\\temp1";			// Da error en Linux.
-	//std::string path = "C:\\temp1";
-	std::string path = "J:\\temp1";			// Error al hacer DELETE de monitor si no fue bien construido...
 
 	{
 
@@ -122,19 +122,11 @@ int main(int argc, char** argv)
 		}
 		catch (std::runtime_error re)
 		{
-			std::cout << "EXCEPTION" << std::endl;
-			std::cout << re.what() << std::endl;
+			std::cout << "EXCEPTION: " << re.what() << std::endl;
 		}
 
-
-		std::cin.clear();
-		std::cin.sync();
-		std::cin.ignore();
+		std::cout << "Press Enter to Stop Monitoring..." << std::endl;
 		std::cin.get();
-
-		std::cout << "DELETING" << std::endl;
-
-		//std::cout << "monitor: '" << monitor << "'" << std::endl;
 
 		//if ( monitor != 0)
 		//{
@@ -145,14 +137,6 @@ int main(int argc, char** argv)
 
 
 
-
-
-	//StaticOSSelector::type oss;
-	//oss.start();
-
-	//FileSystemMonitorGenericImpl<PLATFORM_IMPL_CLASS> monitor;
-	//FileSystemMonitorGenericImpl<PlatformImpl> monitor;
-	//monitor.start();
 
 
 
@@ -175,7 +159,14 @@ int main(int argc, char** argv)
 
 	//#elif defined() || defined() || defined(WIN32)
 
-	std::cin.ignore();
+
+
+		std::cout << "Press Enter to Exit" << std::endl;
+
+	//std::cin.clear();
+	//std::cin.sync();
+	//std::cin.ignore();
 	std::cin.get();
+
 	return 0;
 }
