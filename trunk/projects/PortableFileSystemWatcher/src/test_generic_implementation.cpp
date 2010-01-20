@@ -93,9 +93,9 @@ static void OnRenamed(RenamedEventArgs e) // object source,
 
 int main(int argc, char** argv)
 {
-	std::string path = "D:\\temp1";
+	std::string path = "/home/fernando";
+	//	std::string path = "D:\\temp1";			// Da error en Linux.
 	//	std::string path = "C:\\temp1";
-
 
 	FileSystemMonitorGeneric* monitor;
 
@@ -111,19 +111,27 @@ int main(int argc, char** argv)
 		monitor->setDeletedEventHandler(OnDeleted);
 		monitor->setRenamedEventHandler(OnRenamed);
 
-		//monitor->setEnableRaisingEvents(true); //TODO: cambiar, no está bueno este diseño. Crear un método Start.
+		//monitor->setEnableRaisingEvents(true); //TODO: cambiar, no estï¿½ bueno este diseï¿½o. Crear un mï¿½todo Start.
 		monitor->startMonitoring();
-		monitor->startMonitoring();	//TODO: esto crearia otro Thread... si lo implementamos como un Setter "EnableRaisingEvents" podemos manejarlo de otra manera...
+		//monitor->startMonitoring();	//TODO: esto crearia otro Thread... si lo implementamos como un Setter "EnableRaisingEvents" podemos manejarlo de otra manera...
 
 	}
 	catch (std::runtime_error re)
 	{
+		std::cout << "EXCEPTION" << std::endl;
 		std::cout << re.what() << std::endl;
 	}
 
+
+	std::cin.clear();
+	std::cin.sync();
 	std::cin.get();
 
-	delete monitor;
+	std::cout << "DELETING" << std::endl;
+
+	std::cout << "monitor: '" << monitor << "'" << std::endl;
+
+//	delete monitor;	//TODO: este delete, en caso de error en el constructor da error...
 
 
 
