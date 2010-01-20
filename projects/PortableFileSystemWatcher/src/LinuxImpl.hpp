@@ -37,12 +37,19 @@ public:
 	{
 		closing_ = true;
 
-		printf("removing watch...\n");
-		int retRMWatch = inotify_rm_watch( fileDescriptor_, watchDescriptor_ );
-		printf("retRMWatch: %d\n", retRMWatch);
-		printf("closing file descriptor...\n");
-		int retClose =  close( fileDescriptor_ );
-		printf("retClose: %d\n", retClose);
+		if ( watchDescriptor_ != 0 )
+		{
+			printf("removing watch...\n");
+			int retRMWatch = inotify_rm_watch( fileDescriptor_, watchDescriptor_ );
+			printf("retRMWatch: %d\n", retRMWatch);
+		}
+
+		if ( fileDescriptor_ != 0 )
+		{
+			printf("closing file descriptor...\n");
+			int retClose =  close( fileDescriptor_ );
+			printf("retClose: %d\n", retClose);
+		}
 
 		if ( thread_ )
 		{

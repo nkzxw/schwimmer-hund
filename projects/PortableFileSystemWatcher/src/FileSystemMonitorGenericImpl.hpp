@@ -8,7 +8,15 @@ template <typename PlatformImpl>
 class FileSystemMonitorGenericImpl : public PlatformImpl
 {
 public:
-
+//	FileSystemMonitorGenericImpl()
+//	{
+//		std::cout << "FileSystemMonitorGenericImpl()" << std::endl;
+//	}
+//
+//	~FileSystemMonitorGenericImpl()
+//	{
+//		std::cout << "~FileSystemMonitorGenericImpl()" << std::endl;
+//	}
 };
 
 }
