@@ -47,6 +47,7 @@ public:
 
 		if ( fileDescriptor_ != 0 )
 		{
+			// TODO: parece que close(0) cierra el standard input (CIN)
 //			printf("closing file descriptor...\n");
 			int retClose =  close( fileDescriptor_ );
 //			printf("retClose: %d\n", retClose);
