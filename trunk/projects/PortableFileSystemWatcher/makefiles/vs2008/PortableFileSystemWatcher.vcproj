@@ -172,6 +172,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\reserach\test_BOOST_ASIO_STREAM_DESCRIPTORS.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\reserach\test_DirMonitor.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\test_FileSystemMonitor.cpp"
 				>
 			</File>
@@ -191,6 +199,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\reserach\dir_monitor.hpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\reserach\DirMonitor.hpp"
 				>
 			</File>
 			<File
