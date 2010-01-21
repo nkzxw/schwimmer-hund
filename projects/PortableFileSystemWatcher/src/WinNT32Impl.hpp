@@ -30,7 +30,8 @@ public:
 	{
 		if ( completionPortHandle_ != 0 )
 		{
-			PostQueuedCompletionStatus( completionPortHandle_, 0, 0, NULL );
+			//TODO: manejo de errores
+			::PostQueuedCompletionStatus( completionPortHandle_, 0, 0, NULL );
 		}
 
 		if ( thread_ )
@@ -40,12 +41,14 @@ public:
 		
 		if ( directoryInfo.directoryHandle != 0 )
 		{
-			CloseHandle( directoryInfo.directoryHandle );
+			//TODO: manejo de errores
+			::CloseHandle( directoryInfo.directoryHandle );
 		}
 
 		if ( completionPortHandle_ != 0 )
 		{
-			CloseHandle( completionPortHandle_ );
+			//TODO: manejo de errores
+			::CloseHandle( completionPortHandle_ );
 		}
 	}
 
@@ -64,8 +67,9 @@ public:
 
 		unsigned long addr = (unsigned long) &directoryInfo;
 
+		//TODO: manejo de errores
 		// Set up a key(directory info) for each directory
-		completionPortHandle_ = CreateIoCompletionPort ( directoryInfo.directoryHandle, completionPortHandle_, (unsigned long) addr, 0 );
+		completionPortHandle_ = ::CreateIoCompletionPort ( directoryInfo.directoryHandle, completionPortHandle_, (unsigned long) addr, 0 );
 
 
 		//ReadDirectoryChangesW
@@ -80,7 +84,8 @@ public:
 		//	NULL								// Completion routine
 		//	);      
 
-		ReadDirectoryChangesW ( directoryInfo.directoryHandle, directoryInfo.buffer, MAX_BUFFER, this->includeSubdirectories_ ? 1 : 0, this->notifyFilters_, &directoryInfo.bufferLength, &directoryInfo.overlapped, NULL);
+		//TODO: manejo de errores
+		int retValue = ::ReadDirectoryChangesW ( directoryInfo.directoryHandle, directoryInfo.buffer, MAX_BUFFER, this->includeSubdirectories_ ? 1 : 0, this->notifyFilters_, &directoryInfo.bufferLength, &directoryInfo.overlapped, NULL);
 
 		thread_.reset( new boost::thread( boost::bind(&WinNT32Impl::HandleDirectoryChange, this) ) );
 	}
@@ -104,7 +109,8 @@ public: //private:  //TODO:
 
 		do
 		{
-			GetQueuedCompletionStatus( this->completionPortHandle_, &numBytes, (LPDWORD) &directoryInfo, &overlapped, INFINITE );
+			//TODO: manejo de errores
+			::GetQueuedCompletionStatus( this->completionPortHandle_, &numBytes, (LPDWORD) &directoryInfo, &overlapped, INFINITE );
 
 			if ( directoryInfo )
 			{
@@ -188,6 +194,7 @@ public: //private:  //TODO:
 
 				} while( cbOffset );
 
+				//TODO: manejo de errores
 				// this->notifyFilters_ = //FILE_NOTIFY_CHANGE_LAST_WRITE,            
 				::ReadDirectoryChangesW ( directoryInfo->directoryHandle, directoryInfo->buffer, MAX_BUFFER, this->includeSubdirectories_ ? 1 : 0, this->notifyFilters_,	&directoryInfo->bufferLength, &directoryInfo->overlapped, NULL );
 			}
