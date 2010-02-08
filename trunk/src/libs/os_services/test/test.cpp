@@ -75,6 +75,10 @@ static void OnRenamed(renamed_event_args e) // object source,
 
 int main(int /*argc*/, char** /*argv*/)
 {
+
+	//printf("sizeof(unsigned long): %d \n", sizeof(unsigned long));
+	//printf("sizeof(wchar_t): %d \n", sizeof(wchar_t));
+
 	std::string path = "C:\\temp1";
 	//std::string path = "D:\\temp1";
 	//std::string path = "J:\\temp1";
