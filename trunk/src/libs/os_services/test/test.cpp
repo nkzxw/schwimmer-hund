@@ -78,12 +78,12 @@ static void OnRenamed(renamed_event_args e) // object source,
 int main(int /*argc*/, char** /*argv*/)
 {
 
-	enum
-	{
-		max_length = 1024
-	};
+	//enum
+	//{
+	//	max_length = 1024
+	//};
 
-	unsigned char buffer_[max_length];
+	//unsigned char buffer_[max_length];
 	//boost::asio::buffer bbb(buffer_, max_length);
 
 

@@ -13,8 +13,7 @@
 #include <boost/os_services/win32api_wrapper.hpp>
 #include <boost/os_services/win32_legacy.hpp>		// directoryInfo
 
-
-
+//TODO: CircularBuffer -> http://www.boost.org/doc/libs/1_37_0/libs/circular_buffer/doc/circular_buffer.html#briefexample
 
 //TODO: ver de usar ASIO... hay varias cosas que se denominan IOCP
 
@@ -25,9 +24,49 @@ namespace detail {
 //typedef boost::shared_ptr<boost::thread> HeapThread; //TODO: renombrar
 typedef shared_ptr<thread> HeapThread; //TODO: renombrar
 
+
+
+
+HANDLE tempEvent = 0;
+DWORD status = 0;
+
+VOID CALLBACK cbArchDefFileChanged(DWORD dwErrorCode, // completion code
+								   DWORD dwNumberOfBytesTransfered,  // number of bytes transferred
+								   LPOVERLAPPED lpOverlapped)        // I/O information buffer
+{
+
+	int temp  = status - WAIT_OBJECT_0;
+	int temp2 = status - WAIT_ABANDONED_0;      
+
+
+	if (status == WAIT_OBJECT_0)      
+	{// The config directory was changed
+		PFILE_NOTIFY_INFORMATION fni = (PFILE_NOTIFY_INFORMATION)&directoryInfo.buffer; //&Buffer;
+		printf("%s changed\n", fni->FileName);
+	}
+	else if (status == WAIT_IO_COMPLETION)
+	{
+		//printf("WAIT_IO_COMPLETION The wait was ended by one or more user-mode asynchronous procedure calls (APC) queued to the thread\n");
+	}
+	else if (status == WAIT_TIMEOUT)
+	{
+		printf("WAIT_TIMEOUT\n");
+	}
+	else if (status == WAIT_FAILED)
+	{
+		status = GetLastError();
+	}
+
+	SetEvent( tempEvent ); //hFilesChanged[ARCHDEF_FILE]);
+}
+
+
+
 class windows_impl : public base_impl<windows_impl>
 {
 public:
+
+
 	windows_impl()
 		: completionPortHandle_(0)
 	{}
@@ -58,7 +97,78 @@ public:
 		}
 	}
 
+
+
 	void start(const std::string& path)
+	{
+		tempEvent = CreateEvent( 
+			NULL,               // default security attributes
+			TRUE,               // manual-reset event
+			FALSE,              // initial state is nonsignaled
+			TEXT("Nosequegarchavaaca")  // object name
+			); 
+
+
+		directoryInfo.directoryHandle = win32api_wrapper::CreateFile( path, FILE_LIST_DIRECTORY, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OVERLAPPED, NULL );
+
+		if ( directoryInfo.directoryHandle == INVALID_HANDLE_VALUE )
+		{
+			//TODO: manejo de excepciones
+			std::cout << "Unable to open directory " << path << ". GLE=" << GetLastError() << ". Terminating..." << std::endl; 
+			return;
+		}
+
+
+		///////////////////////////////////////////////////////////////////////
+		// Start the main monitoring loop
+		while (TRUE)
+		{
+			BOOL result = ResetEvent(tempEvent); //hFilesChanged[ARCHDEF_FILE]);
+
+
+			// Monitor The Config directory
+			int retValue = ReadDirectoryChangesW(directoryInfo.directoryHandle,	// handle to directory
+				directoryInfo.buffer,  //&Buffer,							// read results buffer
+				MAX_BUFFER,													// length of buffer
+				this->include_subdirectories_ ? 1 : 0,						// monitoring option
+				this->notify_filters_,										// filter conditions
+				&directoryInfo.bufferLength,                                // bytes returned
+				&directoryInfo.overlapped,			//&ol,					// overlapped buffer
+				&cbArchDefFileChanged);										// completion routine
+
+			if (retValue == FALSE)
+			{
+				//status = GetLastError();
+				return;
+			}
+
+			status = WaitForSingleObjectEx(tempEvent, INFINITE, TRUE); //hFilesChanged[ARCHDEF_FILE]
+
+
+			if (status == WAIT_IO_COMPLETION)
+			{
+				//printf("WAIT_IO_COMPLETION The wait was ended by one or more user-mode\n asynchronous procedure calls (APC) queued to the thread\n");
+			}
+			else if (status == WAIT_TIMEOUT)
+			{
+				printf("WAIT_TIMEOUT\n");
+			}
+			else if (status == WAIT_FAILED)
+			{                  
+				status = GetLastError();
+			}
+		}                              
+	}
+
+
+
+
+
+
+
+
+
+	void startOld(const std::string& path)
 	{
 		
 		directoryInfo.directoryHandle = win32api_wrapper::CreateFile( path, FILE_LIST_DIRECTORY, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OVERLAPPED, NULL );
@@ -97,6 +207,9 @@ public:
 		thread_.reset( new boost::thread( boost::bind(&windows_impl::HandleDirectoryChange, this) ) );
 	}
 
+
+
+
 public: //private:  //TODO:
 
 	void printBuffer(CHAR* buffer, unsigned long numBytes, DWORD bufferLength)
@@ -120,12 +233,22 @@ public: //private:  //TODO:
 		LPOVERLAPPED overlapped;
 		PFILE_NOTIFY_INFORMATION notifyInformation;
 
+		std::vector<boost::asio::const_buffer> buffers;
+
+
 		do
 		{
 			//TODO: manejo de errores
 			::GetQueuedCompletionStatus( this->completionPortHandle_, &numBytes, (LPDWORD) &directoryInfo, &overlapped, INFINITE );
 
-			//boost::asio::buffer bx;  //(directoryInfo->buffer, numBytes);
+			//if ( directoryInfo )
+			//{
+			//	buffers.push_back(boost::asio::buffer(directoryInfo->buffer, numBytes));
+			//	::ReadDirectoryChangesW ( directoryInfo->directoryHandle, directoryInfo->buffer, MAX_BUFFER, this->include_subdirectories_ ? 1 : 0, this->notify_filters_,	&directoryInfo->bufferLength, &directoryInfo->overlapped, NULL );
+			//}
+
+
+
 
 			if ( directoryInfo )
 			{
@@ -231,6 +354,9 @@ public: //private:  //TODO:
 
 		} while( directoryInfo );
 
+
+
+		std::cout << std::endl;
 
 	}
 
