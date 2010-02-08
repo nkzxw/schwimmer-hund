@@ -96,6 +96,18 @@ public:
 
 public: //private:  //TODO:
 
+	void printBuffer(CHAR* buffer, unsigned long numBytes, DWORD bufferLength)
+	{
+		printf("%d bytes: \n", numBytes);
+
+		for (int i = 0; i<numBytes; ++i)
+		{
+			printf("%u ", (unsigned int)buffer[i]);
+		}
+
+		printf("\n");
+	}
+
 	void HandleDirectoryChange()
 	{
 		unsigned long numBytes;
@@ -112,6 +124,8 @@ public: //private:  //TODO:
 
 			if ( directoryInfo )
 			{
+				//printBuffer(directoryInfo->buffer, numBytes, directoryInfo->bufferLength);
+
 				//fni = (PFILE_NOTIFY_INFORMATION)di->lpBuffer;
 				notifyInformation = (PFILE_NOTIFY_INFORMATION)directoryInfo->buffer;
 				//notifyInformation = static_cast<PFILE_NOTIFY_INFORMATION>(directoryInfo->buffer);
