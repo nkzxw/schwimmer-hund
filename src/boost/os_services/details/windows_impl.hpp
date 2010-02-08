@@ -3,14 +3,17 @@
 
 #include <string>
 
+#include <boost/bind.hpp>
+#include <boost/smart_ptr.hpp>
+#include <boost/thread.hpp>
+#include <boost/asio.hpp>
+
 #include <boost/os_services/details/base_impl.hpp>
 #include <boost/os_services/notify_filters.hpp>
 #include <boost/os_services/win32api_wrapper.hpp>
 #include <boost/os_services/win32_legacy.hpp>		// directoryInfo
 
-#include <boost/bind.hpp>
-#include <boost/smart_ptr.hpp>
-#include <boost/thread.hpp>
+
 
 
 //TODO: ver de usar ASIO... hay varias cosas que se denominan IOCP
@@ -121,6 +124,8 @@ public: //private:  //TODO:
 		{
 			//TODO: manejo de errores
 			::GetQueuedCompletionStatus( this->completionPortHandle_, &numBytes, (LPDWORD) &directoryInfo, &overlapped, INFINITE );
+
+			//boost::asio::buffer bx;  //(directoryInfo->buffer, numBytes);
 
 			if ( directoryInfo )
 			{

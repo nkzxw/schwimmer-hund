@@ -5,7 +5,7 @@
 // TODO: Legacy-Code, me gustaría reemplazarlo por código C++
 // WIN32
 
-#define MAX_BUFFER  4096
+#define MAX_BUFFER  16384	//8192	//4096
 
 typedef struct _DIRECTORY_INFO 
 {

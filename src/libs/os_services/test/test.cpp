@@ -31,6 +31,8 @@
 #include <iostream>
 #include <string>
 
+#include <boost/asio.hpp>
+
 #include <boost/os_services/file_system_monitor.hpp>
 
 using namespace boost::os_services;
@@ -75,6 +77,15 @@ static void OnRenamed(renamed_event_args e) // object source,
 
 int main(int /*argc*/, char** /*argv*/)
 {
+
+	enum
+	{
+		max_length = 1024
+	};
+
+	unsigned char buffer_[max_length];
+	//boost::asio::buffer bbb(buffer_, max_length);
+
 
 	//printf("sizeof(unsigned long): %d \n", sizeof(unsigned long));
 	//printf("sizeof(wchar_t): %d \n", sizeof(wchar_t));
