@@ -1,0 +1,328 @@
+------------------------------------------------------------------------------------
+24 bytes:
+0 0 0 0 1 0 0 0 12 0 0 0 97 0 48 0 46 0 116 0 120 0 116 0
+
+->
+
+ 0 0  0 0 
+ 1 0  0 0 
+12 0  0 0 
+97 0 48 0 46 0 116 0 120 0 116 0
+
+->
+
+97 48 46 116 120 116
+a  0  .  t   x   t
+
+->
+
+a0.txt
+
+------------------------------------------------------------------------------------
+
+
+696 bytes:
+24 0 0 0 3 0 0 0 12 0 0 0 97 0 48 0 46 0 116 0 120 0 116 0 
+24 0 0 0 3 0 0 0 12 0 0 0 97 0 48 0 46 0 116 0 120 0 116 0 
+
+24 0 0 0 1 0 0 0 12 0 0 0 97 0 49 0 46 0 116 0 120 0 116 0 
+24 0 0 0 3 0 0 0 12 0 0 0 97 0 49 0 46 0 116 0 120 0 116 0 
+24 0 0 0 3 0 0 0 12 0 0 0 97 0 49 0 46 0 116 0 120 0 116 0 
+
+24 0 0 0 1 0 0 0 12 0 0 0 97 0 50 0 46 0 116 0 120 0 116 0 
+24 0 0 0 3 0 0 0 12 0 0 0 97 0 50 0 46 0 116 0 120 0 116 0 
+24 0 0 0 3 0 0 0 12 0 0 0 97 0 50 0 46 0 116 0 120 0 116 0 
+
+24 0 0 0 1 0 0 0 12 0 0 0 97 0 51 0 46 0 116 0 120 0 116 0 
+24 0 0 0 3 0 0 0 12 0 0 0 97 0 51 0 46 0 116 0 120 0 116 0 
+24 0 0 0 3 0 0 0 12 0 0 0 97 0 51 0 46 0 116 0 120 0 116 0 
+
+24 0 0 0 1 0 0 0 12 0 0 0 97 0 52 0 46 0 116 0 120 0 116 0 
+24 0 0 0 3 0 0 0 12 0 0 0 97 0 52 0 46 0 116 0 120 0 116 0 
+24 0 0 0 3 0 0 0 12 0 0 0 97 0 52 0 46 0 116 0 120 0 116 0 
+
+24 0 0 0 1 0 0 0 12 0 0 0 97 0 53 0 46 0 116 0 120 0 116 0 
+24 0 0 0 3 0 0 0 12 0 0 0 97 0 53 0 46 0 116 0 120 0 116 0 
+24 0 0 0 3 0 0 0 12 0 0 0 97 0 53 0 46 0 116 0 120 0 116 0 
+
+24 0 0 0 1 0 0 0 12 0 0 0 97 0 54 0 46 0 116 0 120 0 116 0 
+24 0 0 0 3 0 0 0 12 0 0 0 97 0 54 0 46 0 116 0 120 0 116 0
+24 0 0 0 3 0 0 0 12 0 0 0 97 0 54 0 46 0 116 0 120 0 116 0 
+
+24 0 0 0 1 0 0 0 12 0 0 0 97 0 55 0 46 0 116 0 120 0 116 0 
+24 0 0 0 3 0 0 0 12 0 0 0 97 0 55 0 46 0 116 0 120 0 116 0 
+24 0 0 0 3 0 0 0 12 0 0 0 97 0 55 0 46 0 116 0 120 0 116 0 
+
+24 0 0 0 1 0 0 0 12 0 0 0 97 0 56 0 46 0 116 0 120 0 116 0 
+24 0 0 0 3 0 0 0 12 0 0 0 97 0 56 0 46 0 116 0 120 0 116 0 
+24 0 0 0 3 0 0 0 12 0 0 0 97 0 56 0 46 0 116 0 120 0 116 0 
+
+24 0 0 0 1 0 0 0 12 0 0 0 97 0 57 0 46 0 116 0 120 0 116 0 
+24 0 0 0 3 0 0 0 12 0 0 0 97 0 57 0 46 0 116 0 120 0 116 0 
+ 0 0 0 0 3 0 0 0 12 0 0 0 97 0 57 0 46 0 116 0 120 0 116 0 
+
+------------------------------------------------------------------------------------
+
+24 bytes por evento
+3 eventos por cada archivo (create+changed+changed)
+-> 72 bytes por arhivo
+
+
+4096 de buffer:
+	- debería funcionar correctamente con 56 archivos
+	- con mas de 56 archivos debería fallar. Hay que ver la velocidad de procesamiento que permite vaciar el buffer.
+
+
+
+------------------------------------------------------------------------------------
+
+sizeof(unsigned long): 4
+sizeof(wchar_t): 2
+
+------------------------------------------------------------------------------------
+#define MAX_BUFFER  4096
+
+typedef struct _FILE_NOTIFY_INFORMATION {
+    unsigned long NextEntryOffset;
+    unsigned long Action;
+    unsigned long FileNameLength;
+    wchar_t FileName[1];
+} FILE_NOTIFY_INFORMATION, *PFILE_NOTIFY_INFORMATION;
+
+
+
+------------------------------------------------------------------------------------
+Test con 56 archivos, sin breakpoints
+------------------------------------------------------------------------------------
+Press Enter to Stop Monitoring...
+Created: a0.txt
+Changed: a0.txt
+Changed: a0.txt
+Created: a1.txt
+Changed: a1.txt
+Changed: a1.txt
+Created: a2.txt
+Changed: a2.txt
+Changed: a2.txt
+Created: a3.txt
+Changed: a3.txt
+Changed: a3.txt
+Created: a4.txt
+Changed: a4.txt
+Changed: a4.txt
+Created: a5.txt
+Changed: a5.txt
+Changed: a5.txt
+Created: a6.txt
+Changed: a6.txt
+Changed: a6.txt
+Created: a7.txt
+Changed: a7.txt
+Changed: a7.txt
+Created: a8.txt
+Changed: a8.txt
+Changed: a8.txt
+Created: a9.txt
+Changed: a9.txt
+Changed: a9.txt
+Created: a10.txt
+Changed: a10.txt
+Changed: a10.txt
+Created: a11.txt
+Changed: a11.txt
+Changed: a11.txt
+Created: a12.txt
+Changed: a12.txt
+Changed: a12.txt
+Created: a13.txt
+Changed: a13.txt
+Changed: a13.txt
+Created: a14.txt
+Changed: a14.txt
+Changed: a14.txt
+Created: a15.txt
+Changed: a15.txt
+Changed: a15.txt
+Created: a16.txt
+Changed: a16.txt
+Changed: a16.txt
+Created: a17.txt
+Changed: a17.txt
+Changed: a17.txt
+Created: a18.txt
+Changed: a18.txt
+Changed: a18.txt
+Created: a19.txt
+Changed: a19.txt
+Changed: a19.txt
+Created: a20.txt
+Changed: a20.txt
+Changed: a20.txt
+Created: a21.txt
+Changed: a21.txt
+Changed: a21.txt
+Created: a22.txt
+Changed: a22.txt
+Changed: a22.txt
+Created: a23.txt
+Changed: a23.txt
+Changed: a23.txt
+Created: a24.txt
+Changed: a24.txt
+Changed: a24.txt
+Created: a25.txt
+Changed: a25.txt
+Changed: a25.txt
+Created: a26.txt
+Changed: a26.txt
+Changed: a26.txt
+Created: a27.txt
+Changed: a27.txt
+Changed: a27.txt
+Created: a28.txt
+Changed: a28.txt
+Changed: a28.txt
+Created: a29.txt
+Changed: a29.txt
+Changed: a29.txt
+Created: a30.txt
+Changed: a30.txt
+Changed: a30.txt
+Created: a31.txt
+Changed: a31.txt
+Changed: a31.txt
+Created: a32.txt
+Changed: a32.txt
+Changed: a32.txt
+Created: a33.txt
+Changed: a33.txt
+Changed: a33.txt
+Created: a34.txt
+Changed: a34.txt
+Changed: a34.txt
+Created: a35.txt
+Changed: a35.txt
+Changed: a35.txt
+Created: a36.txt
+Changed: a36.txt
+Changed: a36.txt
+Created: a37.txt
+Changed: a37.txt
+Changed: a37.txt
+Created: a38.txt
+Changed: a38.txt
+Changed: a38.txt
+Created: a39.txt
+Changed: a39.txt
+Changed: a39.txt
+Created: a40.txt
+Changed: a40.txt
+Changed: a40.txt
+Created: a41.txt
+Changed: a41.txt
+Changed: a41.txt
+Created: a42.txt
+Changed: a42.txt
+Changed: a42.txt
+Created: a43.txt
+Changed: a43.txt
+Changed: a43.txt
+Created: a44.txt
+Changed: a44.txt
+Changed: a44.txt
+Created: a45.txt
+Changed: a45.txt
+Changed: a45.txt
+Created: a46.txt
+Changed: a46.txt
+Changed: a46.txt
+Created: a47.txt
+Changed: a47.txt
+Changed: a47.txt
+Created: a48.txt
+Changed: a48.txt
+Changed: a48.txt
+Created: a49.txt
+Changed: a49.txt
+Changed: a49.txt
+Created: a50.txt
+Changed: a50.txt
+Changed: a50.txt
+Created: a51.txt
+Changed: a51.txt
+Changed: a51.txt
+Created: a52.txt
+Changed: a52.txt
+Changed: a52.txt
+Created: a53.txt
+Changed: a53.txt
+Changed: a53.txt
+Created: a54.txt
+Changed: a54.txt
+Changed: a54.txt
+Created: a55.txt
+Changed: a55.txt
+Changed: a55.txt
+
+
+
+
+------------------------------------------------------------------------------------
+Test con 57 archivos, sin breakpoints
+------------------------------------------------------------------------------------
+
+
+Press Enter to Stop Monitoring...
+Created: a0.txt
+Changed: a0.txt
+Changed: a0.txt
+Created: a1.txt
+Changed: a1.txt
+Changed: a1.txt
+Created: a2.txt
+Changed: a2.txt
+Changed: a2.txt
+Created: a3.txt
+Changed: a3.txt
+Changed: a3.txt
+Created: a4.txt
+Changed: a4.txt
+Changed: a4.txt
+Created: a5.txt
+Changed: a5.txt
+Changed: a5.txt
+Changed: a0.txt
+Changed: a0.txt
+Created: a1.txt
+Changed: a1.txt
+Changed: a1.txt
+Created: a2.txt
+Changed: a2.txt
+Changed: a2.txt
+Created: a3.txt
+Changed: a3.txt
+Changed: a3.txt
+Created: a4.txt
+Changed: a4.txt
+Changed: a4.txt
+Created: a5.txt
+Changed: a5.txt
+Changed: a5.txt
+Changed: a56.txt
+
+
+
+
+
+
+
+
+------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+

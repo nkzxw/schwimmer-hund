@@ -1,0 +1,44 @@
+void* completionPortHandle_;
+
+#define MAX_BUFFER  4096
+
+typedef struct _DIRECTORY_INFO 
+{
+	HANDLE      directoryHandle;
+	TCHAR       directoryName[MAX_PATH];
+	CHAR        buffer[MAX_BUFFER];
+	DWORD       bufferLength;
+	OVERLAPPED  overlapped;
+} DIRECTORY_INFO, *PDIRECTORY_INFO, *LPDIRECTORY_INFO;
+
+DIRECTORY_INFO  directoryInfo;        // Buffer for all of the directories
+
+
+::GetQueuedCompletionStatus( this->completionPortHandle_, &numBytes, (LPDWORD) &directoryInfo, &overlapped, INFINITE );
+
+
+------------------------------------------------------------------------------------------------------------------------------
+
+typedef void *HANDLE;
+
+// The IO completion port used for queueing operations.
+struct iocp_holder
+{
+  HANDLE handle;
+  iocp_holder() : handle(0) {}
+  ~iocp_holder() { if (handle) ::CloseHandle(handle); }
+} iocp_;
+
+
+DWORD bytes_transferred = 0;
+
+#if defined(WINVER) && (WINVER < 0x0500)
+      DWORD completion_key = 0;
+#else
+      DWORD_PTR completion_key = 0;
+#endif
+
+LPOVERLAPPED overlapped = 0;
+::GetQueuedCompletionStatus(iocp_.handle, &bytes_transferred, &completion_key, &overlapped, INFINITE);
+if (overlapped)
+  static_cast<operation*>(overlapped)->destroy();
