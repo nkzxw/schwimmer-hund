@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="PortableFileSystemWatcher"
-	ProjectGUID="{B546A348-4F33-48AD-942C-0E8E96868DD7}"
-	RootNamespace="PortableFileSystemWatcher"
+	Name="boost_file_system_monitor"
+	ProjectGUID="{C4B51495-4336-4947-8771-EAECC512FCC8}"
+	RootNamespace="boost_file_system_monitor"
 	TargetFrameworkVersion="196613"
 	>
 	<Platforms>
@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(BOOST_ROOT)&quot;;&quot;$(DEV_HOME)\CPP\schwimmer-hund\projects\PortableFileSystemWatcher\src\&quot;;&quot;Z:\Development\CPP\schwimmer-hund\projects\PortableFileSystemWatcher\src\&quot;"
+				AdditionalIncludeDirectories="&quot;$(BOOST_ROOT)&quot;;&quot;$(DEV_HOME)\CPP\schwimmer-hund\projects\PortableFileSystemWatcher\src\&quot;"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -164,11 +164,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\src\libs\os_services\test\stress_test.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\libs\os_services\test\test.cpp"
+				RelativePath="..\..\..\src\libs\os_services\test\test.cpp"
 				>
 			</File>
 		</Filter>
@@ -178,59 +174,59 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\src\boost\os_services\details\base_impl.hpp"
+				RelativePath="..\..\..\src\boost\os_services\details\base_impl.hpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\boost\os_services\event_args.hpp"
+				RelativePath="..\..\..\src\boost\os_services\event_args.hpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\boost\os_services\event_handlers.hpp"
+				RelativePath="..\..\..\src\boost\os_services\event_handlers.hpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\boost\os_services\file_system_monitor.hpp"
+				RelativePath="..\..\..\src\boost\os_services\file_system_monitor.hpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\boost\os_services\details\freebsd_impl.hpp"
+				RelativePath="..\..\..\src\boost\os_services\details\freebsd_impl.hpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\boost\os_services\details\impl_selector.hpp"
+				RelativePath="..\..\..\src\boost\os_services\details\impl_selector.hpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\boost\os_services\details\linux_impl.hpp"
+				RelativePath="..\..\..\src\boost\os_services\details\linux_impl.hpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\boost\os_services\details\macosx_impl.hpp"
+				RelativePath="..\..\..\src\boost\os_services\details\macosx_impl.hpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\boost\os_services\notify_filters.hpp"
+				RelativePath="..\..\..\src\boost\os_services\notify_filters.hpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\boost\os_services\details\unsupported_impl.hpp"
+				RelativePath="..\..\..\src\boost\os_services\details\unsupported_impl.hpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\boost\os_services\utils.hpp"
+				RelativePath="..\..\..\src\boost\os_services\utils.hpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\boost\os_services\win32_legacy.hpp"
+				RelativePath="..\..\..\src\boost\os_services\win32_legacy.hpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\boost\os_services\win32api_wrapper.hpp"
+				RelativePath="..\..\..\src\boost\os_services\win32api_wrapper.hpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\boost\os_services\details\windows_impl.hpp"
+				RelativePath="..\..\..\src\boost\os_services\details\windows_impl.hpp"
 				>
 			</File>
 		</Filter>
