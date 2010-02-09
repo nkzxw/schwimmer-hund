@@ -8,6 +8,7 @@
 #include <boost/bind.hpp>
 //#include <boost/foreach.hpp>
 #include <boost/integer.hpp> 
+#include <boost/optional.hpp>
 #include <boost/smart_ptr.hpp>
 #include <boost/thread.hpp>
 
@@ -23,30 +24,22 @@ namespace boost {
 namespace os_services {
 namespace detail {
 
-//typedef boost::shared_ptr<boost::thread> HeapThread; //TODO: renombrar
-typedef shared_ptr<thread> HeapThread; //TODO: renombrar
+typedef boost::shared_ptr<boost::thread> HeapThread; //TODO: renombrar
 
-//template <typename T>
-//struct mallocDeleter
-//{
-//	void operator() (T* ptr)
-//	{
-//		if (ptr != 0)
-//		{
-//			free(ptr);
-//			ptr = 0; //NULL;
-//		}
-//	}
-//};
-
-void directoryInfoDeleter(LPDIRECTORY_INFO ptr)
+void directory_info_deleter(LPDIRECTORY_INFO ptr)
 {
 	if (ptr != 0)
 	{
 		if ( ptr->directory_handle != 0 )
 		{
-			//TODO: manejo de errores
-			::CloseHandle( ptr->directory_handle );
+			BOOL ret_value = ::CloseHandle( ptr->directory_handle );
+
+			if ( ret_value == 0 )
+			{
+				//Destructor -> NO_THROW
+				std::cerr << "Failed to close directory port handle. Reason: " << GetLastError();
+			}
+
 		}
 
 		free(ptr);
@@ -55,41 +48,49 @@ void directoryInfoDeleter(LPDIRECTORY_INFO ptr)
 };
 
 
+
+
 class windows_impl : public base_impl<windows_impl>
 {
 public:
 	windows_impl()
-		: completionPortHandle_(0), number_of_directories(0)
+		: completionPortHandle_(0), is_started_(false)
 	{}
 
 	virtual ~windows_impl()
 	{
 		if ( completionPortHandle_ != 0 )
 		{
-			//TODO: manejo de errores
-			::PostQueuedCompletionStatus( completionPortHandle_, 0, 0, NULL );
+			BOOL ret_value = ::PostQueuedCompletionStatus( completionPortHandle_, 0, 0, NULL );
+
+			if ( ret_value == 0 )
+			{
+				//Destructor -> NO_THROW
+				std::cerr << "Failed to post to completion port. Reason: " << GetLastError();
+				//TODO: Si el Post falla, el Thread nunca va a morir !!
+			}
 		}
 
 		if ( thread_ )
 		{
 			thread_->join();
 		}
-		
-		//if ( directoryInfo.directory_handle != 0 )
-		//{
-		//	//TODO: manejo de errores
-		//	::CloseHandle( directoryInfo.directory_handle );
-		//}
 
 		if ( completionPortHandle_ != 0 )
 		{
-			//TODO: manejo de errores
-			::CloseHandle( completionPortHandle_ );
+			BOOL ret_value = ::CloseHandle( completionPortHandle_ );
+
+			if ( ret_value == 0 )
+			{
+				//Destructor -> NO_THROW
+				std::cerr << "Failed to close completion port handle. Reason: " << GetLastError();
+			}
+
+
 		}
 	}
 
-
-	void add_directory_impl (const std::string& dir_name) throw (std::invalid_argument)
+	void add_directory_impl (const std::string& dir_name) throw (std::invalid_argument, std::runtime_error)
 	{ 
 		LPDIRECTORY_INFO directory_info = (LPDIRECTORY_INFO) malloc(sizeof(DIRECTORY_INFO));
 		memset(directory_info, 0, sizeof(DIRECTORY_INFO));
@@ -105,45 +106,41 @@ public:
 
 		lstrcpy( directory_info->directory_name, dir_name.c_str() );
 
-		unsigned long addr = (unsigned long) &directory_info;
+		//unsigned long addr = (unsigned long) &directory_info;
 
-		//TODO: manejo de errores
 		completionPortHandle_ = ::CreateIoCompletionPort ( directory_info->directory_handle, completionPortHandle_, (DWORD) directory_info, 0 );
-
 	
-		//watch_descriptors_.insert(watch_descriptors_type::relation(directory_info->directory_handle, dir_name));
-		////watch_descriptors_.insert(watch_descriptors_type::relation(directory_info, dir_name));
-
-		//number_of_directories++;
-
-		//boost::shared_ptr<int> p((int*) malloc(sizeof(int)), free);
-		//directories_.push_back( DirectoryInfoPointerType( directory_info, mallocDeleter<DIRECTORY_INFO>() ) );
-		directories_.push_back( DirectoryInfoPointerType( directory_info, directoryInfoDeleter ) );
-		
-		
-	}
-
-
-	void start() throw (std::invalid_argument, std::runtime_error) //const std::string& path)
-	{
-
-		for (VectorType::const_iterator it = directories_.begin(); it!=directories_.end(); ++it)
+		if ( completionPortHandle_ == 0 )
 		{
-			//TODO: manejo de errores
-			int retValue = ::ReadDirectoryChangesW ( (*it)->directory_handle, (*it)->buffer, MAX_BUFFER, this->include_subdirectories_ ? 1 : 0, this->notify_filters_, &(*it)->buffer_length, &(*it)->overlapped, NULL);
+			std::ostringstream oss;
+			oss << "Failed to monitor directory - Directory: " << dir_name << " - Reason: " << GetLastError();
+			throw (std::runtime_error(oss.str()));
 		}
 
-		//for (int i=0; i < number_of_directories; ++i)
-		//{
-		//	//LPDIRECTORY_INFO directory_info = directories_[i];
+		directories_.push_back( DirectoryInfoPointerType( directory_info, directory_info_deleter ) );
+	}
 
-		//	//TODO: manejo de errores
-		//	//int retValue = ::ReadDirectoryChangesW ( directory_info_array[i].directory_handle, directory_info_array[i].buffer, MAX_BUFFER, this->include_subdirectories_ ? 1 : 0, this->notify_filters_, &directory_info_array[i].buffer_length, &directory_info_array[i].overlapped, NULL);
-		//	//int retValue = ::ReadDirectoryChangesW ( directory_info->directory_handle, directory_info->buffer, MAX_BUFFER, this->include_subdirectories_ ? 1 : 0, this->notify_filters_, &directory_info->buffer_length, &directory_info->overlapped, NULL);
-		//	int retValue = ::ReadDirectoryChangesW ( directories_[i]->directory_handle, directories_[i]->buffer, MAX_BUFFER, this->include_subdirectories_ ? 1 : 0, this->notify_filters_, &directories_[i]->buffer_length, &directories_[i]->overlapped, NULL);
-		//}
+	void start() throw (std::runtime_error)
+	{
+		//TODO: is_started_ debe ser protegida con MUTEX.
+		if (!is_started_)
+		{
+			for (VectorType::const_iterator it = directories_.begin(); it!=directories_.end(); ++it)
+			{
+				BOOL ret_value = ::ReadDirectoryChangesW ( (*it)->directory_handle, (*it)->buffer, MAX_BUFFER, this->include_subdirectories_ ? 1 : 0, this->notify_filters_, &(*it)->buffer_length, &(*it)->overlapped, NULL);
 
-		thread_.reset( new boost::thread( boost::bind(&windows_impl::HandleDirectoryChange, this) ) );
+				if ( ret_value == 0 )
+				{
+					std::ostringstream oss;
+					oss << "Failed to monitor directory - Directory: " << (*it)->directory_name << " - Reason: " << GetLastError();
+					throw (std::runtime_error(oss.str()));
+				}
+			}
+
+			thread_.reset( new boost::thread( boost::bind(&windows_impl::handle_directory_changes, this) ) );
+
+			is_started_ = true;
+		}
 	}
 
 
@@ -151,194 +148,282 @@ public:
 
 public: //private:  //TODO:
 
-	//void printBuffer(CHAR* buffer, unsigned long numBytes, DWORD buffer_length)
-	//{
-	//	printf("%d bytes: \n", numBytes);
 
-	//	for (int i = 0; i<numBytes; ++i)
-	//	{
-	//		printf("%u ", (unsigned int)buffer[i]);
-	//	}
-
-	//	printf("\n");
-	//}
-
-	void HandleDirectoryChange()
+	void handle_directory_changes() throw (std::runtime_error)
 	{
-		unsigned long numBytes;
-		unsigned long cbOffset;
-		LPDIRECTORY_INFO directoryInfo;
-		//DirectoryInfo* di;
+		unsigned long num_bytes;
+		unsigned long offset;
+		LPDIRECTORY_INFO directory_info;
 		LPOVERLAPPED overlapped;
-		PFILE_NOTIFY_INFORMATION notifyInformation;
-
-		//std::vector<boost::asio::const_buffer> buffers;
-
+		PFILE_NOTIFY_INFORMATION notify_information;
 
 		do
 		{
-			//TODO: manejo de errores
-			BOOL tempXBool = ::GetQueuedCompletionStatus( this->completionPortHandle_, &numBytes, (LPDWORD) &directoryInfo, &overlapped, INFINITE );
+			BOOL ret_value = ::GetQueuedCompletionStatus( this->completionPortHandle_, &num_bytes, (LPDWORD) &directory_info, &overlapped, INFINITE );
 
-			//if (tempXBool == 0)
-			//{
-			//	std::cout << "tempBool: " << tempXBool << std::endl;
-			//}
-
-			//std::cout << "Readed: " << numBytes << " bytes." << std::endl;
-
-			//if ( numBytes == 0)
-			//{
-			//	std::cout << "Readed: 0 bytes." << std::endl;
-			//}
-
-			if ( directoryInfo )
+			if ( ret_value == 0 )
 			{
-				if ( numBytes > 0 )
+				std::ostringstream oss;
+				oss << "Runtime error. Reason: " << GetLastError();
+				throw (std::runtime_error(oss.str()));
+			}
+
+			if ( directory_info )
+			{
+				if ( num_bytes > 0 )
 				{
-					notifyInformation = (PFILE_NOTIFY_INFORMATION)directoryInfo->buffer;
-					//notifyInformation = static_cast<PFILE_NOTIFY_INFORMATION>(directoryInfo->buffer);
+					notify_information = (PFILE_NOTIFY_INFORMATION)directory_info->buffer;
+					//notify_information = static_cast<PFILE_NOTIFY_INFORMATION>(directory_info->buffer);
+
+
+					boost::optional<std::string> old_name;
 
 					do
 					{
-						cbOffset = notifyInformation->NextEntryOffset;
+						offset = notify_information->NextEntryOffset;
 
 						//if( fni->Action == FILE_ACTION_MODIFIED )
-						//      CheckChangedFile( di, fni );
+						//      CheckChangedFile( di, fni ); //TODO: chequear en FWATCH
 
-						//
-						switch ( notifyInformation->Action )
+
+						//TODO: no me gusta, ver de cambiarlo
+						std::string file_name(notify_information->FileName, notify_information->FileName + (notify_information->FileNameLength/sizeof(WCHAR)) ); 
+
+
+						if (notify_information->Action == FILE_ACTION_RENAMED_OLD_NAME)
 						{
-							case FILE_ACTION_ADDED:
-								if ( this->created_callback_ )
-								{
-									std::string fileName(notifyInformation->FileName, notifyInformation->FileName + (notifyInformation->FileNameLength/sizeof(WCHAR)) ); 
-									filesystem_event_args temp;
-									
-									temp.name = fileName;
+							old_name.reset( file_name );
+						}
+						else if (notify_information->Action == FILE_ACTION_RENAMED_NEW_NAME)
+						{
+							if ( old_name ) // != null)
+							{
+								// WatcherChangeTypes.Renamed
+								notify_rename_event_args(4, file_name, *old_name);
+								old_name.reset(); // = null;
+							}
+							else
+							{
+								//NotifyRenameEventArgs(WatcherChangeTypes.Renamed, file_name, oldName);
+								//oldName = null;
 
-									//threadObject->This->Created(temp);
-									this->created_callback_(temp);
-								}
+								notify_rename_event_args(4, file_name, "");
+								old_name.reset(); // = null;
+							}
+						}
+						else
+						{
+							if (old_name) // != null)
+							{
+								//NotifyRenameEventArgs(WatcherChangeTypes.Renamed, null, oldName);
+								//oldName = null;
 
-								//{
-								//	std::string fileName(notifyInformation->FileName, notifyInformation->FileName + (notifyInformation->FileNameLength/sizeof(WCHAR)) ); 
-								//	tempVec.push_back(fileName);
-								//	//std::cout << fileName << std::endl;
-								//}
+								notify_rename_event_args(4, "", *old_name);
+								old_name.reset(); // = null;
 
-								break;
-							case FILE_ACTION_REMOVED:
-								{
+							}
 
-									//std::cout << "file deleted: ";
-									//if (threadObject->This->Deleted)
-									//if ( this->deleted_callback_ )
-									//{
-									//	std::string fileName(notifyInformation->FileName, notifyInformation->FileName + (notifyInformation->FileNameLength/sizeof(WCHAR)) ); 
-									//	filesystem_event_args temp;
-									//	temp.name = fileName;
+							// Notify each file of change
+							//NotifyFileSystemEventArgs(action, file_name);
+							notify_file_system_event_args(notify_information->Action, file_name);
 
-									//	//threadObject->This->Deleted(temp);
-									//	this->deleted_callback_(temp);
-									//}
-
-
-									std::string fileName(notifyInformation->FileName, notifyInformation->FileName + (notifyInformation->FileNameLength/sizeof(WCHAR)) ); 
-									//tempVec.push_back(fileName);
-									//std::cout << fileName << std::endl;
-
-									filesystem_event_args temp;
-									temp.name = fileName;
-
-									do_callback(deleted_callback_, temp);
-
-								}
-
-
-								break;
-							case FILE_ACTION_MODIFIED:
-								//if (threadObject->This->Changed)
-								if ( this->changed_callback_ )
-								{
-									std::string fileName(notifyInformation->FileName, notifyInformation->FileName + (notifyInformation->FileNameLength/sizeof(WCHAR)) ); 
-
-									filesystem_event_args temp;
-									temp.name = fileName;
-
-									//threadObject->This->Changed(temp);
-									this->changed_callback_(temp);
-								}
-
-
-								//{
-								//	std::string fileName(notifyInformation->FileName, notifyInformation->FileName + (notifyInformation->FileNameLength/sizeof(WCHAR)) ); 
-								//	tempVec.push_back(fileName);
-								//	std::cout << fileName << std::endl;
-								//}
-
-								break;
-							case FILE_ACTION_RENAMED_OLD_NAME:
-
-								//if (threadObject->this->renamed_callback_)
-								if ( this->renamed_callback_ )
-								{
-									std::string fileName(notifyInformation->FileName, notifyInformation->FileName + (notifyInformation->FileNameLength/sizeof(WCHAR)) ); 
-
-									renamed_event_args temp;
-									temp.name = fileName;
-
-									//threadObject->this->renamed_callback_(temp);
-									this->renamed_callback_(temp);
-								}
-
-								//{
-								//	std::string fileName(notifyInformation->FileName, notifyInformation->FileName + (notifyInformation->FileNameLength/sizeof(WCHAR)) ); 
-								//	tempVec.push_back(fileName);
-								//	//std::cout << fileName << std::endl;
-								//}
-
-
-								break;
-							case FILE_ACTION_RENAMED_NEW_NAME:
-								break;
-							default: 
-								//std::cout << "unknown event: ";
-								break;
 						}
 
-						notifyInformation = (PFILE_NOTIFY_INFORMATION)((LPBYTE) notifyInformation + cbOffset);
+						//switch ( notify_information->Action )
+						//{
+						//	case FILE_ACTION_ADDED:
+						//		if ( this->created_callback_ )
+						//		{
+						//			std::string fileName(notify_information->FileName, notify_information->FileName + (notify_information->FileNameLength/sizeof(WCHAR)) ); 
+						//			filesystem_event_args temp;
+						//			
+						//			temp.name = fileName;
+						//			//TODO: chequear si la barra ya está incluida en el path del directorio.
+						//			temp.full_path = directory_info->directory_name + '\\' + fileName;
 
-					} while( cbOffset );
+						//			
+						//			//threadObject->This->Created(temp);
+						//			this->created_callback_(temp);
+						//		}
+						//		break;
+						//	case FILE_ACTION_REMOVED:
+						//		{
+						//			//std::cout << "file deleted: ";
+						//			//if (threadObject->This->Deleted)
+						//			//if ( this->deleted_callback_ )
+						//			//{
+						//			//	std::string fileName(notify_information->FileName, notify_information->FileName + (notify_information->FileNameLength/sizeof(WCHAR)) ); 
+						//			//	filesystem_event_args temp;
+						//			//	temp.name = fileName;
+
+						//			//	//threadObject->This->Deleted(temp);
+						//			//	this->deleted_callback_(temp);
+						//			//}
+
+
+						//			std::string fileName(notify_information->FileName, notify_information->FileName + (notify_information->FileNameLength/sizeof(WCHAR)) ); 
+						//			//tempVec.push_back(fileName);
+						//			//std::cout << fileName << std::endl;
+
+						//			filesystem_event_args temp;
+						//			temp.name = fileName;
+						//			//TODO: chequear si la barra ya está incluida en el path del directorio.
+						//			temp.full_path = directory_info->directory_name + '\\' + fileName;
+
+						//			do_callback(deleted_callback_, temp);
+
+						//		}
+						//		break;
+						//	case FILE_ACTION_MODIFIED:
+						//		//if (threadObject->This->Changed)
+						//		if ( this->changed_callback_ )
+						//		{
+						//			std::string fileName(notify_information->FileName, notify_information->FileName + (notify_information->FileNameLength/sizeof(WCHAR)) ); 
+						//			filesystem_event_args temp;
+						//			temp.name = fileName;
+						//			//TODO: chequear si la barra ya está incluida en el path del directorio.
+						//			temp.full_path = std::string(directory_info->directory_name) + '\\' + fileName;
+
+
+						//			//threadObject->This->Changed(temp);
+						//			this->changed_callback_(temp);
+						//		}
+						//		break;
+						//	case FILE_ACTION_RENAMED_OLD_NAME:
+						//		{
+						//			std::string fileName(notify_information->FileName, notify_information->FileName + (notify_information->FileNameLength/sizeof(WCHAR)) ); 
+						//			old_name.reset( fileName ); //TODO: no me gusta.
+						//			
+						//		}
+						//		break;
+						//	case FILE_ACTION_RENAMED_NEW_NAME:
+						//		{
+						//			if ( this->renamed_callback_ )
+						//			{
+						//				std::string fileName(notify_information->FileName, notify_information->FileName + (notify_information->FileNameLength/sizeof(WCHAR)) ); 
+
+						//				renamed_event_args temp;
+						//				temp.name = fileName;
+						//				temp.old_name = old_name;
+						//				//TODO: chequear si la barra ya está incluida en el path del directorio.
+						//				temp.full_path = directory_info->directory_name + '\\' + fileName;
+
+
+
+						//				this->renamed_callback_(temp);
+
+						//				old_name.reset();
+						//			}
+
+						//		}
+						//		break;
+						//	default: 
+						//		//std::cout << "unknown event: ";
+						//		break;
+						//}
+
+						notify_information = (PFILE_NOTIFY_INFORMATION)((LPBYTE) notify_information + offset);
+
+					} while( offset );
+
+					if (old_name) // != null)
+					{
+						//NotifyRenameEventArgs(WatcherChangeTypes.Renamed, null, oldName);
+						//oldName = null;
+
+						notify_rename_event_args(4, "", *old_name);
+						old_name.reset(); // = null;
+					}
 
 				}
 
-				//TODO: manejo de errores
-				// this->notify_filters_ = //FILE_NOTIFY_CHANGE_LAST_WRITE,            
-				BOOL tempBoolRead = ::ReadDirectoryChangesW ( directoryInfo->directory_handle, directoryInfo->buffer, MAX_BUFFER, this->include_subdirectories_ ? 1 : 0, this->notify_filters_,	&directoryInfo->buffer_length, &directoryInfo->overlapped, NULL );
+				ret_value = ::ReadDirectoryChangesW ( directory_info->directory_handle, directory_info->buffer, MAX_BUFFER, this->include_subdirectories_ ? 1 : 0, this->notify_filters_, &directory_info->buffer_length, &directory_info->overlapped, NULL );
 
-				//if (tempBoolRead == 0)
-				//{
-				//	std::cout << "tempBoolRead: " << tempBoolRead << std::endl;
-				//}
+				if ( ret_value == 0 )
+				{
+					std::ostringstream oss;
+					oss << "Runtime error. Reason: " << GetLastError();
+					throw (std::runtime_error(oss.str()));
+				}
 			}
 
-		} while( directoryInfo );
+		} while( directory_info );
 
-
-
-		std::cout << std::endl;
-
+		//std::cout << std::endl;
 	}
 
 
 
 
+	inline void notify_file_system_event_args( int action, std::string name )
+	{
+		//TODO: ver en .Net
+		//if (!MatchPattern(name))
+		//{
+		//	return;
+		//}
+
+		switch (action)
+		{
+			case FILE_ACTION_ADDED:
+				{
+					//OnCreated(new FileSystemEventArgs(WatcherChangeTypes.Created, directory, name));
+					//TODO: cambiar directory y change_type
+					do_callback(created_callback_, filesystem_event_args(1, "directory", name));
+				}
+				break;
+			case FILE_ACTION_REMOVED:
+				{
+					//OnDeleted(new FileSystemEventArgs(WatcherChangeTypes.Deleted, directory, name));
+					//TODO: cambiar directory y change_type
+					do_callback(deleted_callback_, filesystem_event_args(2, "directory", name));
+				}
+				break;
+			case FILE_ACTION_MODIFIED:
+				{
+					//OnChanged(new FileSystemEventArgs(WatcherChangeTypes.Changed, directory, name));
+					//TODO: cambiar directory y change_type
+					do_callback(changed_callback_, filesystem_event_args(3, "directory", name));
+
+				}
+				break;
+			default:
+				//Debug.Fail("Unknown FileSystemEvent action type!  Value: " + action);
+				break;
+		}
+
+
+	}
+
+	//private void NotifyInternalBufferOverflowEvent()
+	//{
+	//	InternalBufferOverflowException ex = new InternalBufferOverflowException(SR.GetString(SR.FSW_BufferOverflow, directory));
+
+	//	ErrorEventArgs errevent = new ErrorEventArgs(ex);
+
+	//	OnError(errevent);
+	//}
+
+
+	// WatcherChangeTypes action
+	inline void notify_rename_event_args(int action, std::string name, std::string old_name)
+	{
+		//filter if neither new name or old name are a match a specified pattern 
+
+		//TODO:
+		//if (!MatchPattern(name) && !MatchPattern(oldName))
+		//{
+		//	return;
+		//}
+
+		//TODO: "directory"
+		do_callback(renamed_callback_, renamed_event_args(action, "directory", name, old_name));
+	}
+
 
 protected:
 	//typedef boost::bimap<HANDLE, std::string> watch_descriptors_type;
 	//watch_descriptors_type watch_descriptors_;
-	//int number_of_directories;
 	
 	//TODO: boost::ptr_vector
 	typedef boost::shared_ptr<DIRECTORY_INFO> DirectoryInfoPointerType;
@@ -348,10 +433,26 @@ protected:
 
 	HANDLE completionPortHandle_; //void*
 	HeapThread thread_;
+
+	bool is_started_;
 };
 
 } // namespace detail
 } // namespace os_services
 } // namespace boost
 
+//void printBuffer(CHAR* buffer, unsigned long num_bytes, DWORD buffer_length)
+//{
+//	printf("%d bytes: \n", num_bytes);
+
+//	for (int i = 0; i<num_bytes; ++i)
+//	{
+//		printf("%u ", (unsigned int)buffer[i]);
+//	}
+
+//	printf("\n");
+//}
+
 #endif // BOOST_OS_SERVICES_DETAIL_WINDOWS_IMPL_HPP
+
+
