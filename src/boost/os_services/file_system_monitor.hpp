@@ -15,6 +15,7 @@
 #ifndef BOOST_OS_SERVICES_FILE_SYSTEM_MONITOR_HPP
 #define BOOST_OS_SERVICES_FILE_SYSTEM_MONITOR_HPP
 
+#include <boost/bimap.hpp>
 #include <boost/noncopyable.hpp>
 
 #include <boost/os_services/details/impl_selector.hpp>
@@ -28,90 +29,74 @@ class file_system_monitor : private boost::noncopyable
 public:
 	
 	file_system_monitor()
-		: notify_filters_(notify_filters::last_write | notify_filters::directory_name | notify_filters::file_name)
-		, directory_("")
+		: is_started_(false)
+		, notify_filters_(notify_filters::last_write | notify_filters::directory_name | notify_filters::file_name)
+		//, directory_("")
 		, filter_("*.*")
 		, implementation_( new detail::FSMImplementationType )
 	{
 	}
 
-	//FileSystemMonitor(const std::string& path)
-	//	: notify_filters_(NotifyFilters::LastWrite | NotifyFilters::DirectoryName | NotifyFilters::FileName)
-	//	, filter_("*.*")
-	//	, implementation_( new detail::ImplementationType )
-	//{
-	//	//this->implementation_ = new detail::ImplementationType;  //TODO: heap o stack????
-
-	//	if ( path.size() == 0 || !utils::directoryExists(path) )
-	//	{
-	//		throw std::runtime_error("InvalidDirName");
-	//		//throw new ArgumentException(SR.GetString("InvalidDirName", new object[] { path }));
-	//	}
-
-	//	this->directory_ = path;
-	//}
-
-
-
 	//virtual ~FileSystemMonitor()
 	//{
 	//}
 
-	std::string get_path() const //TODO: evitar copias
+	//std::string add_directory() const //TODO: evitar copias
+	//{ 
+	//	return this->directory_; 
+	//}
+
+	void add_directory (const std::string& dir_name) throw (std::invalid_argument)
 	{ 
-		return this->directory_; 
+		implementation_->add_directory( dir_name );
 	}
 
-	void set_path (const std::string& val) 
+	int get_notify_filters() const
 	{ 
-		if ( val.size() == 0 || !utils::directory_exists(val) )
-		{
-			//throw std::runtime_error("InvalidDirName");
-			////throw new ArgumentException(SR.GetString("InvalidDirName", new object[] { path }));
-			throw (std::invalid_argument(val + " is not a valid directory entry"));
-		}
-
-		this->directory_ = val; 
-
-		//TODO: lista de Paths
-	}
-
-	int get_notify_filters() const //TODO: evitar copias
-	{ 
-		return notify_filters_; 
+		//return notify_filters_;
+		return implementation_->notify_filters_;
 	}
 
 	void set_notify_filters(int val) 
 	{ 
-		notify_filters_ = val; 
+		//notify_filters_ = val; 
+		implementation_->notify_filters_ = val;
 	}
 
 	std::string get_filter() const //TODO: evitar copias
 	{ 
-		return filter_; 
+		//return filter_;
+		return implementation_->filter_;
 	}
 
 	void set_filter(const std::string& val) 
 	{ 
-		filter_ = val; 
+		//filter_ = val;
+		implementation_->filter_ = val;
 	}
 
-	bool get_enable_eaising_events() const 
-	{ 
-		return enable_raising_events_;
-	}
-	void set_enable_eaising_events(bool val) 
-	{ 
-		enable_raising_events_ = val; 
-		//TODO: aca va el codigo
-	}
+	//bool get_enable_eaising_events() const 
+	//{ 
+	//	return enable_raising_events_;
+	//}
+	//void set_enable_eaising_events(bool val) 
+	//{ 
+	//	enable_raising_events_ = val; 
+	//	//TODO: aca va el codigo
+	//}
 
-	void start()
+	//TODO: poder setear el tamaño del buffer desde afuera //setInternalBufferSize
+	
+
+	void start() throw (std::runtime_error)
 	{
-		implementation_->filter_ = filter_;
-		implementation_->notify_filters_ = notify_filters_;
-		implementation_->include_subdirectories_ = include_subdirectories_;
-		implementation_->start(directory_); //, notify_filters_, include_subdirectories_, filter_);
+		//TODO: validar que no haya sido inicializado antes.
+
+		//implementation_->filter_ = filter_;
+		//implementation_->notify_filters_ = notify_filters_;
+		//implementation_->include_subdirectories_ = include_subdirectories_;
+		//implementation_->start(directory_); //, notify_filters_, include_subdirectories_, filter_);
+		implementation_->start();
 	}
 
 
@@ -126,7 +111,6 @@ public:
 	{
 		this->implementation_->changed_callback_ = handler;
 	}
-
 
 	void set_created_event_handler(filesystem_event_handler handler)
 	{
@@ -146,44 +130,14 @@ public:
 
 private:
 
-	//inline void initialize()
-	//{
-	//	initialize("", "*.*");
-	//}
+	bool is_started_;
 
-	//inline void initialize(const std::string& path, const std::string& filter)
-	//{
-	//	this->notify_filters_ = NotifyFilters::LastWrite | NotifyFilters::DirectoryName | NotifyFilters::FileName;
-	//	this->implementation_ = new detail::ImplementationType;  //TODO: heap o stack????
-	//	this->filter_ = filter;
-
-	//	//std::runtime_error
-
-	//	if ( path.size() == 0 || !utils::directoryExists(path) )
-	//	{
-	//		throw std::runtime_error("InvalidDirName");
-	//		//throw new ArgumentException(SR.GetString("InvalidDirName", new object[] { path }));
-	//	}
-
-	//	this->directory_ = path;
-	//}
-
-
-	std::string directory_;
-	int notify_filters_;									//TODO: deber�a ser un enum
+	int notify_filters_;				//TODO: debería ser un enum
 	std::string filter_;
-	bool enable_raising_events_;
 	bool include_subdirectories_;
+	//bool enable_raising_events_;
 
-	//void* completionPortHandle_;
-	//HANDLE  thread_;									//TODO:
-	//detail::ThreadObjectParameter* threadObject_;		//TODO: shared_ptr
-
-	//TODO: varias implementaciones distintas por tipo de Sistema Operativo...
-	//detail::ImplementationType* implementation_;				//TODO:
-	//boost::shared_ptr<detail::ImplementationType> implementation_;
 	boost::shared_ptr<detail::FSMImplementationType> implementation_;
-	//detail::ImplementationType* implementation_;
 
 };
 

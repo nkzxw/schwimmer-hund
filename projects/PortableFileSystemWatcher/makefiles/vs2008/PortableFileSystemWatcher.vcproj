@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(BOOST_ROOT)&quot;;&quot;$(DEV_HOME)\CPP\schwimmer-hund\projects\PortableFileSystemWatcher\src\&quot;;&quot;Z:\Development\CPP\schwimmer-hund\projects\PortableFileSystemWatcher\src\&quot;"
+				AdditionalIncludeDirectories="&quot;D:\Development\CPP\schwimmer-hund\projects\PortableFileSystemWatcher\src\&quot;;&quot;$(BOOST_ROOT)&quot;"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -111,6 +111,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
+				AdditionalIncludeDirectories="&quot;D:\Development\CPP\schwimmer-hund\projects\PortableFileSystemWatcher\src\&quot;;&quot;$(BOOST_ROOT)&quot;"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				WarningLevel="3"
@@ -127,6 +128,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalLibraryDirectories="&quot;$(BOOST_ROOT)\stage\lib&quot;"
 				GenerateDebugInformation="true"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
