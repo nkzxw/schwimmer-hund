@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(BOOST_ROOT)&quot;;&quot;$(DEV_HOME)\CPP\schwimmer-hund\src\&quot;"
+				AdditionalIncludeDirectories="&quot;$(BOOST_ROOT)&quot;;&quot;Z:\Development\CPP\schwimmer-hund\src\&quot;;&quot;$(DEV_HOME)\CPP\schwimmer-hund\src\&quot;"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -165,6 +165,10 @@
 			>
 			<File
 				RelativePath="..\..\..\src\libs\os_services\test\test.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\temp\test_fwatch_original.cpp"
 				>
 			</File>
 		</Filter>

@@ -105,14 +105,31 @@ public: //private:  //TODO:
 		LPOVERLAPPED overlapped;
 		PFILE_NOTIFY_INFORMATION notifyInformation;
 
+		//std::vector<std::string> tempVec;
+		//tempVec.reserve(30000);
+
 		do
 		{
 			//TODO: manejo de errores
-			::GetQueuedCompletionStatus( this->completionPortHandle_, &numBytes, (LPDWORD) &directoryInfo, &overlapped, INFINITE );
+			BOOL tempXBool = ::GetQueuedCompletionStatus( this->completionPortHandle_, &numBytes, (LPDWORD) &directoryInfo, &overlapped, INFINITE );
+
+			if (tempXBool == 0)
+			{
+				std::cout << "tempBool: " << tempXBool << std::endl;
+			}
+			//std::cout << "tempBool: " << tempXBool << std::endl;
+
+			//std::cout << "Readed: " << numBytes << " bytes." << std::endl;
+
+			if ( numBytes == 0)
+			{
+				std::cout << "Readed: 0 bytes." << std::endl;
+			}
 
 			if ( directoryInfo )
 			{
-				//fni = (PFILE_NOTIFY_INFORMATION)di->lpBuffer;
+				if ( numBytes > 0 )
+				{
 				notifyInformation = (PFILE_NOTIFY_INFORMATION)directoryInfo->buffer;
 				//notifyInformation = static_cast<PFILE_NOTIFY_INFORMATION>(directoryInfo->buffer);
 
@@ -138,6 +155,12 @@ public: //private:  //TODO:
 								this->created_callback_(temp);
 							}
 
+							//{
+							//	std::string fileName(notifyInformation->FileName, notifyInformation->FileName + (notifyInformation->FileNameLength/sizeof(WCHAR)) ); 
+							//	tempVec.push_back(fileName);
+							//	//std::cout << fileName << std::endl;
+							//}
+
 							break;
 						case FILE_ACTION_REMOVED:
 							{
@@ -156,6 +179,9 @@ public: //private:  //TODO:
 
 
 								std::string fileName(notifyInformation->FileName, notifyInformation->FileName + (notifyInformation->FileNameLength/sizeof(WCHAR)) ); 
+								//tempVec.push_back(fileName);
+								//std::cout << fileName << std::endl;
+
 								filesystem_event_args temp;
 								temp.name = fileName;
 
@@ -178,6 +204,13 @@ public: //private:  //TODO:
 								this->changed_callback_(temp);
 							}
 
+
+							//{
+							//	std::string fileName(notifyInformation->FileName, notifyInformation->FileName + (notifyInformation->FileNameLength/sizeof(WCHAR)) ); 
+							//	tempVec.push_back(fileName);
+							//	std::cout << fileName << std::endl;
+							//}
+
 							break;
 						case FILE_ACTION_RENAMED_OLD_NAME:
 
@@ -193,11 +226,18 @@ public: //private:  //TODO:
 								this->renamed_callback_(temp);
 							}
 
+							//{
+							//	std::string fileName(notifyInformation->FileName, notifyInformation->FileName + (notifyInformation->FileNameLength/sizeof(WCHAR)) ); 
+							//	tempVec.push_back(fileName);
+							//	//std::cout << fileName << std::endl;
+							//}
+
+
 							break;
 						case FILE_ACTION_RENAMED_NEW_NAME:
 							break;
 						default: 
-							std::cout << "unknown event: ";
+							//std::cout << "unknown event: ";
 							break;
 					}
 
@@ -205,12 +245,22 @@ public: //private:  //TODO:
 
 				} while( cbOffset );
 
+				}
+
 				//TODO: manejo de errores
 				// this->notify_filters_ = //FILE_NOTIFY_CHANGE_LAST_WRITE,            
-				::ReadDirectoryChangesW ( directoryInfo->directoryHandle, directoryInfo->buffer, MAX_BUFFER, this->include_subdirectories_ ? 1 : 0, this->notify_filters_,	&directoryInfo->bufferLength, &directoryInfo->overlapped, NULL );
+				BOOL tempBoolRead = ::ReadDirectoryChangesW ( directoryInfo->directoryHandle, directoryInfo->buffer, MAX_BUFFER, this->include_subdirectories_ ? 1 : 0, this->notify_filters_,	&directoryInfo->bufferLength, &directoryInfo->overlapped, NULL );
+
+				if (tempBoolRead == 0)
+				{
+					std::cout << "tempBoolRead: " << tempBoolRead << std::endl;
+				}
+				//std::cout << "tempBoolRead: " << tempBoolRead << std::endl;
 			}
 
 		} while( directoryInfo );
+
+
 
 
 	}

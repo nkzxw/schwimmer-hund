@@ -31,7 +31,7 @@
 #include <iostream>
 #include <string>
 
-#include <boost/asio.hpp>
+//#include <boost/asio.hpp>
 
 #include <boost/os_services/file_system_monitor.hpp>
 
@@ -77,35 +77,30 @@ static void OnRenamed(renamed_event_args e) // object source,
 
 int main(int /*argc*/, char** /*argv*/)
 {
+	std::string path1 = "C:\\temp1";
+	//std::string path1 = "D:\\temp1";
+	//std::string path1 = "J:\\temp1";	//Invalid dir test
+	//std::string path1 = "/home/fernando/temp1";
 
-	//enum
-	//{
-	//	max_length = 1024
-	//};
+	std::string path2 = "C:\\temp2";
+	//std::string path2 = "D:\\temp2";
+	//std::string path2 = "J:\\temp2";	//Invalid dir test
+	//std::string path2 = "/home/fernando/temp2";
 
-	//unsigned char buffer_[max_length];
-	//boost::asio::buffer bbb(buffer_, max_length);
-
-
-	//printf("sizeof(unsigned long): %d \n", sizeof(unsigned long));
-	//printf("sizeof(wchar_t): %d \n", sizeof(wchar_t));
-
-	std::string path = "C:\\temp1";
-	//std::string path = "D:\\temp1";
-	//std::string path = "J:\\temp1";
-	//std::string path = "/home/fernando/temp1";
 
 	{
-
-		file_system_monitor* monitor = 0; // Es importante el "= 0" ya que sino el puntero puede quedar asignado a una posición de memoria erronea si el Constructor de File... lanza una excepcion...
-		//boost::shared_ptr<FileSystemMonitor> monitor;
+		//file_system_monitor* monitor = 0; // Es importante el "= 0" ya que sino el puntero puede quedar asignado a una posición de memoria erronea si el Constructor de File... lanza una excepcion...
+		//boost::shared_ptr<file_system_monitor> monitor;
+		//file_system_monitor* monitor = new file_system_monitor;
+		boost::shared_ptr<file_system_monitor> monitor(new file_system_monitor);
 
 		try
 		{
 			//monitor = new FileSystemMonitor(path);
 			//monitor.reset( new FileSystemMonitor(path) );
-			monitor = new file_system_monitor;
-			monitor->set_path(path);
+			//monitor = new file_system_monitor;
+			monitor->add_directory(path1);
+			//monitor->add_directory(path2);
 
 			monitor->set_notify_filters( notify_filters::last_access | notify_filters::last_write | notify_filters::file_name | notify_filters::directory_name );
 			monitor->set_filter("*.txt"); //TODO: implementar este filtro
@@ -131,11 +126,7 @@ int main(int /*argc*/, char** /*argv*/)
 		std::cout << "Press Enter to Stop Monitoring..." << std::endl;
 		std::cin.get();
 
-		//if ( monitor != 0)
-		//{
-			delete monitor;	//TODO: este delete, en caso de error en el constructor da error...
-		//}
-
+		//delete monitor;
 	}
 
 
