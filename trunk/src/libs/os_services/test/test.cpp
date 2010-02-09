@@ -38,38 +38,25 @@
 using namespace boost::os_services;
 
 
-
-
 static void OnChanged(filesystem_event_args e) // object source,
 {
-	std::cout << "Changed: " << e.name << std::endl;
-
-	// Specify what is done when a file is changed, created, or deleted.
-	//Console.WriteLine("File: " + e.FullPath + " " + e.ChangeType);
+	std::cout << "Changed: " << e.full_path << std::endl;
 }
 
 static void OnCreated(filesystem_event_args e) // object source,
 {
-	std::cout << "Created: " << e.name << std::endl;
-
-	// Specify what is done when a file is changed, created, or deleted.
-	//Console.WriteLine("File: " + e.FullPath + " " + e.ChangeType);
+	std::cout << "Created: " << e.full_path << std::endl;
 }
 
 static void OnDeleted(filesystem_event_args e) // object source,
 {
-	std::cout << "Deleted: " << e.name << std::endl;
-
-	// Specify what is done when a file is changed, created, or deleted.
-	//Console.WriteLine("File: " + e.FullPath + " " + e.ChangeType);
+	std::cout << "Deleted: " << e.full_path << std::endl;
 }
 
 
 static void OnRenamed(renamed_event_args e) // object source,
 {
-	std::cout << "Renamed: " << e.name << std::endl;
-	// Specify what is done when a file is renamed.
-	//Console.WriteLine("File: {0} renamed to {1}", e.OldFullPath, e.FullPath);
+	std::cout << "File: " << e.old_full_path << " renamed to: " << e.full_path  << std::endl;
 }
 
 
@@ -77,7 +64,8 @@ static void OnRenamed(renamed_event_args e) // object source,
 
 int main(int /*argc*/, char** /*argv*/)
 {
-	std::string path1 = "C:\\temp1";
+	//std::string path1 = "C:\\temp1";
+	std::string path1 = "C:\\temp1\\";
 	//std::string path1 = "D:\\temp1";
 	//std::string path1 = "J:\\temp1";	//Invalid dir test
 	//std::string path1 = "/home/fernando/temp1";
@@ -89,18 +77,16 @@ int main(int /*argc*/, char** /*argv*/)
 
 
 	{
-		//file_system_monitor* monitor = 0; // Es importante el "= 0" ya que sino el puntero puede quedar asignado a una posición de memoria erronea si el Constructor de File... lanza una excepcion...
-		//boost::shared_ptr<file_system_monitor> monitor;
-		//file_system_monitor* monitor = new file_system_monitor;
-		boost::shared_ptr<file_system_monitor> monitor(new file_system_monitor);
+		boost::shared_ptr<file_system_monitor> monitor;
 
 		try
 		{
-			//monitor = new FileSystemMonitor(path);
-			//monitor.reset( new FileSystemMonitor(path) );
-			//monitor = new file_system_monitor;
+			monitor.reset(new file_system_monitor);
+
 			monitor->add_directory(path1);
-			//monitor->add_directory(path2);
+			monitor->add_directory(path2);
+
+			//TODO: mapear los notify filters de Windows con otras plataformas...
 
 			monitor->set_notify_filters( notify_filters::last_access | notify_filters::last_write | notify_filters::file_name | notify_filters::directory_name );
 			monitor->set_filter("*.txt"); //TODO: implementar este filtro
@@ -109,9 +95,12 @@ int main(int /*argc*/, char** /*argv*/)
 			monitor->set_deleted_event_handler(OnDeleted);
 			monitor->set_renamed_event_handler(OnRenamed);
 
-			//monitor->setEnableRaisingEvents(true); //TODO: cambiar, no est� bueno este dise�o. Crear un m�todo Start.
 			monitor->start();
-			//monitor->start();	//TODO: esto crearia otro Thread... si lo implementamos como un Setter "EnableRaisingEvents" podemos manejarlo de otra manera...
+			//monitor->start(); //Probar de que no se pueda ejecutar dos veces.
+
+
+			//monitor->stop(); //TODO: implementar
+
 
 		}
 		catch (std::runtime_error& e)
