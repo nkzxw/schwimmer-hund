@@ -2,7 +2,6 @@
 #define BOOST_OS_SERVICES_NOTIFY_FILTERS_HPP
 
 //enum NotifyFilters
-
 //TODO: por ahora muy atado a Win32
 
 namespace boost {

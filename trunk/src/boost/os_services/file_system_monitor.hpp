@@ -30,20 +30,17 @@ public:
 	
 	file_system_monitor()
 		: is_started_(false)
-		, notify_filters_(notify_filters::last_write | notify_filters::directory_name | notify_filters::file_name)
-		//, directory_("")
-		, filter_("*.*")
-		, implementation_( new detail::FSMImplementationType )
+		, implementation_( new detail::FSMImplementationType ) //TODO: cambiar nombre "FSMImplementationType"
 	{
+
+		//TODO: donde setear estos datos?????
+		//, notify_filters_(notify_filters::last_write | notify_filters::directory_name | notify_filters::file_name)
+		//, filter_("*.*")
+
 	}
 
 	//virtual ~FileSystemMonitor()
 	//{
-	//}
-
-	//std::string add_directory() const //TODO: evitar copias
-	//{ 
-	//	return this->directory_; 
 	//}
 
 	void add_directory (const std::string& dir_name) throw (std::invalid_argument)
@@ -53,52 +50,35 @@ public:
 
 	int get_notify_filters() const
 	{ 
-		//return notify_filters_;
 		return implementation_->notify_filters_;
 	}
 
 	void set_notify_filters(int val) 
 	{ 
-		//notify_filters_ = val; 
 		implementation_->notify_filters_ = val;
 	}
 
 	std::string get_filter() const //TODO: evitar copias
 	{ 
-		//return filter_;
 		return implementation_->filter_;
 	}
 
 	void set_filter(const std::string& val) 
 	{ 
-		//filter_ = val;
 		implementation_->filter_ = val;
 	}
 
-	//bool get_enable_eaising_events() const 
-	//{ 
-	//	return enable_raising_events_;
-	//}
-	//void set_enable_eaising_events(bool val) 
-	//{ 
-	//	enable_raising_events_ = val; 
-	//	//TODO: aca va el codigo
-	//}
-
 	//TODO: poder setear el tamaño del buffer desde afuera //setInternalBufferSize
-	
 
 	void start() throw (std::runtime_error)
 	{
-		//TODO: validar que no haya sido inicializado antes.
-
-		//implementation_->filter_ = filter_;
-		//implementation_->notify_filters_ = notify_filters_;
-		//implementation_->include_subdirectories_ = include_subdirectories_;
-		//implementation_->start(directory_); //, notify_filters_, include_subdirectories_, filter_);
-		implementation_->start();
+		//TODO: is_started_ debe ser protegida con MUTEX.
+		if (!is_started_)
+		{
+			implementation_->start();
+			is_started_ = true;
+		}
 	}
-
 
 	//template <typename EH>
 	//void setEventHandler(filesystem_event_handler handler)
@@ -130,15 +110,14 @@ public:
 
 private:
 
-	bool is_started_;
+	bool is_started_; //TODO: pregunta: esto deberia ser manejado acá o por la clase implementacion?
 
-	int notify_filters_;				//TODO: debería ser un enum
-	std::string filter_;
-	bool include_subdirectories_;
-	//bool enable_raising_events_;
+	//TODO: todos estos datos deberian ser manejados por cada Watch
+	//int notify_filters_;				//TODO: debería ser un enum
+	//std::string filter_;
+	//bool include_subdirectories_;
 
 	boost::shared_ptr<detail::FSMImplementationType> implementation_;
-
 };
 
 } // namespace os_services

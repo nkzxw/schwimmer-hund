@@ -12,10 +12,13 @@ namespace boost {
 namespace os_services {
 namespace detail {
 
+
+//TODO: boost non copyable
 template <typename Type>
 class base_impl
 {
 public:
+
 	// Event Handlers
 	filesystem_event_handler changed_callback_;
 	filesystem_event_handler created_callback_;
@@ -34,10 +37,8 @@ public:
 		static_cast<Type*>(this)->add_directory_impl(dir_name);
 	}
 
-
-
 public: // private: //TODO:
-	int notify_filters_;									//TODO: debería ser un enum
+	int notify_filters_;			//TODO: debería ser un enum
 	std::string filter_;
 	bool include_subdirectories_;
 
@@ -50,13 +51,7 @@ protected:
 		{
 			callback( args );
 		}
-		
 	}
-
-	
-
-	
-
 };
 
 
