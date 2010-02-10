@@ -49,14 +49,14 @@ class windows_impl : public base_impl<windows_impl>
 {
 public:
 	windows_impl()
-		: completionPortHandle_(0)//, is_started_(false)
+		: completion_port_handle_(0) //, is_started_(false)
 	{}
 
 	virtual ~windows_impl()
 	{
-		if ( completionPortHandle_ != 0 )
+		if ( completion_port_handle_ != 0 )
 		{
-			BOOL ret_value = ::PostQueuedCompletionStatus( completionPortHandle_, 0, 0, NULL );
+			BOOL ret_value = ::PostQueuedCompletionStatus( completion_port_handle_, 0, 0, NULL );
 
 			if ( ret_value == 0 )
 			{
@@ -71,9 +71,9 @@ public:
 			thread_->join();
 		}
 
-		if ( completionPortHandle_ != 0 )
+		if ( completion_port_handle_ != 0 )
 		{
-			BOOL ret_value = ::CloseHandle( completionPortHandle_ );
+			BOOL ret_value = ::CloseHandle( completion_port_handle_ );
 
 			if ( ret_value == 0 )
 			{
@@ -83,7 +83,7 @@ public:
 		}
 	}
 
-	void add_directory_impl (const std::string& dir_name) throw (std::invalid_argument, std::runtime_error)
+	void add_directory_impl (const std::string& dir_name) //throw (std::invalid_argument, std::runtime_error)
 	{ 
 		LPDIRECTORY_INFO directory_info = (LPDIRECTORY_INFO) malloc(sizeof(DIRECTORY_INFO));
 		memset(directory_info, 0, sizeof(DIRECTORY_INFO));
@@ -101,9 +101,9 @@ public:
 
 		//unsigned long addr = (unsigned long) &directory_info;
 
-		completionPortHandle_ = ::CreateIoCompletionPort ( directory_info->directory_handle, completionPortHandle_, (DWORD) directory_info, 0 );
+		completion_port_handle_ = ::CreateIoCompletionPort ( directory_info->directory_handle, completion_port_handle_, (DWORD) directory_info, 0 );
 	
-		if ( completionPortHandle_ == 0 )
+		if ( completion_port_handle_ == 0 )
 		{
 			std::ostringstream oss;
 			oss << "Failed to monitor directory - Directory: " << dir_name << " - Reason: " << GetLastError();
@@ -113,7 +113,8 @@ public:
 		directories_.push_back( DirectoryInfoPointerType( directory_info, directory_info_deleter ) );
 	}
 
-	void start() throw (std::runtime_error)
+	//TODO: revisar que hacer con  las EXCEPTION-SPECIFICATION
+	void start() //throw (std::runtime_error)
 	{
 		//TODO: is_started_ debe ser protegida con MUTEX.
 		//if (!is_started_)
@@ -136,13 +137,9 @@ public:
 		//}
 	}
 
-
-
-
 public: //private:  //TODO:
 
-
-	void handle_directory_changes() throw (std::runtime_error)
+	void handle_directory_changes() //throw (std::runtime_error)
 	{
 		unsigned long num_bytes;
 		unsigned long offset;
@@ -152,7 +149,7 @@ public: //private:  //TODO:
 
 		do
 		{
-			BOOL ret_value = ::GetQueuedCompletionStatus( this->completionPortHandle_, &num_bytes, (LPDWORD) &directory_info, &overlapped, INFINITE );
+			BOOL ret_value = ::GetQueuedCompletionStatus( this->completion_port_handle_, &num_bytes, (LPDWORD) &directory_info, &overlapped, INFINITE );
 
 			if ( ret_value == 0 )
 			{
@@ -167,7 +164,6 @@ public: //private:  //TODO:
 				{
 					notify_information = (PFILE_NOTIFY_INFORMATION)directory_info->buffer;
 					//notify_information = static_cast<PFILE_NOTIFY_INFORMATION>(directory_info->buffer);
-
 
 					boost::optional<std::string> old_name;
 
@@ -300,7 +296,7 @@ protected:
 	typedef std::vector<DirectoryInfoPointerType> VectorType;
 	VectorType directories_;
 
-	HANDLE completionPortHandle_; //HANDLE -> void*
+	HANDLE completion_port_handle_; //HANDLE -> void*
 	HeapThread thread_;
 
 	//bool is_started_;
