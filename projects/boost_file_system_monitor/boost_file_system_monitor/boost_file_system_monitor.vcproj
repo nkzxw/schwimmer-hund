@@ -182,6 +182,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\boost\os_services\change_types.hpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\boost\os_services\event_args.hpp"
 				>
 			</File>

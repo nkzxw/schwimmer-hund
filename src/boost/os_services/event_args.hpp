@@ -5,21 +5,9 @@ namespace boost {
 namespace os_services {
 
 //TODO: no me gusta el nombre
-//TODO: completar
-
-//TODO: extraido de .Net
-//public enum WatcherChangeTypes
-//{
-//	Created = 1,
-//	Deleted = 2,
-//	Changed = 4,
-//	Renamed = 8,
-//	All = 15,
-//}
 
 struct filesystem_event_args
 {
-
 	filesystem_event_args(int _change_type, const std::string& _directory, const std::string& _name )
 		: change_type(_change_type), name(_name)
 	{

@@ -1,22 +1,20 @@
 #ifndef BOOST_OS_SERVICES_DETAIL_WINDOWS_IMPL_HPP
 #define BOOST_OS_SERVICES_DETAIL_WINDOWS_IMPL_HPP
 
+#include <sstream>
 #include <string>
 
-//#include <boost/asio.hpp>
-
 #include <boost/bind.hpp>
-//#include <boost/foreach.hpp>
 #include <boost/integer.hpp> 
 #include <boost/optional.hpp>
 #include <boost/smart_ptr.hpp>
 #include <boost/thread.hpp>
 
+#include <boost/os_services/change_types.hpp>
 #include <boost/os_services/details/base_impl.hpp>
 #include <boost/os_services/notify_filters.hpp>
 #include <boost/os_services/win32api_wrapper.hpp>
 #include <boost/os_services/win32_legacy.hpp>		// directoryInfo
-#include <sstream>
 
 //TODO: ver de usar ASIO... hay varias cosas que se denominan IOCP
 
@@ -39,22 +37,19 @@ void directory_info_deleter(LPDIRECTORY_INFO ptr)
 				//Destructor -> NO_THROW
 				std::cerr << "Failed to close directory port handle. Reason: " << GetLastError();
 			}
-
 		}
 
 		free(ptr);
-		ptr = 0; //NULL;
+		ptr = 0;
 	}
 };
-
-
 
 
 class windows_impl : public base_impl<windows_impl>
 {
 public:
 	windows_impl()
-		: completionPortHandle_(0), is_started_(false)
+		: completionPortHandle_(0)//, is_started_(false)
 	{}
 
 	virtual ~windows_impl()
@@ -85,8 +80,6 @@ public:
 				//Destructor -> NO_THROW
 				std::cerr << "Failed to close completion port handle. Reason: " << GetLastError();
 			}
-
-
 		}
 	}
 
@@ -123,8 +116,8 @@ public:
 	void start() throw (std::runtime_error)
 	{
 		//TODO: is_started_ debe ser protegida con MUTEX.
-		if (!is_started_)
-		{
+		//if (!is_started_)
+		//{
 			for (VectorType::const_iterator it = directories_.begin(); it!=directories_.end(); ++it)
 			{
 				BOOL ret_value = ::ReadDirectoryChangesW ( (*it)->directory_handle, (*it)->buffer, MAX_BUFFER, this->include_subdirectories_ ? 1 : 0, this->notify_filters_, &(*it)->buffer_length, &(*it)->overlapped, NULL);
@@ -139,8 +132,8 @@ public:
 
 			thread_.reset( new boost::thread( boost::bind(&windows_impl::handle_directory_changes, this) ) );
 
-			is_started_ = true;
-		}
+		//	is_started_ = true;
+		//}
 	}
 
 
@@ -196,145 +189,38 @@ public: //private:  //TODO:
 						}
 						else if (notify_information->Action == FILE_ACTION_RENAMED_NEW_NAME)
 						{
-							if ( old_name ) // != null)
+							if ( old_name )
 							{
-								// WatcherChangeTypes.Renamed
-								notify_rename_event_args(4, file_name, *old_name);
-								old_name.reset(); // = null;
+								notify_rename_event_args(change_types::renamed, directory_info->directory_name, file_name, *old_name);
+								old_name.reset();
 							}
 							else
 							{
-								//NotifyRenameEventArgs(WatcherChangeTypes.Renamed, file_name, oldName);
-								//oldName = null;
-
-								notify_rename_event_args(4, file_name, "");
-								old_name.reset(); // = null;
+								notify_rename_event_args(change_types::renamed, directory_info->directory_name, file_name, "");
+								old_name.reset();
 							}
 						}
 						else
 						{
-							if (old_name) // != null)
+							if (old_name)
 							{
-								//NotifyRenameEventArgs(WatcherChangeTypes.Renamed, null, oldName);
-								//oldName = null;
-
-								notify_rename_event_args(4, "", *old_name);
-								old_name.reset(); // = null;
-
+								notify_rename_event_args(change_types::renamed, directory_info->directory_name, "", *old_name);
+								old_name.reset();
 							}
 
-							// Notify each file of change
-							//NotifyFileSystemEventArgs(action, file_name);
-							notify_file_system_event_args(notify_information->Action, file_name);
+							notify_file_system_event_args(notify_information->Action, directory_info->directory_name, file_name);
 
 						}
-
-						//switch ( notify_information->Action )
-						//{
-						//	case FILE_ACTION_ADDED:
-						//		if ( this->created_callback_ )
-						//		{
-						//			std::string fileName(notify_information->FileName, notify_information->FileName + (notify_information->FileNameLength/sizeof(WCHAR)) ); 
-						//			filesystem_event_args temp;
-						//			
-						//			temp.name = fileName;
-						//			//TODO: chequear si la barra ya está incluida en el path del directorio.
-						//			temp.full_path = directory_info->directory_name + '\\' + fileName;
-
-						//			
-						//			//threadObject->This->Created(temp);
-						//			this->created_callback_(temp);
-						//		}
-						//		break;
-						//	case FILE_ACTION_REMOVED:
-						//		{
-						//			//std::cout << "file deleted: ";
-						//			//if (threadObject->This->Deleted)
-						//			//if ( this->deleted_callback_ )
-						//			//{
-						//			//	std::string fileName(notify_information->FileName, notify_information->FileName + (notify_information->FileNameLength/sizeof(WCHAR)) ); 
-						//			//	filesystem_event_args temp;
-						//			//	temp.name = fileName;
-
-						//			//	//threadObject->This->Deleted(temp);
-						//			//	this->deleted_callback_(temp);
-						//			//}
-
-
-						//			std::string fileName(notify_information->FileName, notify_information->FileName + (notify_information->FileNameLength/sizeof(WCHAR)) ); 
-						//			//tempVec.push_back(fileName);
-						//			//std::cout << fileName << std::endl;
-
-						//			filesystem_event_args temp;
-						//			temp.name = fileName;
-						//			//TODO: chequear si la barra ya está incluida en el path del directorio.
-						//			temp.full_path = directory_info->directory_name + '\\' + fileName;
-
-						//			do_callback(deleted_callback_, temp);
-
-						//		}
-						//		break;
-						//	case FILE_ACTION_MODIFIED:
-						//		//if (threadObject->This->Changed)
-						//		if ( this->changed_callback_ )
-						//		{
-						//			std::string fileName(notify_information->FileName, notify_information->FileName + (notify_information->FileNameLength/sizeof(WCHAR)) ); 
-						//			filesystem_event_args temp;
-						//			temp.name = fileName;
-						//			//TODO: chequear si la barra ya está incluida en el path del directorio.
-						//			temp.full_path = std::string(directory_info->directory_name) + '\\' + fileName;
-
-
-						//			//threadObject->This->Changed(temp);
-						//			this->changed_callback_(temp);
-						//		}
-						//		break;
-						//	case FILE_ACTION_RENAMED_OLD_NAME:
-						//		{
-						//			std::string fileName(notify_information->FileName, notify_information->FileName + (notify_information->FileNameLength/sizeof(WCHAR)) ); 
-						//			old_name.reset( fileName ); //TODO: no me gusta.
-						//			
-						//		}
-						//		break;
-						//	case FILE_ACTION_RENAMED_NEW_NAME:
-						//		{
-						//			if ( this->renamed_callback_ )
-						//			{
-						//				std::string fileName(notify_information->FileName, notify_information->FileName + (notify_information->FileNameLength/sizeof(WCHAR)) ); 
-
-						//				renamed_event_args temp;
-						//				temp.name = fileName;
-						//				temp.old_name = old_name;
-						//				//TODO: chequear si la barra ya está incluida en el path del directorio.
-						//				temp.full_path = directory_info->directory_name + '\\' + fileName;
-
-
-
-						//				this->renamed_callback_(temp);
-
-						//				old_name.reset();
-						//			}
-
-						//		}
-						//		break;
-						//	default: 
-						//		//std::cout << "unknown event: ";
-						//		break;
-						//}
 
 						notify_information = (PFILE_NOTIFY_INFORMATION)((LPBYTE) notify_information + offset);
 
 					} while( offset );
 
-					if (old_name) // != null)
+					if (old_name)
 					{
-						//NotifyRenameEventArgs(WatcherChangeTypes.Renamed, null, oldName);
-						//oldName = null;
-
-						notify_rename_event_args(4, "", *old_name);
-						old_name.reset(); // = null;
+						notify_rename_event_args(change_types::renamed, directory_info->directory_name, "", *old_name);
+						old_name.reset();
 					}
-
 				}
 
 				ret_value = ::ReadDirectoryChangesW ( directory_info->directory_handle, directory_info->buffer, MAX_BUFFER, this->include_subdirectories_ ? 1 : 0, this->notify_filters_, &directory_info->buffer_length, &directory_info->overlapped, NULL );
@@ -348,14 +234,9 @@ public: //private:  //TODO:
 			}
 
 		} while( directory_info );
-
-		//std::cout << std::endl;
 	}
 
-
-
-
-	inline void notify_file_system_event_args( int action, std::string name )
+	inline void notify_file_system_event_args( int action, const std::string& directory, const std::string& name )
 	{
 		//TODO: ver en .Net
 		//if (!MatchPattern(name))
@@ -367,32 +248,23 @@ public: //private:  //TODO:
 		{
 			case FILE_ACTION_ADDED:
 				{
-					//OnCreated(new FileSystemEventArgs(WatcherChangeTypes.Created, directory, name));
-					//TODO: cambiar directory y change_type
-					do_callback(created_callback_, filesystem_event_args(1, "directory", name));
+					do_callback(created_callback_, filesystem_event_args(change_types::created, directory, name));
 				}
 				break;
 			case FILE_ACTION_REMOVED:
 				{
-					//OnDeleted(new FileSystemEventArgs(WatcherChangeTypes.Deleted, directory, name));
-					//TODO: cambiar directory y change_type
-					do_callback(deleted_callback_, filesystem_event_args(2, "directory", name));
+					do_callback(deleted_callback_, filesystem_event_args(change_types::deleted, directory, name));
 				}
 				break;
 			case FILE_ACTION_MODIFIED:
 				{
-					//OnChanged(new FileSystemEventArgs(WatcherChangeTypes.Changed, directory, name));
-					//TODO: cambiar directory y change_type
-					do_callback(changed_callback_, filesystem_event_args(3, "directory", name));
-
+					do_callback(changed_callback_, filesystem_event_args(change_types::changed, directory, name));
 				}
 				break;
 			default:
 				//Debug.Fail("Unknown FileSystemEvent action type!  Value: " + action);
 				break;
 		}
-
-
 	}
 
 	//private void NotifyInternalBufferOverflowEvent()
@@ -405,8 +277,7 @@ public: //private:  //TODO:
 	//}
 
 
-	// WatcherChangeTypes action
-	inline void notify_rename_event_args(int action, std::string name, std::string old_name)
+	inline void notify_rename_event_args(int action, const std::string& directory, const std::string& name, const std::string& old_name)
 	{
 		//filter if neither new name or old name are a match a specified pattern 
 
@@ -416,8 +287,7 @@ public: //private:  //TODO:
 		//	return;
 		//}
 
-		//TODO: "directory"
-		do_callback(renamed_callback_, renamed_event_args(action, "directory", name, old_name));
+		do_callback(renamed_callback_, renamed_event_args(action, directory, name, old_name));
 	}
 
 
@@ -430,11 +300,10 @@ protected:
 	typedef std::vector<DirectoryInfoPointerType> VectorType;
 	VectorType directories_;
 
-
-	HANDLE completionPortHandle_; //void*
+	HANDLE completionPortHandle_; //HANDLE -> void*
 	HeapThread thread_;
 
-	bool is_started_;
+	//bool is_started_;
 };
 
 } // namespace detail
@@ -444,15 +313,11 @@ protected:
 //void printBuffer(CHAR* buffer, unsigned long num_bytes, DWORD buffer_length)
 //{
 //	printf("%d bytes: \n", num_bytes);
-
 //	for (int i = 0; i<num_bytes; ++i)
 //	{
 //		printf("%u ", (unsigned int)buffer[i]);
 //	}
-
 //	printf("\n");
 //}
 
 #endif // BOOST_OS_SERVICES_DETAIL_WINDOWS_IMPL_HPP
-
-
