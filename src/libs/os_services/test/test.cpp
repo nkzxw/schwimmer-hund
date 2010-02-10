@@ -28,6 +28,12 @@
 //TODO: #include <boost/throw_exception.hpp>
 
 
+//TODO:
+	//BOOST_TRY{}
+	//BOOST_CATCH(...){}
+	//BOOST_CATCH_END
+
+
 #include <iostream>
 #include <string>
 

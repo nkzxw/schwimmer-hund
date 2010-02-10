@@ -43,7 +43,8 @@ public:
 	//{
 	//}
 
-	void add_directory (const std::string& dir_name) throw (std::invalid_argument)
+	//TODO: agregar otro add_directory que acepte un boost::filesystem::path(?)
+	void add_directory (const std::string& dir_name) //throw (std::invalid_argument)
 	{ 
 		implementation_->add_directory( dir_name );
 	}
@@ -70,7 +71,7 @@ public:
 
 	//TODO: poder setear el tamaño del buffer desde afuera //setInternalBufferSize
 
-	void start() throw (std::runtime_error)
+	void start() //throw (std::runtime_error)
 	{
 		//TODO: is_started_ debe ser protegida con MUTEX.
 		if (!is_started_)

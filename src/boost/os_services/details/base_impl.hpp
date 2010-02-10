@@ -25,7 +25,7 @@ public:
 	filesystem_event_handler deleted_callback_;
 	renamed_event_handler renamed_callback_;
 
-	void add_directory (const std::string& dir_name) throw (std::invalid_argument, std::runtime_error)
+	void add_directory (const std::string& dir_name) //throw (std::invalid_argument, std::runtime_error)
 	{ 
 		if ( dir_name.size() == 0 || !utils::directory_exists(dir_name) )
 		{
