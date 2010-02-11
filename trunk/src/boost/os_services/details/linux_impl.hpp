@@ -22,6 +22,7 @@
 #include <boost/smart_ptr.hpp>
 #include <boost/thread.hpp>
 
+#include <boost/os_services/change_types.hpp>
 #include <boost/os_services/details/base_impl.hpp>
 #include <boost/os_services/notify_filters.hpp>
 
@@ -100,7 +101,8 @@ public:
 
 		BOOST_FOREACH(watch_descriptors_type::left_reference p, watch_descriptors_.left)
 		{
-			uint32_t watch_descriptor = ::inotify_add_watch(fd_, p.first.c_str(), IN_CREATE | IN_DELETE | IN_MOVED_FROM | IN_MOVED_TO);
+			//TODO: ver si estos atributos como "IN_MODIFY" deben ir fijos o seteados desde afuera.
+			uint32_t watch_descriptor = ::inotify_add_watch(fd_, p.first.c_str(), IN_CREATE | IN_DELETE | IN_MODIFY | IN_MOVED_FROM | IN_MOVED_TO);
 			if (watch_descriptor == -1)
 			{
 				std::ostringstream oss;
@@ -164,6 +166,18 @@ public: //private:  //TODO:
 					{
 
 						std::string file_name( event->name );
+						std::string directory_name;
+
+						watch_descriptors_type::left_iterator it = watch_descriptors_.right.find( event->wd );
+						if ( it != watch_descriptors_.left.end() )
+						{
+							directory_name = it->second;
+						}
+						else
+						{
+							//TODO: que pasa si no lo encontramos en la lista... DEBERIA SER UN RUN-TIME ERROR
+						}
+
 
 
 						if ( event->mask & IN_MOVED_FROM )
@@ -174,12 +188,12 @@ public: //private:  //TODO:
 						{
 							if ( old_name )
 							{
-								notify_rename_event_args(change_types::renamed, directory_info->directory_name, file_name, *old_name);
+								notify_rename_event_args(change_types::renamed, directory_name, file_name, *old_name);
 								old_name.reset();
 							}
 							else
 							{
-								notify_rename_event_args(change_types::renamed, directory_info->directory_name, file_name, "");
+								notify_rename_event_args(change_types::renamed, directory_name, file_name, "");
 								old_name.reset();
 							}
 						}
@@ -187,12 +201,11 @@ public: //private:  //TODO:
 						{
 							if (old_name)
 							{
-								notify_rename_event_args(change_types::renamed, directory_info->directory_name, "", *old_name);
+								notify_rename_event_args(change_types::renamed, directory_name, "", *old_name);
 								old_name.reset();
 							}
 
-							notify_file_system_event_args(notify_information->Action, directory_info->directory_name, file_name);
-
+							notify_file_system_event_args( event->mask, directory_name, file_name);
 						}
 
 						//event->mask & IN_CREATE
@@ -279,6 +292,65 @@ public: //private:  //TODO:
 			}
 		}
 	}
+
+protected:
+
+
+	//TODO: las tres funciones siguientes están duplicadas en windows_impl y linux_impl -> RESOLVER
+	inline void notify_file_system_event_args( int action, const std::string& directory, const std::string& name )
+	{
+		//TODO: ver en .Net
+		//if (!MatchPattern(name))
+		//{
+		//	return;
+		//}
+
+		std::cout << "-------------------------------------------- action: " << action << std::endl;
+
+		if (action & IN_CREATE)
+		{
+			do_callback(created_handler_, filesystem_event_args(change_types::created, directory, name));
+		}
+		else if ( action & IN_DELETE )
+		{
+			do_callback(deleted_handler_, filesystem_event_args(change_types::deleted, directory, name));
+		}
+		else if ( action & IN_MODIFY )
+		{
+			do_callback(changed_handler_, filesystem_event_args(change_types::changed, directory, name));
+		}
+		else
+		{
+			//TODO:
+			//Debug.Fail("Unknown FileSystemEvent action type!  Value: " + action);
+		}
+	}
+
+	//TODO:
+	//private void NotifyInternalBufferOverflowEvent()
+	//{
+	//	InternalBufferOverflowException ex = new InternalBufferOverflowException(SR.GetString(SR.FSW_BufferOverflow, directory));
+
+	//	ErrorEventArgs errevent = new ErrorEventArgs(ex);
+
+	//	OnError(errevent);
+	//}
+
+
+	inline void notify_rename_event_args(int action, const std::string& directory, const std::string& name, const std::string& old_name)
+	{
+		//filter if neither new name or old name are a match a specified pattern
+
+		//TODO:
+		//if (!MatchPattern(name) && !MatchPattern(oldName))
+		//{
+		//	return;
+		//}
+
+		do_callback(renamed_handler_, renamed_event_args(action, directory, name, old_name));
+	}
+
+
 
 	HeapThread thread_;
 
