@@ -8,20 +8,25 @@
 #include <cstdio>		//<stdio.h>
 #include <cstdlib>		//<stdlib.h>
 #include <cerrno>		//<errno.h>
-//#include <pthread.h>	// Threads
-#include <sys/types.h>
-#include <sys/inotify.h>
 
+//TODO: comentado solo para compilar bajo Windows
+//#include <sys/types.h>
+//#include <sys/inotify.h>
+
+#include <boost/bimap.hpp>
 #include <boost/bind.hpp>
+#include <boost/foreach.hpp>
 #include <boost/smart_ptr.hpp>
 #include <boost/thread.hpp>
+
+
 
 #include <boost/os_services/details/base_impl.hpp>
 #include <boost/os_services/notify_filters.hpp>
 
-
-#define EVENT_SIZE  ( sizeof (struct inotify_event) )
-#define BUF_LEN     ( 1024 * ( EVENT_SIZE + 16 ) )
+//
+//#define EVENT_SIZE  ( sizeof (struct inotify_event) )
+//#define BUF_LEN     ( 1024 * ( EVENT_SIZE + 16 ) )
 
 namespace boost {
 namespace os_services {
@@ -35,55 +40,109 @@ class linux_impl : public base_impl<linux_impl>
 {
 public:
 
+	linux_impl()
+		: is_initialized_(false), closing_(false), file_descriptor_(0) //,watch_descriptor_(0)
+	{}
+
 	~linux_impl()
 	{
 		closing_ = true;
-
-		if ( watchDescriptor_ != 0 )
-		{
-//			printf("removing watch...\n");
-			int retRMWatch = inotify_rm_watch( fileDescriptor_, watchDescriptor_ );
-//			printf("retRMWatch: %d\n", retRMWatch);
-		}
-
-		if ( fileDescriptor_ != 0 )
-		{
-			// TODO: parece que close(0) cierra el standard input (CIN)
-//			printf("closing file descriptor...\n");
-			int retClose =  close( fileDescriptor_ );
-//			printf("retClose: %d\n", retClose);
-		}
 
 		if ( thread_ )
 		{
 			thread_->join();
 		}
+
+//		if ( watch_descriptor_ != 0 )
+//		{
+//////			printf("removing watch...\n");
+////			int ret_value = inotify_rm_watch( file_descriptor_, watch_descriptor_ );
+//////			printf("retRMWatch: %d\n", retRMWatch);
+//		}
+
+	    BOOST_FOREACH(watch_descriptors_type::left_reference p, watch_descriptors_.left)
+	    {
+	        //inotify_rm_watch(fd_, p.first);
+	    }
+
+		if ( file_descriptor_ != 0 )
+		{
+//			// TODO: parece que close(0) cierra el standard input (CIN)
+////			printf("closing file descriptor...\n");
+//			int ret_value =  close( file_descriptor_ );
+////			printf("retClose: %d\n", retClose);
+		}
+
+
+
+
+
 	
 	}
 
-	void start(const std::string& path)
+	void add_directory_impl (const std::string& dir_name) //throw (std::invalid_argument, std::runtime_error)
 	{
-		fileDescriptor_ = inotify_init();
+		uint32_t watch_descriptor = 0;
+		//uint32_t watch_descriptor = inotify_add_watch(fd_, dir_name.c_str(), IN_CREATE | IN_DELETE | IN_MOVED_FROM | IN_MOVED_TO);
+		//if (watch_descriptor == -1)
+		//{
+		//	std::ostringstream oss;
+		//	oss << "Failed to monitor directory - Directory: " << dir_name << " - Reason:" << strerror(errno);
+		//	throw (std::invalid_argument(oss.str()));
+		//}
+		watch_descriptors_.insert(watch_descriptors_type::relation(watch_descriptor, dir_name));
+	}
 
-		if ( fileDescriptor_ < 0 ) 
+	//void remove_directory_impl(const std::string& dir_name) // throw (std::invalid_argument);
+
+
+
+	void start() //(const std::string& path)
+	{
+		//file_descriptor_ = inotify_init();
+		if ( file_descriptor_ < 0 ) 
 		{
 			perror( "inotify_init" );
 		}
 
-		
-		//watchDescriptor_ = inotify_add_watch( fileDescriptor_, "/home/fernando/temp1", IN_MODIFY | IN_CREATE | IN_DELETE );
-		watchDescriptor_ = inotify_add_watch( fileDescriptor_, path.c_str(), IN_MODIFY | IN_CREATE | IN_DELETE ); //TODO: IN_MOVED ??
+		if (!is_initialized_)
+		{
+			//file_descriptor_ = ::inotify_init();
+			if (file_descriptor_ == -1)
+			{
+				std::ostringstream oss;
+				oss << "Failed to initialize monitor - Reason: " << strerror(errno);
+				throw (std::runtime_error(oss.str()));
+			}
+			is_initialized_ = true;
+
+			std::cout << "CREATION fileDescriptor_: " << file_descriptor_ << std::endl;
+		}
 
 
-		thread_.reset( new boost::thread( boost::bind(&linux_impl::HandleDirectoryChange, this) ) );
+		BOOST_FOREACH(watch_descriptors_type::left_reference p, watch_descriptors_.left)
+		{
+			//uint32_t watch_descriptor = inotify_add_watch(fd_, dir_name.c_str(), IN_CREATE | IN_DELETE | IN_MOVED_FROM | IN_MOVED_TO);
+			//if (watch_descriptor == -1)
+			//{
+			//	std::ostringstream oss;
+			//	oss << "Failed to monitor directory - Directory: " << dir_name << " - Reason:" << strerror(errno);
+			//	throw (std::invalid_argument(oss.str()));
+			//}
+		}
+
+
+
+
+		thread_.reset( new boost::thread( boost::bind(&linux_impl::handle_directory_changes, this) ) );
 	}
 
 public: //private:  //TODO:
 
-	void HandleDirectoryChange() //TODO: rename
+	void handle_directory_changes() //TODO: rename
 	{
 		int i = 0;
-		char buffer[BUF_LEN];
+		//char buffer[BUF_LEN];
 
 
 		//TODO: while
@@ -91,9 +150,10 @@ public: //private:  //TODO:
 
 		while (! closing_ )
 		{
-	//		printf("reading in file descriptor\n");
-			int length = read( fileDescriptor_, buffer, BUF_LEN );
-	//		printf("end reading on file descriptor\n");
+	////		printf("reading in file descriptor\n");
+	//		int length = read( file_descriptor_, buffer, BUF_LEN );
+	////		printf("end reading on file descriptor\n");
+			int length;
 
 			if (! closing_)
 			{
@@ -117,113 +177,104 @@ public: //private:  //TODO:
 				{
 	//				printf("inside the 'while'\n");
 
-					struct inotify_event *event = ( struct inotify_event * ) &buffer[ i ]; //TODO:
-					inotify_event = reinterpret_cast<struct inotify_event*> (buffer_ + bytes_processed);
+					//struct inotify_event *event = ( struct inotify_event * ) &buffer[ i ]; //TODO:
+					//inotify_event = reinterpret_cast<struct inotify_event*> (buffer_ + bytes_processed);
 
 
 	//				printf("event: %d\n", (void*)event);
 	//				printf("event->len: %d\n", event->len);
 
-					if ( event->len )
-					{
-						if ( event->mask & IN_CREATE )
-						{
-							if ( this->created_callback_ )
-							{
-	//							std::cout << "ESTOOOOYYY ACAA" << std::endl;
-								//std::string fileName( event->name );
-								filesystem_event_args temp;
-								temp.Name = event->name; //fileName;
-
-								//threadObject->This->Created(temp);
-								this->created_callback_(temp);
-							}
-
-							//if ( event->mask & IN_ISDIR )
-							//{
-							//	printf( "The directory '%s' was created.\n", event->name );
-							//}
-							//else
-							//{
-							//	printf( "The file '%s' was created.\n", event->name );
-							//}
-						}
-						else if ( event->mask & IN_DELETE )
-						{
-							if (this->deleted_callback_)
-							{
-								//std::string fileName( event->name );
-								filesystem_event_args temp;
-								temp.Name = event->name; //fileName;
-
-								this->deleted_callback_(temp);
-							}
-
-	//						if ( event->mask & IN_ISDIR )
+					//TODO: cambiar todo esto, adaptar a como lo hace windows_impl
+	//				if ( event->len )
+	//				{
+	//					if ( event->mask & IN_CREATE )
+	//					{
+	//						if ( this->created_callback_ )
 	//						{
-	//							printf( "The directory '%s' was deleted.\n", event->name );
+	////							std::cout << "ESTOOOOYYY ACAA" << std::endl;
+	//							//std::string fileName( event->name );
+	//							filesystem_event_args temp;
+	//							temp.Name = event->name; //fileName;
+
+	//							//threadObject->This->Created(temp);
+	//							this->created_callback_(temp);
 	//						}
-	//						else
+
+	//						//if ( event->mask & IN_ISDIR )
+	//						//{
+	//						//	printf( "The directory '%s' was created.\n", event->name );
+	//						//}
+	//						//else
+	//						//{
+	//						//	printf( "The file '%s' was created.\n", event->name );
+	//						//}
+	//					}
+	//					else if ( event->mask & IN_DELETE )
+	//					{
+	//						if (this->deleted_callback_)
 	//						{
-	//							printf( "The file '%s' was deleted.\n", event->name );
+	//							//std::string fileName( event->name );
+	//							filesystem_event_args temp;
+	//							temp.name = event->name; //fileName;
+
+	//							this->deleted_callback_(temp);
 	//						}
-						}
-						else if ( event->mask & IN_MODIFY )
-						{
 
-							if (this->changed_callback_)
-							{
-								//std::string fileName( event->name );
-								filesystem_event_args temp;
-								temp.Name = event->name; //fileName;
+	////						if ( event->mask & IN_ISDIR )
+	////						{
+	////							printf( "The directory '%s' was deleted.\n", event->name );
+	////						}
+	////						else
+	////						{
+	////							printf( "The file '%s' was deleted.\n", event->name );
+	////						}
+	//					}
+	//					else if ( event->mask & IN_MODIFY )
+	//					{
 
-								this->changed_callback_(temp);
-							}
-
-
-
-
-	//						if ( event->mask & IN_ISDIR )
+	//						if (this->changed_callback_)
 	//						{
-	//							printf( "The directory '%s' was modified.\n", event->name );
-	//						}
-	//						else
-	//						{
-	//							printf( "The file '%s' was modified.\n", event->name );
-	//						}
-						}
+	//							//std::string fileName( event->name );
+	//							filesystem_event_args temp;
+	//							temp.Name = event->name; //fileName;
 
-						//TODO: renaming
-					}
+	//							this->changed_callback_(temp);
+	//						}
 
-					i += EVENT_SIZE + event->len;
+
+
+
+	////						if ( event->mask & IN_ISDIR )
+	////						{
+	////							printf( "The directory '%s' was modified.\n", event->name );
+	////						}
+	////						else
+	////						{
+	////							printf( "The file '%s' was modified.\n", event->name );
+	////						}
+	//					}
+
+	//					//TODO: renaming
+	//				}
+
+					//i += EVENT_SIZE + event->len;
 
 	//				printf("i: %d\n", i);
 				}
 			}
 		}
-
-		////( void ) inotify_rm_watch( fileDescriptor_, wd );
-		////( void ) close( fileDescriptor_ );
-		//int retRMWatch = inotify_rm_watch( fileDescriptor_, watchDescriptor_ );
-		//printf("retRMWatch: %d\n", retRMWatch);
-		//int retClose =  close( fileDescriptor_ );
-		//printf("retClose: %d\n", retClose);
-		//pthread_join( thread1, NULL);
-		////printf("Thread 1 returns: %d\n", iret1);
-		//exit(0);
 	}
 
 	HeapThread thread_;
 
-	int fileDescriptor_; // file descriptor
-	int watchDescriptor_;
+	bool is_initialized_;
+	int file_descriptor_; // file descriptor
+	//int watch_descriptor_;
 	bool closing_;
 
 
-//	int notify_filters_;									//TODO: deber�a ser un enum
-//	std::string filter_;
-//	bool include_subdirectories_;
+	typedef boost::bimap<uint32_t, std::string> watch_descriptors_type;
+	watch_descriptors_type watch_descriptors_;
 
 };
 

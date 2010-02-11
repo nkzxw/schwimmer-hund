@@ -1,6 +1,7 @@
 #ifndef BOOST_OS_SERVICES_WIN32_LEGACY_HPP
 #define BOOST_OS_SERVICES_WIN32_LEGACY_HPP
 
+//TODO: no me gusta haber separado en este arhivo, para ello tenemos el windows_impl
 
 #include <boost/array.hpp>
 

@@ -66,9 +66,7 @@ static void OnRenamed(renamed_event_args e) // object source,
 }
 
 
-
-
-int main(int /*argc*/, char** /*argv*/)
+void simple_test()
 {
 	//std::string path1 = "C:\\temp1";
 	std::string path1 = "C:\\temp1\\";
@@ -82,73 +80,48 @@ int main(int /*argc*/, char** /*argv*/)
 	//std::string path2 = "/home/fernando/temp2";
 
 
+	boost::shared_ptr<file_system_monitor> monitor;
+
+	try
 	{
-		boost::shared_ptr<file_system_monitor> monitor;
+		monitor.reset(new file_system_monitor);
 
-		try
-		{
-			monitor.reset(new file_system_monitor);
+		monitor->add_directory(path1);
+		monitor->add_directory(path2);
 
-			monitor->add_directory(path1);
-			monitor->add_directory(path2);
+		//TODO: mapear los notify filters de Windows con otras plataformas...
 
-			//TODO: mapear los notify filters de Windows con otras plataformas...
+		monitor->set_notify_filters( notify_filters::last_access | notify_filters::last_write | notify_filters::file_name | notify_filters::directory_name );
+		monitor->set_filter("*.txt"); //TODO: implementar este filtro
+		monitor->set_changed_event_handler(OnChanged);
+		monitor->set_created_event_handler(OnCreated);
+		monitor->set_deleted_event_handler(OnDeleted);
+		monitor->set_renamed_event_handler(OnRenamed);
 
-			monitor->set_notify_filters( notify_filters::last_access | notify_filters::last_write | notify_filters::file_name | notify_filters::directory_name );
-			monitor->set_filter("*.txt"); //TODO: implementar este filtro
-			monitor->set_changed_event_handler(OnChanged);
-			monitor->set_created_event_handler(OnCreated);
-			monitor->set_deleted_event_handler(OnDeleted);
-			monitor->set_renamed_event_handler(OnRenamed);
-
-			monitor->start();
-			//monitor->start(); //Probar de que no se pueda ejecutar dos veces.
-
-
-			//monitor->stop(); //TODO: implementar
-
-
-		}
-		catch (std::runtime_error& e)
-		{
-			std::cout << "EXCEPTION: " << e.what() << std::endl;
-		}
-		catch (std::invalid_argument& e)
-		{
-			std::cout << "EXCEPTION: " << e.what() << std::endl;
-		}
-
-		std::cout << "Press Enter to Stop Monitoring..." << std::endl;
-		std::cin.get();
-
-		//delete monitor;
+		monitor->start();
+		//monitor->start(); //Probar de que no se pueda ejecutar dos veces.
+		//monitor->stop(); //TODO: implementar
+	}
+	catch (std::runtime_error& e)
+	{
+		std::cout << "EXCEPTION: " << e.what() << std::endl;
+	}
+	catch (std::invalid_argument& e)
+	{
+		std::cout << "EXCEPTION: " << e.what() << std::endl;
 	}
 
+	std::cout << "Press Enter to Stop Monitoring..." << std::endl;
+	std::cin.get();
+
+	//delete monitor;
+
+}
 
 
-
-
-
-
-	//_WIN32_WINNT
-	//std::cout << "BOOST_WINDOWS: '" << BOOST_WINDOWS << "'" << std::endl;
-	//std::cout << "_WIN32: '" << _WIN32 << "'" << std::endl;
-
-	//std::cout << "_WIN32_WINNT: '" << _WIN32_WINNT << "'" << std::endl;
-	//std::cout << "WINVER: '" << WINVER << "'" << std::endl;
-
-//#if defined(WINVER)
-//	std::cout << "_WIN32_WINNT: '" << _WIN32_WINNT << "'" << std::endl;
-//	std::cout << "WINVER: '" << WINVER << "'" << std::endl;
-//#endif
-
-
-	//std::cout << "__WIN32__: '" << __WIN32__ << "'" << std::endl;
-	//std::cout << "WIN32: '" << WIN32 << "'" << std::endl;
-
-	//#elif defined() || defined() || defined(WIN32)
-
-
+int main(int /*argc*/, char** /*argv*/)
+{
+	simple_test();
 
 	std::cout << "Press Enter to Exit" << std::endl;
 
@@ -161,6 +134,24 @@ int main(int /*argc*/, char** /*argv*/)
 }
 
 
+
+//_WIN32_WINNT
+//std::cout << "BOOST_WINDOWS: '" << BOOST_WINDOWS << "'" << std::endl;
+//std::cout << "_WIN32: '" << _WIN32 << "'" << std::endl;
+
+//std::cout << "_WIN32_WINNT: '" << _WIN32_WINNT << "'" << std::endl;
+//std::cout << "WINVER: '" << WINVER << "'" << std::endl;
+
+//#if defined(WINVER)
+//	std::cout << "_WIN32_WINNT: '" << _WIN32_WINNT << "'" << std::endl;
+//	std::cout << "WINVER: '" << WINVER << "'" << std::endl;
+//#endif
+
+
+//std::cout << "__WIN32__: '" << __WIN32__ << "'" << std::endl;
+//std::cout << "WIN32: '" << WIN32 << "'" << std::endl;
+
+//#elif defined() || defined() || defined(WIN32)
 
 
 

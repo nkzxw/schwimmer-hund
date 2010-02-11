@@ -113,6 +113,9 @@ public: //private:  //TODO:
 			//TODO: manejo de errores
 			BOOL tempXBool = ::GetQueuedCompletionStatus( this->completionPortHandle_, &numBytes, (LPDWORD) &directoryInfo, &overlapped, INFINITE );
 
+<<<<<<< .mine
+			if (tempXBool == 0)
+=======
 			if (tempXBool == 0)
 			{
 				std::cout << "tempBool: " << tempXBool << std::endl;
@@ -127,22 +130,43 @@ public: //private:  //TODO:
 			}
 
 			if ( directoryInfo )
+>>>>>>> .r45
 			{
+<<<<<<< .mine
+				std::cout << "tempBool: " << tempXBool << std::endl;
+			}
+			//std::cout << "tempBool: " << tempXBool << std::endl;
+=======
 				if ( numBytes > 0 )
 				{
 				notifyInformation = (PFILE_NOTIFY_INFORMATION)directoryInfo->buffer;
 				//notifyInformation = static_cast<PFILE_NOTIFY_INFORMATION>(directoryInfo->buffer);
+>>>>>>> .r45
 
-				do
+			//std::cout << "Readed: " << numBytes << " bytes." << std::endl;
+
+			if ( numBytes == 0)
+			{
+				std::cout << "Readed: 0 bytes." << std::endl;
+			}
+
+			if ( directoryInfo  )
+			{
+				if ( numBytes > 0 )
 				{
-					cbOffset = notifyInformation->NextEntryOffset;
+					notifyInformation = (PFILE_NOTIFY_INFORMATION)directoryInfo->buffer;
+					//notifyInformation = static_cast<PFILE_NOTIFY_INFORMATION>(directoryInfo->buffer);
 
-					//if( fni->Action == FILE_ACTION_MODIFIED )
-					//      CheckChangedFile( di, fni );
-
-					//
-					switch ( notifyInformation->Action )
+					do
 					{
+						cbOffset = notifyInformation->NextEntryOffset;
+
+						//if( fni->Action == FILE_ACTION_MODIFIED )
+						//      CheckChangedFile( di, fni );
+
+						//
+						switch ( notifyInformation->Action )
+						{
 						case FILE_ACTION_ADDED:
 							if ( this->created_callback_ )
 							{
@@ -239,11 +263,11 @@ public: //private:  //TODO:
 						default: 
 							//std::cout << "unknown event: ";
 							break;
-					}
+						}
 
-					notifyInformation = (PFILE_NOTIFY_INFORMATION)((LPBYTE) notifyInformation + cbOffset);
+						notifyInformation = (PFILE_NOTIFY_INFORMATION)((LPBYTE) notifyInformation + cbOffset);
 
-				} while( cbOffset );
+					} while( cbOffset );
 
 				}
 
