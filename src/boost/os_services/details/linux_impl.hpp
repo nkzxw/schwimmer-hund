@@ -154,7 +154,7 @@ public: //private:  //TODO:
 					printf("inside the 'while'\n");
 
 					struct inotify_event *event = ( struct inotify_event * ) &buffer[ i ]; //TODO:
-					inotify_event = reinterpret_cast<struct inotify_event*> (buffer_ + bytes_processed);
+					//event = reinterpret_cast<struct inotify_event*> (buffer_ + bytes_processed);
 
 
 					printf("event: %d\n", (void*)event);
@@ -169,10 +169,10 @@ public: //private:  //TODO:
 
 						std::string file_name( event->name );
 
-						watch_descriptors_type::right_iterator it = watch_descriptors_.right.find( event->wd );
-						if ( it != watch_descriptors_.right.end() )
+						watch_descriptors_type::left_iterator it = watch_descriptors_.left.find( "" ); // event->wd );
+						if ( it != watch_descriptors_.left.end() )
 						{
-							directory_name = it->second;
+							//directory_name = it->second;
 						}
 						else
 						{
