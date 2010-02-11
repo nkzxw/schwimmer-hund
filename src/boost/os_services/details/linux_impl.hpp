@@ -143,7 +143,6 @@ public: //private:  //TODO:
 					perror( "read" );
 				}
 
-
 				boost::optional<std::string> old_name;
 				std::string directory_name;
 
@@ -156,12 +155,9 @@ public: //private:  //TODO:
 					struct inotify_event *event = ( struct inotify_event * ) &buffer[ i ]; //TODO:
 					//event = reinterpret_cast<struct inotify_event*> (buffer_ + bytes_processed);
 
-
 					printf("event: %d\n", (void*)event);
 					printf("event->len: %d\n", event->len);
 
-//					#define IN_MOVED_FROM	 0x00000040	/* File was moved from X.  */
-//					#define IN_MOVED_TO      0x00000080	/* File was moved to Y.  */
 
 					//TODO: cambiar todo esto, adaptar a como lo hace windows_impl
 					if ( event->len ) //TODO: que espera hacer acá, mala práctica
