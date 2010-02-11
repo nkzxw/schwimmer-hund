@@ -177,10 +177,8 @@ public: //private:  //TODO:
 						//if( fni->Action == FILE_ACTION_MODIFIED )
 						//      CheckChangedFile( di, fni ); //TODO: chequear en FWATCH
 
-
 						//TODO: no me gusta, ver de cambiarlo
 						std::string file_name(notify_information->FileName, notify_information->FileName + (notify_information->FileNameLength/sizeof(WCHAR)) ); 
-
 
 						if (notify_information->Action == FILE_ACTION_RENAMED_OLD_NAME)
 						{
