@@ -101,8 +101,9 @@ public:
 
 		BOOST_FOREACH(watch_descriptors_type::left_reference p, watch_descriptors_.left)
 		{
+
 			//TODO: ver si estos atributos como "IN_MODIFY" deben ir fijos o seteados desde afuera.
-			uint32_t watch_descriptor = ::inotify_add_watch(fd_, p.first.c_str(), IN_CREATE | IN_DELETE | IN_MODIFY | IN_MOVED_FROM | IN_MOVED_TO);
+			uint32_t watch_descriptor = ::inotify_add_watch(file_descriptor_, p.first.c_str(), IN_CREATE | IN_DELETE | IN_MODIFY | IN_MOVED_FROM | IN_MOVED_TO);
 			if (watch_descriptor == -1)
 			{
 				std::ostringstream oss;
@@ -126,12 +127,11 @@ public: //private:  //TODO:
 		//TODO: while
 		//TODO: boost asio buffer
 
-		while (! closing_ )
+		while ( !closing_ )
 		{
 	//		printf("reading in file descriptor\n");
 			int length = ::read( file_descriptor_, buffer, BUF_LEN );
 	//		printf("end reading on file descriptor\n");
-			int length = 0;
 
 			if (! closing_)
 			{
@@ -145,6 +145,8 @@ public: //private:  //TODO:
 
 
 				boost::optional<std::string> old_name;
+				std::string directory_name;
+
 
 				printf("i: %d\n", i);
 				while ( i < length )
@@ -166,10 +168,9 @@ public: //private:  //TODO:
 					{
 
 						std::string file_name( event->name );
-						std::string directory_name;
 
-						watch_descriptors_type::left_iterator it = watch_descriptors_.right.find( event->wd );
-						if ( it != watch_descriptors_.left.end() )
+						watch_descriptors_type::right_iterator it = watch_descriptors_.right.find( event->wd );
+						if ( it != watch_descriptors_.right.end() )
 						{
 							directory_name = it->second;
 						}
@@ -283,7 +284,7 @@ public: //private:  //TODO:
 
 				if (old_name)
 				{
-					notify_rename_event_args(change_types::renamed, directory_info->directory_name, "", *old_name);
+					notify_rename_event_args(change_types::renamed, directory_name, "", *old_name);
 					old_name.reset();
 				}
 
