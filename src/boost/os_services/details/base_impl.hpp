@@ -4,6 +4,7 @@
 #include <string>
 
 #include <boost/integer.hpp> 
+#include <boost/noncopyable.hpp>
 
 #include <boost/os_services/event_args.hpp>
 #include <boost/os_services/event_handlers.hpp>
@@ -15,7 +16,7 @@ namespace detail {
 
 //TODO: boost non copyable
 template <typename Type>
-class base_impl
+class base_impl //TODO: : private boost::noncopyable
 {
 public:
 
@@ -35,6 +36,16 @@ public:
 		}
 
 		static_cast<Type*>(this)->add_directory_impl(dir_name);
+
+
+//TODO: este es el chequeo que hace dir_monitor
+		//boost::filesystem::path directory(dir_name);
+		//if (!boost::filesystem::is_directory(directory))
+		//{
+		//	throw (std::invalid_argument(dir_name + " is not a valid directory entry"));
+		//}
+
+
 	}
 
 public: // private: //TODO:

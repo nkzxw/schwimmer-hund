@@ -30,17 +30,26 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
+#include <list>
+
+
+#include <boost/lexical_cast.hpp>
 
 #include <boost/os_services/file_system_monitor.hpp>
 
 using namespace boost::os_services;
 
 
+typedef std::list<std::string> VecType;
+//typedef std::vector<std::string> VecType;
+VecType tempVec;
+
 
 
 static void OnChanged(filesystem_event_args e) // object source,
 {
-	std::cout << "Changed: " << e.name << std::endl;
+	//std::cout << "Changed: " << e.name << std::endl;
 
 	// Specify what is done when a file is changed, created, or deleted.
 	//Console.WriteLine("File: " + e.FullPath + " " + e.ChangeType);
@@ -48,7 +57,10 @@ static void OnChanged(filesystem_event_args e) // object source,
 
 static void OnCreated(filesystem_event_args e) // object source,
 {
-	std::cout << "Created: " << e.name << std::endl;
+
+	tempVec.push_back(e.name);
+	
+	//std::cout << "Created: " << e.name << std::endl;
 
 	// Specify what is done when a file is changed, created, or deleted.
 	//Console.WriteLine("File: " + e.FullPath + " " + e.ChangeType);
@@ -56,7 +68,7 @@ static void OnCreated(filesystem_event_args e) // object source,
 
 static void OnDeleted(filesystem_event_args e) // object source,
 {
-	std::cout << "Deleted: " << e.name << std::endl;
+	//std::cout << "Deleted: " << e.name << std::endl;
 
 	// Specify what is done when a file is changed, created, or deleted.
 	//Console.WriteLine("File: " + e.FullPath + " " + e.ChangeType);
@@ -65,7 +77,7 @@ static void OnDeleted(filesystem_event_args e) // object source,
 
 static void OnRenamed(renamed_event_args e) // object source,
 {
-	std::cout << "Renamed: " << e.name << std::endl;
+	//std::cout << "Renamed: " << e.name << std::endl;
 	// Specify what is done when a file is renamed.
 	//Console.WriteLine("File: {0} renamed to {1}", e.OldFullPath, e.FullPath);
 }
@@ -79,6 +91,8 @@ int main(int /*argc*/, char** /*argv*/)
 	//std::string path = "D:\\temp1";
 	//std::string path = "J:\\temp1";
 	//std::string path = "/home/fernando/temp1";
+
+	//tempVec.reserve(30000);
 
 	{
 
@@ -94,10 +108,10 @@ int main(int /*argc*/, char** /*argv*/)
 
 			monitor->set_notify_filters( notify_filters::last_access | notify_filters::last_write | notify_filters::file_name | notify_filters::directory_name );
 			monitor->set_filter("*.txt"); //TODO: implementar este filtro
-			monitor->set_changed_event_handler(OnChanged);
+			//monitor->set_changed_event_handler(OnChanged);
 			monitor->set_created_event_handler(OnCreated);
-			monitor->set_deleted_event_handler(OnDeleted);
-			monitor->set_renamed_event_handler(OnRenamed);
+			//monitor->set_deleted_event_handler(OnDeleted);
+			//monitor->set_renamed_event_handler(OnRenamed);
 
 			//monitor->setEnableRaisingEvents(true); //TODO: cambiar, no est� bueno este dise�o. Crear un m�todo Start.
 			monitor->start();
@@ -124,8 +138,26 @@ int main(int /*argc*/, char** /*argv*/)
 	}
 
 
+	std::cout << "Files: " << tempVec.size() << std::endl;
 
+	int previous_file_index = -1;
+	for (VecType::const_iterator it = tempVec.begin(); it!=tempVec.end(); ++it)
+	{
+		//int tempPos = (*it).find('.')-1;
+		std::string temp = (*it).substr( 1, (*it).find('.')-1 );
+		int index = boost::lexical_cast<int>(temp);
 
+		if ( previous_file_index == index-1 )
+		{
+			std::cout << *it << std::endl;
+		}
+		else
+		{
+			std::cout << "------------------------" << std::endl;
+		}
+
+		previous_file_index  = index;
+	}
 
 
 

@@ -21,7 +21,8 @@
 #  error Platform not supported
 #elif defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
 //#  error Platform not supported
-#include <boost/os_services/details/windows_impl.hpp>
+//#include <boost/os_services/details/windows_impl.hpp>  //TODO: cambiado solo para compilar...
+#include <boost/os_services/details/linux_impl.hpp>
 #elif defined(macintosh) || defined(__APPLE__) || defined(__APPLE_CC__)
 #include <boost/os_services/details/macosx_impl.hpp>
 #else
@@ -42,7 +43,8 @@ namespace detail {
 #elif defined(__CYGWIN__)
 	typedef unsupported_impl FSMImplementationType;
 #elif defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
-	typedef windows_impl FSMImplementationType;
+	//typedef windows_impl FSMImplementationType; //TODO: cambiado solo para compilar
+	typedef linux_impl FSMImplementationType;
 #elif defined(macintosh) || defined(__APPLE__) || defined(__APPLE_CC__)
 	typedef macosx_impl FSMImplementationType;
 #else

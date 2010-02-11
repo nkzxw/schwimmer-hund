@@ -119,6 +119,7 @@ public:
 		//TODO: is_started_ debe ser protegida con MUTEX.
 		//if (!is_started_)
 		//{
+			//TODO: BOOST_FOREACH
 			for (VectorType::const_iterator it = directories_.begin(); it!=directories_.end(); ++it)
 			{
 				BOOL ret_value = ::ReadDirectoryChangesW ( (*it)->directory_handle, (*it)->buffer, MAX_BUFFER, this->include_subdirectories_ ? 1 : 0, this->notify_filters_, &(*it)->buffer_length, &(*it)->overlapped, NULL);
