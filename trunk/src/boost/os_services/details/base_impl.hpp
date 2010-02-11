@@ -3,8 +3,7 @@
 
 #include <string>
 
-#include <boost/integer.hpp> 
-#include <boost/noncopyable.hpp>
+#include <boost/filesystem/path.hpp>
 
 #include <boost/os_services/event_args.hpp>
 #include <boost/os_services/event_handlers.hpp>
@@ -14,39 +13,41 @@ namespace os_services {
 namespace detail {
 
 
-//TODO: boost non copyable
 template <typename Type>
-class base_impl //TODO: : private boost::noncopyable
+class base_impl // : private boost::noncopyable -> No tiene sentido ya que es "detail" 
 {
 public:
 
 	// Event Handlers
-	filesystem_event_handler changed_callback_;
-	filesystem_event_handler created_callback_;
-	filesystem_event_handler deleted_callback_;
-	renamed_event_handler renamed_callback_;
+	filesystem_event_handler changed_handler_;
+	filesystem_event_handler created_handler_;
+	filesystem_event_handler deleted_handler_;
+	renamed_event_handler renamed_handler_;
 
 	void add_directory (const std::string& dir_name) //throw (std::invalid_argument, std::runtime_error)
 	{ 
-		if ( dir_name.size() == 0 || !utils::directory_exists(dir_name) )
+		if ( !utils::directory_exists(dir_name) )
 		{
 			//throw std::runtime_error("InvalidDirName");
 			////throw new ArgumentException(SR.GetString("InvalidDirName", new object[] { path }));
-			throw (std::invalid_argument(dir_name + " is not a valid directory entry"));
+			throw (std::invalid_argument(dir_name + " is not a valid directory."));
 		}
 
 		static_cast<Type*>(this)->add_directory_impl(dir_name);
-
-
-//TODO: este es el chequeo que hace dir_monitor
-		//boost::filesystem::path directory(dir_name);
-		//if (!boost::filesystem::is_directory(directory))
-		//{
-		//	throw (std::invalid_argument(dir_name + " is not a valid directory entry"));
-		//}
-
-
 	}
+
+	void add_directory (boost::filesystem::path directory) //throw (std::invalid_argument, std::runtime_error)
+	{ 
+		if ( !utils::directory_exists(directory) )
+		{
+			throw (std::invalid_argument(directory.native_file_string() + " is not a valid directory."));
+		}
+			
+		static_cast<Type*>(this)->add_directory_impl( directory.native_file_string() );
+	}
+
+	//void start() {}
+	
 
 public: // private: //TODO:
 	int notify_filters_;			//TODO: debería ser un enum
@@ -64,7 +65,6 @@ protected:
 		}
 	}
 };
-
 
 } // namespace detail
 } // namespace os_services

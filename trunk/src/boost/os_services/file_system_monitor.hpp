@@ -16,6 +16,7 @@
 #define BOOST_OS_SERVICES_FILE_SYSTEM_MONITOR_HPP
 
 #include <boost/bimap.hpp>
+#include <boost/filesystem/path.hpp>
 #include <boost/noncopyable.hpp>
 
 #include <boost/os_services/details/impl_selector.hpp>
@@ -47,6 +48,11 @@ public:
 	void add_directory (const std::string& dir_name) //throw (std::invalid_argument)
 	{ 
 		implementation_->add_directory( dir_name );
+	}
+
+	void add_directory (boost::filesystem::path directory) //throw (std::invalid_argument, std::runtime_error)
+	{ 
+		implementation_->add_directory( directory );
 	}
 
 	int get_notify_filters() const
@@ -90,22 +96,22 @@ public:
 	// Event Handlers Setters
 	void set_changed_event_handler(filesystem_event_handler handler)
 	{
-		this->implementation_->changed_callback_ = handler;
+		this->implementation_->changed_handler_ = handler;
 	}
 
 	void set_created_event_handler(filesystem_event_handler handler)
 	{
-		this->implementation_->created_callback_ = handler;
+		this->implementation_->created_handler_ = handler;
 	}
 
 	void set_deleted_event_handler(filesystem_event_handler handler)
 	{
-		this->implementation_->deleted_callback_ = handler;
+		this->implementation_->deleted_handler_ = handler;
 	}
 
 	void set_renamed_event_handler(renamed_event_handler handler)
 	{
-		this->implementation_->renamed_callback_ = handler;
+		this->implementation_->renamed_handler_ = handler;
 	}
 
 

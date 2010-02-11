@@ -5,26 +5,27 @@
 
 #include <string>
 
+// C-Std Headers
+#include <cerrno>		//<errno.h>
 #include <cstdio>		//<stdio.h>
 #include <cstdlib>		//<stdlib.h>
-#include <cerrno>		//<errno.h>
+#include <cstring>		//<string.h>		// for strerror
 
 //TODO: comentado solo para compilar bajo Windows
 //#include <sys/types.h>
 //#include <sys/inotify.h>
 
 #include <boost/bimap.hpp>
+#include <boost/bimap/list_of.hpp>
 #include <boost/bind.hpp>
 #include <boost/foreach.hpp>
+#include <boost/integer.hpp>
 #include <boost/smart_ptr.hpp>
 #include <boost/thread.hpp>
-
-
 
 #include <boost/os_services/details/base_impl.hpp>
 #include <boost/os_services/notify_filters.hpp>
 
-//
 //#define EVENT_SIZE  ( sizeof (struct inotify_event) )
 //#define BUF_LEN     ( 1024 * ( EVENT_SIZE + 16 ) )
 
@@ -53,86 +54,64 @@ public:
 			thread_->join();
 		}
 
-//		if ( watch_descriptor_ != 0 )
-//		{
-//////			printf("removing watch...\n");
-////			int ret_value = inotify_rm_watch( file_descriptor_, watch_descriptor_ );
-//////			printf("retRMWatch: %d\n", retRMWatch);
-//		}
-
-	    BOOST_FOREACH(watch_descriptors_type::left_reference p, watch_descriptors_.left)
-	    {
-	        //inotify_rm_watch(fd_, p.first);
-	    }
-
 		if ( file_descriptor_ != 0 )
 		{
-//			// TODO: parece que close(0) cierra el standard input (CIN)
-////			printf("closing file descriptor...\n");
-//			int ret_value =  close( file_descriptor_ );
-////			printf("retClose: %d\n", retClose);
+
+			BOOST_FOREACH(watch_descriptors_type::left_reference p, watch_descriptors_.left)
+			{
+				if ( p.second != 0 )
+				{
+					//TODO: manejo de errores
+					////printf("removing watch...\n");
+					//int ret_value = ::inotify_rm_watch( file_descriptor_, p.second );
+					////printf("retRMWatch: %d\n", retRMWatch);
+				}
+			}
+
+			// TODO: parece que close(0) cierra el standard input (CIN)
+			////printf("closing file descriptor...\n");
+			//int ret_value =  ::close( file_descriptor_ );
+			////printf("retClose: %d\n", retClose);
 		}
-
-
-
-
-
-	
 	}
 
-	void add_directory_impl (const std::string& dir_name) //throw (std::invalid_argument, std::runtime_error)
+	void add_directory_impl ( const std::string& dir_name ) //throw (std::invalid_argument, std::runtime_error)
 	{
-		uint32_t watch_descriptor = 0;
-		//uint32_t watch_descriptor = inotify_add_watch(fd_, dir_name.c_str(), IN_CREATE | IN_DELETE | IN_MOVED_FROM | IN_MOVED_TO);
-		//if (watch_descriptor == -1)
-		//{
-		//	std::ostringstream oss;
-		//	oss << "Failed to monitor directory - Directory: " << dir_name << " - Reason:" << strerror(errno);
-		//	throw (std::invalid_argument(oss.str()));
-		//}
-		watch_descriptors_.insert(watch_descriptors_type::relation(watch_descriptor, dir_name));
+		//watch_descriptors_.insert(watch_descriptors_type::relation(watch_descriptor, dir_name));
+		//watch_descriptors_.insert(watch_descriptors_type::value_type(dir_name, watch_descriptor));
+		watch_descriptors_.insert(watch_descriptors_type::relation(dir_name, 0));
 	}
 
 	//void remove_directory_impl(const std::string& dir_name) // throw (std::invalid_argument);
 
-
-
 	void start() //(const std::string& path)
 	{
-		//file_descriptor_ = inotify_init();
-		if ( file_descriptor_ < 0 ) 
-		{
-			perror( "inotify_init" );
-		}
-
 		if (!is_initialized_)
 		{
 			//file_descriptor_ = ::inotify_init();
 			if (file_descriptor_ == -1)
 			{
 				std::ostringstream oss;
-				oss << "Failed to initialize monitor - Reason: " << strerror(errno);
+				oss << "Failed to initialize monitor - Reason: " << std::strerror(errno);
 				throw (std::runtime_error(oss.str()));
 			}
 			is_initialized_ = true;
-
-			std::cout << "CREATION fileDescriptor_: " << file_descriptor_ << std::endl;
+			//std::cout << "CREATION fileDescriptor_: " << file_descriptor_ << std::endl;
 		}
-
 
 		BOOST_FOREACH(watch_descriptors_type::left_reference p, watch_descriptors_.left)
 		{
-			//uint32_t watch_descriptor = inotify_add_watch(fd_, dir_name.c_str(), IN_CREATE | IN_DELETE | IN_MOVED_FROM | IN_MOVED_TO);
-			//if (watch_descriptor == -1)
-			//{
-			//	std::ostringstream oss;
-			//	oss << "Failed to monitor directory - Directory: " << dir_name << " - Reason:" << strerror(errno);
-			//	throw (std::invalid_argument(oss.str()));
-			//}
+			uint32_t watch_descriptor = 0;
+			//uint32_t watch_descriptor = ::inotify_add_watch(fd_, p.first.c_str(), IN_CREATE | IN_DELETE | IN_MOVED_FROM | IN_MOVED_TO);
+			if (watch_descriptor == -1)
+			{
+				std::ostringstream oss;
+				oss << "Failed to monitor directory - Directory: " << p.first << " - Reason: " << std::strerror(errno);
+				throw (std::invalid_argument(oss.str()));
+			}
+
+			p.second = watch_descriptor;
 		}
-
-
-
 
 		thread_.reset( new boost::thread( boost::bind(&linux_impl::handle_directory_changes, this) ) );
 	}
@@ -144,7 +123,6 @@ public: //private:  //TODO:
 		int i = 0;
 		//char buffer[BUF_LEN];
 
-
 		//TODO: while
 		//TODO: boost asio buffer
 
@@ -153,7 +131,7 @@ public: //private:  //TODO:
 	////		printf("reading in file descriptor\n");
 	//		int length = read( file_descriptor_, buffer, BUF_LEN );
 	////		printf("end reading on file descriptor\n");
-			int length;
+			int length = 0;
 
 			if (! closing_)
 			{
@@ -273,7 +251,9 @@ public: //private:  //TODO:
 	bool closing_;
 
 
-	typedef boost::bimap<uint32_t, std::string> watch_descriptors_type;
+	//typedef boost::bimap<boost::uint32_t, std::string> watch_descriptors_type;
+	//typedef boost::bimap<std::string, boost::uint32_t> watch_descriptors_type;
+	typedef boost::bimap< std::string, boost::bimaps::list_of<boost::uint32_t> > watch_descriptors_type;
 	watch_descriptors_type watch_descriptors_;
 
 };
