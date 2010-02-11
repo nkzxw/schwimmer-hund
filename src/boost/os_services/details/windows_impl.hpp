@@ -13,8 +13,10 @@
 #include <boost/os_services/change_types.hpp>
 #include <boost/os_services/details/base_impl.hpp>
 #include <boost/os_services/notify_filters.hpp>
+#include <boost/os_services/utils.hpp> //TODO: deberia estar detro del directorio details
 #include <boost/os_services/win32api_wrapper.hpp>
 #include <boost/os_services/win32_legacy.hpp>		// directoryInfo
+
 
 //TODO: ver de usar ASIO... hay varias cosas que se denominan IOCP
 
@@ -52,7 +54,7 @@ public:
 		: completion_port_handle_(0) //, is_started_(false)
 	{}
 
-	virtual ~windows_impl()
+	~windows_impl() //virtual -> deberíamos impedir que esta clase sea heredada.
 	{
 		if ( completion_port_handle_ != 0 )
 		{
@@ -273,17 +275,14 @@ public: //private:  //TODO:
 	//	OnError(errevent);
 	//}
 
-
 	inline void notify_rename_event_args(int action, const std::string& directory, const std::string& name, const std::string& old_name)
 	{
 		//filter if neither new name or old name are a match a specified pattern 
-
 		//TODO:
 		//if (!MatchPattern(name) && !MatchPattern(oldName))
 		//{
 		//	return;
 		//}
-
 		do_callback(renamed_handler_, renamed_event_args(action, directory, name, old_name));
 	}
 
@@ -299,7 +298,6 @@ protected:
 
 	HANDLE completion_port_handle_; //HANDLE -> void*
 	HeapThread thread_;
-
 	//bool is_started_;
 };
 
