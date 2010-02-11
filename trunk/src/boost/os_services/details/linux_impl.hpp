@@ -11,9 +11,8 @@
 #include <cstdlib>		//<stdlib.h>
 #include <cstring>		//<string.h>		// for strerror
 
-//TODO: comentado solo para compilar bajo Windows
-//#include <sys/types.h>
-//#include <sys/inotify.h>
+#include <sys/types.h>
+#include <sys/inotify.h>
 
 #include <boost/bimap.hpp>
 #include <boost/bimap/list_of.hpp>
@@ -26,8 +25,8 @@
 #include <boost/os_services/details/base_impl.hpp>
 #include <boost/os_services/notify_filters.hpp>
 
-//#define EVENT_SIZE  ( sizeof (struct inotify_event) )
-//#define BUF_LEN     ( 1024 * ( EVENT_SIZE + 16 ) )
+#define EVENT_SIZE  ( sizeof (struct inotify_event) )
+#define BUF_LEN     ( 1024 * ( EVENT_SIZE + 16 ) )
 
 namespace boost {
 namespace os_services {
@@ -63,7 +62,7 @@ public:
 				{
 					//TODO: manejo de errores
 					////printf("removing watch...\n");
-					//int ret_value = ::inotify_rm_watch( file_descriptor_, p.second );
+					int ret_value = ::inotify_rm_watch( file_descriptor_, p.second );
 					////printf("retRMWatch: %d\n", retRMWatch);
 				}
 			}
@@ -88,7 +87,7 @@ public:
 	{
 		if (!is_initialized_)
 		{
-			//file_descriptor_ = ::inotify_init();
+			file_descriptor_ = ::inotify_init();
 			if (file_descriptor_ == -1)
 			{
 				std::ostringstream oss;
@@ -101,8 +100,7 @@ public:
 
 		BOOST_FOREACH(watch_descriptors_type::left_reference p, watch_descriptors_.left)
 		{
-			uint32_t watch_descriptor = 0;
-			//uint32_t watch_descriptor = ::inotify_add_watch(fd_, p.first.c_str(), IN_CREATE | IN_DELETE | IN_MOVED_FROM | IN_MOVED_TO);
+			uint32_t watch_descriptor = ::inotify_add_watch(fd_, p.first.c_str(), IN_CREATE | IN_DELETE | IN_MOVED_FROM | IN_MOVED_TO);
 			if (watch_descriptor == -1)
 			{
 				std::ostringstream oss;
@@ -118,127 +116,166 @@ public:
 
 public: //private:  //TODO:
 
-	void handle_directory_changes() //TODO: rename
+	void handle_directory_changes()
 	{
 		int i = 0;
-		//char buffer[BUF_LEN];
+		char buffer[BUF_LEN];
 
 		//TODO: while
 		//TODO: boost asio buffer
 
 		while (! closing_ )
 		{
-	////		printf("reading in file descriptor\n");
-	//		int length = read( file_descriptor_, buffer, BUF_LEN );
-	////		printf("end reading on file descriptor\n");
+	//		printf("reading in file descriptor\n");
+			int length = ::read( file_descriptor_, buffer, BUF_LEN );
+	//		printf("end reading on file descriptor\n");
 			int length = 0;
 
 			if (! closing_)
 			{
-
-	//			printf("length: %d\n", length);
+				printf("length: %d\n", length);
 
 				if ( length < 0 )
 				{
+					//TODO:
 					perror( "read" );
 				}
 
 
-				//int j;
-				//for (j = 0; j<length; j++)
-				//{
-				//	printf("buffer[j]: %d\n", buffer[j]);
-				//}
+				boost::optional<std::string> old_name;
 
-	//			printf("i: %d\n", i);
+				printf("i: %d\n", i);
 				while ( i < length )
 				{
-	//				printf("inside the 'while'\n");
+					printf("inside the 'while'\n");
 
-					//struct inotify_event *event = ( struct inotify_event * ) &buffer[ i ]; //TODO:
-					//inotify_event = reinterpret_cast<struct inotify_event*> (buffer_ + bytes_processed);
+					struct inotify_event *event = ( struct inotify_event * ) &buffer[ i ]; //TODO:
+					inotify_event = reinterpret_cast<struct inotify_event*> (buffer_ + bytes_processed);
 
 
-	//				printf("event: %d\n", (void*)event);
-	//				printf("event->len: %d\n", event->len);
+					printf("event: %d\n", (void*)event);
+					printf("event->len: %d\n", event->len);
+
+//					#define IN_MOVED_FROM	 0x00000040	/* File was moved from X.  */
+//					#define IN_MOVED_TO      0x00000080	/* File was moved to Y.  */
 
 					//TODO: cambiar todo esto, adaptar a como lo hace windows_impl
-	//				if ( event->len )
-	//				{
-	//					if ( event->mask & IN_CREATE )
-	//					{
-	//						if ( this->created_callback_ )
-	//						{
-	////							std::cout << "ESTOOOOYYY ACAA" << std::endl;
-	//							//std::string fileName( event->name );
-	//							filesystem_event_args temp;
-	//							temp.Name = event->name; //fileName;
+					if ( event->len ) //TODO: que espera hacer acá, mala práctica
+					{
 
-	//							//threadObject->This->Created(temp);
-	//							this->created_callback_(temp);
-	//						}
-
-	//						//if ( event->mask & IN_ISDIR )
-	//						//{
-	//						//	printf( "The directory '%s' was created.\n", event->name );
-	//						//}
-	//						//else
-	//						//{
-	//						//	printf( "The file '%s' was created.\n", event->name );
-	//						//}
-	//					}
-	//					else if ( event->mask & IN_DELETE )
-	//					{
-	//						if (this->deleted_callback_)
-	//						{
-	//							//std::string fileName( event->name );
-	//							filesystem_event_args temp;
-	//							temp.name = event->name; //fileName;
-
-	//							this->deleted_callback_(temp);
-	//						}
-
-	////						if ( event->mask & IN_ISDIR )
-	////						{
-	////							printf( "The directory '%s' was deleted.\n", event->name );
-	////						}
-	////						else
-	////						{
-	////							printf( "The file '%s' was deleted.\n", event->name );
-	////						}
-	//					}
-	//					else if ( event->mask & IN_MODIFY )
-	//					{
-
-	//						if (this->changed_callback_)
-	//						{
-	//							//std::string fileName( event->name );
-	//							filesystem_event_args temp;
-	//							temp.Name = event->name; //fileName;
-
-	//							this->changed_callback_(temp);
-	//						}
+						std::string file_name( event->name );
 
 
+						if ( event->mask & IN_MOVED_FROM )
+						{
+							old_name.reset( file_name );
+						}
+						else if ( event->mask & IN_MOVED_TO)
+						{
+							if ( old_name )
+							{
+								notify_rename_event_args(change_types::renamed, directory_info->directory_name, file_name, *old_name);
+								old_name.reset();
+							}
+							else
+							{
+								notify_rename_event_args(change_types::renamed, directory_info->directory_name, file_name, "");
+								old_name.reset();
+							}
+						}
+						else
+						{
+							if (old_name)
+							{
+								notify_rename_event_args(change_types::renamed, directory_info->directory_name, "", *old_name);
+								old_name.reset();
+							}
+
+							notify_file_system_event_args(notify_information->Action, directory_info->directory_name, file_name);
+
+						}
+
+						//event->mask & IN_CREATE
 
 
-	////						if ( event->mask & IN_ISDIR )
-	////						{
-	////							printf( "The directory '%s' was modified.\n", event->name );
-	////						}
-	////						else
-	////						{
-	////							printf( "The file '%s' was modified.\n", event->name );
-	////						}
-	//					}
+//						if ( event->mask & IN_CREATE )
+//						{
+//							if ( this->created_callback_ )
+//							{
+//	//							std::cout << "ESTOOOOYYY ACAA" << std::endl;
+//								//std::string fileName( event->name );
+//								filesystem_event_args temp;
+//								temp.Name = event->name; //fileName;
+//
+//								//threadObject->This->Created(temp);
+//								this->created_callback_(temp);
+//							}
+//
+//							//if ( event->mask & IN_ISDIR )
+//							//{
+//							//	printf( "The directory '%s' was created.\n", event->name );
+//							//}
+//							//else
+//							//{
+//							//	printf( "The file '%s' was created.\n", event->name );
+//							//}
+//						}
+//						else if ( event->mask & IN_DELETE )
+//						{
+//							if (this->deleted_callback_)
+//							{
+//								//std::string fileName( event->name );
+//								filesystem_event_args temp;
+//								temp.name = event->name; //fileName;
+//
+//								this->deleted_callback_(temp);
+//							}
+//
+//	//						if ( event->mask & IN_ISDIR )
+//	//						{
+//	//							printf( "The directory '%s' was deleted.\n", event->name );
+//	//						}
+//	//						else
+//	//						{
+//	//							printf( "The file '%s' was deleted.\n", event->name );
+//	//						}
+//						}
+//						else if ( event->mask & IN_MODIFY )
+//						{
+//							if (this->changed_callback_)
+//							{
+//								//std::string fileName( event->name );
+//								filesystem_event_args temp;
+//								temp.Name = event->name; //fileName;
+//
+//								this->changed_callback_(temp);
+//							}
+//	//						if ( event->mask & IN_ISDIR )
+//	//						{
+//	//							printf( "The directory '%s' was modified.\n", event->name );
+//	//						}
+//	//						else
+//	//						{
+//	//							printf( "The file '%s' was modified.\n", event->name );
+//	//						}
+//						}
 
-	//					//TODO: renaming
-	//				}
+						//TODO: renaming
+					}
 
-					//i += EVENT_SIZE + event->len;
-
-	//				printf("i: %d\n", i);
+					i += EVENT_SIZE + event->len;
+					printf("i: %d\n", i);
 				}
+
+
+				if (old_name)
+				{
+					notify_rename_event_args(change_types::renamed, directory_info->directory_name, "", *old_name);
+					old_name.reset();
+				}
+
+
+
 			}
 		}
 	}
@@ -247,7 +284,6 @@ public: //private:  //TODO:
 
 	bool is_initialized_;
 	int file_descriptor_; // file descriptor
-	//int watch_descriptor_;
 	bool closing_;
 
 
@@ -264,3 +300,12 @@ public: //private:  //TODO:
 } // namespace boost
 
 #endif // BOOST_OS_SERVICES_DETAIL_LINUX_IMPL_HPP
+
+
+
+
+//int j;
+//for (j = 0; j<length; j++)
+//{
+//	printf("buffer[j]: %d\n", buffer[j]);
+//}
