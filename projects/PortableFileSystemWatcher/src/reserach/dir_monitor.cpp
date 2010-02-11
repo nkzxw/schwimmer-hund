@@ -29,7 +29,7 @@
 //        if (fd_ == -1)
 //        {
 //            std::ostringstream oss;
-//            oss << "Failed to initialize monitor - Reason: " << strerror(errno);
+//            oss << "Failed to initialize monitor - Reason: " << std::strerror(errno);
 //            throw (std::runtime_error(oss.str()));
 //        }
 //        is_initialized_ = true;
@@ -44,7 +44,7 @@
 //    if (watch_descriptor == -1)
 //    {
 //        std::ostringstream oss;
-//        oss << "Failed to monitor directory - Directory: " << dir_name << " - Reason:" << strerror(errno);
+//        oss << "Failed to monitor directory - Directory: " << dir_name << " - Reason:" << std::strerror(errno);
 //        throw (std::invalid_argument(oss.str()));
 //    }
 //    watch_descriptors_.insert(watch_descriptors_type::relation(watch_descriptor, dir_name));
@@ -61,7 +61,7 @@
 //    if (retcod == -1)
 //    {
 //        std::ostringstream oss;
-//        oss << "Failed to remove directory monotaration - Directory: " << dir_name << " - Reason:" << strerror(errno);
+//        oss << "Failed to remove directory monotaration - Directory: " << dir_name << " - Reason:" << std::strerror(errno);
 //        throw (std::invalid_argument(oss.str()));
 //    }
 //}

@@ -38,8 +38,10 @@
 #include <string>
 
 //#include <boost/asio.hpp>
+#include <boost/filesystem.hpp>
 
 #include <boost/os_services/file_system_monitor.hpp>
+
 
 using namespace boost::os_services;
 
@@ -65,8 +67,50 @@ static void OnRenamed(renamed_event_args e) // object source,
 	std::cout << "File: " << e.old_full_path << " renamed to: " << e.full_path  << std::endl;
 }
 
+void test_with_boost_filesystem_path_on_windows()
+{
+	boost::filesystem::path path1 ( "C:\\temp1", boost::filesystem::native );
+	boost::filesystem::path path2 ( "C:\\temp2", boost::filesystem::native );
 
-void simple_test()
+	boost::shared_ptr<file_system_monitor> monitor;
+
+	try
+	{
+		monitor.reset(new file_system_monitor);
+
+		monitor->add_directory(path1);
+		monitor->add_directory(path2);
+
+		//TODO: mapear los notify filters de Windows con otras plataformas...
+
+		monitor->set_notify_filters( notify_filters::last_access | notify_filters::last_write | notify_filters::file_name | notify_filters::directory_name );
+		monitor->set_filter("*.txt"); //TODO: implementar este filtro
+		monitor->set_changed_event_handler(OnChanged);
+		monitor->set_created_event_handler(OnCreated);
+		monitor->set_deleted_event_handler(OnDeleted);
+		monitor->set_renamed_event_handler(OnRenamed);
+
+		monitor->start();
+		//monitor->start(); //Probar de que no se pueda ejecutar dos veces.
+		//monitor->stop(); //TODO: implementar
+	}
+	catch (std::runtime_error& e)
+	{
+		std::cout << "EXCEPTION: " << e.what() << std::endl;
+	}
+	catch (std::invalid_argument& e)
+	{
+		std::cout << "EXCEPTION: " << e.what() << std::endl;
+	}
+
+	std::cout << "Press Enter to Stop Monitoring..." << std::endl;
+	std::cin.get();
+
+	//delete monitor;
+}
+
+
+void test_basic()
 {
 	//std::string path1 = "C:\\temp1";
 	std::string path1 = "C:\\temp1\\";
@@ -118,10 +162,80 @@ void simple_test()
 
 }
 
+//#include <map>
+//#include <utility>
+//#include <boost/bimap.hpp>
+//#include <boost/bimap/list_of.hpp>
+
+
 
 int main(int /*argc*/, char** /*argv*/)
 {
-	simple_test();
+
+	//------------------------------------------------------------------------------------------------------
+
+	/*typedef std::map<std::string, int> mtype;
+	mtype m;
+
+	m.insert( std::make_pair("hola", 0) );
+	m.insert( std::make_pair("pepe", 0) );
+
+	for (mtype::iterator it = m.begin(); it != m.end(); ++it)
+	{
+		(*it).second = 15;
+	}*/
+
+	//------------------------------------------------------------------------------------------------------
+
+	////typedef boost::bimap<std::string, boost::uint32_t> bmtype;
+	//typedef boost::bimap< std::string, boost::bimaps::list_of<int> > bmtype;
+
+	//
+	//bmtype bm;
+
+	//bm.insert( bmtype::relation("hola", 0) );
+	//bm.insert( bmtype::relation("pepe", 0) );
+
+	////bm.insert( bmtype::value_type("hola", 0) );
+	////bm.insert( bmtype::value_type("pepe", 0) );
+
+	//
+	//
+	////for (bmtype::iterator it = bm.begin(); it != bm.end(); ++it)
+	//for (bmtype::left_iterator it = bm.left.begin(); it != bm.left.end(); ++it)
+	//{
+	//	(*it).second = 15;
+	//}
+
+ //   BOOST_FOREACH( bmtype::left_reference p, bm.left )
+ //   {
+ //       p.second = 15;
+ //   }
+
+
+	////BOOST_FOREACH(watch_descriptors_type::right_reference p, watch_descriptors_.right)
+	////{
+	////	uint32_t watch_descriptor = 0;
+	////	//uint32_t watch_descriptor = inotify_add_watch(fd_, p.first.c_str(), IN_CREATE | IN_DELETE | IN_MOVED_FROM | IN_MOVED_TO);
+	////	if (watch_descriptor == -1)
+	////	{
+	////		std::ostringstream oss;
+	////		oss << "Failed to monitor directory - Directory: " << p.first << " - Reason:" << std::strerror(errno);
+	////		throw (std::invalid_argument(oss.str()));
+	////	}
+
+	////	//p.first = ""; // = watch_descriptor;
+
+	////	std::cout << typeid(p.first).name() << std::endl;
+	////	std::cout << typeid(p.second).name() << std::endl;
+	////}
+
+	//------------------------------------------------------------------------------------------------------
+
+
+
+	//test_basic();
+	test_with_boost_filesystem_path_on_windows();
 
 	std::cout << "Press Enter to Exit" << std::endl;
 

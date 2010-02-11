@@ -245,17 +245,17 @@ public: //private:  //TODO:
 		{
 			case FILE_ACTION_ADDED:
 				{
-					do_callback(created_callback_, filesystem_event_args(change_types::created, directory, name));
+					do_callback(created_handler_, filesystem_event_args(change_types::created, directory, name));
 				}
 				break;
 			case FILE_ACTION_REMOVED:
 				{
-					do_callback(deleted_callback_, filesystem_event_args(change_types::deleted, directory, name));
+					do_callback(deleted_handler_, filesystem_event_args(change_types::deleted, directory, name));
 				}
 				break;
 			case FILE_ACTION_MODIFIED:
 				{
-					do_callback(changed_callback_, filesystem_event_args(change_types::changed, directory, name));
+					do_callback(changed_handler_, filesystem_event_args(change_types::changed, directory, name));
 				}
 				break;
 			default:
@@ -284,7 +284,7 @@ public: //private:  //TODO:
 		//	return;
 		//}
 
-		do_callback(renamed_callback_, renamed_event_args(action, directory, name, old_name));
+		do_callback(renamed_handler_, renamed_event_args(action, directory, name, old_name));
 	}
 
 
@@ -293,7 +293,7 @@ protected:
 	//watch_descriptors_type watch_descriptors_;
 	
 	//TODO: boost::ptr_vector
-	typedef boost::shared_ptr<DIRECTORY_INFO> DirectoryInfoPointerType;
+	typedef boost::shared_ptr<DIRECTORY_INFO> DirectoryInfoPointerType; //TODO: cambiar nombre a minusculas
 	typedef std::vector<DirectoryInfoPointerType> VectorType;
 	VectorType directories_;
 
