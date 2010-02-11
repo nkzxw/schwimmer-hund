@@ -7,6 +7,7 @@
 
 #include <boost/os_services/event_args.hpp>
 #include <boost/os_services/event_handlers.hpp>
+#include <boost/os_services/utils.hpp> //TODO: deberia estar detro del directorio details
 
 namespace boost {
 namespace os_services {
@@ -50,7 +51,7 @@ public:
 	
 
 public: // private: //TODO:
-	int notify_filters_;			//TODO: debería ser un enum
+	int notify_filters_;			//TODO: deberï¿½a ser un enum
 	std::string filter_;
 	bool include_subdirectories_;
 
