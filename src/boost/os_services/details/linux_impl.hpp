@@ -141,17 +141,17 @@ public:
 
 public: //private:  //TODO:
 
-	void print_buffer(char* buffer, unsigned long num_bytes) //, DWORD buffer_length)
-	{
-		printf("%d bytes: \n", num_bytes);
+	//void print_buffer(char* buffer, unsigned long num_bytes) //, DWORD buffer_length)
+	//{
+	//	printf("%d bytes: \n", num_bytes);
 
-		for (int i = 0; i<num_bytes; ++i)
-		{
-			printf("%u ", (unsigned int)buffer[i]);
-		}
+	//	for (int i = 0; i<num_bytes; ++i)
+	//	{
+	//		printf("%u ", (unsigned int)buffer[i]);
+	//	}
 
-		printf("\n");
-	}
+	//	printf("\n");
+	//}
 
 	void handle_directory_changes()
 	{
@@ -182,9 +182,7 @@ public: //private:  //TODO:
 				//printf("i: %d\n", i);
 				while ( i < length )
 				{
-
 					//printf("dentro de ... while ( i < length ) \n");
-
 
 					struct inotify_event *event = ( struct inotify_event * ) &buffer[ i ]; //TODO:
 					//event = reinterpret_cast<struct inotify_event*> (buffer_ + bytes_processed);
@@ -260,7 +258,9 @@ public: //private:  //TODO:
 						{
 							if ( old_name )
 							{
-								notify_rename_event_args(change_types::renamed, directory_name, "", *old_name);
+								//TODO: en este caso puede ser que se haya movido a otra carpeta no monitoreada, entonces sería un DELETE?
+								//notify_rename_event_args(change_types::renamed, directory_name, "", *old_name);
+								notify_file_system_event_args( change_types::deleted, directory_name, file_name);
 								old_name.reset();
 							}
 
@@ -274,7 +274,9 @@ public: //private:  //TODO:
 
 				if (old_name)
 				{
-					notify_rename_event_args(change_types::renamed, directory_name, "", *old_name);
+					//TODO: en este caso puede ser que se haya movido a otra carpeta no monitoreada
+					//notify_rename_event_args(change_types::renamed, directory_name, "", *old_name);
+					notify_file_system_event_args( change_types::deleted, directory_name, file_name);
 					old_name.reset();
 				}
 			}
