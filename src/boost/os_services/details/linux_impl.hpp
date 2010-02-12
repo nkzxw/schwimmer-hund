@@ -87,7 +87,7 @@ public:
 		if (!is_initialized_)
 		{
 			file_descriptor_ = ::inotify_init();
-			if (file_descriptor_ == -1)
+			if (file_descriptor_ < 0)
 			{
 				std::ostringstream oss;
 				oss << "Failed to initialize monitor - Reason: " << std::strerror(errno);
@@ -159,7 +159,6 @@ public: //private:  //TODO:
 		while ( !closing_ )
 		{
 			//printf("-- antes del read --\n");
-
 			char buffer[BUF_LEN];
 			int i = 0;
 			int length = ::read( file_descriptor_, buffer, BUF_LEN );
@@ -297,25 +296,44 @@ protected:
 
 		//std::cout << "-------------------------------------------- action: " << action << std::endl;
 
-		//TODO: mapear los change_types de Windows a Linux
+		
 
-		if (action & IN_CREATE)
-		{
-			do_callback(created_handler_, filesystem_event_args(change_types::created, directory, name));
-		}
-		else if ( action & IN_DELETE )
-		{
-			do_callback(deleted_handler_, filesystem_event_args(change_types::deleted, directory, name));
-		}
-		else if ( action & IN_MODIFY )
-		{
-			do_callback(changed_handler_, filesystem_event_args(change_types::changed, directory, name));
-		}
-		else
-		{
-			//TODO:
-			//Debug.Fail("Unknown FileSystemEvent action type!  Value: " + action);
-		}
+			if ( action == change_types::created )
+			{
+				do_callback(created_handler_, filesystem_event_args(change_types::created, directory, name));
+			}
+			else if ( action == change_types::deleted )
+			{
+				do_callback(deleted_handler_, filesystem_event_args(change_types::deleted, directory, name));
+			}
+			else if ( action == change_types::created )
+			{
+				do_callback(changed_handler_, filesystem_event_args(change_types::changed, directory, name));
+			}
+			else
+			{
+				//TODO:
+				//Debug.Fail("Unknown FileSystemEvent action type!  Value: " + action);
+			}
+
+
+		//if (action & IN_CREATE)
+		//{
+		//	do_callback(created_handler_, filesystem_event_args(change_types::created, directory, name));
+		//}
+		//else if ( action & IN_DELETE )
+		//{
+		//	do_callback(deleted_handler_, filesystem_event_args(change_types::deleted, directory, name));
+		//}
+		//else if ( action & IN_MODIFY )
+		//{
+		//	do_callback(changed_handler_, filesystem_event_args(change_types::changed, directory, name));
+		//}
+		//else
+		//{
+		//	//TODO:
+		//	//Debug.Fail("Unknown FileSystemEvent action type!  Value: " + action);
+		//}
 	}
 
 	//TODO:
