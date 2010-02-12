@@ -124,16 +124,16 @@ public:
 				throw (std::invalid_argument(oss.str()));
 			}
 
-			std::cout << "watch_descriptor: " << watch_descriptor << std::endl;
+			//std::cout << "watch_descriptor: " << watch_descriptor << std::endl;
 			it->second = watch_descriptor;
 		}
 
 
-		BOOST_FOREACH(pair_type p, watch_descriptors_)
-		{
-			std::cout << "p.first: " << p.first << std::endl;
-			std::cout << "p.second: " << p.second << std::endl;
-		}
+//		BOOST_FOREACH(pair_type p, watch_descriptors_)
+//		{
+//			std::cout << "p.first: " << p.first << std::endl;
+//			std::cout << "p.second: " << p.second << std::endl;
+//		}
 
 
 		thread_.reset( new boost::thread( boost::bind(&linux_impl::handle_directory_changes, this) ) );
@@ -155,15 +155,17 @@ public: //private:  //TODO:
 
 	void handle_directory_changes()
 	{
-		int i = 0;
-		char buffer[BUF_LEN];
 
 		while ( !closing_ )
 		{
+			//printf("-- antes del read --\n");
+
+			char buffer[BUF_LEN];
+			int i = 0;
 			int length = ::read( file_descriptor_, buffer, BUF_LEN );
 
-			printf("length: %d\n", length);
-			print_buffer(buffer, length);
+			//printf("length: %d\n", length);
+			//print_buffer(buffer, length);
 
 			if (! closing_)
 			{
@@ -177,18 +179,49 @@ public: //private:  //TODO:
 				std::string directory_name;
 
 
-				printf("i: %d\n", i);
+				//printf("i: %d\n", i);
 				while ( i < length )
 				{
+
+					//printf("dentro de ... while ( i < length ) \n");
+
+
 					struct inotify_event *event = ( struct inotify_event * ) &buffer[ i ]; //TODO:
 					//event = reinterpret_cast<struct inotify_event*> (buffer_ + bytes_processed);
 
 					//printf("event: %d\n", (void*)event);
-					printf("event->wd: %d\n", event->wd);
-					printf("event->mask: %u\n", event->mask);
-					printf("event->cookie: %u\n", event->cookie);
-					printf("event->len: %u\n", event->len);
-					printf("event->name: %s\n", event->name);
+//					printf("event->wd: %d\n", event->wd);
+//					printf("event->mask: %u\n", event->mask);
+//					printf("event->cookie: %u\n", event->cookie);
+//					printf("event->len: %u\n", event->len);
+//					printf("event->name: %s\n", event->name);
+
+//					if ( event->mask & IN_MOVED_FROM )
+//					{
+//						std::cout << "MOVED FROM" << std::endl;
+//					}
+//					else if ( event->mask & IN_MOVED_TO )
+//					{
+//						std::cout << "MOVED TO" << std::endl;
+//					}
+//					else if ( event->mask & IN_CREATE )
+//					{
+//						std::cout << "CREATE" << std::endl;
+//					}
+//					else if ( event->mask & IN_DELETE )
+//					{
+//						std::cout << "DELETE" << std::endl;
+//					}
+//					else if ( event->mask & IN_MODIFY )
+//					{
+//						std::cout << "MODIFY" << std::endl;
+//					}
+//					else
+//					{
+//						std::cout << "... NOTHING ..." << std::endl;
+//					}
+
+
 
 					if ( event->len ) //TODO: que espera hacer acá, mala práctica
 					{
@@ -236,7 +269,7 @@ public: //private:  //TODO:
 					}
 
 					i += EVENT_SIZE + event->len;
-					//printf("i: %d\n", i);
+					//printf("--- while end -- i: %d\n", i);
 				}
 
 				if (old_name)
@@ -260,7 +293,7 @@ protected:
 		//	return;
 		//}
 
-		std::cout << "-------------------------------------------- action: " << action << std::endl;
+		//std::cout << "-------------------------------------------- action: " << action << std::endl;
 
 		if (action & IN_CREATE)
 		{
