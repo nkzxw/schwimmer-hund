@@ -37,7 +37,6 @@
 #include <iostream>
 #include <string>
 
-//#include <boost/asio.hpp>
 #include <boost/filesystem.hpp>
 
 #include <boost/os_services/file_system_monitor.hpp>
@@ -46,6 +45,7 @@
 using namespace boost::os_services;
 
 
+// Event Handlers
 static void OnChanged(filesystem_event_args e) // object source,
 {
 	std::cout << "Changed: " << e.full_path << std::endl;
@@ -67,7 +67,62 @@ static void OnRenamed(renamed_event_args e) // object source,
 	std::cout << "File: " << e.old_full_path << " renamed to: " << e.full_path  << std::endl;
 }
 
-void test_with_boost_filesystem_path_on_windows()
+
+
+
+
+#if defined(linux) || defined(__linux) || defined(__linux__) || defined(__GNU__) || defined(__GLIBC__)
+
+void test_with_boost_filesystem_path()
+{
+	boost::filesystem::path path1 ( "~/temp1", boost::filesystem::native );
+	boost::filesystem::path path2 ( "~/temp2", boost::filesystem::native );
+
+	boost::shared_ptr<file_system_monitor> monitor;
+
+	try
+	{
+		monitor.reset(new file_system_monitor);
+
+		monitor->add_directory(path1);
+		monitor->add_directory(path2);
+
+		//TODO: mapear los notify filters de Windows con otras plataformas...
+
+		monitor->set_notify_filters( notify_filters::last_access | notify_filters::last_write | notify_filters::file_name | notify_filters::directory_name );
+		monitor->set_filter("*.txt"); //TODO: implementar este filtro
+		monitor->set_changed_event_handler(OnChanged);
+		monitor->set_created_event_handler(OnCreated);
+		monitor->set_deleted_event_handler(OnDeleted);
+		monitor->set_renamed_event_handler(OnRenamed);
+
+		monitor->start();
+		//monitor->start(); //Probar de que no se pueda ejecutar dos veces.
+		//monitor->stop(); //TODO: implementar
+	}
+	catch (std::runtime_error& e)
+	{
+		std::cout << "EXCEPTION: " << e.what() << std::endl;
+	}
+	catch (std::invalid_argument& e)
+	{
+		std::cout << "EXCEPTION: " << e.what() << std::endl;
+	}
+
+	std::cout << "Press Enter to Stop Monitoring..." << std::endl;
+	std::cin.get();
+
+	//delete monitor;
+}
+
+
+
+#elif defined(__FreeBSD__) // || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__DragonFly__)
+#elif defined(__CYGWIN__)
+#  error Platform not supported
+#elif defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
+
+void test_with_boost_filesystem_path()
 {
 	boost::filesystem::path path1 ( "C:\\temp1", boost::filesystem::native );
 	boost::filesystem::path path2 ( "C:\\temp2", boost::filesystem::native );
@@ -108,7 +163,6 @@ void test_with_boost_filesystem_path_on_windows()
 
 	//delete monitor;
 }
-
 
 void test_basic()
 {
@@ -163,11 +217,28 @@ void test_basic()
 }
 
 
+#elif defined(macintosh) || defined(__APPLE__) || defined(__APPLE_CC__)
+#  error No test for the moment
+#else
+#  error Platform not supported
+#endif
+
+
+
+
+
+
+
+
+
+
+
 
 int main(int /*argc*/, char** /*argv*/)
 {
+
+	test_with_boost_filesystem_path();
 	//test_basic();
-	test_with_boost_filesystem_path_on_windows();
 
 	std::cout << "Press Enter to Exit" << std::endl;
 
