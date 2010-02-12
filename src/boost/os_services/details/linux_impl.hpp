@@ -260,7 +260,7 @@ public: //private:  //TODO:
 							{
 								//TODO: en este caso puede ser que se haya movido a otra carpeta no monitoreada, entonces sería un DELETE?
 								//notify_rename_event_args(change_types::renamed, directory_name, "", *old_name);
-								notify_file_system_event_args( change_types::deleted, directory_name, file_name);
+								notify_file_system_event_args( change_types::deleted, directory_name, *old_name);
 								old_name.reset();
 							}
 
@@ -276,7 +276,7 @@ public: //private:  //TODO:
 				{
 					//TODO: en este caso puede ser que se haya movido a otra carpeta no monitoreada
 					//notify_rename_event_args(change_types::renamed, directory_name, "", *old_name);
-					notify_file_system_event_args( change_types::deleted, directory_name, file_name);
+					notify_file_system_event_args( change_types::deleted, directory_name, *old_name);
 					old_name.reset();
 				}
 			}
@@ -296,6 +296,8 @@ protected:
 		//}
 
 		//std::cout << "-------------------------------------------- action: " << action << std::endl;
+
+		//TODO: mapear los change_types de Windows a Linux
 
 		if (action & IN_CREATE)
 		{
