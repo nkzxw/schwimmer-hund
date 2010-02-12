@@ -5,11 +5,14 @@
 
 //#elif defined(BOOST_ASIO_HAS_KQUEUE)
 
+
+// Aparentemente MAXOSX, NETBSD, OPENBSD, etc todos son iguales...
+
 //TODO: ver como hacer para tirar un error en tiempo de compilacion...
 //TODO: Agregar OpenSolaris
 //TODO: ver OpenBSD y NetBSD
 //TODO: ver que hacemos con IBM AIX, HP-UX y ver que otra opcion puede haber
-
+//TODO: SunOS
 
 // #ifdef BOOST_WINDOWS
 #if defined(linux) || defined(__linux) || defined(__linux__) || defined(__GNU__) || defined(__GLIBC__) 
