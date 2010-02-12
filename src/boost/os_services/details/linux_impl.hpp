@@ -96,20 +96,45 @@ public:
 			is_initialized_ = true;
 		}
 
-		BOOST_FOREACH(pair_type p, watch_descriptors_)
+//		BOOST_FOREACH(pair_type p, watch_descriptors_)
+//		{
+//			//TODO: ver si estos atributos como "IN_MODIFY" deben ir fijos o seteados desde afuera.
+//			boost::uint32_t watch_descriptor = ::inotify_add_watch(file_descriptor_, p.first.c_str(), IN_CREATE | IN_DELETE | IN_MODIFY | IN_MOVED_FROM | IN_MOVED_TO);
+//			//if (watch_descriptor == -1)
+//			if (watch_descriptor < 0)
+//			{
+//				std::ostringstream oss;
+//				oss << "Failed to monitor directory - Directory: " << p.first << " - Reason: " << std::strerror(errno);
+//				throw (std::invalid_argument(oss.str()));
+//			}
+//
+//			std::cout << "watch_descriptor: " << watch_descriptor << std::endl;
+//			p.second = watch_descriptor;
+//		}
+
+		for (watch_descriptors_type::iterator it =  watch_descriptors_.begin(); it != watch_descriptors_.end(); ++it )
 		{
 			//TODO: ver si estos atributos como "IN_MODIFY" deben ir fijos o seteados desde afuera.
-			boost::uint32_t watch_descriptor = ::inotify_add_watch(file_descriptor_, p.first.c_str(), IN_CREATE | IN_DELETE | IN_MODIFY | IN_MOVED_FROM | IN_MOVED_TO);
+			boost::uint32_t watch_descriptor = ::inotify_add_watch(file_descriptor_, it->first.c_str(), IN_CREATE | IN_DELETE | IN_MODIFY | IN_MOVED_FROM | IN_MOVED_TO);
 			//if (watch_descriptor == -1)
 			if (watch_descriptor < 0)
 			{
 				std::ostringstream oss;
-				oss << "Failed to monitor directory - Directory: " << p.first << " - Reason: " << std::strerror(errno);
+				oss << "Failed to monitor directory - Directory: " << it->first << " - Reason: " << std::strerror(errno);
 				throw (std::invalid_argument(oss.str()));
 			}
 
-			p.second = watch_descriptor;
+			std::cout << "watch_descriptor: " << watch_descriptor << std::endl;
+			it->second = watch_descriptor;
 		}
+
+
+		BOOST_FOREACH(pair_type p, watch_descriptors_)
+		{
+			std::cout << "p.first: " << p.first << std::endl;
+			std::cout << "p.second: " << p.second << std::endl;
+		}
+
 
 		thread_.reset( new boost::thread( boost::bind(&linux_impl::handle_directory_changes, this) ) );
 	}
@@ -137,7 +162,7 @@ public: //private:  //TODO:
 				std::string directory_name;
 
 
-				printf("i: %d\n", i);
+				//printf("i: %d\n", i);
 				while ( i < length )
 				{
 					struct inotify_event *event = ( struct inotify_event * ) &buffer[ i ]; //TODO:
@@ -193,7 +218,7 @@ public: //private:  //TODO:
 					}
 
 					i += EVENT_SIZE + event->len;
-					printf("i: %d\n", i);
+					//printf("i: %d\n", i);
 				}
 
 				if (old_name)
