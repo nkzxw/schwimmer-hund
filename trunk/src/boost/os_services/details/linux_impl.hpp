@@ -82,7 +82,7 @@ public:
 
 			// TODO: parece que close(0) cierra el standard input (CIN)
 			////printf("closing file descriptor...\n");
-			//int ret_value =  ::close( file_descriptor_ );
+			int ret_value =  ::close( file_descriptor_ );
 			////printf("retClose: %d\n", retClose);
 		}
 	}
@@ -133,8 +133,9 @@ public:
 		{
 
 			//TODO: ver si estos atributos como "IN_MODIFY" deben ir fijos o seteados desde afuera.
-			uint32_t watch_descriptor = ::inotify_add_watch(file_descriptor_, p.first.c_str(), IN_CREATE | IN_DELETE | IN_MODIFY | IN_MOVED_FROM | IN_MOVED_TO);
-			if (watch_descriptor == -1)
+			boost::uint32_t watch_descriptor = ::inotify_add_watch(file_descriptor_, p.first.c_str(), IN_CREATE | IN_DELETE | IN_MODIFY | IN_MOVED_FROM | IN_MOVED_TO);
+			//if (watch_descriptor == -1)
+			if (watch_descriptor < 0)
 			{
 				std::ostringstream oss;
 				oss << "Failed to monitor directory - Directory: " << p.first << " - Reason: " << std::strerror(errno);
@@ -180,13 +181,13 @@ public: //private:  //TODO:
 				printf("i: %d\n", i);
 				while ( i < length )
 				{
-					printf("inside the 'while'\n");
+					//printf("inside the 'while'\n");
 
 					struct inotify_event *event = ( struct inotify_event * ) &buffer[ i ]; //TODO:
 					//event = reinterpret_cast<struct inotify_event*> (buffer_ + bytes_processed);
 
-					printf("event: %d\n", (void*)event);
-					printf("event->len: %d\n", event->len);
+					//printf("event: %d\n", (void*)event);
+					//printf("event->len: %d\n", event->len);
 
 
 					//TODO: cambiar todo esto, adaptar a como lo hace windows_impl
