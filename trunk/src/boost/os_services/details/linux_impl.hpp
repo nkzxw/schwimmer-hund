@@ -141,6 +141,18 @@ public:
 
 public: //private:  //TODO:
 
+	void print_buffer(char* buffer, unsigned long num_bytes) //, DWORD buffer_length)
+	{
+		printf("%d bytes: \n", num_bytes);
+
+		for (int i = 0; i<num_bytes; ++i)
+		{
+			printf("%u ", (unsigned int)buffer[i]);
+		}
+
+		printf("\n");
+	}
+
 	void handle_directory_changes()
 	{
 		int i = 0;
@@ -149,6 +161,9 @@ public: //private:  //TODO:
 		while ( !closing_ )
 		{
 			int length = ::read( file_descriptor_, buffer, BUF_LEN );
+
+			printf("length: %d\n", length);
+			print_buffer(buffer, length);
 
 			if (! closing_)
 			{
@@ -162,15 +177,18 @@ public: //private:  //TODO:
 				std::string directory_name;
 
 
-				//printf("i: %d\n", i);
+				printf("i: %d\n", i);
 				while ( i < length )
 				{
 					struct inotify_event *event = ( struct inotify_event * ) &buffer[ i ]; //TODO:
 					//event = reinterpret_cast<struct inotify_event*> (buffer_ + bytes_processed);
 
 					//printf("event: %d\n", (void*)event);
-					//printf("event->len: %d\n", event->len);
-
+					printf("event->wd: %d\n", event->wd);
+					printf("event->mask: %u\n", event->mask);
+					printf("event->cookie: %u\n", event->cookie);
+					printf("event->len: %u\n", event->len);
+					printf("event->name: %s\n", event->name);
 
 					if ( event->len ) //TODO: que espera hacer acá, mala práctica
 					{
