@@ -75,8 +75,8 @@ static void OnRenamed(renamed_event_args e) // object source,
 
 void test_with_boost_filesystem_path()
 {
-	boost::filesystem::path path1 ( "~/temp1", boost::filesystem::native );
-	boost::filesystem::path path2 ( "~/temp2", boost::filesystem::native );
+	boost::filesystem::path path1 ( "/home/fernando/temp1", boost::filesystem::native );
+	boost::filesystem::path path2 ( "/home/fernando/temp2", boost::filesystem::native );
 
 	boost::shared_ptr<file_system_monitor> monitor;
 
@@ -99,6 +99,10 @@ void test_with_boost_filesystem_path()
 		monitor->start();
 		//monitor->start(); //Probar de que no se pueda ejecutar dos veces.
 		//monitor->stop(); //TODO: implementar
+
+		std::cout << "Press Enter to Stop Monitoring..." << std::endl;
+		std::cin.get();
+
 	}
 	catch (std::runtime_error& e)
 	{
@@ -109,8 +113,6 @@ void test_with_boost_filesystem_path()
 		std::cout << "EXCEPTION: " << e.what() << std::endl;
 	}
 
-	std::cout << "Press Enter to Stop Monitoring..." << std::endl;
-	std::cin.get();
 
 	//delete monitor;
 }
@@ -148,6 +150,10 @@ void test_with_boost_filesystem_path()
 		monitor->start();
 		//monitor->start(); //Probar de que no se pueda ejecutar dos veces.
 		//monitor->stop(); //TODO: implementar
+
+		std::cout << "Press Enter to Stop Monitoring..." << std::endl;
+		std::cin.get();
+
 	}
 	catch (std::runtime_error& e)
 	{
@@ -158,8 +164,6 @@ void test_with_boost_filesystem_path()
 		std::cout << "EXCEPTION: " << e.what() << std::endl;
 	}
 
-	std::cout << "Press Enter to Stop Monitoring..." << std::endl;
-	std::cin.get();
 
 	//delete monitor;
 }
@@ -199,6 +203,10 @@ void test_basic()
 		monitor->start();
 		//monitor->start(); //Probar de que no se pueda ejecutar dos veces.
 		//monitor->stop(); //TODO: implementar
+
+		std::cout << "Press Enter to Stop Monitoring..." << std::endl;
+		std::cin.get();
+
 	}
 	catch (std::runtime_error& e)
 	{
@@ -209,8 +217,6 @@ void test_basic()
 		std::cout << "EXCEPTION: " << e.what() << std::endl;
 	}
 
-	std::cout << "Press Enter to Stop Monitoring..." << std::endl;
-	std::cin.get();
 
 	//delete monitor;
 
