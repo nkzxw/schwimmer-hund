@@ -1,6 +1,8 @@
 #ifndef BOOST_OS_SERVICES_EVENT_ARGS_HPP
 #define BOOST_OS_SERVICES_EVENT_ARGS_HPP
 
+#include <boost/filesystem.hpp>
+
 namespace boost {
 namespace os_services {
 
@@ -11,7 +13,9 @@ struct filesystem_event_args
 	filesystem_event_args(int _change_type, const std::string& _directory, const std::string& _name )
 		: change_type(_change_type), name(_name)
 	{
-		full_path = _directory + '\\' + _name;
+		//full_path = _directory + '\\' + _name;
+		boost::filesystem::path directory_path(_directory);
+		full_path = (directory_path / _name).native_file_string();
 	}
 
 	std::string name;
@@ -26,10 +30,11 @@ struct renamed_event_args : public filesystem_event_args
 	renamed_event_args(int _change_type, const std::string& _directory, const std::string& _name, const std::string& _old_name)
 		: filesystem_event_args( _change_type, _directory, _name), old_name(_old_name)
 	{
-		//TODO: ver el tema de los paths, revisar que ya el path no tenga incluido un '\'
+		//old_full_path = _directory + '\\' + _old_name;
 
-		//full_path = _directory + '\\' + _name;
-		old_full_path = _directory + '\\' + _old_name;
+		boost::filesystem::path directory_path(_directory);
+		old_full_path = (directory_path / _old_name).native_file_string();
+
 	}
 
 	std::string old_full_path;

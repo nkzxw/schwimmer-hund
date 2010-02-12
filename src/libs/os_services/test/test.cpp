@@ -126,8 +126,8 @@ void test_with_boost_filesystem_path()
 
 void test_with_boost_filesystem_path()
 {
-	boost::filesystem::path path1 ( "C:\\temp1", boost::filesystem::native );
-	boost::filesystem::path path2 ( "C:\\temp2", boost::filesystem::native );
+	boost::filesystem::path path1 ( "C:\\temp1\\", boost::filesystem::native );
+	boost::filesystem::path path2 ( "C:\\temp2\\", boost::filesystem::native );
 
 	boost::shared_ptr<file_system_monitor> monitor;
 
