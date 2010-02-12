@@ -10,7 +10,7 @@
 // WIN32
 
 #define MAX_DIRS    256
-#define MAX_BUFFER  8192 //4096
+#define MAX_BUFFER  8192 //4096	//TODO: como cambiarlo en tiempo de ejecución?
 
 typedef struct _DIRECTORY_INFO 
 {
