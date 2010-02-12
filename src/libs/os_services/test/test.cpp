@@ -162,125 +162,10 @@ void test_basic()
 
 }
 
-#include <map>
-#include <utility>
-#include <list>
-#include <boost/bimap.hpp>
-#include <boost/bimap/list_of.hpp>
-#include <boost/bimap/unordered_set_of.hpp>
-#include <boost/bimap/vector_of.hpp>
-#include <boost/foreach.hpp>
-
-
-typedef boost::bimap< std::string, boost::bimaps::vector_of<int> > bmtype;
-
-
-struct Finder
-{
-	Finder(const std::string& text)
-		: text_(text)
-	{
-	}
-	//boost::bimaps::relation::structured_pair<FirstType,SecondType,Info,Layout>
-	//bool operator()( const std::string& test )
-
-	bool operator()( bmtype::left_value_type test )
-	{
-		return test.first == text_;
-	}
-
-	std::string text_;
-};
-
-
 
 
 int main(int /*argc*/, char** /*argv*/)
 {
-
-	//TODO: pasar todo esto a bose-katse (BOOST BIMAP)
-	//------------------------------------------------------------------------------------------------------
-
-	//typedef boost::bimap<std::string, boost::uint32_t> bmtype;
-	//typedef boost::bimap< std::string, boost::bimaps::list_of<int> > bmtype;
-	//typedef boost::bimap< std::string, boost::bimaps::unordered_set_of<int> > bmtype;
-
-	bmtype bm;
-	
-
-	//bm.insert( bmtype::relation("hola", 0) );
-	//bm.insert( bmtype::relation("pepe", 0) );
-
-	bm.insert( bmtype::value_type("hola", 0) );
-	bm.insert( bmtype::value_type("pepe", 0) );
-
-	//for (bmtype::iterator it = bm.begin(); it != bm.end(); ++it)
-	for (bmtype::left_iterator it = bm.left.begin(); it != bm.left.end(); ++it)
-	{
-		(*it).second = 15;
-	}
-
-    BOOST_FOREACH( bmtype::left_reference p, bm.left )
-    {
-        p.second = 15;
-    }
-
-	//bmtype::left_iterator it = bm.left.find( "" ); // event->wd );
-	//if ( it != bm.left.end() )
-	//{
-	//	//directory_name = it->second;
-	//}
-	//else
-	//{
-	//	//TODO: que pasa si no lo encontramos en la lista... DEBERIA SER UN RUN-TIME ERROR
-	//}
-
-	//bmtype::right_iterator it2 = bm.right.find( "" ); // event->wd );
-	//if ( it != bm.right.end() )
-	//{
-	//	//directory_name = it->second;
-	//}
-	//else
-	//{
-	//	//TODO: que pasa si no lo encontramos en la lista... DEBERIA SER UN RUN-TIME ERROR
-	//}
-
-	
-	// Try find_if.
-	//bmtype::left_iterator it = std::find_if (bm.left.begin(), bm.left.begin(), std::bind1st (std::equal_to<bmtype::left_value_type>(), ""));
-	bmtype::left_iterator it = std::find_if (bm.left.begin(), bm.left.begin(), Finder("puto") );
-
-	if ( it != bm.left.end() )
-	{
-		std::cout << "ENCONTRO";
-	}
-	else
-	{
-		std::cout << "NO ENCONTRO";
-	}
-
-
-	//BOOST_FOREACH(watch_descriptors_type::right_reference p, watch_descriptors_.right)
-	//{
-	//	uint32_t watch_descriptor = 0;
-	//	//uint32_t watch_descriptor = inotify_add_watch(fd_, p.first.c_str(), IN_CREATE | IN_DELETE | IN_MOVED_FROM | IN_MOVED_TO);
-	//	if (watch_descriptor == -1)
-	//	{
-	//		std::ostringstream oss;
-	//		oss << "Failed to monitor directory - Directory: " << p.first << " - Reason:" << std::strerror(errno);
-	//		throw (std::invalid_argument(oss.str()));
-	//	}
-
-	//	//p.first = ""; // = watch_descriptor;
-
-	//	std::cout << typeid(p.first).name() << std::endl;
-	//	std::cout << typeid(p.second).name() << std::endl;
-	//}
-
-	//------------------------------------------------------------------------------------------------------
-
-
-
 	//test_basic();
 	test_with_boost_filesystem_path_on_windows();
 
@@ -344,3 +229,162 @@ int main(int /*argc*/, char** /*argv*/)
 ////#include <process.h>
 ////#include <boost/asio/detail/pop_options.hpp>
 //
+
+
+
+
+////------------------------------------------------------------------------------------------------------
+//#include <vector>
+//#include <utility>
+//#include <list>
+//#include <boost/bind.hpp>
+//#include <boost/foreach.hpp>
+//
+//
+////template <typename PairType, typename T>
+////struct pair_first_equals : public std::binary_function<PairType, T, bool> 
+////{
+////	bool operator()(const PairType& p, const T& value) const 
+////	{
+////		return p.first == value;
+////	}
+////};
+//
+//
+////------------------------------------------------------------------------------------------------------
+//
+//typedef std::pair<std::string, boost::uint32_t> pair_type;
+//typedef std::vector<pair_type> vector_type;
+//
+//vector_type vec;
+//vec.push_back(std::make_pair("hola", 0));
+//vec.push_back(std::make_pair("como", 1));
+//vec.push_back(std::make_pair("estas", 2));
+//
+//vector_type::const_iterator it = std::find_if( vec.begin(), vec.end(), boost::bind( &pair_type::first, _1 ) == "como" );
+//
+//if ( it != vec.end() )
+//{
+//	std::cout << "ENCONTRO";
+//}
+//else
+//{
+//	std::cout << "NO ENCONTRO";
+//}
+//
+
+
+//------------------------------------------------------------------------------------------------------
+
+
+
+
+//------------------------------------------------------------------------------------------------------------------------------------------------------
+
+//#include <map>
+//#include <utility>
+//#include <list>
+//#include <boost/bimap.hpp>
+//#include <boost/bimap/list_of.hpp>
+//#include <boost/bimap/unordered_set_of.hpp>
+//#include <boost/bimap/vector_of.hpp>
+//#include <boost/foreach.hpp>
+
+
+//struct Finder
+//{
+//	Finder(const std::string& text)
+//		: text_(text)
+//	{
+//	}
+//	//boost::bimaps::relation::structured_pair<FirstType,SecondType,Info,Layout>
+//	//bool operator()( const std::string& test )
+//
+//	bool operator()( bmtype::left_value_type test )
+//	{
+//		return test.first == text_;
+//	}
+//
+//	std::string text_;
+//};
+
+////TODO: pasar todo esto a bose-katse (BOOST BIMAP)
+////------------------------------------------------------------------------------------------------------
+
+////typedef boost::bimap<std::string, boost::uint32_t> bmtype;
+////typedef boost::bimap< std::string, boost::bimaps::list_of<int> > bmtype;
+////typedef boost::bimap< std::string, boost::bimaps::unordered_set_of<int> > bmtype;
+
+//bmtype bm;
+//
+
+////bm.insert( bmtype::relation("hola", 0) );
+////bm.insert( bmtype::relation("pepe", 0) );
+
+//bm.insert( bmtype::value_type("hola", 0) );
+//bm.insert( bmtype::value_type("pepe", 0) );
+
+////for (bmtype::iterator it = bm.begin(); it != bm.end(); ++it)
+//for (bmtype::left_iterator it = bm.left.begin(); it != bm.left.end(); ++it)
+//{
+//	(*it).second = 15;
+//}
+
+//   BOOST_FOREACH( bmtype::left_reference p, bm.left )
+//   {
+//       p.second = 15;
+//   }
+
+////bmtype::left_iterator it = bm.left.find( "" ); // event->wd );
+////if ( it != bm.left.end() )
+////{
+////	//directory_name = it->second;
+////}
+////else
+////{
+////	//TODO: que pasa si no lo encontramos en la lista... DEBERIA SER UN RUN-TIME ERROR
+////}
+
+////bmtype::right_iterator it2 = bm.right.find( "" ); // event->wd );
+////if ( it != bm.right.end() )
+////{
+////	//directory_name = it->second;
+////}
+////else
+////{
+////	//TODO: que pasa si no lo encontramos en la lista... DEBERIA SER UN RUN-TIME ERROR
+////}
+
+//
+//// Try find_if.
+////bmtype::left_iterator it = std::find_if (bm.left.begin(), bm.left.begin(), std::bind1st (std::equal_to<bmtype::left_value_type>(), ""));
+//bmtype::left_iterator it = std::find_if (bm.left.begin(), bm.left.begin(), Finder("puto") );
+
+//if ( it != bm.left.end() )
+//{
+//	std::cout << "ENCONTRO";
+//}
+//else
+//{
+//	std::cout << "NO ENCONTRO";
+//}
+
+
+////BOOST_FOREACH(watch_descriptors_type::right_reference p, watch_descriptors_.right)
+////{
+////	uint32_t watch_descriptor = 0;
+////	//uint32_t watch_descriptor = inotify_add_watch(fd_, p.first.c_str(), IN_CREATE | IN_DELETE | IN_MOVED_FROM | IN_MOVED_TO);
+////	if (watch_descriptor == -1)
+////	{
+////		std::ostringstream oss;
+////		oss << "Failed to monitor directory - Directory: " << p.first << " - Reason:" << std::strerror(errno);
+////		throw (std::invalid_argument(oss.str()));
+////	}
+
+////	//p.first = ""; // = watch_descriptor;
+
+////	std::cout << typeid(p.first).name() << std::endl;
+////	std::cout << typeid(p.second).name() << std::endl;
+////}
+
+////------------------------------------------------------------------------------------------------------

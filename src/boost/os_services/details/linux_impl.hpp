@@ -57,7 +57,19 @@ public:
 		if ( file_descriptor_ != 0 )
 		{
 
-			BOOST_FOREACH(watch_descriptors_type::left_reference p, watch_descriptors_.left)
+			//BOOST_FOREACH(watch_descriptors_type::left_reference p, watch_descriptors_.left)
+			//{
+			//	if ( p.second != 0 )
+			//	{
+			//		//TODO: manejo de errores
+			//		////printf("removing watch...\n");
+			//		int ret_value = ::inotify_rm_watch( file_descriptor_, p.second );
+			//		////printf("retRMWatch: %d\n", retRMWatch);
+			//	}
+			//}
+
+
+			BOOST_FOREACH(pair_type p, watch_descriptors_)
 			{
 				if ( p.second != 0 )
 				{
@@ -79,7 +91,10 @@ public:
 	{
 		//watch_descriptors_.insert(watch_descriptors_type::relation(watch_descriptor, dir_name));
 		//watch_descriptors_.insert(watch_descriptors_type::value_type(dir_name, watch_descriptor));
-		watch_descriptors_.insert(watch_descriptors_type::relation(dir_name, 0));
+		//watch_descriptors_.insert(watch_descriptors_type::relation(dir_name, 0));
+
+		watch_descriptors_.push_back(std::make_pair(dir_name, 0));
+
 	}
 
 	//void remove_directory_impl(const std::string& dir_name) // throw (std::invalid_argument);
@@ -99,7 +114,22 @@ public:
 			//std::cout << "CREATION fileDescriptor_: " << file_descriptor_ << std::endl;
 		}
 
-		BOOST_FOREACH(watch_descriptors_type::left_reference p, watch_descriptors_.left)
+		//BOOST_FOREACH(watch_descriptors_type::left_reference p, watch_descriptors_.left)
+		//{
+
+		//	//TODO: ver si estos atributos como "IN_MODIFY" deben ir fijos o seteados desde afuera.
+		//	uint32_t watch_descriptor = ::inotify_add_watch(file_descriptor_, p.first.c_str(), IN_CREATE | IN_DELETE | IN_MODIFY | IN_MOVED_FROM | IN_MOVED_TO);
+		//	if (watch_descriptor == -1)
+		//	{
+		//		std::ostringstream oss;
+		//		oss << "Failed to monitor directory - Directory: " << p.first << " - Reason: " << std::strerror(errno);
+		//		throw (std::invalid_argument(oss.str()));
+		//	}
+
+		//	p.second = watch_descriptor;
+		//}
+
+		BOOST_FOREACH(pair_type p, watch_descriptors_)
 		{
 
 			//TODO: ver si estos atributos como "IN_MODIFY" deben ir fijos o seteados desde afuera.
@@ -165,8 +195,12 @@ public: //private:  //TODO:
 
 						std::string file_name( event->name );
 
-						watch_descriptors_type::left_iterator it = watch_descriptors_.left.find( "" ); // event->wd );
-						if ( it != watch_descriptors_.left.end() )
+
+						//watch_descriptors_type::left_iterator it = watch_descriptors_.left.find( "" ); // event->wd );
+						//if ( it != watch_descriptors_.left.end() )
+						
+						watch_descriptors_type::const_iterator it = std::find_if( watch_descriptors_.begin(), watch_descriptors_.end(), boost::bind( &pair_type::second, _1 ) == event->wd );
+						if ( it != watch_descriptors_.end() )
 						{
 							//directory_name = it->second;
 						}
@@ -358,9 +392,13 @@ protected:
 
 	//typedef boost::bimap<boost::uint32_t, std::string> watch_descriptors_type;
 	//typedef boost::bimap<std::string, boost::uint32_t> watch_descriptors_type;
-	typedef boost::bimap< std::string, boost::bimaps::list_of<boost::uint32_t> > watch_descriptors_type;
-	watch_descriptors_type watch_descriptors_;
+	//typedef boost::bimap< std::string, boost::bimaps::list_of<boost::uint32_t> > watch_descriptors_type;
 
+	typedef std::pair<std::string, boost::uint32_t> pair_type;
+	typedef std::vector<pair_type> watch_descriptors_type;
+	
+	watch_descriptors_type watch_descriptors_;
+	
 };
 
 
