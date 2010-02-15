@@ -61,17 +61,28 @@ public:
 			{
 				if ( p.second != 0 )
 				{
-					//TODO: manejo de errores
-					////printf("removing watch...\n");
 					int ret_value = ::inotify_rm_watch( file_descriptor_, p.second );
-					////printf("retRMWatch: %d\n", retRMWatch);
+
+					if ( ret_value < 0 )
+					{
+						//TODO: analizar si esta es la forma optima de manejar errores.
+						std::ostringstream oss;
+						oss << "Failed to remove watch - Reason: "; //TODO: ver que usar en Linux/BSD << GetLastError();
+						throw (std::runtime_error(oss.str()));
+					}
+
 				}
 			}
 
 			// TODO: parece que close(0) cierra el standard input (CIN)
-			////printf("closing file descriptor...\n");
 			int ret_value =  ::close( file_descriptor_ );
-			////printf("retClose: %d\n", retClose);
+
+			if ( ret_value < 0 )
+			{
+				std::ostringstream oss;
+				oss << "Failed to close file descriptor - Reason: "; //TODO: ver que usar en Linux/BSD << GetLastError();
+				throw (std::runtime_error(oss.str()));
+			}
 		}
 	}
 
