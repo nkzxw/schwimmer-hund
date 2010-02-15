@@ -20,6 +20,7 @@
 #elif defined(__FreeBSD__) // || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__DragonFly__)
 #include <boost/os_services/details/freebsd_impl.hpp>
 #elif defined(__CYGWIN__)
+//TODO: ver si se puede implementar usando las api de windows. No creo que esté inotify disponible para cygwin
 //#include <boost/os_services/details/unsupported_impl.hpp>
 #  error Platform not supported
 #elif defined(_WIN32) || defined(__WIN32__) || defined(WIN32)

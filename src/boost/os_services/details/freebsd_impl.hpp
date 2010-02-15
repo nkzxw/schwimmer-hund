@@ -27,9 +27,7 @@ There are platforms that are not supported due to lack of developer resources. I
 #include <cstdlib>		//<stdlib.h>
 #include <cstring>		//<string.h>		// for strerror
 
-//#include <sys/types.h>
-//#include <sys/inotify.h>
-#include <sys/event.h>
+//#include <sys/event.h>
 
 #include <boost/bind.hpp>
 #include <boost/foreach.hpp>
@@ -162,16 +160,31 @@ public:
 
 			/* Create and populate a kevent structure */
 			EV_SET(kev, watch->fd, EVFILT_VNODE, EV_ADD | EV_CLEAR, 0, 0, watch);
+
 			if (mask & PN_ACCESS || mask & PN_MODIFY)
+			{
 				kev->fflags |= NOTE_ATTRIB;
+			}
+			
 			if (mask & PN_CREATE)
+			{
 				kev->fflags |= NOTE_WRITE;
+			}
+			
 			if (mask & PN_DELETE)
+			{
 				kev->fflags |= NOTE_DELETE | NOTE_WRITE;
+			}
+			
 			if (mask & PN_MODIFY)
+			{
 				kev->fflags |= NOTE_WRITE | NOTE_TRUNCATE | NOTE_EXTEND;
+			}
+			
 			if (mask & PN_ONESHOT)
+			{
 				kev->flags |= EV_ONESHOT;
+			}
 
 			/* Add the kevent to the kernel event queue */
 			if (kevent(ctl->fd, kev, 1, NULL, 0, NULL) < 0) 
@@ -179,8 +192,6 @@ public:
 				perror("kevent(2)");
 				return -1;
 			}
-
-
 		}
 
 		thread_.reset( new boost::thread( boost::bind(&freebsd_impl::handle_directory_changes, this) ) );
@@ -191,18 +202,15 @@ public: //private:  //TODO:
 	//void print_buffer(char* buffer, unsigned long num_bytes) //, DWORD buffer_length)
 	//{
 	//	printf("%d bytes: \n", num_bytes);
-
 	//	for (int i = 0; i<num_bytes; ++i)
 	//	{
 	//		printf("%u ", (unsigned int)buffer[i]);
 	//	}
-
 	//	printf("\n");
 	//}
 
 	void handle_directory_changes()
 	{
-
 		while ( !closing_ )
 		{
 			//printf("-- antes del read --\n");
@@ -232,16 +240,11 @@ public: //private:  //TODO:
 
 
 					struct kevent kev;
-
 					struct inotify_event *event = ( struct inotify_event * ) &buffer[ i ]; //TODO:
 					//event = reinterpret_cast<struct inotify_event*> (buffer_ + bytes_processed);
 
-
-
-
 					if ( event->len ) //TODO: que espera hacer acá, mala práctica
 					{
-
 						std::string file_name( event->name );
 
 						watch_descriptors_type::const_iterator it = std::find_if( watch_descriptors_.begin(), watch_descriptors_.end(), boost::bind( &pair_type::second, _1 ) == event->wd );
