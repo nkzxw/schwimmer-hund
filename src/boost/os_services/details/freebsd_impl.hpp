@@ -48,6 +48,16 @@ namespace boost {
 namespace os_services {
 namespace detail {
 
+
+struct watch_data
+{
+	int             fd;	/**< kqueue(4) watched file descriptor */
+	int             wd;	/**< Unique 'watch descriptor' */
+	//char            path[255 + 1];	//path[PATH_MAX + 1];	/**< Path associated with fd */
+};
+
+
+
 //TODO: si es necesario para todas las implementaciones, pasar a base_impl
 typedef boost::shared_ptr<boost::thread> HeapThread; //TODO: cambiar nombre
 
@@ -76,17 +86,29 @@ public:
 			{
 				if ( p.second != 0 )
 				{
-					//TODO: manejo de errores
-					////printf("removing watch...\n");
-					int ret_value = ::inotify_rm_watch( file_descriptor_, p.second );
-					////printf("retRMWatch: %d\n", retRMWatch);
+					//int ret_value = ::inotify_rm_watch( file_descriptor_, p.second );
+					int ret_value = 0;
+
+					if ( ret_value < 0 )
+					{
+						//TODO: analizar si esta es la forma optima de manejar errores.
+						std::ostringstream oss;
+						oss << "Failed to remove watch - Reason: "; //TODO: ver que usar en Linux/BSD << GetLastError();
+						throw (std::runtime_error(oss.str()));
+					}
 				}
 			}
 
 			// TODO: parece que close(0) cierra el standard input (CIN)
-			////printf("closing file descriptor...\n");
-			int ret_value =  ::close( file_descriptor_ );
-			////printf("retClose: %d\n", retClose);
+			//int ret_value = ::close( file_descriptor_ );
+			int ret_value = 0;
+
+			if ( ret_value < 0 )
+			{
+				std::ostringstream oss;
+				oss << "Failed to close file descriptor - Reason: "; //TODO: ver que usar en Linux/BSD << GetLastError();
+				throw (std::runtime_error(oss.str()));
+			}
 		}
 	}
 
@@ -97,7 +119,9 @@ public:
 
 	//void remove_directory_impl(const std::string& dir_name) // throw (std::invalid_argument);
 
-	void start()
+
+	//TODO: hacer lo mismo para linux.
+	void initialize() //private
 	{
 		if (!is_initialized_)
 		{
@@ -112,43 +136,60 @@ public:
 			return 0;
 
 		}
+	}
 
+
+	//TODO: hacer lo mismo para Linux
+	void create_watchs() //TODO: watches? //TODO: private
+	{
 		for (watch_descriptors_type::iterator it =  watch_descriptors_.begin(); it != watch_descriptors_.end(); ++it )
 		{
-			boost::uint32_t watch_descriptor = 0
-			if (watch_descriptor < 0)
+			watch_data watch;
+
+			watch.wd = 0;
+
+			if (watch.wd < 0)
 			{
 				std::ostringstream oss;
 				oss << "Failed to monitor directory - Directory: " << it->first << " - Reason: " << std::strerror(errno);
 				throw (std::invalid_argument(oss.str()));
 			}
-			it->second = watch_descriptor;
+			it->second = watch.wd;
 
 
 			// watch->wd ES IGUAL A watch_descriptor
 
 			// TENEMOS UN FILE DESCRIPTOR POR WATCH
-			/* Open the file */
-			if ((watch->fd = open(watch->path, O_RDONLY)) < 0) 
+			//if ((watch->fd = open(watch->path, O_RDONLY)) < 0) 
+			if ( (watch->fd = open( it->first, O_RDONLY )) < 0) 
 			{
-				warn("opening path `%s' failed", watch->path);
-				return -1;
+				//warn("opening path `%s' failed", watch->path);
+				//return -1;
+
+				std::ostringstream oss;
+				//TODO:
+				oss << "opening path failed: - Reason: " << std::strerror(errno);
+				throw (std::invalid_argument(oss.str()));
+
 			}
+
 
 			//TODO: esto se hace con boost::filesystem
-			/* Test if the file is a directory */
-			if (fstat(watch->fd, &st) < 0) 
-			{
-				warn("fstat(2) failed");
-				return -1;
-			}
-			watch->is_dir = S_ISDIR(st.st_mode);
+			///* Test if the file is a directory */
+			//if ( fstat(watch->fd, &st) < 0) 
+			//{
+			//	warn("fstat(2) failed");
+			//	return -1;
+			//}
+			//watch->is_dir = S_ISDIR(st.st_mode);
+			///* Initialize the directory structure, if needed */
+			//if (watch->is_dir) 
+			//{
+			//	directory_open(ctl, watch);
+			//}
 
-			/* Initialize the directory structure, if needed */
-			if (watch->is_dir) 
-			{
-				directory_open(ctl, watch);
-			}
+			//TODO: ver que hacer y probar que pasa si no lo incluimos...
+			// directory_open(ctl, watch);
 
 			/* Generate a new watch ID */
 			/* FIXME - this never decreases and might fail */
@@ -165,22 +206,22 @@ public:
 			{
 				kev->fflags |= NOTE_ATTRIB;
 			}
-			
+
 			if (mask & PN_CREATE)
 			{
 				kev->fflags |= NOTE_WRITE;
 			}
-			
+
 			if (mask & PN_DELETE)
 			{
 				kev->fflags |= NOTE_DELETE | NOTE_WRITE;
 			}
-			
+
 			if (mask & PN_MODIFY)
 			{
 				kev->fflags |= NOTE_WRITE | NOTE_TRUNCATE | NOTE_EXTEND;
 			}
-			
+
 			if (mask & PN_ONESHOT)
 			{
 				kev->flags |= EV_ONESHOT;
@@ -193,21 +234,17 @@ public:
 				return -1;
 			}
 		}
+	}
+
+	void start()
+	{
+		initialize();
+
 
 		thread_.reset( new boost::thread( boost::bind(&freebsd_impl::handle_directory_changes, this) ) );
 	}
 
 public: //private:  //TODO:
-
-	//void print_buffer(char* buffer, unsigned long num_bytes) //, DWORD buffer_length)
-	//{
-	//	printf("%d bytes: \n", num_bytes);
-	//	for (int i = 0; i<num_bytes; ++i)
-	//	{
-	//		printf("%u ", (unsigned int)buffer[i]);
-	//	}
-	//	printf("\n");
-	//}
 
 	void handle_directory_changes()
 	{
@@ -241,65 +278,10 @@ public: //private:  //TODO:
 
 					struct kevent kev;
 					struct inotify_event *event = ( struct inotify_event * ) &buffer[ i ]; //TODO:
-					//event = reinterpret_cast<struct inotify_event*> (buffer_ + bytes_processed);
-
-					if ( event->len ) //TODO: que espera hacer acá, mala práctica
-					{
-						std::string file_name( event->name );
-
-						watch_descriptors_type::const_iterator it = std::find_if( watch_descriptors_.begin(), watch_descriptors_.end(), boost::bind( &pair_type::second, _1 ) == event->wd );
-						if ( it != watch_descriptors_.end() )
-						{
-							directory_name = it->first;
-						}
-						else
-						{
-							//TODO: que pasa si no lo encontramos en la lista... DEBERIA SER UN RUN-TIME ERROR
-						}
 
 
-						if ( event->mask & IN_MOVED_FROM )
-						{
-							old_name.reset( file_name );
-						}
-						else if ( event->mask & IN_MOVED_TO )
-						{
-							if ( old_name )
-							{
-								notify_rename_event_args(change_types::renamed, directory_name, file_name, *old_name);
-								old_name.reset();
-							}
-							else
-							{
-								notify_rename_event_args(change_types::renamed, directory_name, file_name, "");
-								old_name.reset();
-							}
-						}
-						else
-						{
-							if ( old_name )
-							{
-								//TODO: en este caso puede ser que se haya movido a otra carpeta no monitoreada, entonces sería un DELETE?
-								//notify_rename_event_args(change_types::renamed, directory_name, "", *old_name);
-								notify_file_system_event_args( change_types::deleted, directory_name, *old_name);
-								old_name.reset();
-							}
-
-							notify_file_system_event_args( event->mask, directory_name, file_name);
-						}
-					}
-
-					i += EVENT_SIZE + event->len;
-					//printf("--- while end -- i: %d\n", i);
 				}
 
-				if (old_name)
-				{
-					//TODO: en este caso puede ser que se haya movido a otra carpeta no monitoreada
-					//notify_rename_event_args(change_types::renamed, directory_name, "", *old_name);
-					notify_file_system_event_args( change_types::deleted, directory_name, *old_name);
-					old_name.reset();
-				}
 			}
 		}
 	}

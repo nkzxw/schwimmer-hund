@@ -75,7 +75,7 @@ public:
 			}
 
 			// TODO: parece que close(0) cierra el standard input (CIN)
-			int ret_value =  ::close( file_descriptor_ );
+			int ret_value = ::close( file_descriptor_ );
 
 			if ( ret_value < 0 )
 			{
