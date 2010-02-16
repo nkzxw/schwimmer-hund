@@ -42,8 +42,14 @@ There are platforms that are not supported due to lack of developer resources. I
 #include <boost/os_services/notify_filters.hpp>
 
 //TODO: ver como arreglamos esto...
-#define EVENT_SIZE  ( sizeof (struct inotify_event) )
-#define BUF_LEN     ( 1024 * ( EVENT_SIZE + 16 ) )
+//#define EVENT_SIZE  ( sizeof (struct inotify_event) )
+//#define BUF_LEN     ( 1024 * ( EVENT_SIZE + 16 ) )
+
+
+//TODO: sacar
+static const int WATCH_MAX = 20000;
+
+
 
 
 namespace boost {
@@ -196,8 +202,12 @@ public:
 			//if ((watch->wd = ++ctl->next_wd) > WATCH_MAX) 
 			if ((watch.wd = ++ctl->next_wd) > WATCH_MAX) 
 			{
-				warn("watch_max exceeded");
-				return -1;
+				//warn("watch_max exceeded");
+				//return -1;
+				std::ostringstream oss;
+				//TODO:
+				oss << "watch_max exceeded: - Reason: " << std::strerror(errno);
+				throw (std::invalid_argument(oss.str()));
 			}
 
 			/* Create and populate a kevent structure */
@@ -233,8 +243,14 @@ public:
 			//if (kevent(ctl->fd, kev, 1, NULL, 0, NULL) < 0) 
 			if (kevent(file_descriptor_, kev, 1, NULL, 0, NULL) < 0) 
 			{
-				perror("kevent(2)");
-				return -1;
+				//perror("kevent(2)");
+				//return -1;
+
+
+				std::ostringstream oss;
+				//TODO:
+				oss << "kevent(2): - Reason: " << std::strerror(errno);
+				throw (std::invalid_argument(oss.str()));
 			}
 		}
 	}
