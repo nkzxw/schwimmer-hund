@@ -11,8 +11,8 @@
 #include <cstdlib>		//<stdlib.h>
 #include <cstring>		//<string.h>		// for strerror
 
-#include <sys/types.h>
 #include <sys/inotify.h>
+#include <sys/types.h>
 
 //#include <boost/bimap.hpp>
 //#include <boost/bimap/list_of.hpp>

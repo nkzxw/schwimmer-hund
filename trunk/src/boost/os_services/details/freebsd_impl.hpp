@@ -27,7 +27,8 @@ There are platforms that are not supported due to lack of developer resources. I
 #include <cstdlib>		//<stdlib.h>
 #include <cstring>		//<string.h>		// for strerror
 
-//#include <sys/event.h>
+#include <sys/event.h>
+#include <sys/types.h>
 
 #include <boost/bind.hpp>
 #include <boost/foreach.hpp>
@@ -159,7 +160,7 @@ public:
 
 			// TENEMOS UN FILE DESCRIPTOR POR WATCH
 			//if ((watch->fd = open(watch->path, O_RDONLY)) < 0) 
-			if ( (watch->fd = open( it->first, O_RDONLY )) < 0) 
+			if ( (watch.fd = open( it->first, O_RDONLY )) < 0) 
 			{
 				//warn("opening path `%s' failed", watch->path);
 				//return -1;
