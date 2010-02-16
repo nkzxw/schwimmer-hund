@@ -73,8 +73,11 @@ enum {
 
 } __PN_BITMASK;
 
-
-
+//TODO: sacar
+/* kqueue(4) in MacOS/X does not support NOTE_TRUNCATE */
+#ifndef NOTE_TRUNCATE
+# define NOTE_TRUNCATE 0
+#endif
 
 
 namespace boost {
@@ -101,7 +104,7 @@ class freebsd_impl : public base_impl<freebsd_impl>
 public:
 
 	freebsd_impl()
-		: is_initialized_(false), closing_(false), file_descriptor_(0)
+		: is_initialized_(false), closing_(false), file_descriptor_(0), next_watch_(0)
 	{}
 
 	~freebsd_impl()
@@ -225,13 +228,14 @@ public:
 			/* Generate a new watch ID */
 			/* FIXME - this never decreases and might fail */
 			//if ((watch->wd = ++ctl->next_wd) > WATCH_MAX) 
-			if ((watch.wd = ++ctl->next_wd) > WATCH_MAX) 
+			
+			if ((watch.wd = ++next_watch_) > WATCH_MAX) 
 			{
 				//warn("watch_max exceeded");
 				//return -1;
 				std::ostringstream oss;
 				//TODO:
-				oss << "watch_max exceeded: - Reason: " << std::strerror(errno);
+				oss << "watch_max exceeded";
 				throw (std::invalid_argument(oss.str()));
 			}
 
@@ -345,23 +349,23 @@ protected:
 		//std::cout << "-------------------------------------------- action: " << action << std::endl;
 
 
-		if (action & IN_CREATE)
-		{
-			do_callback(created_handler_, filesystem_event_args(change_types::created, directory, name));
-		}
-		else if ( action & IN_DELETE )
-		{
-			do_callback(deleted_handler_, filesystem_event_args(change_types::deleted, directory, name));
-		}
-		else if ( action & IN_MODIFY )
-		{
-			do_callback(changed_handler_, filesystem_event_args(change_types::changed, directory, name));
-		}
-		else
-		{
-			//TODO:
-			//Debug.Fail("Unknown FileSystemEvent action type!  Value: " + action);
-		}
+		//if (action & IN_CREATE)
+		//{
+		//	do_callback(created_handler_, filesystem_event_args(change_types::created, directory, name));
+		//}
+		//else if ( action & IN_DELETE )
+		//{
+		//	do_callback(deleted_handler_, filesystem_event_args(change_types::deleted, directory, name));
+		//}
+		//else if ( action & IN_MODIFY )
+		//{
+		//	do_callback(changed_handler_, filesystem_event_args(change_types::changed, directory, name));
+		//}
+		//else
+		//{
+		//	//TODO:
+		//	//Debug.Fail("Unknown FileSystemEvent action type!  Value: " + action);
+		//}
 	}
 
 	//TODO:
@@ -393,6 +397,7 @@ protected:
 
 	bool is_initialized_;
 	int file_descriptor_; // file descriptor
+	int next_watch_;
 	bool closing_;
 
 	typedef std::pair<std::string, boost::uint32_t> pair_type;
