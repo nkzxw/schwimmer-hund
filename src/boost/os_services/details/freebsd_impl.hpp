@@ -125,7 +125,7 @@ public:
 	{
 		if (!is_initialized_)
 		{
-			file_descriptor_ = ::kqueue();
+			file_descriptor_ = kqueue(); //::kqueue();
 			if (file_descriptor_ < 0)
 			{
 				std::ostringstream oss;

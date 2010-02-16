@@ -28,6 +28,7 @@
 <option id="gnu.cpp.compiler.mingw.exe.debug.option.debugging.level.793944220" name="Debug Level" superClass="gnu.cpp.compiler.mingw.exe.debug.option.debugging.level" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
 <option id="gnu.cpp.compiler.option.include.paths.1150904092" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 <listOptionValue builtIn="false" value="&quot;${BOOST_ROOT}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;D:\Development\CPP\schwimmer-hund\src&quot;"/>
 </option>
 <inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1220162639" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 </tool>
@@ -42,7 +43,7 @@
 <listOptionValue builtIn="false" value="&quot;${BOOST_ROOT}\stage\lib&quot;"/>
 </option>
 <option id="gnu.cpp.link.option.libs.818162460" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
-<listOptionValue builtIn="false" value="libboost_thread-mgw44-mt-d-1_41"/>
+<listOptionValue builtIn="false" value="libboost_thread-mgw44-mt-d-1_42"/>
 </option>
 <inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.281493048" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 <additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
@@ -53,7 +54,7 @@
 </folderInfo>
 <sourceEntries>
 <entry excluding="src" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
-<entry excluding="reserach" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
+<entry excluding="libs/os_services/test/stress_test.cpp|temp/test_fwatch_original.cpp|reserach" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
 </sourceEntries>
 </configuration>
 </storageModule>
@@ -516,7 +517,7 @@
 </toolChain>
 </folderInfo>
 <sourceEntries>
-<entry excluding="src/reserach" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+<entry excluding="src/libs/os_services/test/stress_test.cpp|src/temp/test_fwatch_original.cpp|src/reserach" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 </sourceEntries>
 </configuration>
 </storageModule>
