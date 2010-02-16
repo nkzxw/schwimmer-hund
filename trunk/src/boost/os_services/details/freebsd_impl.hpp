@@ -27,6 +27,7 @@ There are platforms that are not supported due to lack of developer resources. I
 #include <cstdlib>		//<stdlib.h>
 #include <cstring>		//<string.h>		// for strerror
 
+#include <fcntl.h>
 #include <sys/event.h>
 #include <sys/types.h>
 
