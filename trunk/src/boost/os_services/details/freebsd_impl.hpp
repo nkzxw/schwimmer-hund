@@ -133,8 +133,6 @@ public:
 				throw (std::runtime_error(oss.str()));
 			}
 			is_initialized_ = true;
-			return 0;
-
 		}
 	}
 

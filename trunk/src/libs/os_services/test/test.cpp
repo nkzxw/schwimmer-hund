@@ -77,7 +77,10 @@ std::string temp_path_1("/home/fernando/temp1");
 std::string temp_path_2("/home/fernando/temp2");
 
 #elif defined(__FreeBSD__) // || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__DragonFly__)
-#  error No test for the moment
+
+std::string temp_path_1("/home/fernando/temp1");
+std::string temp_path_2("/home/fernando/temp2");
+
 #elif defined(__CYGWIN__)
 #  error Platform not supported
 #elif defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
