@@ -50,6 +50,31 @@ There are platforms that are not supported due to lack of developer resources. I
 static const int WATCH_MAX = 20000;
 
 
+//TODO: sacar
+enum {
+
+	/** The atime of a file has been modified */
+	PN_ACCESS 		= 0x1 << 0,
+
+	/** A file was created in a watched directory */
+	PN_CREATE		= 0x1 << 1,
+
+	/** A file was deleted from a watched directory */
+	PN_DELETE		= 0x1 << 2,
+
+	/** The modification time of a file has changed */
+	PN_MODIFY		= 0x1 << 3,
+
+	/** Automatically delete the watch after a matching event occurs */
+	PN_ONESHOT		= 0x1 << 4,
+
+	/** An error condition in the underlying kernel event queue */
+	PN_ERROR		= 0x1 << 5,
+
+} __PN_BITMASK;
+
+
+
 
 
 namespace boost {
