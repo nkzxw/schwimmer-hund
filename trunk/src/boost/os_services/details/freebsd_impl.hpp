@@ -90,6 +90,7 @@ struct watch_data
 	int             fd;	/**< kqueue(4) watched file descriptor */
 	int             wd;	/**< Unique 'watch descriptor' */
 	//char            path[255 + 1];	//path[PATH_MAX + 1];	/**< Path associated with fd */
+	struct kevent    kev;
 };
 
 
@@ -179,8 +180,8 @@ public:
 		for (watch_descriptors_type::iterator it =  watch_descriptors_.begin(); it != watch_descriptors_.end(); ++it )
 		{
 			watch_data watch;
-
 			watch.wd = 0;
+			struct kevent *kev = &watch.kev;
 
 			if (watch.wd < 0)
 			{
@@ -229,7 +230,7 @@ public:
 			/* FIXME - this never decreases and might fail */
 			//if ((watch->wd = ++ctl->next_wd) > WATCH_MAX) 
 			
-			if ((watch.wd = ++next_watch_) > WATCH_MAX) 
+			if ( (watch.wd = ++next_watch_) > WATCH_MAX )
 			{
 				//warn("watch_max exceeded");
 				//return -1;
