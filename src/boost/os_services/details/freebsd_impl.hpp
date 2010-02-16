@@ -161,7 +161,7 @@ public:
 
 			// TENEMOS UN FILE DESCRIPTOR POR WATCH
 			//if ((watch->fd = open(watch->path, O_RDONLY)) < 0) 
-			if ( (watch.fd = open( it->first, O_RDONLY )) < 0) 
+			if ( (watch.fd = open( it->first.c_str(), O_RDONLY )) < 0) 
 			{
 				//warn("opening path `%s' failed", watch->path);
 				//return -1;
@@ -193,14 +193,16 @@ public:
 
 			/* Generate a new watch ID */
 			/* FIXME - this never decreases and might fail */
-			if ((watch->wd = ++ctl->next_wd) > WATCH_MAX) 
+			//if ((watch->wd = ++ctl->next_wd) > WATCH_MAX) 
+			if ((watch.wd = ++ctl->next_wd) > WATCH_MAX) 
 			{
 				warn("watch_max exceeded");
 				return -1;
 			}
 
 			/* Create and populate a kevent structure */
-			EV_SET(kev, watch->fd, EVFILT_VNODE, EV_ADD | EV_CLEAR, 0, 0, watch);
+			//EV_SET(kev, watch->fd, EVFILT_VNODE, EV_ADD | EV_CLEAR, 0, 0, watch);
+			EV_SET(kev, watch.fd, EVFILT_VNODE, EV_ADD | EV_CLEAR, 0, 0, watch);
 
 			if (mask & PN_ACCESS || mask & PN_MODIFY)
 			{
@@ -228,7 +230,8 @@ public:
 			}
 
 			/* Add the kevent to the kernel event queue */
-			if (kevent(ctl->fd, kev, 1, NULL, 0, NULL) < 0) 
+			//if (kevent(ctl->fd, kev, 1, NULL, 0, NULL) < 0) 
+			if (kevent(file_descriptor_, kev, 1, NULL, 0, NULL) < 0) 
 			{
 				perror("kevent(2)");
 				return -1;
