@@ -87,10 +87,11 @@ namespace detail {
 
 struct watch_data
 {
-	int             fd;	/**< kqueue(4) watched file descriptor */
-	int             wd;	/**< Unique 'watch descriptor' */
+	int               fd;	/**< kqueue(4) watched file descriptor */
+	int               wd;	/**< Unique 'watch descriptor' */
 	//char            path[255 + 1];	//path[PATH_MAX + 1];	/**< Path associated with fd */
-	struct kevent    kev;
+	struct kevent     kev;
+	boost::uint32_t   mask;	/**< Mask of monitored events */
 };
 
 
@@ -182,6 +183,7 @@ public:
 			watch_data watch;
 			watch.wd = 0;
 			struct kevent *kev = &watch.kev;
+			int mask = watch->mask;
 
 			if (watch.wd < 0)
 			{
