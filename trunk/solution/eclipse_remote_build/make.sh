@@ -7,9 +7,14 @@ echo 2 argument: $2
 #echo PATH: $PATH
 #echo --------------------------------------
 
+
+src_directory=$DEV_ROOT/schwimmer-hund/src/
+
+echo src_directory: $src_directory
+
 #---manage files
 #TODO: ver que el directorio no este hardcodeado
-#tar xvjf $1 -C $DEV_ROOT/schwimmer-hund/src/
+# VERBOSE #tar xvjf $1 -C $DEV_ROOT/schwimmer-hund/src/
 tar xjf $1 -C $DEV_ROOT/schwimmer-hund/src/
 
 #---make
