@@ -1,6 +1,6 @@
-echo 1 argument: $1
-echo 2 argument: $2
-echo 3 argument: $3
+#echo 1 argument: $1
+#echo 2 argument: $2
+#echo 3 argument: $3
 
 #echo --------------------------------------
 #echo BOOST_ROOT: $BOOST_ROOT
@@ -27,7 +27,9 @@ rm compilation.log
 #g++ -I"$BOOST_ROOT" -I$src_dir -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/libs/os_services/test/test.d" -MT"src/libs/os_services/test/test.d" -o"src/libs/os_services/test/test.o" "$DEV_ROOT/schwimmer-hund/src/libs/os_services/test/test.cpp"
 g++ -I"$BOOST_ROOT" -I$src_dir -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/libs/os_services/test/test.d" -MT"src/libs/os_services/test/test.d" -o"src/libs/os_services/test/test.o" "$DEV_ROOT/schwimmer-hund/src/libs/os_services/test/test.cpp" &> compilation.log
 
-cat compilation.log | tr "/" "\\"
+#cat compilation.log | tr "/" "\\" | tr "/" "\\"
+cat compilation.log | sed -e 's!/home/fernando/dev/schwimmer-hund/!.\\!g' | tr "/" "\\"
+
 
 rm compilation.log
 
@@ -38,3 +40,15 @@ rm compilation.log
 
 #---delete temporaries
 rm $compressed_file_path
+
+
+
+# ------------------------------------------------------------------------------------
+# OLDS
+# ------------------------------------------------------------------------------------
+
+# cat file | tr "/" "\\" | tr "home" "XXXX"
+# sed -e s/:/-/g $a
+# sed -e 's,bin,/home/sandeep/bin,' file
+# cat file | sed -e 's!/home/fernando/dev/schwimmer-hund/!.\\!g' | tr "/" "\\"
+# sed 's_c:/mydocuments/pictures_d:/mypics/personal_'
