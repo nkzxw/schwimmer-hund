@@ -12,20 +12,20 @@ http://www.boost.org/doc/libs/1_41_0/more/getting_started/windows.html
 
 		
 	  cd $BOOST_ROOT
-		REM bjam --build-dir="/home/fernando/Documents/boost_1_42_0" --toolset=gcc --layout=versioned --build-type=complete stage
-		REM bjam --build-dir="/home/fernando/Documents/boost_1_42_0" --toolset=gcc --layout=versioned --build-type=minimal stage
+		REM bjam --build-dir="/home/fernando/programs/boost_1_42_0" --toolset=gcc --layout=versioned --build-type=complete stage
+		REM bjam --build-dir="/home/fernando/programs/boost_1_42_0" --toolset=gcc --layout=versioned --build-type=minimal stage
 	
 
 
-		./bjam --build-dir="/home/fernando/Documents/boost_1_42_0" --toolset=gcc --build-type=complete --layout=versioned --with-serialization stage
-		./bjam --build-dir="/home/fernando/Documents/boost_1_42_0" --toolset=gcc --build-type=complete --layout=versioned --with-system stage
-		./bjam --build-dir="/home/fernando/Documents/boost_1_42_0" --toolset=gcc --build-type=complete --layout=versioned --with-date_time stage
-		./bjam --build-dir="/home/fernando/Documents/boost_1_42_0" --toolset=gcc --build-type=complete --layout=versioned --with-regex stage
-		./bjam --build-dir="/home/fernando/Documents/boost_1_42_0" --toolset=gcc --build-type=complete --layout=versioned --with-thread stage
-		./bjam --build-dir="/home/fernando/Documents/boost_1_42_0" --toolset=gcc --build-type=complete --layout=versioned --with-filesystem stage
-		./bjam --build-dir="/home/fernando/Documents/boost_1_42_0" --toolset=gcc --build-type=complete --layout=versioned --with-program_options stage
-		./bjam --build-dir="/home/fernando/Documents/boost_1_42_0" --toolset=gcc --build-type=complete --layout=versioned --with-wave stage
-		./bjam --build-dir="/home/fernando/Documents/boost_1_42_0" --toolset=gcc --build-type=complete --layout=versioned --with-test stage
+		./bjam --build-dir="/home/fernando/programs/boost_1_42_0" --toolset=gcc --build-type=complete --layout=versioned --with-serialization stage
+		./bjam --build-dir="/home/fernando/programs/boost_1_42_0" --toolset=gcc --build-type=complete --layout=versioned --with-system stage
+		./bjam --build-dir="/home/fernando/programs/boost_1_42_0" --toolset=gcc --build-type=complete --layout=versioned --with-date_time stage
+		./bjam --build-dir="/home/fernando/programs/boost_1_42_0" --toolset=gcc --build-type=complete --layout=versioned --with-regex stage
+		./bjam --build-dir="/home/fernando/programs/boost_1_42_0" --toolset=gcc --build-type=complete --layout=versioned --with-thread stage
+		./bjam --build-dir="/home/fernando/programs/boost_1_42_0" --toolset=gcc --build-type=complete --layout=versioned --with-filesystem stage
+		./bjam --build-dir="/home/fernando/programs/boost_1_42_0" --toolset=gcc --build-type=complete --layout=versioned --with-program_options stage
+		./bjam --build-dir="/home/fernando/programs/boost_1_42_0" --toolset=gcc --build-type=complete --layout=versioned --with-wave stage
+		./bjam --build-dir="/home/fernando/programs/boost_1_42_0" --toolset=gcc --build-type=complete --layout=versioned --with-test stage
 
 
 
