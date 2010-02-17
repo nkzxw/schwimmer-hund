@@ -9,20 +9,20 @@ echo 3 argument: $3
 #echo --------------------------------------
 
 compressed_file_path=$1
-#echo compressed_file_path: $compressed_file_path
+src_dir=$2
 
-src_directory=$DEV_ROOT/schwimmer-hund/src/
-#echo src_directory: $src_directory
+#echo compressed_file_path: $compressed_file_path
+#echo src_dir: $src_dir
 
 #---manage files
 #TODO: ver que el directorio no este hardcodeado
-# VERBOSE #tar xvjf $compressed_file_path -C $src_directory
-tar xjf $compressed_file_path -C $src_directory
+# VERBOSE #tar xvjf $compressed_file_path -C $src_dir
+tar xjf $compressed_file_path -C $src_dir
 
 #---make
 #TODO: PROJECT_ROOT
 
-g++ -I"$BOOST_ROOT" -I$DEV_ROOT/schwimmer-hund/src -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/libs/os_services/test/test.d" -MT"src/libs/os_services/test/test.d" -o"src/libs/os_services/test/test.o" "$DEV_ROOT/schwimmer-hund/src/libs/os_services/test/test.cpp"
+g++ -I"$BOOST_ROOT" -I$src_dir -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/libs/os_services/test/test.d" -MT"src/libs/os_services/test/test.d" -o"src/libs/os_services/test/test.o" "$DEV_ROOT/schwimmer-hund/src/libs/os_services/test/test.cpp"
 
 #---delete temporaries
 rm $compressed_file_path
