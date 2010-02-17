@@ -28,12 +28,10 @@ rm compilation.log
 g++ -I"$BOOST_ROOT" -I$src_dir -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/libs/os_services/test/test.d" -MT"src/libs/os_services/test/test.d" -o"src/libs/os_services/test/test.o" "$DEV_ROOT/schwimmer-hund/src/libs/os_services/test/test.cpp" &> compilation.log
 
 #cat compilation.log | tr "/" "\\" | tr "/" "\\"
-cat compilation.log | sed -e 's!/home/fernando/dev/schwimmer-hund/!.\\!g' | tr "/" "\\"
-
+#cat compilation.log | sed -e 's!/home/fernando/dev/schwimmer-hund/!.\\!g' | tr "/" "\\"
+cat compilation.log | sed -e 's!/home/fernando/dev/schwimmer-hund/!.\\!g' | sed -e 's!/home/fernando/programs/!C:\\Program Files\\Boost\\!g' | tr "/" "\\"
 
 rm compilation.log
-
-
 
 
 #echo "/home/fernando/dev/schwimmer-hund/src/boost/os_services/details/freebsd_impl.hpp:330:" | tr "/" "\\"
