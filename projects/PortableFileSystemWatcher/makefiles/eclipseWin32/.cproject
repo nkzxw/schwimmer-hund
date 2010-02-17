@@ -54,7 +54,7 @@
 </folderInfo>
 <sourceEntries>
 <entry excluding="src" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
-<entry excluding="libs/os_services/test/stress_test.cpp|temp/test_fwatch_original.cpp|reserach" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
+<entry excluding="libs/os_services/test/stress_test.cpp|temp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
 </sourceEntries>
 </configuration>
 </storageModule>
@@ -517,7 +517,7 @@
 </toolChain>
 </folderInfo>
 <sourceEntries>
-<entry excluding="src/libs/os_services/test/stress_test.cpp|src/temp/test_fwatch_original.cpp|src/reserach" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+<entry excluding="src/temp|src/libs/os_services/test/stress_test.cpp|src/temp/test_fwatch_original.cpp|src/reserach" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 </sourceEntries>
 </configuration>
 </storageModule>
