@@ -28,8 +28,7 @@ REM "C:\Program Files\putty\pscp.exe" -pw candombe 2010021702225403.tar.bz2 fern
 
 del %tarfilename%
 del %compressedfilename%
-
-
+del log.txt
 
 
 
