@@ -3,6 +3,7 @@
 REM TODO: usar sesiones que no se cierren
 REM TODO: ver de conectarse usando las SAVED de putty para no tener que enviar el PWD por texto
 REM TODO: meter algo en que medio que intercepte la salida standard y haga reemplazos en el texto de los nombres de los arhivos. Todo esto para el parser detecte bien los nombres de los archivos
+REM TODO: eliminar los comentarios que pone el bash al hacer Login ( -l )
 
 set temp_var = %TIME:~0,1%
 IF [%temp_var%]==[] (set current_datetime=%DATE:~6,4%%DATE:~3,2%%DATE:~0,2%0%TIME:~1,1%%TIME:~3,2%%TIME:~6,2%%TIME:~9,2%) ELSE set current_datetime=%DATE:~6,4%%DATE:~3,2%%DATE:~0,2%%TIME:~0,2%%TIME:~3,2%%TIME:~6,2%%TIME:~9,2%
@@ -23,7 +24,7 @@ REM del %compressedfilename% >> log.txt
 "C:\Program Files\7-Zip\7za.exe" a -ttar -r -x!*svn* %tarfilename% %src_directory%\* >> log.txt
 "C:\Program Files\7-Zip\7za.exe" a -tbzip2 %compressedfilename% %tarfilename% >> log.txt
 
-"C:\Program Files\putty\pscp.exe" -pw %host_password% %compressedfilename% %host_uri%:%host_target_dir%
+"C:\Program Files\putty\pscp.exe" -pw %host_password% %compressedfilename% %host_uri%:%host_target_dir% >> log.txt
 REM "C:\Program Files\putty\pscp.exe" -pw candombe 2010021702225403.tar.bz2 fernando@192.168.120.36:/home/fernando/dev/schwimmer-hund
 
 "C:\Program Files\putty\plink.exe" -pw %host_password% %host_uri% bash -l -c '. /home/fernando/dev/schwimmer-hund/solution/eclipse_remote_build/make.sh /home/fernando/dev/schwimmer-hund/%compressedfilename%'
