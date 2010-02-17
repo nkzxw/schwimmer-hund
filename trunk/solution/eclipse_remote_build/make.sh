@@ -8,9 +8,6 @@ echo 3 argument: $3
 #echo PATH: $PATH
 #echo --------------------------------------
 
-
-echo hola como te va >> ./interceptor.sh
-
 compressed_file_path=$1
 src_dir=$2
 
