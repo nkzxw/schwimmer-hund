@@ -9,7 +9,8 @@ echo 2 argument: $2
 
 #---manage files
 #TODO: ver que el directorio no este hardcodeado
-tar xvjf $1 -C $DEV_ROOT/schwimmer-hund/src/
+#tar xvjf $1 -C $DEV_ROOT/schwimmer-hund/src/
+tar xjf $1 -C $DEV_ROOT/schwimmer-hund/src/
 
 #---make
 #TODO: PROJECT_ROOT

@@ -1,5 +1,9 @@
 @echo off
 
+REM TODO: usar sesiones que no se cierren
+REM TODO: ver de conectarse usando las SAVED de putty para no tener que enviar el PWD por texto
+REM TODO: meter algo en que medio que intercepte la salida standard y haga reemplazos en el texto de los nombres de los arhivos. Todo esto para el parser detecte bien los nombres de los archivos
+
 set temp_var = %TIME:~0,1%
 IF [%temp_var%]==[] (set current_datetime=%DATE:~6,4%%DATE:~3,2%%DATE:~0,2%0%TIME:~1,1%%TIME:~3,2%%TIME:~6,2%%TIME:~9,2%) ELSE set current_datetime=%DATE:~6,4%%DATE:~3,2%%DATE:~0,2%%TIME:~0,2%%TIME:~3,2%%TIME:~6,2%%TIME:~9,2%
 
