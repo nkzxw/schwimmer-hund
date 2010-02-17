@@ -16,7 +16,7 @@ rm compilation.log
 g++ -I"$BOOST_ROOT" -I$src_dir -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$src_dir/libs/os_services/test/test.d" -MT"$src_dir/libs/os_services/test/test.d" -o"$src_dir/libs/os_services/test/test.o" "$src_dir/libs/os_services/test/test.cpp" &> compilation.log
 
 # LINK: 
-g++ -L"$BOOST_ROOT/stage/lib/" -o"$src_dir/../bin/PortableFileSystemWatcher"  $src_dir/libs/os_services/test/test.o   -lboost_thread-gcc42-mt-d-1_42 -lboost_system-gcc42-mt-d-1_42 -lboost_filesystem-gcc42-mt-d-1_42 &>> compilation.log
+g++ -L"$BOOST_ROOT/stage/lib/" -o"$src_dir/../bin/PortableFileSystemWatcher"  $src_dir/libs/os_services/test/test.o   -lboost_thread-gcc42-mt-d-1_42 -lboost_system-gcc42-mt-d-1_42 -lboost_filesystem-gcc42-mt-d-1_42 &> compilation.log
 
 # TODO: revisar 
 # g++ -IC:\Program Files\Boost\boost_1_42_0 -IZ:\Development\CPP\schwimmer-hund\src -O0 -g3 -Wall -c -fmessage-length=0 -osrc\libs\os_services\test\test.o ..\..\..\..\..\src\libs\os_services\test\test.cpp
@@ -28,7 +28,7 @@ g++ -L"$BOOST_ROOT/stage/lib/" -o"$src_dir/../bin/PortableFileSystemWatcher"  $s
 
 cat compilation.log | sed -e 's!/home/fernando/dev/schwimmer-hund/!.\\!g' | sed -e 's!/home/fernando/programs/!C:\\Program Files\\Boost\\!g' | tr "/" "\\"
 
-rm compilation.log
+#rm compilation.log
 
 
 #echo "/home/fernando/dev/schwimmer-hund/src/boost/os_services/details/freebsd_impl.hpp:330:" | tr "/" "\\"
