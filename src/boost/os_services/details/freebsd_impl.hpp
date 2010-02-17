@@ -243,8 +243,10 @@ public:
 			}
 
 			/* Create and populate a kevent structure */
-			//EV_SET(kev, watch->fd, EVFILT_VNODE, EV_ADD | EV_CLEAR, 0, 0, watch);
-			EV_SET(kev, watch.fd, EVFILT_VNODE, EV_ADD | EV_CLEAR, 0, 0, watch);
+			////EV_SET(kev, watch->fd, EVFILT_VNODE, EV_ADD | EV_CLEAR, 0, 0, watch);
+
+			//TODO: da error
+			//EV_SET(kev, watch.fd, EVFILT_VNODE, EV_ADD | EV_CLEAR, 0, 0, watch);
 
 			if (mask & PN_ACCESS || mask & PN_MODIFY)
 			{
@@ -302,9 +304,10 @@ public: //private:  //TODO:
 		while ( !closing_ )
 		{
 			//printf("-- antes del read --\n");
-			char buffer[BUF_LEN];
+//			char buffer[BUF_LEN];
 			int i = 0;
-			int length = ::read( file_descriptor_, buffer, BUF_LEN );
+			int length;
+//			int length = ::read( file_descriptor_, buffer, BUF_LEN );
 
 			//printf("length: %d\n", length);
 			//print_buffer(buffer, length);
@@ -328,7 +331,7 @@ public: //private:  //TODO:
 
 
 					struct kevent kev;
-					struct inotify_event *event = ( struct inotify_event * ) &buffer[ i ]; //TODO:
+					//struct inotify_event *event = ( struct inotify_event * ) &buffer[ i ]; //TODO:
 
 
 				}
