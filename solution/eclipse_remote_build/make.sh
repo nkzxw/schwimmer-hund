@@ -9,7 +9,7 @@ echo 3 argument: $3
 #echo --------------------------------------
 
 compressed_file_path=$1
-echo compressed_file_path: $compressed_file_path
+#echo compressed_file_path: $compressed_file_path
 
 src_directory=$DEV_ROOT/schwimmer-hund/src/
 #echo src_directory: $src_directory
