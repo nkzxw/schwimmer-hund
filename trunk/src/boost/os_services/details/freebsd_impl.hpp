@@ -183,7 +183,7 @@ public:
 			watch_data watch;
 			watch.wd = 0;
 			struct kevent *kev = &watch.kev;
-			int mask = watch->mask;
+			int mask = watch.mask;
 
 			if (watch.wd < 0)
 			{
