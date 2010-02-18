@@ -55,7 +55,7 @@ REM echo %compressed_filename%
 
 REM -------------------------------------------------------------------------------------------
 REM Llamar desde Eclipse:
-REM copy_to_host.bat ${workspace_loc:/boost_file_system_monitor_remote_build}\..\..\src fernando@192.168.120.36 candombe /home/fernando/dev/schwimmer-hund /home/fernando/dev/schwimmer-hund/solution/eclipse_remote_build/make.sh $DEV_ROOT/schwimmer-hund/src/
+REM copy_to_host.bat ${workspace_loc:/boost_file_system_monitor_remote_build}\..\..\src fernando@192.168.120.36 candombe /home/fernando/dev/schwimmer-hund /home/fernando/dev/schwimmer-hund/solution/eclipse_remote_build/make.sh $DEV_ROOT/schwimmer-hund/src
 
 
 REM -------------------------------------------------------------------------------------------
