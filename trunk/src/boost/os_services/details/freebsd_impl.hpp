@@ -161,8 +161,13 @@ public:
 	//TODO: hacer lo mismo para linux.
 	void initialize() //private
 	{
+		std::cout << "void initialize()" << std::endl;
+
 		if (!is_initialized_)
 		{
+
+			std::cout << "file_descriptor_ = kqueue();" << std::endl;
+
 			file_descriptor_ = kqueue(); //::kqueue();
 			if (file_descriptor_ < 0)
 			{
@@ -180,25 +185,29 @@ public:
 	{
 		for (watch_descriptors_type::iterator it =  watch_descriptors_.begin(); it != watch_descriptors_.end(); ++it )
 		{
-			watch_data watch;
-			watch.wd = 0;
-			struct kevent *kev = &watch.kev;
-			int mask = watch.mask;
+			//watch_data watch;
+			watch_data *watch = new watch_data;
 
-			if (watch.wd < 0)
+
+			//TODO: en el constructor
+			watch->wd = 0;
+			struct kevent *kev = &watch->kev;
+			int mask = watch->mask;
+
+			if (watch->wd < 0)
 			{
 				std::ostringstream oss;
 				oss << "Failed to monitor directory - Directory: " << it->first << " - Reason: " << std::strerror(errno);
 				throw (std::invalid_argument(oss.str()));
 			}
-			it->second = watch.wd;
+			it->second = watch->wd;
 
 
 			// watch->wd ES IGUAL A watch_descriptor
 
 			// TENEMOS UN FILE DESCRIPTOR POR WATCH
 			//if ((watch->fd = open(watch->path, O_RDONLY)) < 0) 
-			if ( (watch.fd = open( it->first.c_str(), O_RDONLY )) < 0) 
+			if ( (watch->fd = open( it->first.c_str(), O_RDONLY )) < 0)
 			{
 				//warn("opening path `%s' failed", watch->path);
 				//return -1;
@@ -232,7 +241,7 @@ public:
 			/* FIXME - this never decreases and might fail */
 			//if ((watch->wd = ++ctl->next_wd) > WATCH_MAX) 
 			
-			if ( (watch.wd = ++next_watch_) > WATCH_MAX )
+			if ( (watch->wd = ++next_watch_) > WATCH_MAX )
 			{
 				//warn("watch_max exceeded");
 				//return -1;
@@ -243,10 +252,8 @@ public:
 			}
 
 			/* Create and populate a kevent structure */
-			////EV_SET(kev, watch->fd, EVFILT_VNODE, EV_ADD | EV_CLEAR, 0, 0, watch);
-
-			//TODO: da error
-			//EV_SET(kev, watch.fd, EVFILT_VNODE, EV_ADD | EV_CLEAR, 0, 0, watch);
+			//EV_SET(kev, watch->fd, EVFILT_VNODE, EV_ADD | EV_CLEAR, 0, 0, watch);
+			EV_SET(kev, watch->fd, EVFILT_VNODE, EV_ADD | EV_CLEAR, 0, 0, watch);
 
 			if (mask & PN_ACCESS || mask & PN_MODIFY)
 			{
@@ -292,7 +299,7 @@ public:
 	void start()
 	{
 		initialize();
-
+		create_watchs();
 
 		thread_.reset( new boost::thread( boost::bind(&freebsd_impl::handle_directory_changes, this) ) );
 	}
