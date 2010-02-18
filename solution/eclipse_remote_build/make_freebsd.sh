@@ -1,8 +1,8 @@
 compressed_file_path=$1
 src_dir=$2
 
-#echo compressed_file_path: $compressed_file_path
-#echo src_dir: $src_dir
+echo compressed_file_path: $compressed_file_path
+echo src_dir: $src_dir
 
 #---manage files
 # VERBOSE #tar xvjf $compressed_file_path -C $src_dir
