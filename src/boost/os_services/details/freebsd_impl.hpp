@@ -298,6 +298,7 @@ public:
 
 	void start()
 	{
+		std::cout << "void start()" << std::endl;
 		initialize();
 		create_watchs();
 

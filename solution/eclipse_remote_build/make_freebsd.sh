@@ -11,6 +11,7 @@ tar xjf $compressed_file_path -C $src_dir
 #---make
 
 rm compilation.log
+rm $src_dir/../bin/PortableFileSystemWatcher
 
 #g++ -I"$BOOST_ROOT" -I$src_dir -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/libs/os_services/test/test.d" -MT"src/libs/os_services/test/test.d" -o"src/libs/os_services/test/test.o" "$src_dir/libs/os_services/test/test.cpp"
 g++ -I"$BOOST_ROOT" -I$src_dir -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$src_dir/libs/os_services/test/test.d" -MT"$src_dir/libs/os_services/test/test.d" -o"$src_dir/libs/os_services/test/test.o" "$src_dir/libs/os_services/test/test.cpp" &> compilation.log
