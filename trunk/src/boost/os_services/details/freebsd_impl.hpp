@@ -57,22 +57,16 @@ enum {
 
 	/** The atime of a file has been modified */
 	PN_ACCESS 		= 0x1 << 0,
-
 	/** A file was created in a watched directory */
 	PN_CREATE		= 0x1 << 1,
-
 	/** A file was deleted from a watched directory */
 	PN_DELETE		= 0x1 << 2,
-
 	/** The modification time of a file has changed */
 	PN_MODIFY		= 0x1 << 3,
-
 	/** Automatically delete the watch after a matching event occurs */
 	PN_ONESHOT		= 0x1 << 4,
-
 	/** An error condition in the underlying kernel event queue */
 	PN_ERROR		= 0x1 << 5,
-
 } __PN_BITMASK;
 
 #define PN_ALL_EVENTS	(PN_ACCESS | PN_CREATE | PN_DELETE | PN_MODIFY)
@@ -89,249 +83,38 @@ namespace os_services {
 namespace detail {
 
 
-struct fsentry
+
+struct fsitem; //forward-declaration
+
+typedef boost::shared_ptr<fsitem> watch_type;
+typedef std::vector<watch_type> watch_collection_type;
+
+struct fsitem
 {
-	boost::filesystem::path full_path;
+	boost::filesystem::path path;
 
-	int fd;					/**< kqueue(4) watched file descriptor */
-	//int wd;	/**< Unique 'watch descriptor' */
-	boost::uint32_t        mask;	/**< Mask of monitored events */
+	//TODO: uno de estos dos (fd y wd) no es necesario
+	int fd;	/**< kqueue(4) watched file descriptor */
+	int wd;	/**< Unique 'watch descriptor' */
 
-
-	std::vector<fsentry> subitems;
-};
-
-struct watch_data
-{
-	int               fd;	/**< kqueue(4) watched file descriptor */
-	int               wd;	/**< Unique 'watch descriptor' */
 	//char            path[255 + 1];	//path[PATH_MAX + 1];	/**< Path associated with fd */
-	std::string 	  path;
-	struct kevent     kev;
-	boost::uint32_t   mask;	/**< Mask of monitored events */
+	struct kevent kev;
+	boost::uint32_t mask;	/**< Mask of monitored events */
 
-	fsentry directory;
-	int parent_wd; //TODO: para que sirve?
+	watch_collection_type subitems;
 };
 
 
 
 
-
-//struct directory
-//{
-//
-//	boost::filesystem::path path;
-////	char    *path;
-////	size_t   path_len;
-////
-////	/** A directory handle returned by opendir(3) */
-////	DIR     *dirp;
-//
-//	/* All entries in the directory (struct dirent) */
-//	LIST_HEAD(, dentry) all;
-//};
-
-
-//TODO: contemplar include_sub_directories_
-void fill_file_system(fsentry& head_dir)
-{
-	boost::filesystem::directory_iterator end_iter;
-	for ( boost::filesystem::directory_iterator dir_itr( head_dir.full_path ); dir_itr != end_iter; ++dir_itr )
-	{
-		try
-		{
-			fsentry child;
-			child.full_path = dir_itr->path();
-
-			//TODO: habilitarlo para hacerlo recursivo...
-//			if ( boost::filesystem::is_directory( dir_itr->status() ) )
-//			{
-//				fill_file_system(child);
-//			}
-
-			head_dir.subitems.push_back(child);
-		}
-		catch ( const std::exception & ex )
-		{
-			std::cout << dir_itr->path().filename() << " " << ex.what() << std::endl;
-		}
-	}
-
-}
-
-//static int directory_scan(struct pnotify_cb *ctl, struct pnotify_watch * watch)
-int directory_scan()
-{
-	struct pnotify_watch *wtmp;
-	struct directory *dir;
-	struct dirent   ent, *entp;
-	struct dentry  *dptr;
-	bool            found;
-	char            path[PATH_MAX + 1];
-	char           *cp;
-	struct stat	st;
-
-	assert(watch != NULL);
-
-	dir = &watch->dir;
-
-	dprintf("scanning directory\n");
-
-	/* Generate the basename */
-	(void) snprintf((char *) &path, PATH_MAX, "%s/", dir->path);
-	cp = path + dir->path_len + 1;
-
-	/*
-	 * Invalidate the status mask for all entries.
-	 *  This is used to detect entries that have been deleted.
- 	 */
-	LIST_FOREACH(dptr, &dir->all, entries) {
-		dptr->mask = PN_DELETE;
-	}
-
-	/* Skip the initial '.' and '..' entries */
-	/* XXX-FIXME doesnt work with chroot(2) when '..' doesn't exist */
-	rewinddir(dir->dirp);
-	if (readdir_r(dir->dirp, &ent, &entp) != 0) {
-		perror("readdir_r(3)");
-		return -1;
-	}
-	if (strcmp(ent.d_name, ".") == 0) {
-		if (readdir_r(dir->dirp, &ent, &entp) != 0) {
-			perror("readdir_r(3)");
-			return -1;
-		}
-	}
-
-	/* Read all entries in the directory */
-	for (;;) {
-
-		/* Read the next entry */
-		if (readdir_r(dir->dirp, &ent, &entp) != 0) {
-			perror("readdir_r(3)");
-			return -1;
-		}
-
-		/* Check for the end-of-directory condition */
-		if (entp == NULL)
-			break;
-
-		/* Perform a linear search for the dentry */
-		found = false;
-		LIST_FOREACH(dptr, &dir->all, entries) {
-
-			/*
-			 * BUG - this doesnt handle hardlinks which
-			 * have the same d_fileno but different
-			 * dirent structs
-			 */
-			//should compare the entire dirent struct...
-			if (dptr->ent.d_fileno != ent.d_fileno)
-				continue;
-
-			dprintf("old entry: %s\n", ent.d_name);
-			dptr->mask = 0;
-
-			/* Generate the full pathname */
-			// BUG: name_max is not precise enough
-			strncpy(cp, ent.d_name, NAME_MAX);
-
-			/* Check the mtime and atime */
-			if (stat((char *) &path, &st) < 0) {
-				perror("stat(2)");
-				return -1;
-			}
-
-			found = true;
-			break;
-		}
-
-		/* Add the entry to the list, if needed */
-		if (!found) {
-			dprintf("new entry: %s\n", ent.d_name);
-
-			/* Allocate a new dentry structure */
-			if ((dptr = malloc(sizeof(*dptr))) == NULL) {
-				perror("malloc(3)");
-				return -1;
-			}
-
-			/* Copy the dirent structure */
-			memcpy(&dptr->ent, &ent, sizeof(ent));
-			dptr->mask = PN_CREATE;
-
-			/* Generate the full pathname */
-			// BUG: name_max is not precise enough
-			strncpy(cp, ent.d_name, NAME_MAX);
-
-			/* Get the file status */
-			if (stat((char *) &path, &st) < 0) {
-				perror("stat(2)");
-				return -1;
-			}
-
-			/* Add a watch if it is a regular file */
-			if (S_ISREG(st.st_mode))
-			{
-				if (pnotify_add_watch(ctl, path, watch->mask) < 0)
-				{
-					return -1;
-				}
-				wtmp = LIST_FIRST(&ctl->watch);
-				wtmp->parent_wd = watch->wd;
-			}
-
-			LIST_INSERT_HEAD(&dir->all, dptr, entries);
-		}
-	}
-
-	return 0;
-}
-
-
-//static int directory_open(struct pnotify_cb *ctl, struct pnotify_watch * watch)
-int directory_open(watch_data* watch)
-{
-	fsentry* dir;
-	dir = &watch->directory;
-
-	//LIST_INIT(&dir->all);
-	if ( (dir->dirp = opendir(watch->path)) == NULL )
-	{
-		//TODO:
-		//perror("opendir(2)");
-		return -1;
-	}
-
-
-
-	//TODO:
-//	dir->path_len = strlen(watch->path);
-//	if ((dir->path_len >= PATH_MAX) || ((dir->path = malloc(dir->path_len + 1)) == NULL))
-//	{
-//
-//		perror("malloc(3)");
-//		return -1;
-//	}
-//	strncpy(dir->path, watch->path, dir->path_len);
-
-
-	/* Scan the directory */
-	if ( directory_scan( watch ) < 0 )
-	{
-		//warn("directory_scan failed");
-		return -1;
-	}
-
-	return 0;
-}
 
 
 
 
 //TODO: si es necesario para todas las implementaciones, pasar a base_impl
 typedef boost::shared_ptr<boost::thread> HeapThread; //TODO: cambiar nombre
+
+
 
 //TODO: ver que pasa con NetBSD, OpenBSD, etc...
 
@@ -385,9 +168,21 @@ public:
 		}
 	}
 
+
+	//TODO: agregar
+	//void add_directory_impl ( const boost::filesystem::path& dir ) //throw (std::invalid_argument, std::runtime_error)
+
 	void add_directory_impl ( const std::string& dir_name ) //throw (std::invalid_argument, std::runtime_error)
 	{
-		watch_descriptors_.push_back(std::make_pair<std::string, watch_data*>(dir_name, 0));
+		//watch_descriptors_.push_back(std::make_pair<std::string, watch_data*>(dir_name, 0));
+
+
+		//boost::shared_ptr<fsitem> item(new fsitem);
+		watch_type item(new fsitem);
+		item->path = dir_name;		//boost::filesystem::path full_path( str_path, boost::filesystem::native );
+		//TODO: asignar mask
+
+		user_watchs_.push_back(item);
 	}
 
 	//void remove_directory_impl(const std::string& dir_name) // throw (std::invalid_argument);
@@ -413,15 +208,12 @@ public:
 		}
 	}
 
-	void create_watch(watch_descriptors_type pair)
+
+
+	void create_watch( watch_type watch )
 	{
-		std::cout << "inside create_watchs LOOP" << std::endl;
-
-		fsentry *fs = new fsentry;
-		fs->full_path = boost::filesystem::path(it->first);
-		it->second = fs;
-
-		watch_data *watch = new watch_data;
+		std::cout << "void create_watch( watch_type watch )" << std::endl;
+		std::cout << "watch->path.filename(): " << watch->path.filename() << std::endl;
 
 		//TODO: ver esto...
 		watch->mask = PN_ALL_EVENTS; //TODO: asignar lo que el usuario quiere monitorear...
@@ -434,7 +226,7 @@ public:
 		if (watch->wd < 0)
 		{
 			std::ostringstream oss;
-			oss << "Failed to monitor directory - Directory: " << it->first << " - Reason: " << std::strerror(errno);
+			oss << "Failed to monitor directory - Directory: " << watch->path.native_file_string() << " - Reason: " << std::strerror(errno);
 			throw (std::invalid_argument(oss.str()));
 		}
 //			it->second = watch->wd;
@@ -443,11 +235,12 @@ public:
 		// watch->wd ES IGUAL A watch_descriptor
 
 
-		std::cout << "FILE: " << it->first << std::endl;
+
+		std::cout << "FILE: " << watch->path.native_file_string() << std::endl;
 
 		// TENEMOS UN FILE DESCRIPTOR POR WATCH
 		//if ((watch->fd = open(watch->path, O_RDONLY)) < 0)
-		if ( (watch->fd = open( it->first.c_str(), O_RDONLY )) < 0)
+		if ( (watch->fd = open( watch->path.native_file_string().c_str(), O_RDONLY )) < 0)
 		{
 			//warn("opening path `%s' failed", watch->path);
 			//return -1;
@@ -458,27 +251,13 @@ public:
 			throw (std::invalid_argument(oss.str()));
 
 		}
-		fs->fd = watch->fd;
 
 
-		//TODO: esto se hace con boost::filesystem
-		///* Test if the file is a directory */
-		//if ( fstat(watch->fd, &st) < 0)
-		//{
-		//	warn("fstat(2) failed");
-		//	return -1;
-		//}
-		//watch->is_dir = S_ISDIR(st.st_mode);
-		///* Initialize the directory structure, if needed */
-		//if (watch->is_dir)
-		//{
-		//	directory_open(ctl, watch);
-		//}
+		if ( boost::filesystem::is_directory( watch->path ) )
+		{
+			scan_directory( watch );
+		}
 
-		//TODO: ver que hacer y probar que pasa si no lo incluimos...
-		// directory_open(ctl, watch);
-
-		fill_file_system(*fs);
 
 
 
@@ -498,7 +277,8 @@ public:
 
 		/* Create and populate a kevent structure */
 		//EV_SET(kev, watch->fd, EVFILT_VNODE, EV_ADD | EV_CLEAR, 0, 0, watch);
-		EV_SET(kev, watch->fd, EVFILT_VNODE, EV_ADD | EV_CLEAR, 0, 0, watch);
+		EV_SET( kev, watch->fd, EVFILT_VNODE, EV_ADD | EV_CLEAR, 0, 0, watch.get() );
+
 
 		//TODO: ver esto...
 		if (mask & PN_ACCESS || mask & PN_MODIFY)
@@ -544,14 +324,70 @@ public:
 	}
 
 
+	//TODO: contemplar la opcion include_sub_directories_
+	void scan_directory( watch_type head_dir )
+	{
+		std::cout << "void scan_directory( watch_type head_dir )" << std::endl;
+		std::cout << "head_dir->path.filename(): " << head_dir->path.filename() << std::endl;
+
+
+
+		//TODO: STL --> std::transform o std::for_each o boost::lambda o BOOST_FOREACH
+		//TODO: watch_collection_type o all_watchs_type ?????? GUARDA!!!!
+		for (watch_collection_type::iterator it =  head_dir->subitems.begin(); it != head_dir->subitems.end(); ++it )
+		{
+			(*it)->mask = PN_DELETE;
+		}
+
+
+		boost::filesystem::directory_iterator end_iter;
+		for ( boost::filesystem::directory_iterator dir_itr( head_dir->path ); dir_itr != end_iter; ++dir_itr )
+		{
+			try
+			{
+
+				bool found = false;
+
+				//TODO: reemplazar por std::find o algo similar...
+				//TODO: user_watchs o all_watchs ?????? GUARDA!!!!
+				//Linear-search
+				for (watch_collection_type::iterator it =  head_dir->subitems.begin(); it != head_dir->subitems.end(); ++it )
+				{
+					if (  (*it)->path.filename() == dir_itr->path().filename() )
+					{
+						std::cout << "found" << std::endl;
+						std::cout << "(*it)->path.filename(): " << (*it)->path.filename() << std::endl;
+						found = true;
+					}
+				}
+
+				if ( !found )
+				{
+					watch_type item(new fsitem);
+					item->path = dir_itr->path();
+					item->mask = PN_CREATE;
+
+					//TODO: ver en el codigo de pnotify: /* Add a watch if it is a regular file */
+					create_watch( item );
+					head_dir->subitems.push_back(item);
+				}
+			}
+			catch ( const std::exception & ex )
+			{
+				std::cout << dir_itr->path().filename() << " " << ex.what() << std::endl;
+			}
+		}
+
+	}
+
 	void start()
 	{
 		std::cout << "void start()" << std::endl;
 		initialize();
 
-		for (watch_descriptors_type::iterator it =  watch_descriptors_.begin(); it != watch_descriptors_.end(); ++it )
+		for (watch_collection_type::iterator it =  user_watchs_.begin(); it != user_watchs_.end(); ++it )
 		{
-			create_watch(*it);
+			create_watch( *it );
 		}
 
 		thread_.reset( new boost::thread( boost::bind(&freebsd_impl::handle_directory_changes, this) ) );
@@ -563,16 +399,11 @@ public: //private:  //TODO:
 	{
 		while ( !closing_ )
 		{
-
-			watch_data *watch; //struct pnotify_watch *watch;
 //			struct pnotify_event *evp;
 			struct kevent   kev;
 			int rc;
 
-			/* Wait for an event notification from the kernel */
 			std::cout << "waiting for kernel event.." << std::endl;
-
-			//printf("-- antes del kevent (read) --\n");
 
 			//TODO: ver timeout
 			//rc = kevent(ctl->fd, NULL, 0, &kev, 1, NULL);
@@ -585,38 +416,155 @@ public: //private:  //TODO:
 				return;
 			}
 
-			std::cout << "kev.ident: " << kev.ident << std::endl;
-			std::cout << "kev.filter: " << kev.filter << std::endl;
-			std::cout << "kev.flags: " << kev.flags << std::endl;
-			std::cout << "kev.fflags: " << kev.fflags << std::endl;
-			std::cout << "kev.data: " << kev.data << std::endl;
-			std::cout << "kev.udata: " << kev.udata << std::endl;
+			std::cout << "salio de kevent(...)" << std::endl;
 
-//		     struct kevent {
-//		             uintptr_t       ident;          /* identifier for this event */
-//		             int16_t         filter;         /* filter for event */
-//		             uint16_t        flags;          /* general flags */
-//		             uint32_t        fflags;         /* filter-specific flags */
-//		             intptr_t        data;           /* filter-specific data */
-//		             void            *udata;         /* opaque user data identifier */
-//		     };
+			watch_type watch( (fsitem*) kev.udata );
+
+			std::cout << "watch->fd: " << watch->fd << std::endl;
+			std::cout << "watch->wd: " << watch->wd << std::endl;
+			std::cout << "watch->mask: " << watch->mask << std::endl;
+			std::cout << "watch->path.filename(): " << watch->path.filename() << std::endl;
 
 
+//			std::cout << "kev.ident: " << kev.ident << std::endl;
+//			std::cout << "kev.filter: " << kev.filter << std::endl;
+//			std::cout << "kev.flags: " << kev.flags << std::endl;
+//			std::cout << "kev.fflags: " << kev.fflags << std::endl;
+//			std::cout << "kev.data: " << kev.data << std::endl;
+//			std::cout << "kev.udata: " << kev.udata << std::endl;
 
-			std::cout << "Luego del IF" << std::endl;
-
-			//printf("length: %d\n", length);
-			//print_buffer(buffer, length);
 
 			if (! closing_)
 			{
-				//watch = (struct pnotify_watch *) kev.udata;
-				watch = (watch_data*) kev.udata;
+				if (kev.fflags & NOTE_WRITE)
+				{
+					std::cout << "NOTE_WRITE -> PN_MODIFY" << std::endl;
+				}
+				if (kev.fflags & NOTE_TRUNCATE)
+				{
+					std::cout << "NOTE_TRUNCATE -> PN_MODIFY" << std::endl;
+				}
+				if (kev.fflags & NOTE_EXTEND)
+				{
+					std::cout << "NOTE_EXTEND -> PN_MODIFY" << std::endl;
+				}
+				if (kev.fflags & NOTE_ATTRIB)
+				{
+					std::cout << "NOTE_ATTRIB -> PN_ATTRIB" << std::endl;
+				}
+				if (kev.fflags & NOTE_DELETE)
+				{
+					std::cout << "NOTE_DELETE -> PN_DELETE" << std::endl;
+				}
+				if (kev.fflags & NOTE_RENAME)
+				{
+					std::cout << "NOTE_RENAME -> XXXXXXXXX" << std::endl;
+				}
+				if (kev.fflags & NOTE_REVOKE)
+				{
+					std::cout << "NOTE_REVOKE -> XXXXXXXXX" << std::endl;
+				}
+				if (kev.fflags & NOTE_LINK)
+				{
+					std::cout << "NOTE_LINK -> XXXXXXXXX" << std::endl;
+				}
 
-				std::cout << "watch->fd: " << watch->fd << std::endl;
-				std::cout << "watch->wd: " << watch->wd << std::endl;
-				std::cout << "watch->mask: " << watch->mask << std::endl;
-				//std::cout << "watch.fd: " << watch.fd << std::endl;
+
+				/* Convert the kqueue(4) flags to pnotify_event flags */
+				//if (!watch->is_dir)
+				if ( ! boost::filesystem::is_directory( watch->path ) )
+				{
+//					if (kev.fflags & NOTE_WRITE)
+//						evt->mask |= PN_MODIFY;
+//					if (kev.fflags & NOTE_TRUNCATE)
+//						evt->mask |= PN_MODIFY;
+//					if (kev.fflags & NOTE_EXTEND)
+//						evt->mask |= PN_MODIFY;
+//			#if TODO
+//					// not implemented yet
+//					if (kev.fflags & NOTE_ATTRIB)
+//						evt->mask |= PN_ATTRIB;
+//			#endif
+//					if (kev.fflags & NOTE_DELETE)
+//						evt->mask |= PN_DELETE;
+
+//					/* Construct a pnotify_event structure */
+//					if ((evp = calloc(1, sizeof(*evp))) == NULL)
+//					{
+//						warn("malloc failed");
+//						return -1;
+//					}
+//
+//					/* If the event happened within a watched directory,
+//					   add the filename and the parent watch descriptor.
+//					*/
+//					if (watch->parent_wd)
+//					{
+//
+//						/* KLUDGE: remove the leading basename */
+//						char *fn = strrchr(watch->path, '/') ;
+//						if (!fn)
+//						{
+//							fn = watch->path;
+//						}
+//						else
+//						{
+//							fn++;
+//						}
+//
+//						evt->wd = watch->parent_wd;
+//						/* FIXME: more error handling */
+//						(void) strncpy(evt->name, fn, strlen(fn));
+//					}
+//
+//					/* Add the event to the list of pending events */
+//					memcpy(evp, evt, sizeof(*evp));
+//					STAILQ_INSERT_TAIL(&ctl->event, evp, entries);
+//
+//					dprint_event(evt);
+
+				/* Handle events on directories */
+				}
+				else
+				{
+
+					/* When a file is added or deleted, NOTE_WRITE is set */
+					if (kev.fflags & NOTE_WRITE)
+					{
+						directory_event_handler( watch );
+//						if (kq_directory_event_handler(kev, ctl, watch) < 0)
+//						{
+//							warn("error processing diretory");
+//							return -1;
+//						}
+					}
+					/* FIXME: Handle the deletion of a watched directory */
+					else if (kev.fflags & NOTE_DELETE)
+					{
+//						warn("unimplemented - TODO");
+//						return -1;
+					}
+					else
+					{
+//						warn("unknown event recieved");
+//						return -1;
+					}
+
+				}
+
+
+
+
+
+
+
+				//watch = (struct pnotify_watch *) kev.udata;
+//				watch = (watch_data*) kev.udata;
+
+//				std::cout << "watch->fd: " << watch->fd << std::endl;
+//				std::cout << "watch->wd: " << watch->wd << std::endl;
+//				std::cout << "watch->mask: " << watch->mask << std::endl;
+//				//std::cout << "watch.fd: " << watch.fd << std::endl;
 
 				//TODO: ver este tema, porque se puede estar disparando contra el directorui
 //				if (watch->parent_wd && kev.fflags & NOTE_DELETE)
@@ -624,96 +572,57 @@ public: //private:  //TODO:
 //					dprintf("ignoring NOTE_DELETE on a watched file\n");
 //					goto retry;
 //				}
-
-
-				if (kev.fflags & NOTE_WRITE)
-				{
-					//evt->mask |= PN_MODIFY;
-					std::cout << "NOTE_WRITE -> PN_MODIFY" << std::endl;
-				}
-				if (kev.fflags & NOTE_TRUNCATE)
-				{
-					//evt->mask |= PN_MODIFY;
-					std::cout << "NOTE_TRUNCATE -> PN_MODIFY" << std::endl;
-				}
-				if (kev.fflags & NOTE_EXTEND)
-				{
-					//evt->mask |= PN_MODIFY;
-					std::cout << "NOTE_EXTEND -> PN_MODIFY" << std::endl;
-				}
-		#if TODO
-				// not implemented yet
-				if (kev.fflags & NOTE_ATTRIB)
-				{
-					//evt->mask |= PN_ATTRIB;
-					std::cout << "NOTE_ATTRIB -> PN_ATTRIB" << std::endl;
-				}
-		#endif
-				if (kev.fflags & NOTE_DELETE)
-				{
-					//evt->mask |= PN_DELETE;
-					std::cout << "NOTE_DELETE -> PN_DELETE" << std::endl;
-				}
-
-				if (kev.fflags & NOTE_RENAME)
-				{
-					//evt->mask |= PN_DELETE;
-					std::cout << "NOTE_RENAME -> XXXXXXXXX" << std::endl;
-				}
-
-				if (kev.fflags & NOTE_REVOKE)
-				{
-					//evt->mask |= PN_DELETE;
-					std::cout << "NOTE_REVOKE -> XXXXXXXXX" << std::endl;
-				}
-
-				if (kev.fflags & NOTE_LINK)
-				{
-					//evt->mask |= PN_DELETE;
-					std::cout << "NOTE_LINK -> XXXXXXXXX" << std::endl;
-				}
-
-
-
-
-//				/* Construct a pnotify_event structure */
-//				if ((evp = calloc(1, sizeof(*evp))) == NULL)
-//				{
-//					//TODO:
-//					//warn("malloc failed");
-//					return;
-//				}
-
-
-//				/* If the event happened within a watched directory, add the filename and the parent watch descriptor.
-//				*/
-//				if (watch->parent_wd)
-//				{
-//
-//					/* KLUDGE: remove the leading basename */
-//					char *fn = strrchr(watch->path, '/') ;
-//					if (!fn)
-//					{
-//						fn = watch->path;
-//					}
-//					else
-//					{
-//						fn++;
-//					}
-//
-//					evt->wd = watch->parent_wd;
-//					/* FIXME: more error handling */
-//					(void) strncpy(evt->name, fn, strlen(fn));
-//				}
-//
-//				/* Add the event to the list of pending events */
-//				memcpy(evp, evt, sizeof(*evp));
-//				STAILQ_INSERT_TAIL(&ctl->event, evp, entries);
-//
-//				dprint_event(evt);
-
 			}
 		}
+	}
+
+	//TODO: cambiarle el nombre porque es parecido al event handler general y no se indica bien que hace cada uno...
+	//void directory_event_handler(struct kevent kev, struct pnotify_cb * ctl, struct pnotify_watch * watch)
+	void directory_event_handler( watch_type head_dir )
+	{
+		struct pnotify_event *ev;
+		struct dentry  *dptr, *dtmp;
+
+		//TODO: ????
+		//assert(ctl && watch);
+
+		scan_directory( head_dir );
+
+
+		for (watch_collection_type::iterator it =  head_dir->subitems.begin(); it != head_dir->subitems.end(); ++it )
+		{
+			if ((*it)->mask == 0) /* Skip files that have not changed */
+			{
+				continue;
+			}
+
+			//TODO: manejar el evento...
+//			/* Construct a pnotify_event structure */
+//			if ((ev = calloc(1, sizeof(*ev))) == NULL)
+//			{
+//				warn("malloc failed");
+//				return -1;
+//			}
+//			ev->wd = watch->wd;
+//			ev->mask = dptr->mask;
+//			(void) strlcpy(ev->name, dptr->ent.d_name, sizeof(ev->name));
+//			dprint_event(ev);
+//
+//			/* Add the event to the list of pending events */
+//			STAILQ_INSERT_TAIL(&ctl->event, ev, entries);
+
+			/* Remove the directory entry for a deleted file */
+			if ( (*it)->mask & PN_DELETE )
+			{
+				std::cout << "ELIMINANDO ITEM DE LA LISTA" << std::endl;
+				std::cout << "(*it)->path.filename(): " << (*it)->path.filename() << std::endl;
+
+//				LIST_REMOVE(dptr, entries);
+//				free(dptr);
+			}
+
+		}
+
 	}
 
 protected:
@@ -721,23 +630,17 @@ protected:
 	//TODO: las tres funciones siguientes están duplicadas en windows_impl y freebsd_impl -> RESOLVER
 	// inline void notify_file_system_event_args( int action, const std::string& directory, const std::string& name )
 
-
 	HeapThread thread_;
 
 	bool is_initialized_;
+
+	//TODO: cambiarle el nombre
 	int file_descriptor_; // file descriptor
-	int next_watch_;
+	int next_watch_; //TODO: analizar si es necesario
 	bool closing_;
 
-
-
-//	typedef std::pair<std::string, boost::uint32_t> pair_type;
-	//typedef std::pair<std::string, fsentry*> pair_type;
-
-	typedef std::pair<std::string, watch_data*> pair_type;
-	typedef std::vector<pair_type> watch_descriptors_type;
-	
-	watch_descriptors_type watch_descriptors_;
+	watch_collection_type user_watchs_;
+	watch_collection_type all_watchs_;
 	
 };
 
