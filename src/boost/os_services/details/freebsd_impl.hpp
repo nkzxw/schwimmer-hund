@@ -86,6 +86,7 @@ namespace detail {
 
 struct fsitem; //forward-declaration
 
+//TODO: ver boost::ptr_vector
 typedef boost::shared_ptr<fsitem> watch_type;
 typedef std::vector<watch_type> watch_collection_type;
 
@@ -95,7 +96,7 @@ struct fsitem
 	~fsitem()
 	{
 		std::cout << "--------------------- ~fsitem() ------------------------------" << std::endl;
-		std::cout << "this->path.filename(): " << this->path.filename() << std::endl;
+		std::cout << "this->path.native_file_string(): " << this->path.native_file_string() << std::endl;
 	}
 
 	boost::filesystem::path path;
@@ -107,6 +108,8 @@ struct fsitem
 	//char            path[255 + 1];	//path[PATH_MAX + 1];	/**< Path associated with fd */
 	struct kevent kev;
 	boost::uint32_t mask;	/**< Mask of monitored events */
+
+	int parent_wd;
 
 	watch_collection_type subitems;
 };
@@ -222,10 +225,13 @@ public:
 	void create_watch( watch_type watch )
 	{
 		std::cout << "void create_watch( watch_type watch )" << std::endl;
-		std::cout << "watch->path.filename(): " << watch->path.filename() << std::endl;
+		std::cout << "watch->path.native_file_string(): " << watch->path.native_file_string() << std::endl;
 
 		//TODO: ver esto...
-		watch->mask = PN_ALL_EVENTS; //TODO: asignar lo que el usuario quiere monitorear...
+		if ( watch->mask == 0 )
+		{
+			watch->mask = PN_ALL_EVENTS; //TODO: asignar lo que el usuario quiere monitorear...
+		}
 
 		//TODO: en el constructor
 		watch->wd = 0;
@@ -337,7 +343,72 @@ public:
 	void scan_directory( watch_type head_dir )
 	{
 		std::cout << "void scan_directory( watch_type head_dir )" << std::endl;
-		std::cout << "head_dir->path.filename(): " << head_dir->path.filename() << std::endl;
+		std::cout << "head_dir->path.native_file_string(): " << head_dir->path.native_file_string() << std::endl;
+
+
+		//TODO: STL --> std::transform o std::for_each o boost::lambda o BOOST_FOREACH
+		//TODO: watch_collection_type o all_watchs_type ?????? GUARDA!!!!
+
+
+		std::cout << "head_dir->subitems.size(): " << head_dir->subitems.size() << std::endl;
+		for (watch_collection_type::iterator it =  head_dir->subitems.begin(); it != head_dir->subitems.end(); ++it )
+		{
+			(*it)->mask = PN_DELETE;
+		}
+
+
+		boost::filesystem::directory_iterator end_iter;
+		for ( boost::filesystem::directory_iterator dir_itr( head_dir->path ); dir_itr != end_iter; ++dir_itr )
+		{
+			try
+			{
+				bool found = false;
+
+				//TODO: reemplazar por std::find o algo similar...
+				//TODO: user_watchs o all_watchs ?????? GUARDA!!!!
+				//Linear-search
+				for (watch_collection_type::iterator it =  head_dir->subitems.begin(); it != head_dir->subitems.end(); ++it )
+				{
+					if (  (*it)->path.native_file_string() == dir_itr->path().native_file_string() )
+					{
+						std::cout << "found" << std::endl;
+						std::cout << "(*it)->path.native_file_string(): " << (*it)->path.native_file_string() << std::endl;
+						found = true;
+					}
+				}
+
+				if ( !found )
+				{
+					watch_type item(new fsitem);
+					item->path = dir_itr->path();
+
+					//TODO: ver en el codigo de pnotify: /* Add a watch if it is a regular file */
+					create_watch( item );
+					item->mask = PN_CREATE;
+					item->parent_wd = head_dir->wd;
+
+					std::cout << "PN_CREATE: " << PN_CREATE << std::endl;
+					std::cout << "item->path.native_file_string(): " << item->path.native_file_string() << std::endl;
+					std::cout << "item->mask: " << item->mask << std::endl;
+					std::cout << "item->parent_wd: " << item->parent_wd << std::endl;
+
+
+					head_dir->subitems.push_back(item);
+				}
+			}
+			catch ( const std::exception & ex )
+			{
+				std::cout << dir_itr->path().native_file_string() << " " << ex.what() << std::endl;
+			}
+		}
+
+	}
+
+
+	void scan_directory( fsitem* head_dir )
+	{
+		std::cout << "void scan_directory( fsitem* head_dir )" << std::endl;
+		std::cout << "head_dir->path.native_file_string(): " << head_dir->path.native_file_string() << std::endl;
 
 
 
@@ -348,6 +419,8 @@ public:
 			(*it)->mask = PN_DELETE;
 		}
 
+		std::cout << "PN_DELETE: " << PN_DELETE << std::endl;
+		std::cout << "PN_CREATE: " << PN_CREATE << std::endl;
 
 		boost::filesystem::directory_iterator end_iter;
 		for ( boost::filesystem::directory_iterator dir_itr( head_dir->path ); dir_itr != end_iter; ++dir_itr )
@@ -360,30 +433,42 @@ public:
 				//TODO: reemplazar por std::find o algo similar...
 				//TODO: user_watchs o all_watchs ?????? GUARDA!!!!
 				//Linear-search
+
 				for (watch_collection_type::iterator it =  head_dir->subitems.begin(); it != head_dir->subitems.end(); ++it )
 				{
-					if (  (*it)->path.filename() == dir_itr->path().filename() )
+					if (  (*it)->path.native_file_string() == dir_itr->path().native_file_string() )
 					{
 						std::cout << "found" << std::endl;
-						std::cout << "(*it)->path.filename(): " << (*it)->path.filename() << std::endl;
+						std::cout << "(*it)->path.native_file_string(): " << (*it)->path.native_file_string() << std::endl;
 						found = true;
 					}
 				}
 
 				if ( !found )
 				{
+					std::cout << "NEW ITEM" << std::endl;
+					std::cout << "dir_itr->path().native_file_string(): " << dir_itr->path().native_file_string() << std::endl;
+
 					watch_type item(new fsitem);
 					item->path = dir_itr->path();
-					item->mask = PN_CREATE;
+
 
 					//TODO: ver en el codigo de pnotify: /* Add a watch if it is a regular file */
 					create_watch( item );
+					item->mask = PN_CREATE;
+					item->parent_wd = head_dir->wd;
+
+					std::cout << "PN_CREATE: " << PN_CREATE << std::endl;
+					std::cout << "item->path.native_file_string(): " << item->path.native_file_string() << std::endl;
+					std::cout << "item->mask: " << item->mask << std::endl;
+					std::cout << "item->parent_wd: " << item->parent_wd << std::endl;
+
 					head_dir->subitems.push_back(item);
 				}
 			}
 			catch ( const std::exception & ex )
 			{
-				std::cout << dir_itr->path().filename() << " " << ex.what() << std::endl;
+				std::cout << dir_itr->path().native_file_string() << " " << ex.what() << std::endl;
 			}
 		}
 
@@ -428,12 +513,30 @@ public: //private:  //TODO:
 			std::cout << "salio de kevent(...)" << std::endl;
 
 			//TODO: esto puede ser un tema, porque el shared_ptr (watch_type) va a tener el contador en 1 y cuando salga de scope va a hacer delete de la memoria...
-			watch_type watch( (fsitem*) kev.udata );
+//			watch_type watch( (fsitem*) kev.udata );
+			fsitem* watch =  (fsitem*) kev.udata;
+
+
+			/* Workaround:
+
+			   Deleting a file in a watched directory causes two events:
+			     	NOTE_MODIFY on the directory
+				NOTE_DELETE on the file
+
+			   We ignore the NOTE_DELETE on the file.
+		        */
+			if (watch->parent_wd && kev.fflags & NOTE_DELETE)
+			{
+				std::cout << "-*-*-*-*-*--*-*-*-*-** IGNORE NOTE_DELETE" << std::endl;
+				//dprintf("ignoring NOTE_DELETE on a watched file\n");
+				//goto retry;
+				continue;
+			}
 
 			std::cout << "watch->fd: " << watch->fd << std::endl;
 			std::cout << "watch->wd: " << watch->wd << std::endl;
 			std::cout << "watch->mask: " << watch->mask << std::endl;
-			std::cout << "watch->path.filename(): " << watch->path.filename() << std::endl;
+			std::cout << "watch->path.native_file_string(): " << watch->path.native_file_string() << std::endl;
 
 
 //			std::cout << "kev.ident: " << kev.ident << std::endl;
@@ -537,7 +640,6 @@ public: //private:  //TODO:
 				}
 				else
 				{
-
 					/* When a file is added or deleted, NOTE_WRITE is set */
 					if (kev.fflags & NOTE_WRITE)
 					{
@@ -588,8 +690,58 @@ public: //private:  //TODO:
 
 	//TODO: cambiarle el nombre porque es parecido al event handler general y no se indica bien que hace cada uno...
 	//void directory_event_handler(struct kevent kev, struct pnotify_cb * ctl, struct pnotify_watch * watch)
-	void directory_event_handler( watch_type head_dir )
+//	void directory_event_handler( watch_type head_dir )
+//	{
+//		struct pnotify_event *ev;
+//		struct dentry  *dptr, *dtmp;
+//
+//		//TODO: ????
+//		//assert(ctl && watch);
+//
+//		scan_directory( head_dir );
+//
+//
+//		for (watch_collection_type::iterator it =  head_dir->subitems.begin(); it != head_dir->subitems.end(); ++it )
+//		{
+//			if ((*it)->mask == 0) /* Skip files that have not changed */
+//			{
+//				continue;
+//			}
+//
+//			//TODO: manejar el evento...
+////			/* Construct a pnotify_event structure */
+////			if ((ev = calloc(1, sizeof(*ev))) == NULL)
+////			{
+////				warn("malloc failed");
+////				return -1;
+////			}
+////			ev->wd = watch->wd;
+////			ev->mask = dptr->mask;
+////			(void) strlcpy(ev->name, dptr->ent.d_name, sizeof(ev->name));
+////			dprint_event(ev);
+////
+////			/* Add the event to the list of pending events */
+////			STAILQ_INSERT_TAIL(&ctl->event, ev, entries);
+//
+//			/* Remove the directory entry for a deleted file */
+//			if ( (*it)->mask & PN_DELETE )
+//			{
+//				std::cout << "ELIMINANDO ITEM DE LA LISTA" << std::endl;
+//				std::cout << "(*it)->path.native_file_string(): " << (*it)->path.native_file_string() << std::endl;
+//
+////				LIST_REMOVE(dptr, entries);
+////				free(dptr);
+//			}
+//
+//		}
+//
+//	}
+
+
+	void directory_event_handler( fsitem* head_dir )
 	{
+		std::cout << "void directory_event_handler( fsitem* head_dir )" << std::endl;
+
 		struct pnotify_event *ev;
 		struct dentry  *dptr, *dtmp;
 
@@ -599,7 +751,8 @@ public: //private:  //TODO:
 		scan_directory( head_dir );
 
 
-		for (watch_collection_type::iterator it =  head_dir->subitems.begin(); it != head_dir->subitems.end(); ++it )
+		watch_collection_type::iterator it = head_dir->subitems.begin();
+		while ( it != head_dir->subitems.end() )
 		{
 			if ((*it)->mask == 0) /* Skip files that have not changed */
 			{
@@ -625,10 +778,15 @@ public: //private:  //TODO:
 			if ( (*it)->mask & PN_DELETE )
 			{
 				std::cout << "ELIMINANDO ITEM DE LA LISTA" << std::endl;
-				std::cout << "(*it)->path.filename(): " << (*it)->path.filename() << std::endl;
+				std::cout << "(*it)->path.native_file_string(): " << (*it)->path.native_file_string() << std::endl;
+				std::cout << "(*it)->mask: " << (*it)->mask << std::endl;
 
-//				LIST_REMOVE(dptr, entries);
-//				free(dptr);
+
+				it = head_dir->subitems.erase(it);
+			}
+			else
+			{
+				++it;
 			}
 
 		}
