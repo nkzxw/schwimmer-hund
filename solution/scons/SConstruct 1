@@ -1,0 +1,96 @@
+#Requerimientos:
+#	OS Environment Variables
+#			BOOST_ROOT = C:\Program Files\boost\boost_1_39_0\
+#		Para Visual C++ Express, agregar en las variables de ambiente:
+#			INCLUDE="C:\Program Files\Microsoft SDKs\Windows\v6.0A\Include;C:\Program Files\Microsoft Visual Studio 9.0\VC\include"
+#			LIB="C:\Program Files\Microsoft SDKs\Windows\v6.0A\Lib;C:\Program Files\Microsoft Visual Studio 9.0\VC\lib"
+
+
+import os
+
+env_test = Environment(ENV = os.environ)
+
+if env_test['PLATFORM'] == 'win32':
+	print "--WIN32 Platform"
+	#/O2 /Oi /GL /D "_MBCS" /FD /EHsc /MD /Gy /Fo"Release\\" /Fd"Release\vc90.pdb" /W3 /nologo /c /Zi /TP /errorReport:prompt
+	#/OUT:"E:\Development\CPP\p1945\subprojects\test_technologies\makefiles\vs2008\Release\test_technologies.exe" /NOLOGO /MANIFEST /MANIFESTFILE:"Release\test_technologies.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"E:\Development\CPP\p1945\subprojects\test_technologies\makefiles\vs2008\Release\test_technologies.pdb" /OPT:REF /OPT:ICF /LTCG /DYNAMICBASE /NXCOMPAT /MACHINE:X86 /ERRORREPORT:PROMPT kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib
+	#Debug -> CCFLAGS = ['/Zi']
+	env = Environment(platform = 'win32')
+	#env.Program('get_machine_id', ['../../src/main.cpp'], CPPPATH = ['C:/Program Files/boost/boost_1_39_0'], LIBS=['iphlpapi'])
+	env.Program('get_machine_id', ['../../src/main.cpp', '../../src/base64.cpp'], CPPPATH = [os.environ['BOOST_ROOT']], LIBS=['iphlpapi'])
+	
+	#Program('program', ['prog.c', 'file1.c', 'file2.c'])
+
+	
+elif env_test['PLATFORM'] == 'posix':
+	print "--POSIX Platform"
+	env = Environment(platform = 'posix')
+	env.Program('get_machine_id', ['../../src/main.cpp', '../../src/base64.cpp'], CPPPATH = ['/usr/local/include'])
+	#LIBPATH='.'  
+  
+else:
+  print "--Other Platform"
+
+
+
+
+#print env.Dump()
+
+
+
+#------------------------------------------------------------------------------- WIN32-VisualC++ Express
+##/O2 /Oi /GL /D "_MBCS" /FD /EHsc /MD /Gy /Fo"Release\\" /Fd"Release\vc90.pdb" /W3 /nologo /c /Zi /TP /errorReport:prompt
+##/OUT:"E:\Development\CPP\p1945\subprojects\test_technologies\makefiles\vs2008\Release\test_technologies.exe" /NOLOGO /MANIFEST /MANIFESTFILE:"Release\test_technologies.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"E:\Development\CPP\p1945\subprojects\test_technologies\makefiles\vs2008\Release\test_technologies.pdb" /OPT:REF /OPT:ICF /LTCG /DYNAMICBASE /NXCOMPAT /MACHINE:X86 /ERRORREPORT:PROMPT kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib
+##Debug -> CCFLAGS = ['/Zi']
+##, LIBS=['iphlpapi']
+#env = Environment(platform = 'win32')
+#env.Program('get_machine_id', ['../../src/main.cpp'], CPPPATH = ['C:/Program Files/Microsoft SDKs/Windows/v6.0A/Include', 'C:/Program Files/boost/boost_1_39_0'], LIBPATH='C:/Program Files/Microsoft SDKs/Windows/v6.0A/Lib')
+#------------------------------------------------------------------------------- 
+
+#------------------------------------------------------------------------------- WIN32-MINGW
+#env = Environment(platform = 'win32', tools = ['mingw'])
+#env['ENV']['PATH'] = ['C:/MinGW/bin']
+#env.Program('get_machine_id', ['../../src/main.cpp'], CPPPATH = ['C:/Program Files/boost/boost_1_39_0'], LIBS=['libiphlpapi'])
+#env.Program('get_hdd_serial_win32', ['../../src/main_get_hdd_serial_win32.cpp'], CPPPATH = ['C:/Program Files/boost/boost_1_39_0'], LIBS=['iphlpapi'])
+##LIBPATH='.'
+#------------------------------------------------------------------------------- 
+
+#------------------------------------------------------------------------------- WIN32-CYGWIN	(FUNCIONA-Inventado)
+##CYGWIN -> 'TOOLS': [ 'default', 'gnulink', 'gcc', 'g++', 'gfortran', 'gas', 'ar', 'filesystem', 'javac', 'zip'],
+##debug --> CCFLAGS = '-g'
+#env = Environment(platform = 'win32', tools = ['mingw', 'gcc', 'g++', 'gnulink', 'ar', 'gas', 'm4'])
+#env['ENV']['PATH'] = ['C:/cygwin/bin']
+#env['CXX'] = 'g++-4'		#Verizon
+##env['CXX'] = 'g++'			#Home
+##env.Program('get_machine_id', ['../../src/main.cpp'], CPPPATH = ['C:/Program Files/boost/boost_1_39_0'])
+#env.Program('get_hdd_serial_posix', ['../../src/main_get_hdd_serial_posix.cpp'], CPPPATH = ['C:/Program Files/boost/boost_1_39_0'])
+#------------------------------------------------------------------------------- 
+
+#------------------------------------------------------------------------------- WIN32-CYGWIN -->NO FUNCIONA
+#env = Environment(platform = 'cygwin')
+#env['CXX'] = 'g++'
+#------------------------------------------------------------------------------- 
+
+
+
+#TODO: como ponemos los PATHS no fijos? habria que incluir alguna variable de ambiente definida en el sistema operativo, como BOOST_ROOT
+
+
+
+#import os
+#num_cpu = int(os.environ.get('NUM_CPU', 2))
+#SetOption('num_jobs', num_cpu)
+#print "running with -j", GetOption('num_jobs')
+
+#env = Environment()
+#env = Environment(platform = 'os2')
+#env = Environment(platform = 'posix')
+#print os.environ['BOOST_ROOT']
+#print os.environ['PATH']
+#print env['ENV']['PATH']
+#env_test = Environment()
+#print 'INCLUDE: '
+##print env_test['ENV']['INCLUDE']
+#print os.environ['INCLUDE']
+#print 'LIB: '
+#print env_test['ENV']['LIB']

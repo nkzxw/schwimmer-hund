@@ -91,6 +91,12 @@ typedef std::vector<watch_type> watch_collection_type;
 
 struct fsitem
 {
+
+	~fsitem()
+	{
+		std::cout << "--------------------- ~fsitem() ------------------------------" << std::endl;
+	}
+
 	boost::filesystem::path path;
 
 	//TODO: uno de estos dos (fd y wd) no es necesario
@@ -126,47 +132,49 @@ public:
 		: is_initialized_(false), closing_(false), file_descriptor_(0), next_watch_(0)
 	{}
 
-	~freebsd_impl()
-	{
-		closing_ = true;
-
-		if ( thread_ )
-		{
-			thread_->join();
-		}
-
-		if ( file_descriptor_ != 0 )
-		{
-			//TODO:
-//			BOOST_FOREACH(pair_type p, watch_descriptors_)
-//			{
-//				if ( p.second != 0 )
-//				{
-//					//int ret_value = ::inotify_rm_watch( file_descriptor_, p.second );
-//					int ret_value = 0;
+//	~freebsd_impl()
+//	{
+//		//TODO: rehacer completamente el constructor...
 //
-//					if ( ret_value < 0 )
-//					{
-//						//TODO: analizar si esta es la forma optima de manejar errores.
-//						std::ostringstream oss;
-//						oss << "Failed to remove watch - Reason: "; //TODO: ver que usar en Linux/BSD << GetLastError();
-//						throw (std::runtime_error(oss.str()));
-//					}
-//				}
+//		closing_ = true;
+//
+//		if ( thread_ )
+//		{
+//			thread_->join();
+//		}
+//
+//		if ( file_descriptor_ != 0 )
+//		{
+//			//TODO:
+////			BOOST_FOREACH(pair_type p, watch_descriptors_)
+////			{
+////				if ( p.second != 0 )
+////				{
+////					//int ret_value = ::inotify_rm_watch( file_descriptor_, p.second );
+////					int ret_value = 0;
+////
+////					if ( ret_value < 0 )
+////					{
+////						//TODO: analizar si esta es la forma optima de manejar errores.
+////						std::ostringstream oss;
+////						oss << "Failed to remove watch - Reason: "; //TODO: ver que usar en Linux/BSD << GetLastError();
+////						throw (std::runtime_error(oss.str()));
+////					}
+////				}
+////			}
+//
+//			// TODO: parece que close(0) cierra el standard input (CIN)
+//			//int ret_value = ::close( file_descriptor_ );
+//			int ret_value = 0;
+//
+//			if ( ret_value < 0 )
+//			{
+//				std::ostringstream oss;
+//				oss << "Failed to close file descriptor - Reason: "; //TODO: ver que usar en Linux/BSD << GetLastError();
+//				throw (std::runtime_error(oss.str()));
 //			}
-
-			// TODO: parece que close(0) cierra el standard input (CIN)
-			//int ret_value = ::close( file_descriptor_ );
-			int ret_value = 0;
-
-			if ( ret_value < 0 )
-			{
-				std::ostringstream oss;
-				oss << "Failed to close file descriptor - Reason: "; //TODO: ver que usar en Linux/BSD << GetLastError();
-				throw (std::runtime_error(oss.str()));
-			}
-		}
-	}
+//		}
+//	}
 
 
 	//TODO: agregar
@@ -418,6 +426,7 @@ public: //private:  //TODO:
 
 			std::cout << "salio de kevent(...)" << std::endl;
 
+			//TODO: esto puede ser un tema, porque el shared_ptr (watch_type) va a tener el contador en 1 y cuando salga de scope va a hacer delete de la memoria...
 			watch_type watch( (fsitem*) kev.udata );
 
 			std::cout << "watch->fd: " << watch->fd << std::endl;
