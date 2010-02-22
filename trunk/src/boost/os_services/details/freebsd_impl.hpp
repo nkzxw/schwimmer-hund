@@ -296,6 +296,19 @@ public:
 
 
 		//TODO: ver esto...
+
+
+		//TODO: ver si Windows y Linux saltan cuando se mofica el nombre del directorio raiz monitoreado.
+		         // sino saltan, evisar que se use NOTE_RENAME con cualquier directorio raiz
+
+				// -> Windows no salta...
+				// -> Linux tampoco...
+
+		kev->fflags |= NOTE_RENAME; //Eliminado porque no sirve monitorear el dir raiz.
+		//TODO: no está incluido en PN_ALL_EVENTS por eso lo agrego de una
+		//TODO: ver como mapear las constantes de BSD con las de la interfaz que vamos a exponer al usuario...
+		//TODO: vamos a tener que hacer algo similar a lo que estamos haciendo a continuacion...
+
 		if (mask & PN_ACCESS || mask & PN_MODIFY)
 		{
 			kev->fflags |= NOTE_ATTRIB;
