@@ -23,7 +23,7 @@
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.buildArguments</key>
-					<value>${workspace_loc:/boost_file_system_monitor_remote_build}\..\..\src fernando@192.168.120.41 candombe /home/fernando/dev/schwimmer-hund /home/fernando/dev/schwimmer-hund/solution/eclipse_remote_build/make_ubuntu.sh $DEV_ROOT/schwimmer-hund/src</value>
+					<value></value>
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.buildCommand</key>

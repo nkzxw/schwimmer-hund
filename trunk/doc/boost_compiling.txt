@@ -76,6 +76,23 @@ http://www.boost.org/doc/libs/1_41_0/more/getting_started/windows.html
 
 
 
+	- 1.42
+	   
+	  cd C:\Program Files\boost\boost_1_42_0
+		REM bjam --build-dir="C:\Program Files\boost\boost_1_42_0" --toolset=msvc-9.0 --build-type=complete stage
+		REM bjam --build-dir="C:\Program Files\boost\boost_1_42_0" --toolset=msvc-9.0 --build-type=minimal stage
+	
+		bjam --build-dir="C:\Program Files\boost\boost_1_42_0" --toolset=msvc-9.0 --build-type=complete --with-serialization stage
+		bjam --build-dir="C:\Program Files\boost\boost_1_42_0" --toolset=msvc-9.0 --build-type=complete --with-system stage
+		bjam --build-dir="C:\Program Files\boost\boost_1_42_0" --toolset=msvc-9.0 --build-type=complete --with-date_time stage
+		bjam --build-dir="C:\Program Files\boost\boost_1_42_0" --toolset=msvc-9.0 --build-type=complete --with-regex stage
+		bjam --build-dir="C:\Program Files\boost\boost_1_42_0" --toolset=msvc-9.0 --build-type=complete --with-thread stage
+		bjam --build-dir="C:\Program Files\boost\boost_1_42_0" --toolset=msvc-9.0 --build-type=complete --with-filesystem stage
+		bjam --build-dir="C:\Program Files\boost\boost_1_42_0" --toolset=msvc-9.0 --build-type=complete --with-program_options stage
+		bjam --build-dir="C:\Program Files\boost\boost_1_42_0" --toolset=msvc-9.0 --build-type=complete --with-wave stage
+		bjam --build-dir="C:\Program Files\boost\boost_1_42_0" --toolset=msvc-9.0 --build-type=complete --with-test stage
+
+
 	- 1.41
 	   
 	  cd C:\Program Files\boost\boost_1_41_0
