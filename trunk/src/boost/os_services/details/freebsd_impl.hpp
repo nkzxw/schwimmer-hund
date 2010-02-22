@@ -95,6 +95,7 @@ struct fsitem
 	~fsitem()
 	{
 		std::cout << "--------------------- ~fsitem() ------------------------------" << std::endl;
+		std::cout << "this->path.filename(): " << this->path.filename() << std::endl;
 	}
 
 	boost::filesystem::path path;
