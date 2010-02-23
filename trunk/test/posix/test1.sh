@@ -1,3 +1,12 @@
-#asegurarse que los directorios existan
+# http://www.freeos.com/guides/lsst/ch03sec06.html
 
-mv ~/temp1/
+
+#TODO: asegurarse que los directorios existan
+
+#mv ~/temp1/
+
+
+for ((  i = 0 ;  i <= 100;  i++  ))
+do
+  echo "Welcome $i times"
+done
