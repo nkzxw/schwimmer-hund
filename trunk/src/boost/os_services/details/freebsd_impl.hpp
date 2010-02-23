@@ -69,13 +69,20 @@ enum {
 	PN_DELETE		= 0x1 << 2,
 	/** The modification time of a file has changed */
 	PN_MODIFY		= 0x1 << 3,
+
+
+
 	/** Automatically delete the watch after a matching event occurs */
 	PN_ONESHOT		= 0x1 << 4,
 	/** An error condition in the underlying kernel event queue */
 	PN_ERROR		= 0x1 << 5,
+
+	PN_RENAME		= 0x1 << 6
+
+
 } __PN_BITMASK;
 
-#define PN_ALL_EVENTS	(PN_ACCESS | PN_CREATE | PN_DELETE | PN_MODIFY)
+#define PN_ALL_EVENTS	(PN_ACCESS | PN_CREATE | PN_DELETE | PN_MODIFY | PN_RENAME)
 
 //TODO: sacar
 /* kqueue(4) in MacOS/X does not support NOTE_TRUNCATE */
@@ -523,8 +530,7 @@ public:
 					if (  dir_st.st_dev == (*it)->st_dev && dir_st.st_ino == (*it)->st_ino && (*it)->path.native_file_string() == dir_itr->path().native_file_string() )
 					{
 						//std::cout << "found inode & filename: " << (*it)->path.native_file_string() << std::endl;
-
-						(*it)->mask = -999;
+						(*it)->mask = 0; //-999;
 //						std::cout << "(*it)->path.native_file_string(): " << (*it)->path.native_file_string() << std::endl;
 						found_filename = true;
 						found_inode = true;
@@ -594,19 +600,20 @@ public:
 
 		for (watch_collection_type::iterator it =  head_dir->subitems.begin(); it != head_dir->subitems.end(); ++it )
 		{
-			if ( (*it)->mask != -999 )
+			if ( (*it)->mask != 0 ) //-999 )
 			{
 				bool found = false;
 				for (watch_collection_type::iterator it2 =  temp_file_list.begin(); it2 != temp_file_list.end(); ++it2 )
 				{
-					if ( (*it2)->mask != -999 )
+					if ( (*it2)->mask != 0 ) //-999 )
 					{
 						if (  (*it)->st_dev == (*it2)->st_dev && (*it)->st_ino == (*it2)->st_ino )
 						{
 							//std::cout << "found inode: " << (*it)->path.native_file_string() << " - " << (*it2)->path.native_file_string() << std::endl;
 							found = true;
-							(*it)->mask = -998;	//RENAME
-							(*it2)->mask = -999;	//NO PROCESAR
+
+							(*it)->mask = PN_RENAME; //  -998;
+							(*it2)->mask = 0; //-999;	//NO PROCESAR
 							break;
 						}
 
@@ -623,7 +630,7 @@ public:
 
 		for (watch_collection_type::iterator it =  temp_file_list.begin(); it != temp_file_list.end(); ++it )
 		{
-			if ( (*it)->mask != -999 )
+			if ( (*it)->mask != 0 ) //-999 )
 			{
 				std::cout << "--- NEW FILE ---" << std::endl;
 				std::cout << "(*it)->path.native_file_string(): " << (*it)->path.native_file_string() << std::endl;
@@ -994,10 +1001,8 @@ public: //private:  //TODO:
 
 	void directory_event_handler( fsitem* head_dir )
 	{
-		std::cout << "void directory_event_handler( fsitem* head_dir )" << std::endl;
-		std::cout << "head_dir->path.native_file_string(): " << head_dir->path.native_file_string() << std::endl;
-
-
+//		std::cout << "void directory_event_handler( fsitem* head_dir )" << std::endl;
+//		std::cout << "head_dir->path.native_file_string(): " << head_dir->path.native_file_string() << std::endl;
 
 		struct pnotify_event *ev;
 		struct dentry *dptr, *dtmp;
