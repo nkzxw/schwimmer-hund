@@ -563,6 +563,11 @@ public:
 					watch_type item(new fsitem);
 					item->path = dir_itr->path();
 
+					std::cout << "File created: " << item->path.native_file_string() << std::endl;
+
+
+					//std::cout << "DEBUG 1" << std::endl;
+
 					//TODO: ver en el codigo de pnotify: /* Add a watch if it is a regular file */
 					create_watch( item );
 					item->mask = PN_CREATE;
@@ -571,6 +576,8 @@ public:
 					item->st_ino = dir_st.st_ino;
 
 					head_dir->subitems.push_back(item);
+
+					//std::cout << "DEBUG 2" << std::endl;
 				}
 
 				if ( !found_filename && found_inode )
@@ -598,6 +605,8 @@ public:
 			}
 		}
 
+		//std::cout << "DEBUG 3" << std::endl;
+
 		for (watch_collection_type::iterator it =  head_dir->subitems.begin(); it != head_dir->subitems.end(); ++it )
 		{
 			if ( (*it)->mask != 0 ) //-999 )
@@ -611,6 +620,8 @@ public:
 						{
 							//std::cout << "found inode: " << (*it)->path.native_file_string() << " - " << (*it2)->path.native_file_string() << std::endl;
 							found = true;
+
+							std::cout << "File: " << (*it)->path.native_file_string() << " renamed to: " << (*it2)->path.native_file_string() << std::endl;
 
 							(*it)->mask = PN_RENAME; //  -998;
 							(*it2)->mask = 0; //-999;	//NO PROCESAR
@@ -628,15 +639,21 @@ public:
 			}
 		}
 
+
+		//std::cout << "DEBUG 4" << std::endl;
+
 		for (watch_collection_type::iterator it =  temp_file_list.begin(); it != temp_file_list.end(); ++it )
 		{
 			if ( (*it)->mask != 0 ) //-999 )
 			{
-				std::cout << "--- NEW FILE ---" << std::endl;
-				std::cout << "(*it)->path.native_file_string(): " << (*it)->path.native_file_string() << std::endl;
+//				std::cout << "--- NEW FILE ---" << std::endl;
+//				std::cout << "(*it)->path.native_file_string(): " << (*it)->path.native_file_string() << std::endl;
 
 				watch_type item(new fsitem);
 				item->path = (*it)->path;
+
+				std::cout << "File created: " << item->path.native_file_string() << std::endl;
+
 
 				//TODO: ver en el codigo de pnotify: /* Add a watch if it is a regular file */
 				create_watch( item );
@@ -649,6 +666,7 @@ public:
 			}
 		}
 
+		//std::cout << "DEBUG 5" << std::endl;
 
 
 	}
@@ -905,6 +923,9 @@ public: //private:  //TODO:
 					if (kev.fflags & NOTE_WRITE)
 					{
 						directory_event_handler( watch );
+
+						//std::cout << "DEBUG 13" << std::endl;
+
 //						if (kq_directory_event_handler(kev, ctl, watch) < 0)
 //						{
 //							warn("error processing diretory");
@@ -1012,46 +1033,51 @@ public: //private:  //TODO:
 
 		scan_directory( head_dir );
 
+		//std::cout << "DEBUG 6" << std::endl;
 
 		watch_collection_type::iterator it = head_dir->subitems.begin();
 		while ( it != head_dir->subitems.end() )
 		{
+
+			//std::cout << "DEBUG 7" << std::endl;
+			//std::cout << "File removed: " << (*it)->path.native_file_string() << std::endl;
+
 			if ((*it)->mask == 0) /* Skip files that have not changed */
 			{
+				++it;
 				continue;
 			}
 
-			//TODO: manejar el evento...
-//			/* Construct a pnotify_event structure */
-//			if ((ev = calloc(1, sizeof(*ev))) == NULL)
-//			{
-//				warn("malloc failed");
-//				return -1;
-//			}
-//			ev->wd = watch->wd;
-//			ev->mask = dptr->mask;
-//			(void) strlcpy(ev->name, dptr->ent.d_name, sizeof(ev->name));
-//			dprint_event(ev);
-//
-//			/* Add the event to the list of pending events */
-//			STAILQ_INSERT_TAIL(&ctl->event, ev, entries);
+			//std::cout << "DEBUG 8" << std::endl;
+
 
 			/* Remove the directory entry for a deleted file */
 			if ( (*it)->mask & PN_DELETE )
 			{
-				std::cout << "ELIMINANDO ITEM DE LA LISTA" << std::endl;
-				std::cout << "(*it)->path.native_file_string(): " << (*it)->path.native_file_string() << std::endl;
-				//std::cout << "(*it)->mask: " << (*it)->mask << std::endl;
+				//std::cout << "DEBUG 9" << std::endl;
+
+
+				std::cout << "File removed: " << (*it)->path.native_file_string() << std::endl;
+
+//				std::cout << "ELIMINANDO ITEM DE LA LISTA" << std::endl;
+//				std::cout << "(*it)->path.native_file_string(): " << (*it)->path.native_file_string() << std::endl;
+//				//std::cout << "(*it)->mask: " << (*it)->mask << std::endl;
 
 
 				it = head_dir->subitems.erase(it);
 			}
 			else
 			{
+				//std::cout << "DEBUG 10" << std::endl;
+
 				++it;
 			}
 
+			//std::cout << "DEBUG 11" << std::endl;
+
+
 		}
+		//std::cout << "DEBUG 12" << std::endl;
 
 	}
 
