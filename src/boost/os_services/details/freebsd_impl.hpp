@@ -262,7 +262,7 @@ public:
 
 
 
-		std::cout << "FILE: " << watch->path.native_file_string() << std::endl;
+		//std::cout << "FILE: " << watch->path.native_file_string() << std::endl;
 
 		// TENEMOS UN FILE DESCRIPTOR POR WATCH
 		//if ((watch->fd = open(watch->path, O_RDONLY)) < 0)
@@ -399,7 +399,6 @@ public:
 		//TODO: STL --> std::transform o std::for_each o boost::lambda o BOOST_FOREACH
 		//TODO: watch_collection_type o all_watchs_type ?????? GUARDA!!!!
 
-
 		//std::cout << "head_dir->subitems.size(): " << head_dir->subitems.size() << std::endl;
 		for (watch_collection_type::iterator it =  head_dir->subitems.begin(); it != head_dir->subitems.end(); ++it )
 		{
@@ -422,34 +421,22 @@ public:
 					std::cout << "STAT ERROR" << std::endl;
 				}
 
-
 				//TODO: reemplazar por std::find o algo similar...
 				//TODO: user_watchs o all_watchs ?????? GUARDA!!!!
 				//Linear-search
 				for (watch_collection_type::iterator it =  head_dir->subitems.begin(); it != head_dir->subitems.end(); ++it )
 				{
 
-//					std::cout << "(*it)->path.native_file_string(): " << (*it)->path.native_file_string() << std::endl;
-//					std::cout << "(*it)->st_dev: " << (*it)->st_dev << std::endl;
-//					std::cout << "(*it)->st_ino: " << (*it)->st_ino << std::endl;
-//
-//					std::cout << "dir_itr->path().native_file_string(): " << dir_itr->path().native_file_string() << std::endl;
-//					std::cout << "dir_st.st_dev: " << dir_st.st_dev << std::endl;
-//					std::cout << "dir_st.st_ino: " << dir_st.st_ino << std::endl;
-
-
-
-
 					if (  (*it)->path.native_file_string() == dir_itr->path().native_file_string() )
 					{
-						std::cout << "found filename: " << (*it)->path.native_file_string() << std::endl;
+						//std::cout << "found filename: " << (*it)->path.native_file_string() << std::endl;
 //						std::cout << "(*it)->path.native_file_string(): " << (*it)->path.native_file_string() << std::endl;
 						found = true;
 					}
 
 					if ((dir_st.st_dev == (*it)->st_dev) &&  (dir_st.st_ino == (*it)->st_ino))
 					{
-						std::cout << "found inode: " << (*it)->path.native_file_string() << " - " << dir_itr->path().native_file_string() << std::endl;
+						//std::cout << "found inode: " << (*it)->path.native_file_string() << " - " << dir_itr->path().native_file_string() << std::endl;
 					}
 
 
@@ -457,7 +444,7 @@ public:
 
 				if ( !found )
 				{
-					std::cout << "if ( !found )" << std::endl;
+					//std::cout << "if ( !found )" << std::endl;
 
 					watch_type item(new fsitem);
 					item->path = dir_itr->path();
@@ -490,7 +477,14 @@ public:
 //		std::cout << "void scan_directory( fsitem* head_dir )" << std::endl;
 //		std::cout << "head_dir->path.native_file_string(): " << head_dir->path.native_file_string() << std::endl;
 
+		watch_collection_type temp_file_list;
 
+//		std::cout << "PN_CREATE: " << PN_CREATE << std::endl;
+//		std::cout << "PN_ACCESS: " << PN_ACCESS << std::endl;
+//		std::cout << "PN_DELETE: " << PN_DELETE << std::endl;
+//		std::cout << "PN_MODIFY: " << PN_MODIFY << std::endl;
+//		std::cout << "PN_ONESHOT: " << PN_ONESHOT << std::endl;
+//		std::cout << "PN_ERROR: " << PN_ERROR << std::endl;
 
 		//TODO: STL --> std::transform o std::for_each o boost::lambda o BOOST_FOREACH
 		//TODO: watch_collection_type o all_watchs_type ?????? GUARDA!!!!
@@ -507,95 +501,148 @@ public:
 		{
 			try
 			{
-				bool found_name = false;
+				//std::cout << "--- Finding File Name: " << dir_itr->path().native_file_string() << std::endl;
+
+
+				bool found_filename = false;
+				bool found_inode = false;
+
+				struct stat dir_st;
+				if ( lstat( dir_itr->path().native_file_string().c_str(), &dir_st) < 0)
+				{
+					//TODO: manejo de errores
+					std::cout << "STAT ERROR" << std::endl;
+				}
 
 				//TODO: reemplazar por std::find o algo similar...
 				//TODO: user_watchs o all_watchs ?????? GUARDA!!!!
-				//Linear-search
 
+				//Linear-search
 				for (watch_collection_type::iterator it =  head_dir->subitems.begin(); it != head_dir->subitems.end(); ++it )
 				{
-					if (  (*it)->path.native_file_string() == dir_itr->path().native_file_string() )
+					if (  dir_st.st_dev == (*it)->st_dev && dir_st.st_ino == (*it)->st_ino && (*it)->path.native_file_string() == dir_itr->path().native_file_string() )
 					{
-						std::cout << "found filename: " << (*it)->path.native_file_string() << std::endl;
+						//std::cout << "found inode & filename: " << (*it)->path.native_file_string() << std::endl;
+
+						(*it)->mask = -999;
 //						std::cout << "(*it)->path.native_file_string(): " << (*it)->path.native_file_string() << std::endl;
-						found_name = true;
+						found_filename = true;
+						found_inode = true;
+					}
+					else
+					{
+
+						if (  dir_st.st_dev == (*it)->st_dev && dir_st.st_ino == (*it)->st_ino )
+						{
+							//std::cout << "found inode: " << (*it)->path.native_file_string() << std::endl;
+							found_inode = true;
+						}
+
+						if ( (*it)->path.native_file_string() == dir_itr->path().native_file_string() )
+						{
+							//std::cout << "found filename: " << (*it)->path.native_file_string() << std::endl;
+							found_filename = true;
+						}
 					}
 				}
 
 
-				if ( !found_name )
+				if ( !found_filename && !found_inode )	//Archivo nuevo
 				{
-					std::cout << "if ( !found_name )" << std::endl;
-
-					struct stat dir_st;
-					if ( lstat( dir_itr->path().native_file_string().c_str(), &dir_st) < 0)
-					{
-						//TODO: manejo de errores
-						std::cout << "STAT ERROR" << std::endl;
-					}
-
-					bool found_inode = false;
-					for (watch_collection_type::iterator it =  head_dir->subitems.begin(); it != head_dir->subitems.end(); ++it )
-					{
-						if ((dir_st.st_dev == (*it)->st_dev) &&  (dir_st.st_ino == (*it)->st_ino))
-						{
-							std::cout << "found inode: " << (*it)->path.native_file_string() << " - " << dir_itr->path().native_file_string() << std::endl;
-							std::cout << "Chequeando si es HardLink" << std::endl;
-
-
-							bool found_name = false;
-							for (watch_collection_type::iterator it2 =  head_dir->subitems.begin(); it2 != head_dir->subitems.end(); ++it2 )
-							{
-								if (  (*it)->path.native_file_string() == (*it2)->path.native_file_string() )
-								{
-									std::cout << "found filename: " << (*it2)->path.native_file_string() << std::endl;
-									found_name = true;
-								}
-							}
-
-							if (!found_name)
-							{
-								found_inode = true;
-							}
-							else
-							{
-								std::cout << "Es HARDLINK" << std::endl;
-							}
-						}
-					}
-
-					if ( found_inode )
-					{
-						std::cout << "Encontré el INODE ... Puede ser un HardLink o el nuevo nombre del archivo..." << std::endl;
-					}
-
-
-//					std::cout << "NEW ITEM" << std::endl;
+//					std::cout << "if (!found_filename && found_inode)" << std::endl;
 //					std::cout << "dir_itr->path().native_file_string(): " << dir_itr->path().native_file_string() << std::endl;
+//					std::cout << "dir_st.st_dev: " << dir_st.st_dev << std::endl;
+//					std::cout << "dir_st.st_ino: " << dir_st.st_ino << std::endl;
 
 					watch_type item(new fsitem);
 					item->path = dir_itr->path();
-
 
 					//TODO: ver en el codigo de pnotify: /* Add a watch if it is a regular file */
 					create_watch( item );
 					item->mask = PN_CREATE;
 					item->parent_wd = head_dir->wd;
-
-//					std::cout << "PN_CREATE: " << PN_CREATE << std::endl;
-//					std::cout << "item->path.native_file_string(): " << item->path.native_file_string() << std::endl;
-//					std::cout << "item->mask: " << item->mask << std::endl;
-//					std::cout << "item->parent_wd: " << item->parent_wd << std::endl;
+					item->st_dev = dir_st.st_dev;
+					item->st_ino = dir_st.st_ino;
 
 					head_dir->subitems.push_back(item);
 				}
+
+				if ( !found_filename && found_inode )
+				{
+//					std::cout << "if ( !found_filename && found_inode )" << std::endl;
+//					std::cout << "dir_itr->path().native_file_string(): " << dir_itr->path().native_file_string() << std::endl;
+//					std::cout << "dir_st.st_dev: " << dir_st.st_dev << std::endl;
+//					std::cout << "dir_st.st_ino: " << dir_st.st_ino << std::endl;
+
+					watch_type item(new fsitem);
+					item->path = dir_itr->path();
+					item->mask = PN_CREATE;
+					item->parent_wd = head_dir->wd;
+					item->st_dev = dir_st.st_dev;
+					item->st_ino = dir_st.st_ino;
+
+					temp_file_list.push_back(item);
+				}
+
+
 			}
 			catch ( const std::exception & ex )
 			{
 				std::cout << dir_itr->path().native_file_string() << " " << ex.what() << std::endl;
 			}
 		}
+
+		for (watch_collection_type::iterator it =  head_dir->subitems.begin(); it != head_dir->subitems.end(); ++it )
+		{
+			if ( (*it)->mask != -999 )
+			{
+				bool found = false;
+				for (watch_collection_type::iterator it2 =  temp_file_list.begin(); it2 != temp_file_list.end(); ++it2 )
+				{
+					if ( (*it2)->mask != -999 )
+					{
+						if (  (*it)->st_dev == (*it2)->st_dev && (*it)->st_ino == (*it2)->st_ino )
+						{
+							//std::cout << "found inode: " << (*it)->path.native_file_string() << " - " << (*it2)->path.native_file_string() << std::endl;
+							found = true;
+							(*it)->mask = -998;	//RENAME
+							(*it2)->mask = -999;	//NO PROCESAR
+							break;
+						}
+
+						if ( (*it)->path.native_file_string() == (*it2)->path.native_file_string() )
+						{
+							//TODO: que hacemos acá, ver cuando podría a generarse este caso... Me parece que nunca.
+							std::cout << "found filename: " << (*it)->path.native_file_string() << " - " << (*it2)->path.native_file_string() << std::endl;
+							found = true;
+						}
+					}
+				}
+			}
+		}
+
+		for (watch_collection_type::iterator it =  temp_file_list.begin(); it != temp_file_list.end(); ++it )
+		{
+			if ( (*it)->mask != -999 )
+			{
+				std::cout << "--- NEW FILE ---" << std::endl;
+				std::cout << "(*it)->path.native_file_string(): " << (*it)->path.native_file_string() << std::endl;
+
+				watch_type item(new fsitem);
+				item->path = (*it)->path;
+
+				//TODO: ver en el codigo de pnotify: /* Add a watch if it is a regular file */
+				create_watch( item );
+				item->mask = PN_CREATE;
+				item->parent_wd = head_dir->wd;
+				item->st_dev = (*it)->st_dev;
+				item->st_ino = (*it)->st_ino;
+
+				head_dir->subitems.push_back(item);
+			}
+		}
+
+
 
 	}
 
