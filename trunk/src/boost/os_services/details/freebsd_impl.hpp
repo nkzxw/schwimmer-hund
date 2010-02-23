@@ -118,6 +118,8 @@ struct fsitem
 	int parent_wd;
 
 	watch_collection_type subitems;
+
+	//TODO: PONER PUNTERO A parent
 };
 
 
@@ -642,6 +644,7 @@ public: //private:  //TODO:
 					std::cout << "watch->fd: " << watch->fd << std::endl;
 					std::cout << "OLDNAME: " << watch->path.native_file_string() << std::endl;
 
+					//TODO: buscar el directorio padre de la forma más eficiente posible a traves del parent_
 					std::cout << "Parent: " << user_watchs_[0]->path.native_file_string() << std::endl;
 
 
