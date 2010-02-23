@@ -117,6 +117,9 @@ struct fsitem
 
 	int parent_wd;
 
+    dev_t st_dev; /* ID of device containing file */
+    ino_t st_ino; /* inode number */
+
 	watch_collection_type subitems;
 
 	//TODO: PONER PUNTERO A parent
@@ -265,13 +268,19 @@ public:
 		//if ((watch->fd = open(watch->path, O_RDONLY)) < 0)
 
 
-		//TODO:
-		#define O_EVTONLY EVFILT_VNODE
 
-		std::cout << "O_RDONLY: " << O_RDONLY << std::endl;
-		std::cout << "O_EVTONLY: " << O_EVTONLY << std::endl;
+		struct stat st;
+		if ( lstat( watch->path.native_file_string().c_str(), &st) < 0)
+		{
+			//TODO: error
+			std::cout << "STAT ERROR" << std::endl;
+			return;
+		}
 
+		watch->st_dev = st.st_dev;
+		watch->st_ino = st.st_ino;
 
+		//TODO: en Mac está la macro "O_EVTONLY". Parece que es conveniente usarla en reemplazo de "O_RDONLY"
 		//if ( (watch->fd = open( watch->path.native_file_string().c_str(), O_EVTONLY )) < 0)
 		if ( (watch->fd = open( watch->path.native_file_string().c_str(), O_RDONLY )) < 0)
 		{
@@ -285,35 +294,12 @@ public:
 
 		}
 
-		std::cout << "watch->fd: " << watch->fd << std::endl;
-
-		int ret_value = ::close( watch->fd );
-
-
-
-
-		if ( (watch->fd = open( watch->path.native_file_string().c_str(), O_RDONLY )) < 0)
-		{
-			//warn("opening path `%s' failed", watch->path);
-			//return -1;
-
-			std::ostringstream oss;
-			//TODO:
-			oss << "opening path failed: - Reason: " << std::strerror(errno);
-			throw (std::invalid_argument(oss.str()));
-
-		}
-
-		std::cout << "-*-*-* watch->fd: " << watch->fd << std::endl;
-
+		//std::cout << "watch->fd: " << watch->fd << std::endl;
 
 		if ( boost::filesystem::is_directory( watch->path ) )
 		{
 			scan_directory( watch );
 		}
-
-
-
 
 		/* Generate a new watch ID */
 		/* FIXME - this never decreases and might fail */
@@ -343,7 +329,7 @@ public:
 				// -> Windows no salta...
 				// -> Linux tampoco...
 
-		kev->fflags = NOTE_DELETE |  NOTE_WRITE | NOTE_EXTEND | NOTE_ATTRIB | NOTE_LINK | NOTE_RENAME | NOTE_REVOKE;
+		kev->fflags = NOTE_DELETE |  NOTE_WRITE | NOTE_EXTEND | NOTE_ATTRIB | NOTE_LINK | NOTE_REVOKE; //| NOTE_RENAME
 
 
 //		kev->fflags |= NOTE_RENAME; //Eliminado porque no sirve monitorear el dir raiz.
@@ -385,7 +371,7 @@ public:
 			kev->flags |= EV_ONESHOT;
 		}
 
-		std::cout << "kev->flags: " << kev->flags << std::endl;
+		//std::cout << "kev->flags: " << kev->flags << std::endl;
 
 		/* Add the kevent to the kernel event queue */
 		//if (kevent(ctl->fd, kev, 1, NULL, 0, NULL) < 0)
@@ -420,6 +406,7 @@ public:
 			(*it)->mask = PN_DELETE;
 		}
 
+		//std::cout << "-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.---..--..-.-.-.-...-.-.-.-.-.-.-." << std::endl;
 
 		boost::filesystem::directory_iterator end_iter;
 		for ( boost::filesystem::directory_iterator dir_itr( head_dir->path ); dir_itr != end_iter; ++dir_itr )
@@ -428,21 +415,50 @@ public:
 			{
 				bool found = false;
 
+				struct stat dir_st;
+				if ( lstat( dir_itr->path().native_file_string().c_str(), &dir_st) < 0)
+				{
+					//TODO: manejo de errores
+					std::cout << "STAT ERROR" << std::endl;
+				}
+
+
 				//TODO: reemplazar por std::find o algo similar...
 				//TODO: user_watchs o all_watchs ?????? GUARDA!!!!
 				//Linear-search
 				for (watch_collection_type::iterator it =  head_dir->subitems.begin(); it != head_dir->subitems.end(); ++it )
 				{
+
+//					std::cout << "(*it)->path.native_file_string(): " << (*it)->path.native_file_string() << std::endl;
+//					std::cout << "(*it)->st_dev: " << (*it)->st_dev << std::endl;
+//					std::cout << "(*it)->st_ino: " << (*it)->st_ino << std::endl;
+//
+//					std::cout << "dir_itr->path().native_file_string(): " << dir_itr->path().native_file_string() << std::endl;
+//					std::cout << "dir_st.st_dev: " << dir_st.st_dev << std::endl;
+//					std::cout << "dir_st.st_ino: " << dir_st.st_ino << std::endl;
+
+
+
+
 					if (  (*it)->path.native_file_string() == dir_itr->path().native_file_string() )
 					{
-//						std::cout << "found" << std::endl;
+						std::cout << "found filename: " << (*it)->path.native_file_string() << std::endl;
 //						std::cout << "(*it)->path.native_file_string(): " << (*it)->path.native_file_string() << std::endl;
 						found = true;
 					}
+
+					if ((dir_st.st_dev == (*it)->st_dev) &&  (dir_st.st_ino == (*it)->st_ino))
+					{
+						std::cout << "found inode: " << (*it)->path.native_file_string() << " - " << dir_itr->path().native_file_string() << std::endl;
+					}
+
+
 				}
 
 				if ( !found )
 				{
+					std::cout << "if ( !found )" << std::endl;
+
 					watch_type item(new fsitem);
 					item->path = dir_itr->path();
 
@@ -491,8 +507,7 @@ public:
 		{
 			try
 			{
-
-				bool found = false;
+				bool found_name = false;
 
 				//TODO: reemplazar por std::find o algo similar...
 				//TODO: user_watchs o all_watchs ?????? GUARDA!!!!
@@ -502,14 +517,60 @@ public:
 				{
 					if (  (*it)->path.native_file_string() == dir_itr->path().native_file_string() )
 					{
-//						std::cout << "found" << std::endl;
+						std::cout << "found filename: " << (*it)->path.native_file_string() << std::endl;
 //						std::cout << "(*it)->path.native_file_string(): " << (*it)->path.native_file_string() << std::endl;
-						found = true;
+						found_name = true;
 					}
 				}
 
-				if ( !found )
+
+				if ( !found_name )
 				{
+					std::cout << "if ( !found_name )" << std::endl;
+
+					struct stat dir_st;
+					if ( lstat( dir_itr->path().native_file_string().c_str(), &dir_st) < 0)
+					{
+						//TODO: manejo de errores
+						std::cout << "STAT ERROR" << std::endl;
+					}
+
+					bool found_inode = false;
+					for (watch_collection_type::iterator it =  head_dir->subitems.begin(); it != head_dir->subitems.end(); ++it )
+					{
+						if ((dir_st.st_dev == (*it)->st_dev) &&  (dir_st.st_ino == (*it)->st_ino))
+						{
+							std::cout << "found inode: " << (*it)->path.native_file_string() << " - " << dir_itr->path().native_file_string() << std::endl;
+							std::cout << "Chequeando si es HardLink" << std::endl;
+
+
+							bool found_name = false;
+							for (watch_collection_type::iterator it2 =  head_dir->subitems.begin(); it2 != head_dir->subitems.end(); ++it2 )
+							{
+								if (  (*it)->path.native_file_string() == (*it2)->path.native_file_string() )
+								{
+									std::cout << "found filename: " << (*it2)->path.native_file_string() << std::endl;
+									found_name = true;
+								}
+							}
+
+							if (!found_name)
+							{
+								found_inode = true;
+							}
+							else
+							{
+								std::cout << "Es HARDLINK" << std::endl;
+							}
+						}
+					}
+
+					if ( found_inode )
+					{
+						std::cout << "Encontré el INODE ... Puede ser un HardLink o el nuevo nombre del archivo..." << std::endl;
+					}
+
+
 //					std::cout << "NEW ITEM" << std::endl;
 //					std::cout << "dir_itr->path().native_file_string(): " << dir_itr->path().native_file_string() << std::endl;
 
@@ -576,12 +637,12 @@ public: //private:  //TODO:
 
 			std::cout << "salio de kevent(...)" << std::endl;
 
-			std::cout << "kev.ident: " << kev.ident << std::endl;
-			std::cout << "kev.filter: " << kev.filter << std::endl;
-			std::cout << "kev.flags: " << kev.flags << std::endl;
-			std::cout << "kev.fflags: " << kev.fflags << std::endl;
-			std::cout << "kev.data: " << kev.data << std::endl;
-			std::cout << "kev.udata: " << kev.udata << std::endl;
+//			std::cout << "kev.ident: " << kev.ident << std::endl;
+//			std::cout << "kev.filter: " << kev.filter << std::endl;
+//			std::cout << "kev.flags: " << kev.flags << std::endl;
+//			std::cout << "kev.fflags: " << kev.fflags << std::endl;
+//			std::cout << "kev.data: " << kev.data << std::endl;
+//			std::cout << "kev.udata: " << kev.udata << std::endl;
 
 			//TODO: esto puede ser un tema, porque el shared_ptr (watch_type) va a tener el contador en 1 y cuando salga de scope va a hacer delete de la memoria...
 //			watch_type watch( (fsitem*) kev.udata );
@@ -604,12 +665,12 @@ public: //private:  //TODO:
 				continue;
 			}
 
-			std::cout << "----------------------------------------------------------------------------" << std::endl;
-			std::cout << "watch->fd: " << watch->fd << std::endl;
-			std::cout << "watch->wd: " << watch->wd << std::endl;
-			std::cout << "watch->mask: " << watch->mask << std::endl;
-			std::cout << "watch->path.native_file_string(): " << watch->path.native_file_string() << std::endl;
-			std::cout << "----------------------------------------------------------------------------" << std::endl;
+//			std::cout << "----------------------------------------------------------------------------" << std::endl;
+//			std::cout << "watch->fd: " << watch->fd << std::endl;
+//			std::cout << "watch->wd: " << watch->wd << std::endl;
+//			std::cout << "watch->mask: " << watch->mask << std::endl;
+//			std::cout << "watch->path.native_file_string(): " << watch->path.native_file_string() << std::endl;
+//			std::cout << "----------------------------------------------------------------------------" << std::endl;
 
 
 
@@ -640,73 +701,85 @@ public: //private:  //TODO:
 				if (kev.fflags & NOTE_RENAME)
 				{
 					std::cout << "NOTE_RENAME -> XXXXXXXXX" << std::endl;
-
 					std::cout << "watch->fd: " << watch->fd << std::endl;
 					std::cout << "OLDNAME: " << watch->path.native_file_string() << std::endl;
 
-					//TODO: buscar el directorio padre de la forma más eficiente posible a traves del parent_
-					std::cout << "Parent: " << user_watchs_[0]->path.native_file_string() << std::endl;
 
-
-					struct stat old_st;
-					if (fstat(watch->fd, &old_st) < 0)
-					{
-						//warn("fstat(2) failed");
-						std::cout << "ERROR STAT" << std::endl;
-						return;
-					}
-
-					std::cout << "old_st.st_dev: " << old_st.st_dev << std::endl;
-					std::cout << "old_st.st_ino: " << old_st.st_ino << std::endl;
-					std::cout << "old_st.st_mode: " << old_st.st_mode << std::endl;
-
-
-
-					boost::filesystem::directory_iterator end_iter;
-					//TODO: hardcode
-					for ( boost::filesystem::directory_iterator dir_itr( user_watchs_[0]->path ); dir_itr != end_iter; ++dir_itr )
-					{
-						try
-						{
-							struct stat it_st;
-
-							if ( stat( dir_itr->path().native_file_string().c_str(), &it_st) == 0)
-							{
-								std::cout << "dir_itr->path().native_file_string(): " << dir_itr->path().native_file_string() << std::endl;
-								std::cout << "it_st.st_dev: " << it_st.st_dev << std::endl;
-								std::cout << "it_st.st_ino: " << it_st.st_ino << std::endl;
-								std::cout << "it_st.st_mode: " << it_st.st_mode << std::endl;
-
-
-//#define S_ISDIR(m)      (((m) & 0170000) == 0040000)    /* directory */
-//#define S_ISCHR(m)      (((m) & 0170000) == 0020000)    /* char special */
-//#define S_ISBLK(m)      (((m) & 0170000) == 0060000)    /* block special */
-//#define S_ISREG(m)      (((m) & 0170000) == 0100000)    /* regular file */
-//#define S_ISFIFO(m)     (((m) & 0170000) == 0010000)    /* fifo or socket */
-//#if __POSIX_VISIBLE >= 200112
-//#define S_ISLNK(m)      (((m) & 0170000) == 0120000)    /* symbolic link */
-//#define S_ISSOCK(m)     (((m) & 0170000) == 0140000)    /* socket */
-//#endif
-//#if __BSD_VISIBLE
-//#define S_ISWHT(m)      (((m) & 0170000) == 0160000)    /* whiteout */
-//#endif
-
-
-								if ((it_st.st_dev == old_st.st_dev) &&  (it_st.st_ino == old_st.st_ino))
-								{
-									std::cout << "NEW NAME " << dir_itr->path().native_file_string() << std::endl;
-								}
-							}
-						}
-						catch ( const std::exception & ex )
-						{
-							std::cout << dir_itr->path().native_file_string() << " " << ex.what() << std::endl;
-						}
-					}
+					//
+//					//TODO: buscar el directorio padre de la forma más eficiente posible a traves del parent_
+//					std::cout << "Parent: " << user_watchs_[0]->path.native_file_string() << std::endl;
+//
+//
+//					struct stat old_st;
+//					if (fstat(watch->fd, &old_st) < 0)
+//					{
+//						//warn("fstat(2) failed");
+//						std::cout << "ERROR STAT" << std::endl;
+//						return;
+//					}
+//
+//////					std::cout << "old_st.st_dev: " << old_st.st_dev << std::endl;
+////					std::cout << "old_st.st_ino: " << old_st.st_ino << std::endl;
+////					std::cout << "old_st.st_mode: " << old_st.st_mode << std::endl;
+////					std::cout << "old_st.st_nlink: " << old_st.st_nlink << std::endl;
+////					std::cout << "old_st.st_rdev: " << old_st.st_rdev << std::endl;
+////					std::cout << "old_st.st_atime: " << old_st.st_atime << std::endl;
+////					std::cout << "old_st.st_mtime: " << old_st.st_mtime << std::endl;
+////					std::cout << "old_st.st_ctime: " << old_st.st_ctime << std::endl;
+////					std::cout << "S_ISDIR(old_st.st_mode): " << S_ISDIR(old_st.st_mode) << std::endl;
+////					std::cout << "S_ISREG(old_st.st_mode): " << S_ISREG(old_st.st_mode) << std::endl;
+////					std::cout << "S_ISLNK(old_st.st_mode): " << S_ISLNK(old_st.st_mode) << std::endl;
+//
+//
+//
+//
+//
+//					boost::filesystem::directory_iterator end_iter;
+//					//TODO: hardcode
+//					for ( boost::filesystem::directory_iterator dir_itr( user_watchs_[0]->path ); dir_itr != end_iter; ++dir_itr )
+//					{
+//						try
+//						{
+//							struct stat it_st;
+//
+//							//if ( stat( dir_itr->path().native_file_string().c_str(), &it_st) == 0)
+//							if ( lstat( dir_itr->path().native_file_string().c_str(), &it_st) == 0)
+//							{
+////								std::cout << "dir_itr->path().native_file_string(): " << dir_itr->path().native_file_string() << std::endl;
+//////								std::cout << "it_st.st_dev: " << it_st.st_dev << std::endl;
+////								std::cout << "it_st.st_ino: " << it_st.st_ino << std::endl;
+////								std::cout << "it_st.st_mode: " << it_st.st_mode << std::endl;
+////								std::cout << "it_st.st_nlink: " << it_st.st_nlink << std::endl;
+////								std::cout << "it_st.st_rdev: " << it_st.st_rdev << std::endl;
+////								std::cout << "it_st.st_atime: " << it_st.st_atime << std::endl;
+////								std::cout << "it_st.st_mtime: " << it_st.st_mtime << std::endl;
+////								std::cout << "it_st.st_ctime: " << it_st.st_ctime << std::endl;
+////								std::cout << "S_ISDIR(it_st.st_mode): " << S_ISDIR(it_st.st_mode) << std::endl;
+////								std::cout << "S_ISREG(it_st.st_mode): " << S_ISREG(it_st.st_mode) << std::endl;
+////								std::cout << "S_ISLNK(it_st.st_mode): " << S_ISLNK(it_st.st_mode) << std::endl;
+//
+//								if ((it_st.st_dev == old_st.st_dev) &&  (it_st.st_ino == old_st.st_ino))
+//								{
+//									std::cout << "NEW NAME " << dir_itr->path().native_file_string() << std::endl;
+//								}
+//							}
+//							else
+//							{
+//								std::cout << "ERROR EN STAT" << std::endl;
+//								std::cout << "dir_itr->path().native_file_string(): " << dir_itr->path().native_file_string() << std::endl;
+//							}
+//						}
+//						catch ( const std::exception & ex )
+//						{
+//							std::cout << dir_itr->path().native_file_string() << " " << ex.what() << std::endl;
+//						}
+//					}
 
 
 
 				}
+
+
 				if (kev.fflags & NOTE_REVOKE)
 				{
 					std::cout << "NOTE_REVOKE -> XXXXXXXXX" << std::endl;
@@ -874,10 +947,13 @@ public: //private:  //TODO:
 
 	void directory_event_handler( fsitem* head_dir )
 	{
-		//std::cout << "void directory_event_handler( fsitem* head_dir )" << std::endl;
+		std::cout << "void directory_event_handler( fsitem* head_dir )" << std::endl;
+		std::cout << "head_dir->path.native_file_string(): " << head_dir->path.native_file_string() << std::endl;
+
+
 
 		struct pnotify_event *ev;
-		struct dentry  *dptr, *dtmp;
+		struct dentry *dptr, *dtmp;
 
 		//TODO: ????
 		//assert(ctl && watch);
