@@ -656,6 +656,10 @@ public: //private:  //TODO:
 						return;
 					}
 
+					std::cout << "old_st.st_dev: " << old_st.st_dev << std::endl;
+					std::cout << "old_st.st_ino: " << old_st.st_ino << std::endl;
+					std::cout << "old_st.st_mode: " << old_st.st_mode << std::endl;
+
 
 
 					boost::filesystem::directory_iterator end_iter;
@@ -668,6 +672,26 @@ public: //private:  //TODO:
 
 							if ( stat( dir_itr->path().native_file_string().c_str(), &it_st) == 0)
 							{
+								std::cout << "dir_itr->path().native_file_string(): " << dir_itr->path().native_file_string() << std::endl;
+								std::cout << "it_st.st_dev: " << it_st.st_dev << std::endl;
+								std::cout << "it_st.st_ino: " << it_st.st_ino << std::endl;
+								std::cout << "it_st.st_mode: " << it_st.st_mode << std::endl;
+
+
+//#define S_ISDIR(m)      (((m) & 0170000) == 0040000)    /* directory */
+//#define S_ISCHR(m)      (((m) & 0170000) == 0020000)    /* char special */
+//#define S_ISBLK(m)      (((m) & 0170000) == 0060000)    /* block special */
+//#define S_ISREG(m)      (((m) & 0170000) == 0100000)    /* regular file */
+//#define S_ISFIFO(m)     (((m) & 0170000) == 0010000)    /* fifo or socket */
+//#if __POSIX_VISIBLE >= 200112
+//#define S_ISLNK(m)      (((m) & 0170000) == 0120000)    /* symbolic link */
+//#define S_ISSOCK(m)     (((m) & 0170000) == 0140000)    /* socket */
+//#endif
+//#if __BSD_VISIBLE
+//#define S_ISWHT(m)      (((m) & 0170000) == 0160000)    /* whiteout */
+//#endif
+
+
 								if ((it_st.st_dev == old_st.st_dev) &&  (it_st.st_ino == old_st.st_ino))
 								{
 									std::cout << "NEW NAME " << dir_itr->path().native_file_string() << std::endl;
