@@ -29,8 +29,14 @@ There are platforms that are not supported due to lack of developer resources. I
 #include <cstring>		//<string.h>		// for strerror
 
 #include <fcntl.h>
-#include <sys/event.h>
 #include <sys/types.h>
+#include <sys/event.h>
+#include <sys/stat.h>
+#include <sys/fcntl.h>
+#include <unistd.h>
+
+
+
 
 #include <boost/bind.hpp>
 #include <boost/filesystem/path.hpp>
@@ -95,8 +101,8 @@ struct fsitem
 
 	~fsitem()
 	{
-		std::cout << "--------------------- ~fsitem() ------------------------------" << std::endl;
-		std::cout << "this->path.native_file_string(): " << this->path.native_file_string() << std::endl;
+//		std::cout << "--------------------- ~fsitem() ------------------------------" << std::endl;
+//		std::cout << "this->path.native_file_string(): " << this->path.native_file_string() << std::endl;
 	}
 
 	boost::filesystem::path path;
@@ -203,11 +209,11 @@ public:
 	//TODO: hacer lo mismo para linux.
 	void initialize() //private
 	{
-		std::cout << "void initialize()" << std::endl;
+		//std::cout << "void initialize()" << std::endl;
 
 		if (!is_initialized_)
 		{
-			std::cout << "file_descriptor_ = kqueue();" << std::endl;
+			//std::cout << "file_descriptor_ = kqueue();" << std::endl;
 
 			file_descriptor_ = kqueue(); //::kqueue();
 			if (file_descriptor_ < 0)
@@ -224,8 +230,8 @@ public:
 
 	void create_watch( watch_type watch )
 	{
-		std::cout << "void create_watch( watch_type watch )" << std::endl;
-		std::cout << "watch->path.native_file_string(): " << watch->path.native_file_string() << std::endl;
+//		std::cout << "void create_watch( watch_type watch )" << std::endl;
+//		std::cout << "watch->path.native_file_string(): " << watch->path.native_file_string() << std::endl;
 
 		//TODO: ver esto...
 		if ( watch->mask == 0 )
@@ -255,6 +261,16 @@ public:
 
 		// TENEMOS UN FILE DESCRIPTOR POR WATCH
 		//if ((watch->fd = open(watch->path, O_RDONLY)) < 0)
+
+
+		//TODO:
+		#define O_EVTONLY EVFILT_VNODE
+
+		std::cout << "O_RDONLY: " << O_RDONLY << std::endl;
+		std::cout << "O_EVTONLY: " << O_EVTONLY << std::endl;
+
+
+		//if ( (watch->fd = open( watch->path.native_file_string().c_str(), O_EVTONLY )) < 0)
 		if ( (watch->fd = open( watch->path.native_file_string().c_str(), O_RDONLY )) < 0)
 		{
 			//warn("opening path `%s' failed", watch->path);
@@ -266,6 +282,27 @@ public:
 			throw (std::invalid_argument(oss.str()));
 
 		}
+
+		std::cout << "watch->fd: " << watch->fd << std::endl;
+
+		int ret_value = ::close( watch->fd );
+
+
+
+
+		if ( (watch->fd = open( watch->path.native_file_string().c_str(), O_RDONLY )) < 0)
+		{
+			//warn("opening path `%s' failed", watch->path);
+			//return -1;
+
+			std::ostringstream oss;
+			//TODO:
+			oss << "opening path failed: - Reason: " << std::strerror(errno);
+			throw (std::invalid_argument(oss.str()));
+
+		}
+
+		std::cout << "-*-*-* watch->fd: " << watch->fd << std::endl;
 
 
 		if ( boost::filesystem::is_directory( watch->path ) )
@@ -293,7 +330,7 @@ public:
 		/* Create and populate a kevent structure */
 		//EV_SET(kev, watch->fd, EVFILT_VNODE, EV_ADD | EV_CLEAR, 0, 0, watch);
 		EV_SET( kev, watch->fd, EVFILT_VNODE, EV_ADD | EV_CLEAR, 0, 0, watch.get() );
-
+		//EV_SET( &ev_change[foldersToWatch], fd[foldersToWatch], EVFILT_VNODE, EV_ADD | EV_CLEAR, vnode_events, 0, &(mpTaskInfo->mpControlInfo[foldersToWatch]) );
 
 		//TODO: ver esto...
 
@@ -304,7 +341,19 @@ public:
 				// -> Windows no salta...
 				// -> Linux tampoco...
 
-		kev->fflags |= NOTE_RENAME; //Eliminado porque no sirve monitorear el dir raiz.
+		kev->fflags = NOTE_DELETE |  NOTE_WRITE | NOTE_EXTEND | NOTE_ATTRIB | NOTE_LINK | NOTE_RENAME | NOTE_REVOKE;
+
+
+//		kev->fflags |= NOTE_RENAME; //Eliminado porque no sirve monitorear el dir raiz.
+//		kev->fflags |= NOTE_TRUNCATE; //TODO: ver
+//		kev->fflags |= NOTE_WRITE; //TODO: ver
+//		kev->fflags |= NOTE_EXTEND; //TODO: ver
+//		kev->fflags |= NOTE_ATTRIB; //TODO: ver
+//		kev->fflags |= NOTE_DELETE; //TODO: ver
+//		kev->fflags |= NOTE_RENAME; //TODO: ver
+//		kev->fflags |= NOTE_REVOKE; //TODO: ver
+//		kev->fflags |= NOTE_LINK; //TODO: ver
+
 		//TODO: no está incluido en PN_ALL_EVENTS por eso lo agrego de una
 		//TODO: ver como mapear las constantes de BSD con las de la interfaz que vamos a exponer al usuario...
 		//TODO: vamos a tener que hacer algo similar a lo que estamos haciendo a continuacion...
@@ -355,15 +404,15 @@ public:
 	//TODO: contemplar la opcion include_sub_directories_
 	void scan_directory( watch_type head_dir )
 	{
-		std::cout << "void scan_directory( watch_type head_dir )" << std::endl;
-		std::cout << "head_dir->path.native_file_string(): " << head_dir->path.native_file_string() << std::endl;
+		//std::cout << "void scan_directory( watch_type head_dir )" << std::endl;
+		//std::cout << "head_dir->path.native_file_string(): " << head_dir->path.native_file_string() << std::endl;
 
 
 		//TODO: STL --> std::transform o std::for_each o boost::lambda o BOOST_FOREACH
 		//TODO: watch_collection_type o all_watchs_type ?????? GUARDA!!!!
 
 
-		std::cout << "head_dir->subitems.size(): " << head_dir->subitems.size() << std::endl;
+		//std::cout << "head_dir->subitems.size(): " << head_dir->subitems.size() << std::endl;
 		for (watch_collection_type::iterator it =  head_dir->subitems.begin(); it != head_dir->subitems.end(); ++it )
 		{
 			(*it)->mask = PN_DELETE;
@@ -384,8 +433,8 @@ public:
 				{
 					if (  (*it)->path.native_file_string() == dir_itr->path().native_file_string() )
 					{
-						std::cout << "found" << std::endl;
-						std::cout << "(*it)->path.native_file_string(): " << (*it)->path.native_file_string() << std::endl;
+//						std::cout << "found" << std::endl;
+//						std::cout << "(*it)->path.native_file_string(): " << (*it)->path.native_file_string() << std::endl;
 						found = true;
 					}
 				}
@@ -400,10 +449,10 @@ public:
 					item->mask = PN_CREATE;
 					item->parent_wd = head_dir->wd;
 
-					std::cout << "PN_CREATE: " << PN_CREATE << std::endl;
-					std::cout << "item->path.native_file_string(): " << item->path.native_file_string() << std::endl;
-					std::cout << "item->mask: " << item->mask << std::endl;
-					std::cout << "item->parent_wd: " << item->parent_wd << std::endl;
+//					std::cout << "PN_CREATE: " << PN_CREATE << std::endl;
+//					std::cout << "item->path.native_file_string(): " << item->path.native_file_string() << std::endl;
+//					std::cout << "item->mask: " << item->mask << std::endl;
+//					std::cout << "item->parent_wd: " << item->parent_wd << std::endl;
 
 
 					head_dir->subitems.push_back(item);
@@ -420,8 +469,8 @@ public:
 
 	void scan_directory( fsitem* head_dir )
 	{
-		std::cout << "void scan_directory( fsitem* head_dir )" << std::endl;
-		std::cout << "head_dir->path.native_file_string(): " << head_dir->path.native_file_string() << std::endl;
+//		std::cout << "void scan_directory( fsitem* head_dir )" << std::endl;
+//		std::cout << "head_dir->path.native_file_string(): " << head_dir->path.native_file_string() << std::endl;
 
 
 
@@ -432,8 +481,8 @@ public:
 			(*it)->mask = PN_DELETE;
 		}
 
-		std::cout << "PN_DELETE: " << PN_DELETE << std::endl;
-		std::cout << "PN_CREATE: " << PN_CREATE << std::endl;
+//		std::cout << "PN_DELETE: " << PN_DELETE << std::endl;
+//		std::cout << "PN_CREATE: " << PN_CREATE << std::endl;
 
 		boost::filesystem::directory_iterator end_iter;
 		for ( boost::filesystem::directory_iterator dir_itr( head_dir->path ); dir_itr != end_iter; ++dir_itr )
@@ -451,16 +500,16 @@ public:
 				{
 					if (  (*it)->path.native_file_string() == dir_itr->path().native_file_string() )
 					{
-						std::cout << "found" << std::endl;
-						std::cout << "(*it)->path.native_file_string(): " << (*it)->path.native_file_string() << std::endl;
+//						std::cout << "found" << std::endl;
+//						std::cout << "(*it)->path.native_file_string(): " << (*it)->path.native_file_string() << std::endl;
 						found = true;
 					}
 				}
 
 				if ( !found )
 				{
-					std::cout << "NEW ITEM" << std::endl;
-					std::cout << "dir_itr->path().native_file_string(): " << dir_itr->path().native_file_string() << std::endl;
+//					std::cout << "NEW ITEM" << std::endl;
+//					std::cout << "dir_itr->path().native_file_string(): " << dir_itr->path().native_file_string() << std::endl;
 
 					watch_type item(new fsitem);
 					item->path = dir_itr->path();
@@ -471,10 +520,10 @@ public:
 					item->mask = PN_CREATE;
 					item->parent_wd = head_dir->wd;
 
-					std::cout << "PN_CREATE: " << PN_CREATE << std::endl;
-					std::cout << "item->path.native_file_string(): " << item->path.native_file_string() << std::endl;
-					std::cout << "item->mask: " << item->mask << std::endl;
-					std::cout << "item->parent_wd: " << item->parent_wd << std::endl;
+//					std::cout << "PN_CREATE: " << PN_CREATE << std::endl;
+//					std::cout << "item->path.native_file_string(): " << item->path.native_file_string() << std::endl;
+//					std::cout << "item->mask: " << item->mask << std::endl;
+//					std::cout << "item->parent_wd: " << item->parent_wd << std::endl;
 
 					head_dir->subitems.push_back(item);
 				}
@@ -489,7 +538,7 @@ public:
 
 	void start()
 	{
-		std::cout << "void start()" << std::endl;
+		//std::cout << "void start()" << std::endl;
 		initialize();
 
 		for (watch_collection_type::iterator it =  user_watchs_.begin(); it != user_watchs_.end(); ++it )
@@ -525,6 +574,13 @@ public: //private:  //TODO:
 
 			std::cout << "salio de kevent(...)" << std::endl;
 
+			std::cout << "kev.ident: " << kev.ident << std::endl;
+			std::cout << "kev.filter: " << kev.filter << std::endl;
+			std::cout << "kev.flags: " << kev.flags << std::endl;
+			std::cout << "kev.fflags: " << kev.fflags << std::endl;
+			std::cout << "kev.data: " << kev.data << std::endl;
+			std::cout << "kev.udata: " << kev.udata << std::endl;
+
 			//TODO: esto puede ser un tema, porque el shared_ptr (watch_type) va a tener el contador en 1 y cuando salga de scope va a hacer delete de la memoria...
 //			watch_type watch( (fsitem*) kev.udata );
 			fsitem* watch =  (fsitem*) kev.udata;
@@ -540,24 +596,21 @@ public: //private:  //TODO:
 		        */
 			if (watch->parent_wd && kev.fflags & NOTE_DELETE)
 			{
-				std::cout << "-*-*-*-*-*--*-*-*-*-** IGNORE NOTE_DELETE" << std::endl;
+				//std::cout << "-*-*-*-*-*--*-*-*-*-** IGNORE NOTE_DELETE" << std::endl;
 				//dprintf("ignoring NOTE_DELETE on a watched file\n");
 				//goto retry;
 				continue;
 			}
 
+			std::cout << "----------------------------------------------------------------------------" << std::endl;
 			std::cout << "watch->fd: " << watch->fd << std::endl;
 			std::cout << "watch->wd: " << watch->wd << std::endl;
 			std::cout << "watch->mask: " << watch->mask << std::endl;
 			std::cout << "watch->path.native_file_string(): " << watch->path.native_file_string() << std::endl;
+			std::cout << "----------------------------------------------------------------------------" << std::endl;
 
 
-//			std::cout << "kev.ident: " << kev.ident << std::endl;
-//			std::cout << "kev.filter: " << kev.filter << std::endl;
-//			std::cout << "kev.flags: " << kev.flags << std::endl;
-//			std::cout << "kev.fflags: " << kev.fflags << std::endl;
-//			std::cout << "kev.data: " << kev.data << std::endl;
-//			std::cout << "kev.udata: " << kev.udata << std::endl;
+
 
 
 			if (! closing_)
@@ -585,6 +638,47 @@ public: //private:  //TODO:
 				if (kev.fflags & NOTE_RENAME)
 				{
 					std::cout << "NOTE_RENAME -> XXXXXXXXX" << std::endl;
+
+					std::cout << "watch->fd: " << watch->fd << std::endl;
+					std::cout << "OLDNAME: " << watch->path.native_file_string() << std::endl;
+
+					std::cout << "Parent: " << user_watchs_[0]->path.native_file_string() << std::endl;
+
+
+					struct stat old_st;
+					if (fstat(watch->fd, &old_st) < 0)
+					{
+						//warn("fstat(2) failed");
+						std::cout << "ERROR STAT" << std::endl;
+						return;
+					}
+
+
+
+					boost::filesystem::directory_iterator end_iter;
+					//TODO: hardcode
+					for ( boost::filesystem::directory_iterator dir_itr( user_watchs_[0]->path ); dir_itr != end_iter; ++dir_itr )
+					{
+						try
+						{
+							struct stat it_st;
+
+							if ( stat( dir_itr->path().native_file_string().c_str(), &it_st) == 0)
+							{
+								if ((it_st.st_dev == old_st.st_dev) &&  (it_st.st_ino == old_st.st_ino))
+								{
+									std::cout << "NEW NAME " << dir_itr->path().native_file_string() << std::endl;
+								}
+							}
+						}
+						catch ( const std::exception & ex )
+						{
+							std::cout << dir_itr->path().native_file_string() << " " << ex.what() << std::endl;
+						}
+					}
+
+
+
 				}
 				if (kev.fflags & NOTE_REVOKE)
 				{
@@ -753,7 +847,7 @@ public: //private:  //TODO:
 
 	void directory_event_handler( fsitem* head_dir )
 	{
-		std::cout << "void directory_event_handler( fsitem* head_dir )" << std::endl;
+		//std::cout << "void directory_event_handler( fsitem* head_dir )" << std::endl;
 
 		struct pnotify_event *ev;
 		struct dentry  *dptr, *dtmp;
@@ -792,7 +886,7 @@ public: //private:  //TODO:
 			{
 				std::cout << "ELIMINANDO ITEM DE LA LISTA" << std::endl;
 				std::cout << "(*it)->path.native_file_string(): " << (*it)->path.native_file_string() << std::endl;
-				std::cout << "(*it)->mask: " << (*it)->mask << std::endl;
+				//std::cout << "(*it)->mask: " << (*it)->mask << std::endl;
 
 
 				it = head_dir->subitems.erase(it);
