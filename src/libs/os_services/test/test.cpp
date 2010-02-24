@@ -35,11 +35,19 @@
 
 
 #include <iostream>
+#include <sstream>
 #include <string>
 
 #include <boost/filesystem.hpp>
+#include <boost/lexical_cast.hpp>
 
 #include <boost/os_services/file_system_monitor.hpp>
+
+
+
+
+
+
 
 
 using namespace boost::os_services;
@@ -73,13 +81,13 @@ static void OnRenamed(renamed_event_args e) // object source,
 
 #if defined(linux) || defined(__linux) || defined(__linux__) || defined(__GNU__) || defined(__GLIBC__)
 
-std::string temp_path_1("/home/fernando/temp1");
-std::string temp_path_2("/home/fernando/temp2");
+std::string temp_path_1("/home/fernando/temp1/");
+std::string temp_path_2("/home/fernando/temp2/");
 
 #elif defined(__FreeBSD__) // || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__DragonFly__)
 
-std::string temp_path_1("/home/fernando/temp1");
-std::string temp_path_2("/home/fernando/temp2");
+std::string temp_path_1("/home/fernando/temp1/");
+std::string temp_path_2("/home/fernando/temp2/");
 
 #elif defined(__CYGWIN__)
 #  error Platform not supported
@@ -87,62 +95,6 @@ std::string temp_path_2("/home/fernando/temp2");
 
 std::string temp_path_1("C:\\temp1\\");
 std::string temp_path_2("C:\\temp2\\");
-
-
-void test_basic()
-{
-	//std::string path1 = "C:\\temp1";
-	std::string path1 = "C:\\temp1\\";
-	//std::string path1 = "D:\\temp1";
-	//std::string path1 = "J:\\temp1";	//Invalid dir test
-	//std::string path1 = "/home/fernando/temp1";
-
-	std::string path2 = "C:\\temp2";
-	//std::string path2 = "D:\\temp2";
-	//std::string path2 = "J:\\temp2";	//Invalid dir test
-	//std::string path2 = "/home/fernando/temp2";
-
-
-	boost::shared_ptr<file_system_monitor> monitor;
-
-	try
-	{
-		monitor.reset(new file_system_monitor);
-
-		monitor->add_directory(path1);
-		monitor->add_directory(path2);
-
-		//TODO: mapear los notify filters de Windows con otras plataformas...
-
-		monitor->set_notify_filters( notify_filters::last_access | notify_filters::last_write | notify_filters::file_name | notify_filters::directory_name );
-		monitor->set_filter("*.txt"); //TODO: implementar este filtro
-		monitor->set_changed_event_handler(OnChanged);
-		monitor->set_created_event_handler(OnCreated);
-		monitor->set_deleted_event_handler(OnDeleted);
-		monitor->set_renamed_event_handler(OnRenamed);
-
-		monitor->start();
-		//monitor->start(); //Probar de que no se pueda ejecutar dos veces.
-		//monitor->stop(); //TODO: implementar
-
-		std::cout << "Press Enter to Stop Monitoring..." << std::endl;
-		std::cin.get();
-
-	}
-	catch (std::runtime_error& e)
-	{
-		std::cout << "EXCEPTION: " << e.what() << std::endl;
-	}
-	catch (std::invalid_argument& e)
-	{
-		std::cout << "EXCEPTION: " << e.what() << std::endl;
-	}
-
-
-	//delete monitor;
-
-}
-
 
 #elif defined(macintosh) || defined(__APPLE__) || defined(__APPLE_CC__)
 #  error No test for the moment
@@ -203,10 +155,297 @@ void test_with_boost_filesystem_path()
 
 
 
-int main(int /*argc*/, char** /*argv*/)
+void test_invalid_platform_path()
+{
+#if defined(linux) || defined(__linux) || defined(__linux__) || defined(__GNU__) || defined(__GLIBC__) || defined(__FreeBSD__) // || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__DragonFly__)
+	std::string invalid_path_1("C:\\temp1\\");
+	std::string invalid_path_2("C:\\temp2\\");
+#elif defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
+	std::string invalid_path_1("/home/fernando/temp1/");
+	std::string invalid_path_2("/home/fernando/temp2/");
+#endif
+
+	boost::shared_ptr<file_system_monitor> monitor;
+
+	try
+	{
+		monitor.reset(new file_system_monitor);
+
+		std::cout << "invalid_path_1: " << invalid_path_1 << std::endl;
+		std::cout << "invalid_path_2: " << invalid_path_2 << std::endl;
+
+		monitor->add_directory(invalid_path_1);
+		monitor->add_directory(invalid_path_2);
+
+		monitor->set_notify_filters( notify_filters::last_access | notify_filters::last_write | notify_filters::file_name | notify_filters::directory_name );
+		monitor->set_filter("*.txt"); //TODO: implementar este filtro
+		monitor->set_changed_event_handler(OnChanged);
+		monitor->set_created_event_handler(OnCreated);
+		monitor->set_deleted_event_handler(OnDeleted);
+		monitor->set_renamed_event_handler(OnRenamed);
+
+		monitor->start();
+
+		std::cout << "Press Enter to Stop Monitoring..." << std::endl;
+		std::cin.get();
+
+	}
+	catch (std::runtime_error& e)
+	{
+		std::cout << "EXCEPTION: " << e.what() << std::endl;
+	}
+	catch (std::invalid_argument& e)
+	{
+		std::cout << "EXCEPTION: " << e.what() << std::endl;
+	}
+
+}
+
+
+void test_invalid_directory()
+{
+#if defined(linux) || defined(__linux) || defined(__linux__) || defined(__GNU__) || defined(__GLIBC__) || defined(__FreeBSD__) // || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__DragonFly__)
+	std::string invalid_path_1("/home/pepe/temp1/");
+	std::string invalid_path_2("/home/pepe/temp2/");
+#elif defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
+	std::string invalid_path_1("J:\\temp1\\");
+	std::string invalid_path_2("J:\\temp2\\");
+#endif
+
+	boost::shared_ptr<file_system_monitor> monitor;
+
+	try
+	{
+		monitor.reset(new file_system_monitor);
+
+		monitor->add_directory(invalid_path_1);
+		monitor->add_directory(invalid_path_2);
+
+		monitor->set_notify_filters( notify_filters::last_access | notify_filters::last_write | notify_filters::file_name | notify_filters::directory_name );
+		monitor->set_filter("*.txt"); //TODO: implementar este filtro
+		monitor->set_changed_event_handler(OnChanged);
+		monitor->set_created_event_handler(OnCreated);
+		monitor->set_deleted_event_handler(OnDeleted);
+		monitor->set_renamed_event_handler(OnRenamed);
+
+		monitor->start();
+
+		std::cout << "Press Enter to Stop Monitoring..." << std::endl;
+		std::cin.get();
+
+	}
+	catch (std::runtime_error& e)
+	{
+		std::cout << "EXCEPTION: " << e.what() << std::endl;
+	}
+	catch (std::invalid_argument& e)
+	{
+		std::cout << "EXCEPTION: " << e.what() << std::endl;
+	}
+
+}
+
+void test_slash_path_terminated()
+{
+#if defined(linux) || defined(__linux) || defined(__linux__) || defined(__GNU__) || defined(__GLIBC__) || defined(__FreeBSD__) // || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__DragonFly__)
+	std::string invalid_path_1("/home/fernando/temp1/");
+	std::string invalid_path_2("/home/fernando/temp2/");
+#elif defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
+	std::string invalid_path_1("C:\\temp1\\");
+	std::string invalid_path_2("C:\\temp2\\");
+#endif
+
+	boost::shared_ptr<file_system_monitor> monitor;
+
+	try
+	{
+		monitor.reset(new file_system_monitor);
+
+		monitor->add_directory(invalid_path_1);
+		monitor->add_directory(invalid_path_2);
+
+		monitor->set_notify_filters( notify_filters::last_access | notify_filters::last_write | notify_filters::file_name | notify_filters::directory_name );
+		monitor->set_filter("*.txt"); //TODO: implementar este filtro
+		monitor->set_changed_event_handler(OnChanged);
+		monitor->set_created_event_handler(OnCreated);
+		monitor->set_deleted_event_handler(OnDeleted);
+		monitor->set_renamed_event_handler(OnRenamed);
+
+		monitor->start();
+
+		std::cout << "Press Enter to Stop Monitoring..." << std::endl;
+		std::cin.get();
+
+	}
+	catch (std::runtime_error& e)
+	{
+		std::cout << "EXCEPTION: " << e.what() << std::endl;
+	}
+	catch (std::invalid_argument& e)
+	{
+		std::cout << "EXCEPTION: " << e.what() << std::endl;
+	}
+
+}
+
+
+void test_non_slash_path_terminated()
+{
+#if defined(linux) || defined(__linux) || defined(__linux__) || defined(__GNU__) || defined(__GLIBC__) || defined(__FreeBSD__) // || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__DragonFly__)
+	std::string invalid_path_1("/home/fernando/temp1");
+	std::string invalid_path_2("/home/fernando/temp2");
+#elif defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
+	std::string invalid_path_1("C:\\temp1");
+	std::string invalid_path_2("C:\\temp2");
+#endif
+
+	boost::shared_ptr<file_system_monitor> monitor;
+
+	try
+	{
+		monitor.reset(new file_system_monitor);
+
+		monitor->add_directory(invalid_path_1);
+		monitor->add_directory(invalid_path_2);
+
+		monitor->set_notify_filters( notify_filters::last_access | notify_filters::last_write | notify_filters::file_name | notify_filters::directory_name );
+		monitor->set_filter("*.txt"); //TODO: implementar este filtro
+		monitor->set_changed_event_handler(OnChanged);
+		monitor->set_created_event_handler(OnCreated);
+		monitor->set_deleted_event_handler(OnDeleted);
+		monitor->set_renamed_event_handler(OnRenamed);
+
+		monitor->start();
+
+		std::cout << "Press Enter to Stop Monitoring..." << std::endl;
+		std::cin.get();
+
+	}
+	catch (std::runtime_error& e)
+	{
+		std::cout << "EXCEPTION: " << e.what() << std::endl;
+	}
+	catch (std::invalid_argument& e)
+	{
+		std::cout << "EXCEPTION: " << e.what() << std::endl;
+	}
+}
+
+
+void test_two_start_execution()
+{
+#if defined(linux) || defined(__linux) || defined(__linux__) || defined(__GNU__) || defined(__GLIBC__) || defined(__FreeBSD__) // || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__DragonFly__)
+	std::string invalid_path_1("/home/fernando/temp1");
+	std::string invalid_path_2("/home/fernando/temp2");
+#elif defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
+	std::string invalid_path_1("C:\\temp1");
+	std::string invalid_path_2("C:\\temp2");
+#endif
+
+	boost::shared_ptr<file_system_monitor> monitor;
+
+	try
+	{
+		monitor.reset(new file_system_monitor);
+
+		monitor->add_directory(invalid_path_1);
+		monitor->add_directory(invalid_path_2);
+
+		monitor->set_notify_filters( notify_filters::last_access | notify_filters::last_write | notify_filters::file_name | notify_filters::directory_name );
+		monitor->set_filter("*.txt"); //TODO: implementar este filtro
+		monitor->set_changed_event_handler(OnChanged);
+		monitor->set_created_event_handler(OnCreated);
+		monitor->set_deleted_event_handler(OnDeleted);
+		monitor->set_renamed_event_handler(OnRenamed);
+
+		monitor->start();
+		monitor->start();
+
+		std::cout << "Press Enter to Stop Monitoring..." << std::endl;
+		std::cin.get();
+
+	}
+	catch (std::runtime_error& e)
+	{
+		std::cout << "EXCEPTION: " << e.what() << std::endl;
+	}
+	catch (std::invalid_argument& e)
+	{
+		std::cout << "EXCEPTION: " << e.what() << std::endl;
+	}
+}
+
+
+//TODO: Test: monitor->start(); //monitor->start(); //Probar de que no se pueda ejecutar dos veces.
+
+
+void test_stress( int argc, char* argv[] )
 {
 
-	test_with_boost_filesystem_path();
+#if defined(linux) || defined(__linux) || defined(__linux__) || defined(__GNU__) || defined(__GLIBC__) || defined(__FreeBSD__) // || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__DragonFly__)
+const std::string default_dir = "/home/fernando/temp1/";
+#elif defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
+const std::string default_dir = "C:\\temp1\\";
+#endif
+
+	const int default_max_files = 10000;
+
+	std::string file_name = "a";
+	std::string file_ext = ".txt";
+
+	std::string dir = default_dir;
+	int max_files = default_max_files;
+
+	if (argc > 1)
+	{
+		std::string dir = argv[1];
+		//max_files = boost::lexical_cast<int>(argv[1]);
+	}
+
+	if (argc > 2)
+	{
+		//std::string temp = argv[2];
+		max_files = boost::lexical_cast<int>(argv[2]);
+	}
+
+
+	std::string source_file_path = dir + file_name + file_ext;
+
+	for (int i = 0; i<max_files; ++i)
+	{
+		std::stringstream ss;
+		ss << dir;
+		ss << file_name;
+		ss << i;
+		ss << file_ext;
+
+
+		//TODO: que no arroje error cuando el archivo existe...
+		//TODO: si el archivo existe, borrarlo...
+		boost::filesystem::copy_file( source_file_path, ss.str() );
+	}
+
+	std::cout << "DELETING..." << std::endl;
+
+	for (int i = 0; i<max_files; ++i)
+	{
+		std::stringstream ss;
+		ss << dir;
+		ss << file_name;
+		ss << i;
+		ss << file_ext;
+
+		boost::filesystem::remove(ss.str());
+	}
+
+}
+
+
+int main(int argc, char** argv)
+{
+	test_invalid_platform_path();
+	//test_stress( argc, argv );
+	//test_with_boost_filesystem_path();
 	//test_basic();
 
 	std::cout << "Press Enter to Exit" << std::endl;
