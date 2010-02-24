@@ -11,18 +11,6 @@ namespace os_services {
 namespace detail {
 namespace utils {
 
-bool directory_exists( const std::string& str_path )
-{
-	//TODO: trim de path
-	if ( str_path.size() == 0 )
-	{
-		return false;
-	}
-
-	boost::filesystem::path full_path( str_path, boost::filesystem::native );
-	return directory_exists(str_path);
-}
-
 bool directory_exists( const boost::filesystem::path& full_path )
 {
 	if ( !boost::filesystem::exists( full_path ) )
@@ -36,6 +24,18 @@ bool directory_exists( const boost::filesystem::path& full_path )
 	}
 
 	return true;
+}
+
+bool directory_exists( const std::string& str_path )
+{
+	//TODO: trim de path
+	if ( str_path.size() == 0 )
+	{
+		return false;
+	}
+
+	boost::filesystem::path full_path( str_path, boost::filesystem::native );
+	return directory_exists(full_path);
 }
 
 } // namespace utils
