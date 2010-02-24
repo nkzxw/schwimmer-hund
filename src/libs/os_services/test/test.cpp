@@ -171,8 +171,86 @@ void test_invalid_platform_path()
 	{
 		monitor.reset(new file_system_monitor);
 
-		std::cout << "invalid_path_1: " << invalid_path_1 << std::endl;
-		std::cout << "invalid_path_2: " << invalid_path_2 << std::endl;
+		//std::cout << "invalid_path_1: " << invalid_path_1 << std::endl;
+		//std::cout << "invalid_path_2: " << invalid_path_2 << std::endl;
+
+		monitor->add_directory(invalid_path_1);
+		monitor->add_directory(invalid_path_2);
+
+		monitor->set_notify_filters( notify_filters::last_access | notify_filters::last_write | notify_filters::file_name | notify_filters::directory_name );
+		monitor->set_filter("*.txt"); //TODO: implementar este filtro
+		monitor->set_changed_event_handler(OnChanged);
+		monitor->set_created_event_handler(OnCreated);
+		monitor->set_deleted_event_handler(OnDeleted);
+		monitor->set_renamed_event_handler(OnRenamed);
+
+		monitor->start();
+
+		std::cout << "Press Enter to Stop Monitoring..." << std::endl;
+		std::cin.get();
+
+	}
+	catch (std::runtime_error& e)
+	{
+		std::cout << "EXCEPTION: " << e.what() << std::endl;
+	}
+	catch (std::invalid_argument& e)
+	{
+		std::cout << "EXCEPTION: " << e.what() << std::endl;
+	}
+
+}
+
+
+void test_empty_string_path()
+{
+	std::string invalid_path_1("");
+	std::string invalid_path_2("");
+
+	boost::shared_ptr<file_system_monitor> monitor;
+
+	try
+	{
+		monitor.reset(new file_system_monitor);
+
+		monitor->add_directory(invalid_path_1);
+		monitor->add_directory(invalid_path_2);
+
+		monitor->set_notify_filters( notify_filters::last_access | notify_filters::last_write | notify_filters::file_name | notify_filters::directory_name );
+		monitor->set_filter("*.txt"); //TODO: implementar este filtro
+		monitor->set_changed_event_handler(OnChanged);
+		monitor->set_created_event_handler(OnCreated);
+		monitor->set_deleted_event_handler(OnDeleted);
+		monitor->set_renamed_event_handler(OnRenamed);
+
+		monitor->start();
+
+		std::cout << "Press Enter to Stop Monitoring..." << std::endl;
+		std::cin.get();
+
+	}
+	catch (std::runtime_error& e)
+	{
+		std::cout << "EXCEPTION: " << e.what() << std::endl;
+	}
+	catch (std::invalid_argument& e)
+	{
+		std::cout << "EXCEPTION: " << e.what() << std::endl;
+	}
+
+}
+
+
+void test_white_space_string_path()
+{
+	std::string invalid_path_1(" ");
+	std::string invalid_path_2(" ");
+
+	boost::shared_ptr<file_system_monitor> monitor;
+
+	try
+	{
+		monitor.reset(new file_system_monitor);
 
 		monitor->add_directory(invalid_path_1);
 		monitor->add_directory(invalid_path_2);
@@ -377,7 +455,8 @@ void test_two_start_execution()
 
 
 //TODO: Test: monitor->start(); //monitor->start(); //Probar de que no se pueda ejecutar dos veces.
-
+//TODO: Test: empty string path
+//TODO: Test: "   " path
 
 void test_stress( int argc, char* argv[] )
 {
@@ -443,7 +522,8 @@ const std::string default_dir = "C:\\temp1\\";
 
 int main(int argc, char** argv)
 {
-	test_invalid_platform_path();
+	test_empty_string_path();
+	//test_invalid_platform_path();
 	//test_stress( argc, argv );
 	//test_with_boost_filesystem_path();
 	//test_basic();
