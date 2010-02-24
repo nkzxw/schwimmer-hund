@@ -45,11 +45,6 @@
 
 
 
-
-
-
-
-
 using namespace boost::os_services;
 
 
@@ -458,6 +453,7 @@ void test_two_start_execution()
 
 void test_stress( int argc, char* argv[] )
 {
+	//TODO: levantar un thread que monitoree la aplicacion y otro thread que vaya modificando el FileSystem
 
 #if defined(linux) || defined(__linux) || defined(__linux__) || defined(__GNU__) || defined(__GLIBC__) || defined(__FreeBSD__) // || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__DragonFly__)
 const std::string default_dir = "/home/fernando/temp1/";
