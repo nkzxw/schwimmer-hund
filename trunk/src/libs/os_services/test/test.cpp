@@ -1,51 +1,17 @@
-// TODO: LEER: URGENTE
-// http://msdn.microsoft.com/en-us/library/aa383745(VS.85).aspx
-// http://blogs.msdn.com/oldnewthing/archive/2007/04/11/2079137.aspx
-// http://msdn.microsoft.com/en-us/library/6sehtctf.aspx
-// http://stackoverflow.com/questions/142508/how-do-i-check-os-with-a-preprocessor-directive
-
-
-// WINDOWS VERSION AT RUNTIME
-//		http://support.microsoft.com/kb/189249
-//		http://msdn.microsoft.com/en-us/library/ms724439(VS.85).aspx
-//		http://msdn.microsoft.com/en-us/library/ms724832(VS.85).aspx
-//		http://msdn.microsoft.com/en-us/library/ms724451(VS.85).aspx
-//      http://msdn.microsoft.com/en-us/library/ms725492(VS.85).aspx
-//		http://msdn.microsoft.com/en-us/library/ms724833(VS.85).aspx
-
-
-// LINUX VERSION AT RUNTIME
-//		http://linux.die.net/man/2/uname
-//		cat /proc/sys/kernel/osrelease
-
-// FREEBSD VERSION AT RUNTIME
-//		PROBABLEMENTE: http://linux.die.net/man/2/uname
-
-
-// TODO: BOOST: Nomenclaturas...
-
-//TODO: boost::function_requires
-//TODO: #include <boost/throw_exception.hpp>
-
-
-//TODO:
-	//BOOST_TRY{}
-	//BOOST_CATCH(...){}
-	//BOOST_CATCH_END
-
-
 #include <iostream>
 #include <sstream>
 #include <string>
+
+#define BOOST_TEST_MODULE MyTest //TODO: rename
+#include <boost/test/unit_test.hpp>
 
 #include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
 
 #include <boost/os_services/file_system_monitor.hpp>
 
-
-
 using namespace boost::os_services;
+
 
 
 // Event Handlers
@@ -100,11 +66,10 @@ std::string temp_path_2("C:\\temp2\\");
 
 
 
+//
 
-
-
-
-void test_with_boost_filesystem_path()
+//TODO: ver que podemos testear en este caso, es el caso correcto...
+BOOST_AUTO_TEST_CASE( test_with_boost_filesystem_path )
 {
 	boost::filesystem::path path1 ( temp_path_1, boost::filesystem::native );
 	boost::filesystem::path path2 ( temp_path_2, boost::filesystem::native );
@@ -144,13 +109,12 @@ void test_with_boost_filesystem_path()
 		std::cout << "EXCEPTION: " << e.what() << std::endl;
 	}
 
-
-	//delete monitor;
+	//BOOST_CHECK_THROW( cs1.at( cs1.length() ), std::out_of_range );    // 3 //
 }
 
 
 
-void test_invalid_platform_path()
+BOOST_AUTO_TEST_CASE( test_invalid_platform_path )
 {
 #if defined(linux) || defined(__linux) || defined(__linux__) || defined(__GNU__) || defined(__GLIBC__) || defined(__FreeBSD__) // || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__DragonFly__)
 	std::string invalid_path_1("C:\\temp1\\");
@@ -166,11 +130,8 @@ void test_invalid_platform_path()
 	{
 		monitor.reset(new file_system_monitor);
 
-		//std::cout << "invalid_path_1: " << invalid_path_1 << std::endl;
-		//std::cout << "invalid_path_2: " << invalid_path_2 << std::endl;
-
-		monitor->add_directory(invalid_path_1);
-		monitor->add_directory(invalid_path_2);
+		BOOST_CHECK_THROW( monitor->add_directory(invalid_path_1), std::invalid_argument );
+		BOOST_CHECK_THROW( monitor->add_directory(invalid_path_2), std::invalid_argument );
 
 		monitor->set_notify_filters( notify_filters::last_access | notify_filters::last_write | notify_filters::file_name | notify_filters::directory_name );
 		monitor->set_filter("*.txt"); //TODO: implementar este filtro
@@ -193,11 +154,11 @@ void test_invalid_platform_path()
 	{
 		std::cout << "EXCEPTION: " << e.what() << std::endl;
 	}
-
 }
 
 
-void test_empty_string_path()
+
+BOOST_AUTO_TEST_CASE( test_empty_string_path )
 {
 	std::string invalid_path_1("");
 	std::string invalid_path_2("");
@@ -232,11 +193,12 @@ void test_empty_string_path()
 	{
 		std::cout << "EXCEPTION: " << e.what() << std::endl;
 	}
-
 }
 
 
-void test_white_space_string_path()
+
+
+BOOST_AUTO_TEST_CASE( test_white_space_string_path )
 {
 	std::string invalid_path_1(" ");
 	std::string invalid_path_2(" ");
@@ -274,9 +236,9 @@ void test_white_space_string_path()
 
 }
 
-
-void test_invalid_directory()
+BOOST_AUTO_TEST_CASE( test_invalid_directory )
 {
+
 #if defined(linux) || defined(__linux) || defined(__linux__) || defined(__GNU__) || defined(__GLIBC__) || defined(__FreeBSD__) // || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__DragonFly__)
 	std::string invalid_path_1("/home/pepe/temp1/");
 	std::string invalid_path_2("/home/pepe/temp2/");
@@ -318,8 +280,9 @@ void test_invalid_directory()
 
 }
 
-void test_slash_path_terminated()
+BOOST_AUTO_TEST_CASE( test_slash_path_terminated )
 {
+
 #if defined(linux) || defined(__linux) || defined(__linux__) || defined(__GNU__) || defined(__GLIBC__) || defined(__FreeBSD__) // || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__DragonFly__)
 	std::string invalid_path_1("/home/fernando/temp1/");
 	std::string invalid_path_2("/home/fernando/temp2/");
@@ -361,9 +324,9 @@ void test_slash_path_terminated()
 
 }
 
-
-void test_non_slash_path_terminated()
+BOOST_AUTO_TEST_CASE( test_non_slash_path_terminated )
 {
+
 #if defined(linux) || defined(__linux) || defined(__linux__) || defined(__GNU__) || defined(__GLIBC__) || defined(__FreeBSD__) // || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__DragonFly__)
 	std::string invalid_path_1("/home/fernando/temp1");
 	std::string invalid_path_2("/home/fernando/temp2");
@@ -404,9 +367,9 @@ void test_non_slash_path_terminated()
 	}
 }
 
-
-void test_two_start_execution()
+BOOST_AUTO_TEST_CASE( test_two_start_execution )
 {
+
 #if defined(linux) || defined(__linux) || defined(__linux__) || defined(__GNU__) || defined(__GLIBC__) || defined(__FreeBSD__) // || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__DragonFly__)
 	std::string invalid_path_1("/home/fernando/temp1");
 	std::string invalid_path_2("/home/fernando/temp2");
@@ -449,91 +412,90 @@ void test_two_start_execution()
 }
 
 
-//TODO: Test: monitor->start(); //monitor->start(); //Probar de que no se pueda ejecutar dos veces.
 
-void test_stress( int argc, char* argv[] )
-{
-	//TODO: levantar un thread que monitoree la aplicacion y otro thread que vaya modificando el FileSystem
-
-#if defined(linux) || defined(__linux) || defined(__linux__) || defined(__GNU__) || defined(__GLIBC__) || defined(__FreeBSD__) // || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__DragonFly__)
-const std::string default_dir = "/home/fernando/temp1/";
-#elif defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
-const std::string default_dir = "C:\\temp1\\";
-#endif
-
-	const int default_max_files = 10000;
-
-	std::string file_name = "a";
-	std::string file_ext = ".txt";
-
-	std::string dir = default_dir;
-	int max_files = default_max_files;
-
-	if (argc > 1)
-	{
-		std::string dir = argv[1];
-		//max_files = boost::lexical_cast<int>(argv[1]);
-	}
-
-	if (argc > 2)
-	{
-		//std::string temp = argv[2];
-		max_files = boost::lexical_cast<int>(argv[2]);
-	}
-
-
-	std::string source_file_path = dir + file_name + file_ext;
-
-	for (int i = 0; i<max_files; ++i)
-	{
-		std::stringstream ss;
-		ss << dir;
-		ss << file_name;
-		ss << i;
-		ss << file_ext;
-
-
-		//TODO: que no arroje error cuando el archivo existe...
-		//TODO: si el archivo existe, borrarlo...
-		boost::filesystem::copy_file( source_file_path, ss.str() );
-	}
-
-	std::cout << "DELETING..." << std::endl;
-
-	for (int i = 0; i<max_files; ++i)
-	{
-		std::stringstream ss;
-		ss << dir;
-		ss << file_name;
-		ss << i;
-		ss << file_ext;
-
-		boost::filesystem::remove(ss.str());
-	}
-
-}
-
-
-int main(int argc, char** argv)
-{
-	//TODO: boost test
-
-	//test_two_start_execution()	//TODO: testear
-	//test_white_space_string_path();
-	//test_empty_string_path();
-	//test_invalid_platform_path();
-	test_stress( argc, argv );
-	//test_with_boost_filesystem_path();
-
-	std::cout << "Press Enter to Exit" << std::endl;
-
-	//std::cin.clear();
-	//std::cin.sync();
-	//std::cin.ignore();
-	std::cin.get();
-
-	return 0;
-}
+//void test_stress( int argc, char* argv[] )
+//{
+//	//TODO: levantar un thread que monitoree la aplicacion y otro thread que vaya modificando el FileSystem
+//
+//#if defined(linux) || defined(__linux) || defined(__linux__) || defined(__GNU__) || defined(__GLIBC__) || defined(__FreeBSD__) // || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__DragonFly__)
+//const std::string default_dir = "/home/fernando/temp1/";
+//#elif defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
+//const std::string default_dir = "C:\\temp1\\";
+//#endif
+//
+//	const int default_max_files = 10000;
+//
+//	std::string file_name = "a";
+//	std::string file_ext = ".txt";
+//
+//	std::string dir = default_dir;
+//	int max_files = default_max_files;
+//
+//	if (argc > 1)
+//	{
+//		std::string dir = argv[1];
+//		//max_files = boost::lexical_cast<int>(argv[1]);
+//	}
+//
+//	if (argc > 2)
+//	{
+//		//std::string temp = argv[2];
+//		max_files = boost::lexical_cast<int>(argv[2]);
+//	}
+//
+//
+//	std::string source_file_path = dir + file_name + file_ext;
+//
+//	for (int i = 0; i<max_files; ++i)
+//	{
+//		std::stringstream ss;
+//		ss << dir;
+//		ss << file_name;
+//		ss << i;
+//		ss << file_ext;
+//
+//
+//		//TODO: que no arroje error cuando el archivo existe...
+//		//TODO: si el archivo existe, borrarlo...
+//		boost::filesystem::copy_file( source_file_path, ss.str() );
+//	}
+//
+//	std::cout << "DELETING..." << std::endl;
+//
+//	for (int i = 0; i<max_files; ++i)
+//	{
+//		std::stringstream ss;
+//		ss << dir;
+//		ss << file_name;
+//		ss << i;
+//		ss << file_ext;
+//
+//		boost::filesystem::remove(ss.str());
+//	}
+//
+//}
+//
+//
+//int main(int argc, char** argv)
+//{
+//	//TODO: boost test
+//
+//	//test_two_start_execution()	//TODO: testear
+//	//test_white_space_string_path();
+//	//test_empty_string_path();
+//	//test_invalid_platform_path();
+//	test_stress( argc, argv );
+//	//test_with_boost_filesystem_path();
+//
+//	std::cout << "Press Enter to Exit" << std::endl;
+//
+//	//std::cin.clear();
+//	//std::cin.sync();
+//	//std::cin.ignore();
+//	std::cin.get();
+//
+//	return 0;
+//}
 
 
 
