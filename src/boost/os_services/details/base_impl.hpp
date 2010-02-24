@@ -31,7 +31,7 @@ public:
 		{
 			//throw std::runtime_error("InvalidDirName");
 			////throw new ArgumentException(SR.GetString("InvalidDirName", new object[] { path }));
-			throw (std::invalid_argument(dir_name + " is not a valid directory."));
+			throw (std::invalid_argument("'" + dir_name + "' is not a valid directory."));
 		}
 
 		static_cast<Type*>(this)->add_directory_impl(dir_name);
@@ -41,7 +41,7 @@ public:
 	{ 
 		if ( !utils::directory_exists(directory) )
 		{
-			throw (std::invalid_argument(directory.native_file_string() + " is not a valid directory."));
+			throw (std::invalid_argument("'" + directory.native_file_string() + "' is not a valid directory."));
 		}
 			
 		static_cast<Type*>(this)->add_directory_impl( directory.native_file_string() );

@@ -455,8 +455,6 @@ void test_two_start_execution()
 
 
 //TODO: Test: monitor->start(); //monitor->start(); //Probar de que no se pueda ejecutar dos veces.
-//TODO: Test: empty string path
-//TODO: Test: "   " path
 
 void test_stress( int argc, char* argv[] )
 {
@@ -522,11 +520,14 @@ const std::string default_dir = "C:\\temp1\\";
 
 int main(int argc, char** argv)
 {
-	test_empty_string_path();
+	//TODO: boost test
+
+	//test_two_start_execution()	//TODO: testear
+	//test_white_space_string_path();
+	//test_empty_string_path();
 	//test_invalid_platform_path();
-	//test_stress( argc, argv );
+	test_stress( argc, argv );
 	//test_with_boost_filesystem_path();
-	//test_basic();
 
 	std::cout << "Press Enter to Exit" << std::endl;
 
