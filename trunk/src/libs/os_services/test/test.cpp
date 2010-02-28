@@ -1,11 +1,11 @@
+//#define BOOST_TEST_DYN_LINK
+#define BOOST_TEST_MAIN
+//#define BOOST_TEST_MODULE "Suites" //TODO: rename
+#include <boost/test/unit_test.hpp>
+
 #include <iostream>
 #include <sstream>
 #include <string>
-
-
-#define BOOST_TEST_DYN_LINK
-#define BOOST_TEST_MODULE MyTest //TODO: rename
-#include <boost/test/unit_test.hpp>
 
 #include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
@@ -42,12 +42,7 @@ static void OnRenamed(renamed_event_args e) // object source,
 
 
 
-#if defined(linux) || defined(__linux) || defined(__linux__) || defined(__GNU__) || defined(__GLIBC__)
-
-std::string temp_path_1("/home/fernando/temp1/");
-std::string temp_path_2("/home/fernando/temp2/");
-
-#elif defined(__FreeBSD__) // || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__DragonFly__)
+#if defined(linux) || defined(__linux) || defined(__linux__) || defined(__GNU__) || defined(__GLIBC__) || defined(__FreeBSD__) // || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__DragonFly__)
 
 std::string temp_path_1("/home/fernando/temp1/");
 std::string temp_path_2("/home/fernando/temp2/");
@@ -68,54 +63,7 @@ std::string temp_path_2("C:\\temp2\\");
 
 
 
-//
-
-//TODO: ver que podemos testear en este caso, es el caso correcto...
-BOOST_AUTO_TEST_CASE( test_with_boost_filesystem_path )
-{
-	boost::filesystem::path path1 ( temp_path_1, boost::filesystem::native );
-	boost::filesystem::path path2 ( temp_path_2, boost::filesystem::native );
-
-	boost::shared_ptr<file_system_monitor> monitor;
-
-	try
-	{
-		monitor.reset(new file_system_monitor);
-
-		BOOST_CHECK_NO_THROW( monitor->add_directory(path1) );
-		BOOST_CHECK_NO_THROW( monitor->add_directory(path2) );
-		
-
-		//TODO: mapear los notify filters de Windows con otras plataformas...
-
-		monitor->set_notify_filters( notify_filters::last_access | notify_filters::last_write | notify_filters::file_name | notify_filters::directory_name );
-		monitor->set_filter("*.txt"); //TODO: implementar este filtro
-		monitor->set_changed_event_handler(OnChanged);
-		monitor->set_created_event_handler(OnCreated);
-		monitor->set_deleted_event_handler(OnDeleted);
-		monitor->set_renamed_event_handler(OnRenamed);
-
-		monitor->start();
-		//monitor->start(); //Probar de que no se pueda ejecutar dos veces.
-		//monitor->stop(); //TODO: implementar
-
-		std::cout << "Press Enter to Stop Monitoring..." << std::endl;
-		std::cin.get();
-
-	}
-	catch (std::runtime_error& e)
-	{
-		std::cout << "EXCEPTION: " << e.what() << std::endl;
-	}
-	catch (std::invalid_argument& e)
-	{
-		std::cout << "EXCEPTION: " << e.what() << std::endl;
-	}
-
-	//BOOST_CHECK_THROW( cs1.at( cs1.length() ), std::out_of_range );    // 3 //
-}
-
-
+BOOST_AUTO_TEST_SUITE( my_suite )
 
 BOOST_AUTO_TEST_CASE( test_invalid_platform_path )
 {
@@ -127,46 +75,43 @@ BOOST_AUTO_TEST_CASE( test_invalid_platform_path )
 	std::string invalid_path_2("/home/fernando/temp2/");
 #endif
 
-	boost::shared_ptr<file_system_monitor> monitor;
+	boost::shared_ptr<file_system_monitor> monitor(new file_system_monitor);
 
-	try
-	{
-		monitor.reset(new file_system_monitor);
+	BOOST_CHECK_THROW( monitor->add_directory(invalid_path_1), std::invalid_argument );
+	BOOST_CHECK_THROW( monitor->add_directory(invalid_path_2), std::invalid_argument );
 
-		BOOST_CHECK_THROW( monitor->add_directory(invalid_path_1), std::runtime_error );
-		BOOST_CHECK_THROW( monitor->add_directory(invalid_path_2), std::runtime_error );
+}
 
-		monitor->set_notify_filters( notify_filters::last_access | notify_filters::last_write | notify_filters::file_name | notify_filters::directory_name );
-		monitor->set_filter("*.txt"); //TODO: implementar este filtro
-		monitor->set_changed_event_handler(OnChanged);
-		monitor->set_created_event_handler(OnCreated);
-		monitor->set_deleted_event_handler(OnDeleted);
-		monitor->set_renamed_event_handler(OnRenamed);
+BOOST_AUTO_TEST_CASE( test_empty_string_path )
+{
+	std::string invalid_path_1("");
+	std::string invalid_path_2("");
 
-		monitor->start();
+	boost::shared_ptr<file_system_monitor> monitor(new file_system_monitor);
 
-		std::cout << "Press Enter to Stop Monitoring..." << std::endl;
-		std::cin.get();
-
-	}
-	catch (std::runtime_error& e)
-	{
-		std::cout << "EXCEPTION: " << e.what() << std::endl;
-	}
-	catch (std::invalid_argument& e)
-	{
-		std::cout << "EXCEPTION: " << e.what() << std::endl;
-	}
+	BOOST_CHECK_THROW( monitor->add_directory(invalid_path_1), std::invalid_argument );
+	BOOST_CHECK_THROW( monitor->add_directory(invalid_path_2), std::invalid_argument );
 }
 
 
-//
-//
-//
-//BOOST_AUTO_TEST_CASE( test_empty_string_path )
+BOOST_AUTO_TEST_SUITE_END() //Paths
+
+
+
+
+
+
+
+
+
+
+
+
+////TODO: ver que podemos testear en este caso, es el caso correcto...
+//BOOST_AUTO_TEST_CASE( test_with_boost_filesystem_path )
 //{
-//	std::string invalid_path_1("");
-//	std::string invalid_path_2("");
+//	boost::filesystem::path path1 ( temp_path_1, boost::filesystem::native );
+//	boost::filesystem::path path2 ( temp_path_2, boost::filesystem::native );
 //
 //	boost::shared_ptr<file_system_monitor> monitor;
 //
@@ -174,8 +119,11 @@ BOOST_AUTO_TEST_CASE( test_invalid_platform_path )
 //	{
 //		monitor.reset(new file_system_monitor);
 //
-//		monitor->add_directory(invalid_path_1);
-//		monitor->add_directory(invalid_path_2);
+//		BOOST_CHECK_NO_THROW( monitor->add_directory(path1) );
+//		BOOST_CHECK_NO_THROW( monitor->add_directory(path2) );
+//		
+//
+//		//TODO: mapear los notify filters de Windows con otras plataformas...
 //
 //		monitor->set_notify_filters( notify_filters::last_access | notify_filters::last_write | notify_filters::file_name | notify_filters::directory_name );
 //		monitor->set_filter("*.txt"); //TODO: implementar este filtro
@@ -185,6 +133,8 @@ BOOST_AUTO_TEST_CASE( test_invalid_platform_path )
 //		monitor->set_renamed_event_handler(OnRenamed);
 //
 //		monitor->start();
+//		//monitor->start(); //Probar de que no se pueda ejecutar dos veces.
+//		//monitor->stop(); //TODO: implementar
 //
 //		std::cout << "Press Enter to Stop Monitoring..." << std::endl;
 //		std::cin.get();
@@ -198,11 +148,11 @@ BOOST_AUTO_TEST_CASE( test_invalid_platform_path )
 //	{
 //		std::cout << "EXCEPTION: " << e.what() << std::endl;
 //	}
+//
+//	//BOOST_CHECK_THROW( cs1.at( cs1.length() ), std::out_of_range );    // 3 //
 //}
-//
-//
-//
-//
+
+
 //BOOST_AUTO_TEST_CASE( test_white_space_string_path )
 //{
 //	std::string invalid_path_1(" ");
