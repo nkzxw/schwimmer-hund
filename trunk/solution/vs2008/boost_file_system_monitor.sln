@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "boost_file_system_monitor", "boost_file_system_monitor\boost_file_system_monitor.vcproj", "{C4B51495-4336-4947-8771-EAECC512FCC8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C4B51495-4336-4947-8771-EAECC512FCC8}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C4B51495-4336-4947-8771-EAECC512FCC8}.Debug|Win32.Build.0 = Debug|Win32
+		{C4B51495-4336-4947-8771-EAECC512FCC8}.Release|Win32.ActiveCfg = Release|Win32
+		{C4B51495-4336-4947-8771-EAECC512FCC8}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
