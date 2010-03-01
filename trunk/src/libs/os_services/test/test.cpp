@@ -32,7 +32,6 @@ static void OnDeleted(filesystem_event_args e) // object source,
 	std::cout << "Deleted: '" << e.full_path << "'" << std::endl;
 }
 
-
 static void OnRenamed(renamed_event_args e) // object source,
 {
 	std::cout << "File: '" << e.old_full_path << "' renamed to: '" << e.full_path  << "'" << std::endl;
@@ -47,6 +46,14 @@ static void OnRenamed(renamed_event_args e) // object source,
 std::string temp_path_1("/home/fernando/temp1/");
 std::string temp_path_2("/home/fernando/temp2/");
 
+<<<<<<< .mine
+#elif defined(__FreeBSD__) //TODO: || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__DragonFly__)
+
+std::string temp_path_1("/home/fernando/temp1/");
+std::string temp_path_2("/home/fernando/temp2/");
+
+=======
+>>>>>>> .r150
 #elif defined(__CYGWIN__)
 #  error Platform not supported
 #elif defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
@@ -64,7 +71,6 @@ std::string temp_path_2("C:\\temp2\\");
 
 
 BOOST_AUTO_TEST_SUITE( my_suite )
-
 BOOST_AUTO_TEST_CASE( test_invalid_platform_path )
 {
 #if defined(linux) || defined(__linux) || defined(__linux__) || defined(__GNU__) || defined(__GLIBC__) || defined(__FreeBSD__) // || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__DragonFly__)
@@ -95,6 +101,8 @@ BOOST_AUTO_TEST_CASE( test_empty_string_path )
 
 
 BOOST_AUTO_TEST_SUITE_END() //Paths
+
+
 
 
 
@@ -322,6 +330,7 @@ BOOST_AUTO_TEST_SUITE_END() //Paths
 //	}
 //}
 //
+
 //BOOST_AUTO_TEST_CASE( test_two_start_execution )
 //{
 //
@@ -350,7 +359,7 @@ BOOST_AUTO_TEST_SUITE_END() //Paths
 //		monitor->set_renamed_event_handler(OnRenamed);
 //
 //		monitor->start();
-//		monitor->start();
+//		monitor->start(); //TODO: todavía no está definido que tiene que hacer la lib en este caso...
 //
 //		std::cout << "Press Enter to Stop Monitoring..." << std::endl;
 //		std::cin.get();
