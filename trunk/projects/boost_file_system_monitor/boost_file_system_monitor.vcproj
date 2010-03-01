@@ -172,18 +172,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\libs\os_services\test\stress_test_creation_watcher.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\libs\os_services\test\stress_test_file_generator.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\libs\os_services\test\stress_test_file_generator_and_watcher.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\src\libs\os_services\test\test.cpp"
 				>
 			</File>
