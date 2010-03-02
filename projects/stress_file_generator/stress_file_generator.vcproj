@@ -176,7 +176,7 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\src\libs\os_services\test\paths.hpp"
+				RelativePath="..\..\src\libs\os_services\test\test_paths_platform_selector.hpp"
 				>
 			</File>
 		</Filter>
