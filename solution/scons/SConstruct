@@ -13,19 +13,7 @@
 import os
 
 #env_test = Environment ( MSVS_VERSION = '9.0' ) 
-
 env_test = Environment(ENV = os.environ)
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -44,8 +32,7 @@ if env_test['PLATFORM'] == 'win32':
 	#env.Program('stress_test_file_generator', ['../../src/libs/os_services/test/stress_test_file_generator.cpp'], CPPPATH = [os.environ['BOOST_ROOT']], LIBS=['iphlpapi'])
 	
 	Program('stress_test_file_generator', ['../../src/libs/os_services/test/stress_test_file_generator.cpp'], CPPPATH = [os.environ['BOOST_ROOT']], LIBS=['iphlpapi'])
-	
-	
+		
 	#Program('program', ['prog.c', 'file1.c', 'file2.c'])
 
 	
