@@ -1,0 +1,79 @@
+NOTE_WRITE -> PN_MODIFY
+void directory_event_handler( fsitem* head_dir )
+head_dir->path.native_file_string(): /home/fernando/temp1
+
+found filename: /home/fernando/temp1/dir11
+found inode: /home/fernando/temp1/dir11 - /home/fernando/temp1/dir11
+
+found filename: /home/fernando/temp1/dir12
+found inode: /home/fernando/temp1/dir12 - /home/fernando/temp1/dir12
+
+found filename: /home/fernando/temp1/dir13
+found inode: /home/fernando/temp1/dir13 - /home/fernando/temp1/dir13
+
+found filename: /home/fernando/temp1/file12
+found inode: /home/fernando/temp1/file12 - /home/fernando/temp1/file12
+found inode: /home/fernando/temp1/hardlink12 - /home/fernando/temp1/file12
+
+found filename: /home/fernando/temp1/file13
+found inode: /home/fernando/temp1/file13 - /home/fernando/temp1/file13
+found inode: /home/fernando/temp1/hardlink13 - /home/fernando/temp1/file13
+
+found inode: /home/fernando/temp1/file11 - /home/fernando/temp1/hardlink11
+found filename: /home/fernando/temp1/hardlink11
+found inode: /home/fernando/temp1/hardlink11 - /home/fernando/temp1/hardlink11
+
+found inode: /home/fernando/temp1/file12 - /home/fernando/temp1/hardlink12
+found filename: /home/fernando/temp1/hardlink12
+found inode: /home/fernando/temp1/hardlink12 - /home/fernando/temp1/hardlink12
+
+found inode: /home/fernando/temp1/file13 - /home/fernando/temp1/hardlink13
+found filename: /home/fernando/temp1/hardlink13
+found inode: /home/fernando/temp1/hardlink13 - /home/fernando/temp1/hardlink13
+
+found filename: /home/fernando/temp1/symlink11
+found inode: /home/fernando/temp1/symlink11 - /home/fernando/temp1/symlink11
+
+found filename: /home/fernando/temp1/symlink12
+found inode: /home/fernando/temp1/symlink12 - /home/fernando/temp1/symlink12
+
+found filename: /home/fernando/temp1/symlink13
+found inode: /home/fernando/temp1/symlink13 - /home/fernando/temp1/symlink13
+
+found inode: /home/fernando/temp1/file11 - /home/fernando/temp1/file11B
+found inode: /home/fernando/temp1/hardlink11 - /home/fernando/temp1/file11B
+
+
+
+IGUAL INODE - DISTINTO NAME
+	-> HardLink
+	
+IGUAL INODE - IGUAL NAME
+	-> Archivo Regular
+	
+IGUAL INODE - IGUAL NAME
+	-> Archivo Regular
+		
+	
+NO ENCUENTRO EL FILENAME
+		-> Encuentro INODE ?
+				-> NO: Archivo Nuevo
+				-> SI:
+							-> INODE es hardlink?
+										-> SI: No es INODE Válido... -> Hacer de cuenta que no encontré
+										-> NO: ARCHIVO RENOMBRADO
+										
+							
+						
+	
+	
+
+
+
+
+Test:
+	Agregar un HardLink
+	Borrar un HardLink
+	Renombrar un HardLink
+	
+	
