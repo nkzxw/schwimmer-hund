@@ -15,7 +15,7 @@ import os
 #env_test = Environment ( MSVS_VERSION = '9.0' ) 
 env_test = Environment(ENV = os.environ)
 
-
+BOOST_ROOT_LIB = os.environ['BOOST_ROOT'] + '/stage/lib'
 
 if env_test['PLATFORM'] == 'win32':
 	print "--WIN32 Platform"
@@ -25,13 +25,18 @@ if env_test['PLATFORM'] == 'win32':
 	#env = Environment(platform = 'win32')        
 	
 	##env = Environment ( MSVS_VERSION = '7.1' ) 
-	#env = Environment ( MSVS_VERSION = '9.0' ) 
 	
 	##env.Program('get_machine_id', ['../../src/main.cpp'], CPPPATH = ['C:/Program Files/boost/boost_1_39_0'], LIBS=['iphlpapi'])
 	##env.Program('get_machine_id', ['../../src/main.cpp', '../../src/base64.cpp'], CPPPATH = [os.environ['BOOST_ROOT']], LIBS=['iphlpapi'])
 	#env.Program('stress_test_file_generator', ['../../src/libs/os_services/test/stress_test_file_generator.cpp'], CPPPATH = [os.environ['BOOST_ROOT']], LIBS=['iphlpapi'])
 	
-	Program('stress_test_file_generator', ['../../src/libs/os_services/test/stress_test_file_generator.cpp'], CPPPATH = [os.environ['BOOST_ROOT']], LIBS=['iphlpapi'])
+	#env.Program('stress_test_file_generator', ['../../src/libs/os_services/test/stress_test_file_generator.cpp'], CPPPATH = [os.environ['BOOST_ROOT']], LIBS=['iphlpapi'])
+	#Program('stress_test_file_generator', ['../../src/libs/os_services/test/stress_test_file_generator.cpp'], CPPPATH = [os.environ['BOOST_ROOT']], LIBPATH=[BOOST_ROOT_LIB])
+
+
+	env = Environment ( MSVS_VERSION = '9.0' )
+	env.Program('stress_test_file_generator', ['../../src/libs/os_services/test/stress_test_file_generator.cpp'], CPPPATH = [os.environ['BOOST_ROOT']], LIBPATH=[BOOST_ROOT_LIB])
+	
 		
 	#Program('program', ['prog.c', 'file1.c', 'file2.c'])
 
@@ -154,3 +159,16 @@ else:
 #env = Environment()
 #env = Environment(platform = 'os2')
 #env = Environment(platform = 'posix')
+
+
+
+#env = Environment()
+#print "-------------------------------------------------------------------------------------------------------------"
+#print os.environ['PATH']
+#print "-------------------------------------------------------------------------------------------------------------"
+#print env['ENV']['PATH']
+#print "-------------------------------------------------------------------------------------------------------------"
+#print env['MSVS_VERSION']
+#print "-------------------------------------------------------------------------------------------------------------"
+#print os.environ['MSVS_VERSION']
+#print "-------------------------------------------------------------------------------------------------------------"
