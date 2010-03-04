@@ -1,6 +1,6 @@
 #Requerimientos:
 #	OS Environment Variables
-#			BOOST_ROOT = C:\Program Files\boost\boost_1_39_0\
+#			BOOST_ROOT = C:\Program Files\boost\boost_1_42_0\
 #		Para Visual C++ Express, agregar en las variables de ambiente:
 #			INCLUDE="C:\Program Files\Microsoft SDKs\Windows\v6.0A\Include;C:\Program Files\Microsoft Visual Studio 9.0\VC\include"
 #			LIB="C:\Program Files\Microsoft SDKs\Windows\v6.0A\Lib;C:\Program Files\Microsoft Visual Studio 9.0\VC\lib"
