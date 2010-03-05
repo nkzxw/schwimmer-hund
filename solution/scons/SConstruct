@@ -17,7 +17,7 @@ import os
 env_test = Environment(ENV = os.environ)
 
 BOOST_ROOT_LIB = os.environ['BOOST_ROOT'] + '/stage/lib'
-SRC_DIR = os.environ['DEV_HOME'] + '/CPP/schwimmer-hund/src/'
+SRC_DIR = os.environ['DEV_CPP_HOME'] + '/CPP/schwimmer-hund/src/'
 
 if env_test['PLATFORM'] == 'win32':
 	print "--WIN32 Platform"
