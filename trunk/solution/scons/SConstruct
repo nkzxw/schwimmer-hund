@@ -17,15 +17,16 @@ import os
 env_test = Environment(ENV = os.environ)
 
 
-#print 'BOOST_ROOT: ' + os.environ['BOOST_ROOT']
-print 'BOOST_VERSION: ' + os.environ['BOOST_VERSION']
-print 'GCC_VERSION: ' + os.environ['GCC_VERSION']
-#print 'DEV_CPP_HOME: ' + os.environ['DEV_CPP_HOME']
-
-
-
 BOOST_ROOT_LIB = os.environ['BOOST_ROOT'] + '/stage/lib'
 SRC_DIR = os.environ['DEV_CPP_HOME'] + '/schwimmer-hund/src/'
+
+print 'BOOST_ROOT: ' + os.environ['BOOST_ROOT']
+print 'BOOST_VERSION: ' + os.environ['BOOST_VERSION']
+print 'GCC_VERSION: ' + os.environ['GCC_VERSION']
+print 'DEV_CPP_HOME: ' + os.environ['DEV_CPP_HOME']
+print 'BOOST_ROOT_LIB: ' + BOOST_ROOT_LIB
+print 'SRC_DIR: ' + SRC_DIR
+
 
 if env_test['PLATFORM'] == 'win32':
 	print "--WIN32 Platform"
