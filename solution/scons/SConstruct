@@ -18,6 +18,8 @@ env_test = Environment(ENV = os.environ)
 
 
 #print 'BOOST_ROOT: ' + os.environ['BOOST_ROOT']
+print 'BOOST_VERSION: ' + os.environ['BOOST_VERSION']
+print 'GCC_VERSION: ' + os.environ['GCC_VERSION']
 #print 'DEV_CPP_HOME: ' + os.environ['DEV_CPP_HOME']
 
 
@@ -45,10 +47,10 @@ elif env_test['PLATFORM'] == 'posix':
 	#LIBPATH='.'  
 	
 	env = Environment ( )
-	env.Append( LIBS=['boost_thread-gcc44-mt-d-1_41'] )
-	env.Append( LIBS=['boost_system-gcc44-mt-d-1_41'] )
-	env.Append( LIBS=['boost_filesystem-gcc44-mt-d-1_41'] )
-	env.Append( LIBS=['boost_unit_test_framework-gcc44-mt-d-1_41'] )
+	env.Append( LIBS=['boost_thread-gcc' + os.environ['GCC_VERSION'] + '-mt-d-' + os.environ['BOOST_VERSION'] ] )
+	env.Append( LIBS=['boost_system-gcc' + os.environ['GCC_VERSION'] + '-mt-d-' + os.environ['BOOST_VERSION'] ] )
+	env.Append( LIBS=['boost_filesystem-gcc' + os.environ['GCC_VERSION'] + '-mt-d-' + os.environ['BOOST_VERSION']] )
+	env.Append( LIBS=['boost_unit_test_framework-gcc' + os.environ['GCC_VERSION'] + '-mt-d-' + os.environ['BOOST_VERSION'] ] )
  
 	#TODO: BOOST_VERSION
  
