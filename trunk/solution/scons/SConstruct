@@ -16,6 +16,10 @@ import os
 
 env_test = Environment(ENV = os.environ)
 
+
+print 'BOOST_ROOT: ' + os.environ['BOOST_ROOT']
+print 'DEV_CPP_HOME: ' + os.environ['DEV_CPP_HOME']
+
 BOOST_ROOT_LIB = os.environ['BOOST_ROOT'] + '/stage/lib'
 SRC_DIR = os.environ['DEV_CPP_HOME'] + '/schwimmer-hund/src/'
 
