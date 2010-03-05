@@ -11,6 +11,7 @@
 
 #TODO: usar... DEV_HOME o DEV_ROOT
 #TODO: hacer .bat para compilar en caso de que use varios compiladores...
+#TODO: Sconscript -> http://www.scons.org/doc/0.96.1/HTML/scons-user/x1826.html
 
 import os
 
@@ -51,14 +52,6 @@ elif env_test['PLATFORM'] == 'posix':
 	env.Append( LIBS=['boost_system-gcc' + os.environ['GCC_VERSION'] + '-mt-d-' + os.environ['BOOST_VERSION'] ] )
 	env.Append( LIBS=['boost_filesystem-gcc' + os.environ['GCC_VERSION'] + '-mt-d-' + os.environ['BOOST_VERSION']] )
 	env.Append( LIBS=['boost_unit_test_framework-gcc' + os.environ['GCC_VERSION'] + '-mt-d-' + os.environ['BOOST_VERSION'] ] )
- 
-	#env.Append( LIBS=['boost_thread-gcc44-mt-d-1_41' ] )
-	#env.Append( LIBS=['boost_system-gcc44-mt-d-1_41' ] )
-	#env.Append( LIBS=['boost_filesystem-gcc44-mt-d-1_41'] )
-	#env.Append( LIBS=['boost_unit_test_framework-gcc44-mt-d-1_41' ] )
-
-
-	#TODO: BOOST_VERSION
  
 else:
   print "--Other Platform"
