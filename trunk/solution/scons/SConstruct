@@ -16,16 +16,15 @@ import os
 
 env_test = Environment(ENV = os.environ)
 
-
 BOOST_ROOT_LIB = os.environ['BOOST_ROOT'] + '/stage/lib'
 SRC_DIR = os.environ['DEV_CPP_HOME'] + '/schwimmer-hund/src/'
 
-print 'BOOST_ROOT: ' + os.environ['BOOST_ROOT']
-print 'BOOST_VERSION: ' + os.environ['BOOST_VERSION']
-print 'GCC_VERSION: ' + os.environ['GCC_VERSION']
-print 'DEV_CPP_HOME: ' + os.environ['DEV_CPP_HOME']
-print 'BOOST_ROOT_LIB: ' + BOOST_ROOT_LIB
-print 'SRC_DIR: ' + SRC_DIR
+#print 'BOOST_ROOT: ' + os.environ['BOOST_ROOT']
+#print 'BOOST_VERSION: ' + os.environ['BOOST_VERSION']
+#print 'GCC_VERSION: ' + os.environ['GCC_VERSION']
+#print 'DEV_CPP_HOME: ' + os.environ['DEV_CPP_HOME']
+#print 'BOOST_ROOT_LIB: ' + BOOST_ROOT_LIB
+#print 'SRC_DIR: ' + SRC_DIR
 
 
 if env_test['PLATFORM'] == 'win32':
@@ -48,15 +47,15 @@ elif env_test['PLATFORM'] == 'posix':
 	#LIBPATH='.'  
 	
 	env = Environment ( )
-	#env.Append( LIBS=['boost_thread-gcc' + os.environ['GCC_VERSION'] + '-mt-d-' + os.environ['BOOST_VERSION'] ] )
-	#env.Append( LIBS=['boost_system-gcc' + os.environ['GCC_VERSION'] + '-mt-d-' + os.environ['BOOST_VERSION'] ] )
-	#env.Append( LIBS=['boost_filesystem-gcc' + os.environ['GCC_VERSION'] + '-mt-d-' + os.environ['BOOST_VERSION']] )
-	#env.Append( LIBS=['boost_unit_test_framework-gcc' + os.environ['GCC_VERSION'] + '-mt-d-' + os.environ['BOOST_VERSION'] ] )
+	env.Append( LIBS=['boost_thread-gcc' + os.environ['GCC_VERSION'] + '-mt-d-' + os.environ['BOOST_VERSION'] ] )
+	env.Append( LIBS=['boost_system-gcc' + os.environ['GCC_VERSION'] + '-mt-d-' + os.environ['BOOST_VERSION'] ] )
+	env.Append( LIBS=['boost_filesystem-gcc' + os.environ['GCC_VERSION'] + '-mt-d-' + os.environ['BOOST_VERSION']] )
+	env.Append( LIBS=['boost_unit_test_framework-gcc' + os.environ['GCC_VERSION'] + '-mt-d-' + os.environ['BOOST_VERSION'] ] )
  
-	env.Append( LIBS=['boost_thread-gcc44-mt-d-1_41' ] )
-	env.Append( LIBS=['boost_system-gcc44-mt-d-1_41' ] )
-	env.Append( LIBS=['boost_filesystem-gcc44-mt-d-1_41'] )
-	env.Append( LIBS=['boost_unit_test_framework-gcc44-mt-d-1_41' ] )
+	#env.Append( LIBS=['boost_thread-gcc44-mt-d-1_41' ] )
+	#env.Append( LIBS=['boost_system-gcc44-mt-d-1_41' ] )
+	#env.Append( LIBS=['boost_filesystem-gcc44-mt-d-1_41'] )
+	#env.Append( LIBS=['boost_unit_test_framework-gcc44-mt-d-1_41' ] )
 
 
 	#TODO: BOOST_VERSION
@@ -69,7 +68,10 @@ else:
 env.Append( CPPPATH = [ os.environ['BOOST_ROOT'], SRC_DIR ] )
 env.Append( LIBPATH=[BOOST_ROOT_LIB] )
 
+env.Program('stress_test_creation_watcher', ['../../src/libs/os_services/test/stress_test_creation_watcher.cpp'])
 env.Program('stress_test_file_generator', ['../../src/libs/os_services/test/stress_test_file_generator.cpp'])
+env.Program('stress_test_file_generator_and_watcher', ['../../src/libs/os_services/test/stress_test_file_generator_and_watcher.cpp'])
+env.Program('test', ['../../src/libs/os_services/test/test.cpp'])
 
 
 #print env.Dump()
