@@ -9,12 +9,15 @@
 #			INCLUDE="C:\Program Files\Microsoft SDKs\Windows\v6.0A\Include;C:\Program Files\Microsoft Visual Studio 9.0\VC\include"
 #			LIB="C:\Program Files\Microsoft SDKs\Windows\v6.0A\Lib;C:\Program Files\Microsoft Visual Studio 9.0\VC\lib"
 
+#TODO: usar... DEV_HOME o DEV_ROOT
+#TODO: hacer .bat para compilar en caso de que use varios compiladores...
 
 import os
 
 env_test = Environment(ENV = os.environ)
 
 BOOST_ROOT_LIB = os.environ['BOOST_ROOT'] + '/stage/lib'
+SRC_DIR = os.environ['DEV_HOME'] + '/CPP/schwimmer-hund/src/'
 
 if env_test['PLATFORM'] == 'win32':
 	print "--WIN32 Platform"
@@ -34,13 +37,16 @@ elif env_test['PLATFORM'] == 'posix':
 	#env = Environment(platform = 'posix')
 	#env.Program('get_machine_id', ['../../src/main.cpp', '../../src/base64.cpp'], CPPPATH = ['/usr/local/include'])
 	#LIBPATH='.'  
+	
+	env = Environment ( )
   
 else:
   print "--Other Platform"
 
 
 
-env.Append( CPPPATH = [os.environ['BOOST_ROOT'], 'Z:/Development/CPP/schwimmer-hund/src/'] )
+#env.Append( CPPPATH = [ os.environ['BOOST_ROOT'], 'Z:/Development/CPP/schwimmer-hund/src/' ] )
+env.Append( CPPPATH = [ os.environ['BOOST_ROOT'], SRC_DIR ] )
 env.Append( LIBPATH=[BOOST_ROOT_LIB] )
 
 env.Program('stress_test_file_generator', ['../../src/libs/os_services/test/stress_test_file_generator.cpp'])
