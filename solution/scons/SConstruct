@@ -37,6 +37,7 @@ if env_test['PLATFORM'] == 'win32':
 	#env = Environment(platform = 'win32')        
 	env = Environment ( MSVC_VERSION = '9.0' )
 	
+	
 	env.Append( CPPFLAGS = ['/EHsc'] )		# Visual Studio: Enable C++ Exceptions
 	#env.Append( LIBS=['iphlpapi'] )
 
