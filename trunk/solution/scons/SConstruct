@@ -4,7 +4,7 @@
 #	OS Environment Variables
 #			BOOST_ROOT = C:\Program Files\boost\boost_1_42_0\
 #		Con mas de un Visual Studio instalado... especificar version ... en este caso...
-#     MSVS_VERSION = 9.0
+#     MSVC_VERSION = 9.0
 #		Para Visual C++ Express, agregar en las variables de ambiente:
 #			INCLUDE="C:\Program Files\Microsoft SDKs\Windows\v6.0A\Include;C:\Program Files\Microsoft Visual Studio 9.0\VC\include"
 #			LIB="C:\Program Files\Microsoft SDKs\Windows\v6.0A\Lib;C:\Program Files\Microsoft Visual Studio 9.0\VC\lib"
@@ -12,7 +12,6 @@
 
 import os
 
-#env_test = Environment ( MSVS_VERSION = '9.0' ) 
 env_test = Environment(ENV = os.environ)
 
 BOOST_ROOT_LIB = os.environ['BOOST_ROOT'] + '/stage/lib'
@@ -22,34 +21,29 @@ if env_test['PLATFORM'] == 'win32':
 	#/O2 /Oi /GL /D "_MBCS" /FD /EHsc /MD /Gy /Fo"Release\\" /Fd"Release\vc90.pdb" /W3 /nologo /c /Zi /TP /errorReport:prompt
 	#/OUT:"E:\Development\CPP\p1945\subprojects\test_technologies\makefiles\vs2008\Release\test_technologies.exe" /NOLOGO /MANIFEST /MANIFESTFILE:"Release\test_technologies.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"E:\Development\CPP\p1945\subprojects\test_technologies\makefiles\vs2008\Release\test_technologies.pdb" /OPT:REF /OPT:ICF /LTCG /DYNAMICBASE /NXCOMPAT /MACHINE:X86 /ERRORREPORT:PROMPT kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib
 	#Debug -> CCFLAGS = ['/Zi']
+
 	#env = Environment(platform = 'win32')        
+	env = Environment ( MSVC_VERSION = '9.0' )
 	
-	##env = Environment ( MSVS_VERSION = '7.1' ) 
-	
-	##env.Program('get_machine_id', ['../../src/main.cpp'], CPPPATH = ['C:/Program Files/boost/boost_1_39_0'], LIBS=['iphlpapi'])
-	##env.Program('get_machine_id', ['../../src/main.cpp', '../../src/base64.cpp'], CPPPATH = [os.environ['BOOST_ROOT']], LIBS=['iphlpapi'])
-	#env.Program('stress_test_file_generator', ['../../src/libs/os_services/test/stress_test_file_generator.cpp'], CPPPATH = [os.environ['BOOST_ROOT']], LIBS=['iphlpapi'])
-	
-	#env.Program('stress_test_file_generator', ['../../src/libs/os_services/test/stress_test_file_generator.cpp'], CPPPATH = [os.environ['BOOST_ROOT']], LIBS=['iphlpapi'])
-	#Program('stress_test_file_generator', ['../../src/libs/os_services/test/stress_test_file_generator.cpp'], CPPPATH = [os.environ['BOOST_ROOT']], LIBPATH=[BOOST_ROOT_LIB])
-
-
-	env = Environment ( MSVS_VERSION = '9.0' )
-	env.Program('stress_test_file_generator', ['../../src/libs/os_services/test/stress_test_file_generator.cpp'], CPPPATH = [os.environ['BOOST_ROOT']], LIBPATH=[BOOST_ROOT_LIB])
-	
-		
-	#Program('program', ['prog.c', 'file1.c', 'file2.c'])
+	env.Append( CPPFLAGS = ['/EHsc'] )		# Visual Studio: Enable C++ Exceptions
+	#env.Append( LIBS=['iphlpapi'] )
 
 	
 elif env_test['PLATFORM'] == 'posix':
 	print "--POSIX Platform"
-	env = Environment(platform = 'posix')
-	env.Program('get_machine_id', ['../../src/main.cpp', '../../src/base64.cpp'], CPPPATH = ['/usr/local/include'])
+	#env = Environment(platform = 'posix')
+	#env.Program('get_machine_id', ['../../src/main.cpp', '../../src/base64.cpp'], CPPPATH = ['/usr/local/include'])
 	#LIBPATH='.'  
   
 else:
   print "--Other Platform"
 
+
+
+env.Append( CPPPATH = [os.environ['BOOST_ROOT'], 'Z:/Development/CPP/schwimmer-hund/src/'] )
+env.Append( LIBPATH=[BOOST_ROOT_LIB] )
+
+env.Program('stress_test_file_generator', ['../../src/libs/os_services/test/stress_test_file_generator.cpp'])
 
 
 
@@ -131,8 +125,8 @@ else:
 
 
 
-#print "MSVS_VERSION ----------------------------------------"
-#print os.environ['MSVS_VERSION']
+#print "MSVC_VERSION ----------------------------------------"
+#print os.environ['MSVC_VERSION']
 #print "-----------------------------------------------------"
 #
 #
@@ -168,7 +162,7 @@ else:
 #print "-------------------------------------------------------------------------------------------------------------"
 #print env['ENV']['PATH']
 #print "-------------------------------------------------------------------------------------------------------------"
-#print env['MSVS_VERSION']
+#print env['MSVC_VERSION']
 #print "-------------------------------------------------------------------------------------------------------------"
-#print os.environ['MSVS_VERSION']
+#print os.environ['MSVC_VERSION']
 #print "-------------------------------------------------------------------------------------------------------------"
