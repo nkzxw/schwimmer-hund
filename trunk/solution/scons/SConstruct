@@ -17,8 +17,10 @@ import os
 env_test = Environment(ENV = os.environ)
 
 
-print 'BOOST_ROOT: ' + os.environ['BOOST_ROOT']
-print 'DEV_CPP_HOME: ' + os.environ['DEV_CPP_HOME']
+#print 'BOOST_ROOT: ' + os.environ['BOOST_ROOT']
+#print 'DEV_CPP_HOME: ' + os.environ['DEV_CPP_HOME']
+
+
 
 BOOST_ROOT_LIB = os.environ['BOOST_ROOT'] + '/stage/lib'
 SRC_DIR = os.environ['DEV_CPP_HOME'] + '/schwimmer-hund/src/'
@@ -43,10 +45,15 @@ elif env_test['PLATFORM'] == 'posix':
 	#LIBPATH='.'  
 	
 	env = Environment ( )
-  
+	env.Append( LIBS=['boost_thread-gcc44-mt-d-1_41'] )
+	env.Append( LIBS=['boost_system-gcc44-mt-d-1_41'] )
+	env.Append( LIBS=['boost_filesystem-gcc44-mt-d-1_41'] )
+	env.Append( LIBS=['boost_unit_test_framework-gcc44-mt-d-1_41'] )
+ 
+	#TODO: BOOST_VERSION
+ 
 else:
   print "--Other Platform"
-
 
 
 #env.Append( CPPPATH = [ os.environ['BOOST_ROOT'], 'Z:/Development/CPP/schwimmer-hund/src/' ] )
@@ -54,7 +61,6 @@ env.Append( CPPPATH = [ os.environ['BOOST_ROOT'], SRC_DIR ] )
 env.Append( LIBPATH=[BOOST_ROOT_LIB] )
 
 env.Program('stress_test_file_generator', ['../../src/libs/os_services/test/stress_test_file_generator.cpp'])
-
 
 
 #print env.Dump()
