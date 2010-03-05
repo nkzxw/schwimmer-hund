@@ -1,0 +1,33 @@
+Compilar:
+
+
+	SCONS:
+	cl /FoZ:\Development\CPP\schwimmer-hund\src\libs\os_services\test\stress_test_file_generator_scons.obj  /Od   "/IC:\Program Files\Boost\boost_1_42_0" /IZ:\Development\CPP\schwimmer-hund\src        /D "_MBCS" /Gm /EHsc                         /c /ZI /TP /nologo Z:\Development\CPP\schwimmer-hund\src\libs\os_services\test\stress_test_file_generator.cpp 
+	
+	---
+	
+	
+	VS:
+	cl /FoZ:\Development\CPP\schwimmer-hund\src\libs\os_services\test\stress_test_file_generator_vs.obj     /Od   /I "C:\Program Files\Boost\boost_1_42_0" /I "Z:\Development\\CPP\schwimmer-hund\src\\" /D "_MBCS" /Gm /EHsc /RTC1 /MDd  /W3 /nologo /c /ZI /TP /errorReport:prompt Z:\Development\CPP\schwimmer-hund\src\libs\os_services\test\stress_test_file_generator.cpp
+	
+	/Fd"Debug\vc90.pdb"
+
+
+
+
+---
+
+
+LINK
+
+	SCONS:
+	link /OUT:"stress_test_file_generator.exe" /nologo "/LIBPATH:C:\Program Files\Boost\boost_1_42_0\stage\lib" Z:\Development\CPP\schwimmer-hund\src\libs\os_services\test\stress_test_file_generator_scons.obj
+	
+	
+	---
+	
+	
+	VS
+	link /OUT:"stress_test_file_generator.exe" /NOLOGO /LIBPATH:"C:\Program Files\Boost\boost_1_42_0\stage\lib" /MANIFEST /MANIFESTFILE:"Debug\stress_file_generator.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"z:\Development\CPP\schwimmer-hund\solution\vs2008\Debug\stress_file_generator.pdb" /DYNAMICBASE /NXCOMPAT /MACHINE:X86 /ERRORREPORT:PROMPT kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib
+	link /OUT:"stress_test_file_generator.exe" /NOLOGO /LIBPATH:"C:\Program Files\Boost\boost_1_42_0\stage\lib" /MANIFEST /DEBUG /PDB:"z:\Development\CPP\schwimmer-hund\solution\vs2008\Debug\stress_file_generator.pdb" /DYNAMICBASE /NXCOMPAT /MACHINE:X86 /ERRORREPORT:PROMPT kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib Z:\Development\CPP\schwimmer-hund\src\libs\os_services\test\stress_test_file_generator_vs.obj
+	link /OUT:"stress_test_file_generator.exe" /NOLOGO /LIBPATH:"C:\Program Files\Boost\boost_1_42_0\stage\lib" /MANIFEST /DEBUG /PDB:"z:\Development\CPP\schwimmer-hund\solution\vs2008\Debug\stress_file_generator.pdb" /DYNAMICBASE /NXCOMPAT /MACHINE:X86 /ERRORREPORT:PROMPT kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib Z:\Development\CPP\schwimmer-hund\src\libs\os_services\test\stress_test_file_generator_scons.obj
