@@ -28,6 +28,7 @@ SRC_DIR = os.environ['DEV_CPP_HOME'] + '/schwimmer-hund/src/'
 #print 'SRC_DIR: ' + SRC_DIR
 
 
+#esta consulta deberia ser quizas por el compilador mas que por la plataforma... que pasa con MinGW
 if env_test['PLATFORM'] == 'win32':
 	print "--WIN32 Platform"
 	#/O2 /Oi /GL /D "_MBCS" /FD /EHsc /MD /Gy /Fo"Release\\" /Fd"Release\vc90.pdb" /W3 /nologo /c /Zi /TP /errorReport:prompt
@@ -39,6 +40,10 @@ if env_test['PLATFORM'] == 'win32':
 	
 	
 	env.Append( CPPFLAGS = ['/EHsc'] )		# Visual Studio: Enable C++ Exceptions
+	#env.Append( CPPFLAGS = ['/MDd'] )		# Visual Studio: Multithread Debug DLL
+	env.Append( CPPFLAGS = ['/MD'] )		# Visual Studio: Multithread DLL
+	
+	
 	#env.Append( LIBS=['iphlpapi'] )
 
 	
