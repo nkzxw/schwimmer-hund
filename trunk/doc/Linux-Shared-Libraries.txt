@@ -22,7 +22,7 @@ boost_1_41_0
 
 
 
-sudo ln -s $BOOST_ROOT/stage/lib/libboost_thread-gcc44-mt-d-$BOOST_VERSION.so.1.41.0 /usr/lib/libboost_thread-gcc44-mt-d-$BOOST_VERSION.so
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_thread-gcc44-mt-d-$BOOST_VERSION.so.1.$BOOST_VERSION_MEDIUM.0 /usr/lib/libboost_thread-gcc44-mt-d-$BOOST_VERSION.so
 sudo ln -s $BOOST_ROOT/stage/lib/libboost_thread-gcc44-mt-d-$BOOST_VERSION.so.1.41.0 /usr/lib/libboost_thread-gcc44-mt-d.so
 sudo ln -s $BOOST_ROOT/stage/lib/libboost_thread-gcc44-mt-d-$BOOST_VERSION.so.1.41.0 /usr/lib/libboost_thread-gcc44-mt-d-$BOOST_VERSION.so.1.41.0
 
