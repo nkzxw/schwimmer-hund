@@ -3,6 +3,11 @@
 #			Version Stable 1.2.0 no funciona con Visual Studio 2008. Usar version Latest. Ejemplo: 1.2.0.d20100117
 #	OS Environment Variables
 #			BOOST_ROOT = C:\Program Files\boost\boost_1_42_0\
+#     BOOST_VERSION = 1_42
+#     DEV_CPP_HOME = Z:\Development\CPP
+#     DEV_HOME = Z:\Development\
+#			GCC_VERSION = 44 #Para POSIX
+#
 #		Con mas de un Visual Studio instalado... especificar version ... en este caso...
 #     MSVC_VERSION = 9.0
 #		Para Visual C++ Express, agregar en las variables de ambiente:
@@ -17,8 +22,11 @@ import os
 
 env_test = Environment(ENV = os.environ)
 
+PROJECT_NAME = 'schwimmer-hund'   #TODO: Reemplazar en todos lados donde figure hardcodeado el nombre del proyecto...
+
 BOOST_ROOT_LIB = os.environ['BOOST_ROOT'] + '/stage/lib'
 SRC_DIR = os.environ['DEV_CPP_HOME'] + '/schwimmer-hund/src/'
+BIN_DIR = os.environ['DEV_CPP_HOME'] + '/schwimmer-hund/bin/'
 
 #print 'BOOST_ROOT: ' + os.environ['BOOST_ROOT']
 #print 'BOOST_VERSION: ' + os.environ['BOOST_VERSION']
@@ -26,6 +34,13 @@ SRC_DIR = os.environ['DEV_CPP_HOME'] + '/schwimmer-hund/src/'
 #print 'DEV_CPP_HOME: ' + os.environ['DEV_CPP_HOME']
 #print 'BOOST_ROOT_LIB: ' + BOOST_ROOT_LIB
 #print 'SRC_DIR: ' + SRC_DIR
+print 'BIN_DIR: ' + BIN_DIR
+
+
+
+#bin = "#export/$PLATFORM/bin"
+#env = Environment( 
+
 
 
 #esta consulta deberia ser quizas por el compilador mas que por la plataforma... que pasa con MinGW
@@ -36,7 +51,7 @@ if env_test['PLATFORM'] == 'win32':
 	#Debug -> CCFLAGS = ['/Zi']
 
 	#env = Environment(platform = 'win32')        
-	env = Environment ( MSVC_VERSION = '9.0' )
+	env = Environment ( BINDIR = 'Z:/Development/CPP/schwimmer-hund/bin/', MSVC_VERSION = '9.0' )
 	
 	
 	env.Append( CPPFLAGS = ['/EHsc'] )		# Visual Studio: Enable C++ Exceptions
@@ -53,7 +68,7 @@ elif env_test['PLATFORM'] == 'posix':
 	#env.Program('get_machine_id', ['../../src/main.cpp', '../../src/base64.cpp'], CPPPATH = ['/usr/local/include'])
 	#LIBPATH='.'  
 	
-	env = Environment ( )
+	env = Environment( BINDIR = 'Z:/Development/CPP/schwimmer-hund/bin/' )
 	env.Append( LIBS=['boost_thread-gcc' + os.environ['GCC_VERSION'] + '-mt-d-' + os.environ['BOOST_VERSION'] ] )
 	env.Append( LIBS=['boost_system-gcc' + os.environ['GCC_VERSION'] + '-mt-d-' + os.environ['BOOST_VERSION'] ] )
 	env.Append( LIBS=['boost_filesystem-gcc' + os.environ['GCC_VERSION'] + '-mt-d-' + os.environ['BOOST_VERSION']] )
@@ -62,15 +77,26 @@ elif env_test['PLATFORM'] == 'posix':
 else:
   print "--Other Platform"
 
+#foo = SConscript('Z:/Development/CPP/schwimmer-hund/src/libs/os_services/test/SConscript', src_dir='Z:/Development/CPP/schwimmer-hund/bin/', exports='env')
+#foo = SConscript('Z:/Development/CPP/schwimmer-hund/src/libs/os_services/test/SConscript', src_dir='build', exports='env')
+foo = SConscript('SConscript', src_dir='build', exports='env')
 
-#env.Append( CPPPATH = [ os.environ['BOOST_ROOT'], 'Z:/Development/CPP/schwimmer-hund/src/' ] )
-env.Append( CPPPATH = [ os.environ['BOOST_ROOT'], SRC_DIR ] )
-env.Append( LIBPATH=[BOOST_ROOT_LIB] )
 
-env.Program('stress_test_creation_watcher', ['../../src/libs/os_services/test/stress_test_creation_watcher.cpp'])
-env.Program('stress_test_file_generator', ['../../src/libs/os_services/test/stress_test_file_generator.cpp'])
-env.Program('stress_test_file_generator_and_watcher', ['../../src/libs/os_services/test/stress_test_file_generator_and_watcher.cpp'])
-env.Program('test', ['../../src/libs/os_services/test/test.cpp'])
+##env.BuildDir( 'Z:/Development/CPP/schwimmer-hund/bin/', 'Z:/Development/CPP/schwimmer-hund/src/libs/os_services/test/' )
+##env.BuildDir('build1/', 'src/')
+##env.BuildDir('build2/', 'src/')
+#
+#
+##env.Append( CPPPATH = [ os.environ['BOOST_ROOT'], 'Z:/Development/CPP/schwimmer-hund/src/' ] )
+#env.Append( CPPPATH = [ os.environ['BOOST_ROOT'], SRC_DIR ] )
+#env.Append( LIBPATH=[BOOST_ROOT_LIB] )
+#
+##env.Program('stress_test_creation_watcher', ['../../src/libs/os_services/test/stress_test_creation_watcher.cpp'])
+##env.Program('stress_test_file_generator', ['../../src/libs/os_services/test/stress_test_file_generator.cpp'])
+##env.Program('stress_test_file_generator_and_watcher', ['../../src/libs/os_services/test/stress_test_file_generator_and_watcher.cpp'])
+#
+#env.Program('test', ['../../src/libs/os_services/test/test.cpp'])
+##env.Program('test', ['Z:/Development/CPP/schwimmer-hund/bin/test.cpp'])
 
 
 #print env.Dump()
