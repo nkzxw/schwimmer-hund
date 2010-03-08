@@ -79,7 +79,7 @@ else:
 
 #foo = SConscript('Z:/Development/CPP/schwimmer-hund/src/libs/os_services/test/SConscript', src_dir='Z:/Development/CPP/schwimmer-hund/bin/', exports='env')
 #foo = SConscript('Z:/Development/CPP/schwimmer-hund/src/libs/os_services/test/SConscript', src_dir='build', exports='env')
-foo = SConscript('SConscript', src_dir='build', exports='env')
+foo = SConscript('SConscript', src_dir='Z:/Development/CPP/schwimmer-hund/bin', exports='env')
 
 
 ##env.BuildDir( 'Z:/Development/CPP/schwimmer-hund/bin/', 'Z:/Development/CPP/schwimmer-hund/src/libs/os_services/test/' )

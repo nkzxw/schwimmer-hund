@@ -23,8 +23,8 @@ env.Append( LIBPATH=[BOOST_ROOT_LIB] )
 #env.Program('stress_test_file_generator', ['../../src/libs/os_services/test/stress_test_file_generator.cpp'])
 #env.Program('stress_test_file_generator_and_watcher', ['../../src/libs/os_services/test/stress_test_file_generator_and_watcher.cpp'])
 
-env.Program('test', ['../../../src/libs/os_services/test/test.cpp'])
-#env.Program('test', ['Z:/Development/CPP/schwimmer-hund/bin/test.cpp'])
+#env.Program('test', ['../../src/libs/os_services/test/test.cpp'])
+env.Program('test', ['Z:/Development/CPP/schwimmer-hund/src/libs/os_services/test/test.cpp'])
 #env.Program('test', ['build/test.cpp'])
 
 
