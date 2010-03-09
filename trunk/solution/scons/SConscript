@@ -19,16 +19,33 @@ Import('release_env', 'debug_env', 'PLATFORM_STR', 'BOOST_ROOT', 'BOOST_ROOT_LIB
 #release_env.Program('stress_test_file_generator_and_watcher', ['../../src/libs/os_services/test/stress_test_file_generator_and_watcher.cpp'])
 #release_env.Program('test', ['Z:/Development/CPP/schwimmer-hund/src/libs/os_services/test/test.cpp'])
 
-#release_env.Program('test_release', [ SRC_DIR + '/libs/os_services/test/test.cpp'])
-
+release_obj = release_env.Object('stress_test_creation_watcher-rel', [ SRC_DIR + '/libs/os_services/test/stress_test_creation_watcher.cpp'])
+release_obj = release_env.Object('stress_test_file_generator-rel', [ SRC_DIR + '/libs/os_services/test/stress_test_file_generator.cpp'])
+release_obj = release_env.Object('stress_test_file_generator_and_watcher-rel', [ SRC_DIR + '/libs/os_services/test/stress_test_file_generator_and_watcher.cpp'])
 release_obj = release_env.Object('test-rel', [ SRC_DIR + '/libs/os_services/test/test.cpp'])
+
+release_env.Program('stress_test_creation_watcher_' + PLATFORM_STR + '_release', release_obj)
+release_env.Program('stress_test_file_generator_' + PLATFORM_STR + '_release', release_obj)
+release_env.Program('stress_test_file_generator_and_watcher_' + PLATFORM_STR + '_release', release_obj)
 release_env.Program('test_' + PLATFORM_STR + '_release', release_obj)
 
 
-#debug_env.Program('test_debug', [ SRC_DIR + '/libs/os_services/test/test.cpp'])
 
+#debug_obj = debug_env.Object('test-dbg', [ SRC_DIR + '/libs/os_services/test/test.cpp'])
+#debug_env.Program('test_' + PLATFORM_STR + '_debug', debug_obj)
+
+
+
+debug_obj = debug_env.Object('stress_test_creation_watcher-dbg', [ SRC_DIR + '/libs/os_services/test/stress_test_creation_watcher.cpp'])
+debug_obj = debug_env.Object('stress_test_file_generator-dbg', [ SRC_DIR + '/libs/os_services/test/stress_test_file_generator.cpp'])
+debug_obj = debug_env.Object('stress_test_file_generator_and_watcher-dbg', [ SRC_DIR + '/libs/os_services/test/stress_test_file_generator_and_watcher.cpp'])
 debug_obj = debug_env.Object('test-dbg', [ SRC_DIR + '/libs/os_services/test/test.cpp'])
+
+debug_env.Program('stress_test_creation_watcher_' + PLATFORM_STR + '_debug', debug_obj)
+debug_env.Program('stress_test_file_generator_' + PLATFORM_STR + '_debug', debug_obj)
+debug_env.Program('stress_test_file_generator_and_watcher_' + PLATFORM_STR + '_debug', debug_obj)
 debug_env.Program('test_' + PLATFORM_STR + '_debug', debug_obj)
+
 
 
 

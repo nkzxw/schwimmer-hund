@@ -89,7 +89,7 @@ sudo ln -s $BOOST_ROOT/stage/lib/libboost_unit_test_framework-gcc44-mt-$BOOST_VE
 
 
 ------------------------------------------------------------------------------------------------------------------------
-boost_1_42_0
+boost_1_42_0 - GCC 42
 ------------------------------------------------------------------------------------------------------------------------
 
 
@@ -107,6 +107,111 @@ sudo ln -s $BOOST_ROOT/stage/lib/libboost_unit_test_framework-gcc42-sd-$BOOST_VE
 sudo ln -s $BOOST_ROOT/stage/lib/libboost_unit_test_framework-gcc42-s-$BOOST_VERSION.a /usr/lib/libboost_unit_test_framework-gcc42-s-$BOOST_VERSION.a
 sudo ln -s $BOOST_ROOT/stage/lib/libboost_unit_test_framework-gcc42-mt-d-$BOOST_VERSION.so.1.42.0 /usr/lib/libboost_unit_test_framework-gcc42-mt-d-$BOOST_VERSION.so.1.42.0
 sudo ln -s $BOOST_ROOT/stage/lib/libboost_unit_test_framework-gcc42-mt-$BOOST_VERSION.so.1.42.0 /usr/lib/libboost_unit_test_framework-gcc42-mt-$BOOST_VERSION.so.1.42.0
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------
+
+
+------------------------------------------------------------------------------------------------------------------------
+boost_1_42_0 - GCC 44
+------------------------------------------------------------------------------------------------------------------------
+
+
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_thread-gcc44-mt-d-1_42.so.1.42.0               /usr/lib/libboost_thread-gcc44-mt-d-1_42.so.1.42.0
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_thread-gcc44-mt-d-1_42.so                      /usr/lib/libboost_thread-gcc44-mt-d-1_42.so       
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_thread-gcc44-mt-d.so                           /usr/lib/libboost_thread-gcc44-mt-d.so            
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_thread-gcc44-mt-1_42.so.1.42.0                 /usr/lib/libboost_thread-gcc44-mt-1_42.so.1.42.0  
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_thread-gcc44-mt-1_42.so                        /usr/lib/libboost_thread-gcc44-mt-1_42.so         
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_thread-gcc44-mt.so                             /usr/lib/libboost_thread-gcc44-mt.so              
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_thread-gcc44-mt-d-1_42.a                       /usr/lib/libboost_thread-gcc44-mt-d-1_42.a        
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_thread-gcc44-mt-d.a                            /usr/lib/libboost_thread-gcc44-mt-d.a             
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_thread-gcc44-mt-1_42.a                         /usr/lib/libboost_thread-gcc44-mt-1_42.a          
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_thread-gcc44-mt.a                              /usr/lib/libboost_thread-gcc44-mt.a               
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_thread-gcc44-mt-sd-1_42.a                      /usr/lib/libboost_thread-gcc44-mt-sd-1_42.a       
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_thread-gcc44-mt-sd.a                           /usr/lib/libboost_thread-gcc44-mt-sd.a            
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_thread-gcc44-mt-s-1_42.a                       /usr/lib/libboost_thread-gcc44-mt-s-1_42.a        
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_thread-gcc44-mt-s.a                            /usr/lib/libboost_thread-gcc44-mt-s.a             
+
+
+
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_system-gcc44-mt-d-1_42.so.1.42.0              /usr/lib/libboost_system-gcc44-mt-d-1_42.so.1.42.0         
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_system-gcc44-mt-d-1_42.so                     /usr/lib/libboost_system-gcc44-mt-d-1_42.so                
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_system-gcc44-mt-d.so                          /usr/lib/libboost_system-gcc44-mt-d.so                     
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_system-gcc44-mt-1_42.so.1.42.0                /usr/lib/libboost_system-gcc44-mt-1_42.so.1.42.0           
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_system-gcc44-mt-1_42.so                       /usr/lib/libboost_system-gcc44-mt-1_42.so                  
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_system-gcc44-mt.so                            /usr/lib/libboost_system-gcc44-mt.so                       
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_system-gcc44-d-1_42.so.1.42.0                 /usr/lib/libboost_system-gcc44-d-1_42.so.1.42.0            
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_system-gcc44-d-1_42.so                        /usr/lib/libboost_system-gcc44-d-1_42.so                   
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_system-gcc44-d.so                             /usr/lib/libboost_system-gcc44-d.so                        
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_system-gcc44-1_42.so.1.42.0                   /usr/lib/libboost_system-gcc44-1_42.so.1.42.0              
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_system-gcc44-1_42.so                          /usr/lib/libboost_system-gcc44-1_42.so                     
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_system-gcc44.so                               /usr/lib/libboost_system-gcc44.so                          
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_system-gcc44-mt-d-1_42.a                      /usr/lib/libboost_system-gcc44-mt-d-1_42.a                 
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_system-gcc44-mt-d.a                           /usr/lib/libboost_system-gcc44-mt-d.a                      
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_system-gcc44-mt-1_42.a                        /usr/lib/libboost_system-gcc44-mt-1_42.a                   
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_system-gcc44-mt.a                             /usr/lib/libboost_system-gcc44-mt.a                        
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_system-gcc44-d-1_42.a                         /usr/lib/libboost_system-gcc44-d-1_42.a                    
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_system-gcc44-d.a                              /usr/lib/libboost_system-gcc44-d.a                         
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_system-gcc44-1_42.a                           /usr/lib/libboost_system-gcc44-1_42.a                      
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_system-gcc44.a                                /usr/lib/libboost_system-gcc44.a                           
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_system-gcc44-mt-sd-1_42.a                     /usr/lib/libboost_system-gcc44-mt-sd-1_42.a                
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_system-gcc44-mt-sd.a                          /usr/lib/libboost_system-gcc44-mt-sd.a                     
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_system-gcc44-mt-s-1_42.a                      /usr/lib/libboost_system-gcc44-mt-s-1_42.a                 
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_system-gcc44-mt-s.a                           /usr/lib/libboost_system-gcc44-mt-s.a                      
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_system-gcc44-sd-1_42.a                        /usr/lib/libboost_system-gcc44-sd-1_42.a                   
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_system-gcc44-sd.a                             /usr/lib/libboost_system-gcc44-sd.a                        
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_system-gcc44-s-1_42.a                         /usr/lib/libboost_system-gcc44-s-1_42.a                    
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_system-gcc44-s.a                              /usr/lib/libboost_system-gcc44-s.a                         
+                                                                                                                                          
+
+
+
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_filesystem-gcc44-d-1_42.a	                     /usr/lib/libboost_filesystem-gcc44-d-1_42.a	                 
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_filesystem-gcc44-d.a                           /usr/lib/libboost_filesystem-gcc44-d.a                       
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_filesystem-gcc44-1_42.a                        /usr/lib/libboost_filesystem-gcc44-1_42.a                    
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_filesystem-gcc44.a                             /usr/lib/libboost_filesystem-gcc44.a                         
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_filesystem-gcc44-mt-sd-1_42.a                  /usr/lib/libboost_filesystem-gcc44-mt-sd-1_42.a              
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_filesystem-gcc44-mt-sd.a                       /usr/lib/libboost_filesystem-gcc44-mt-sd.a                   
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_filesystem-gcc44-mt-s-1_42.a                   /usr/lib/libboost_filesystem-gcc44-mt-s-1_42.a               
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_filesystem-gcc44-mt-s.a                        /usr/lib/libboost_filesystem-gcc44-mt-s.a                    
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_filesystem-gcc44-sd-1_42.a                     /usr/lib/libboost_filesystem-gcc44-sd-1_42.a                 
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_filesystem-gcc44-sd.a                          /usr/lib/libboost_filesystem-gcc44-sd.a                      
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_filesystem-gcc44-s-1_42.a                      /usr/lib/libboost_filesystem-gcc44-s-1_42.a                  
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_filesystem-gcc44-s.a                           /usr/lib/libboost_filesystem-gcc44-s.a                       
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_filesystem-gcc44-mt-d-1_42.so.1.42.0           /usr/lib/libboost_filesystem-gcc44-mt-d-1_42.so.1.42.0       
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_filesystem-gcc44-mt-d-1_42.so                  /usr/lib/libboost_filesystem-gcc44-mt-d-1_42.so              
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_filesystem-gcc44-mt-d.so                       /usr/lib/libboost_filesystem-gcc44-mt-d.so                   
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_filesystem-gcc44-mt-1_42.so.1.42.0             /usr/lib/libboost_filesystem-gcc44-mt-1_42.so.1.42.0         
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_filesystem-gcc44-mt-1_42.so                    /usr/lib/libboost_filesystem-gcc44-mt-1_42.so                
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_filesystem-gcc44-mt.so                         /usr/lib/libboost_filesystem-gcc44-mt.so                     
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_filesystem-gcc44-d-1_42.so.1.42.0              /usr/lib/libboost_filesystem-gcc44-d-1_42.so.1.42.0          
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_filesystem-gcc44-d-1_42.so                     /usr/lib/libboost_filesystem-gcc44-d-1_42.so                 
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_filesystem-gcc44-d.so                          /usr/lib/libboost_filesystem-gcc44-d.so                      
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_filesystem-gcc44-1_42.so.1.42.0                /usr/lib/libboost_filesystem-gcc44-1_42.so.1.42.0            
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_filesystem-gcc44-1_42.so                       /usr/lib/libboost_filesystem-gcc44-1_42.so                   
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_filesystem-gcc44.so                            /usr/lib/libboost_filesystem-gcc44.so                        
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_filesystem-gcc44-mt-d-1_42.a                   /usr/lib/libboost_filesystem-gcc44-mt-d-1_42.a               
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_filesystem-gcc44-mt-d.a                        /usr/lib/libboost_filesystem-gcc44-mt-d.a                    
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_filesystem-gcc44-mt-1_42.a                     /usr/lib/libboost_filesystem-gcc44-mt-1_42.a                 
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_filesystem-gcc44-mt.a                          /usr/lib/libboost_filesystem-gcc44-mt.a                      
+
+
+
+
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_unit_test_framework-gcc44-d-$BOOST_VERSION.so.1.42.0  /usr/lib/libboost_unit_test_framework-gcc44-d-$BOOST_VERSION.so.1.42.0
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_unit_test_framework-gcc44-$BOOST_VERSION.so.1.42.0 /usr/lib/libboost_unit_test_framework-gcc44-$BOOST_VERSION.so.1.42.0
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_unit_test_framework-gcc44-mt-d-$BOOST_VERSION.a /usr/lib/libboost_unit_test_framework-gcc44-mt-d-$BOOST_VERSION.a
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_unit_test_framework-gcc44-mt-$BOOST_VERSION.a /usr/lib/libboost_unit_test_framework-gcc44-mt-$BOOST_VERSION.a
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_unit_test_framework-gcc44-d-$BOOST_VERSION.a /usr/lib/libboost_unit_test_framework-gcc44-d-$BOOST_VERSION.a
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_unit_test_framework-gcc44-$BOOST_VERSION.a /usr/lib/libboost_unit_test_framework-gcc44-$BOOST_VERSION.a
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_unit_test_framework-gcc44-mt-sd-$BOOST_VERSION.a /usr/lib/libboost_unit_test_framework-gcc44-mt-sd-$BOOST_VERSION.a
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_unit_test_framework-gcc44-mt-s-$BOOST_VERSION.a /usr/lib/libboost_unit_test_framework-gcc44-mt-s-$BOOST_VERSION.a
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_unit_test_framework-gcc44-sd-$BOOST_VERSION.a /usr/lib/libboost_unit_test_framework-gcc44-sd-$BOOST_VERSION.a
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_unit_test_framework-gcc44-s-$BOOST_VERSION.a /usr/lib/libboost_unit_test_framework-gcc44-s-$BOOST_VERSION.a
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_unit_test_framework-gcc44-mt-d-$BOOST_VERSION.so.1.42.0 /usr/lib/libboost_unit_test_framework-gcc44-mt-d-$BOOST_VERSION.so.1.42.0
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_unit_test_framework-gcc44-mt-$BOOST_VERSION.so.1.42.0 /usr/lib/libboost_unit_test_framework-gcc44-mt-$BOOST_VERSION.so.1.42.0
 
 
 
