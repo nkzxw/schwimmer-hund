@@ -38,14 +38,9 @@ if Platform().name == 'win32':
 		PLATFORM_STR = Platform().name + '-vc90'
 		print 'PLATFORM_STR: ' + PLATFORM_STR
 
-
 		COMPILER_VERSION = '9.0'
 
-
-
-
 		#COMPILE RELASE:  /O2 /Oi /GL /D "_MBCS" /FD /EHsc /MD /Gy  /W3 /nologo /c /Zi /TP
-
 		
 		#env = Environment(platform = 'win32')        
 		release_env = Environment ( BINDIR = BIN_DIR, MSVC_VERSION = COMPILER_VERSION )
@@ -58,10 +53,24 @@ if Platform().name == 'win32':
 		release_env.Append( CPPFLAGS = ['/MD'] )		  	# Visual Studio: Runtime Library: Multi-threaded DLL (/MD)
 		release_env.Append( CPPFLAGS = ['/Gy'] )		  	# Visual Studio: Enable Function-Level Linking: Yes (/Gy)
 		release_env.Append( CPPFLAGS = ['/W3'] )				# Visual Studio: Warning Level: Level 3 (/W3)
-		release_env.Append( CPPFLAGS = ['/nologo'] )		# Visual Studio: Suppress Startup Banner: Yes (/nologo)
+		#release_env.Append( CPPFLAGS = ['/nologo'] )		# Visual Studio: Suppress Startup Banner: Yes (/nologo)
 		#release_env.Append( CPPFLAGS = ['/c'] )		  		# Visual Studio: ???????????????????????
 		release_env.Append( CPPFLAGS = ['/Zi'] )		  	# Visual Studio: Debug Information Format: Program Database (/Zi)
-		release_env.Append( CPPFLAGS = ['/TP'] )		  	# Visual Studio: Compile as: Compile as C++ Code (/TP)
+		#release_env.Append( CPPFLAGS = ['/TP'] )		  	# Visual Studio: Compile as: Compile as C++ Code (/TP)
+
+		#release_env.Append( LIBS=['kernel32'] )
+		#release_env.Append( LIBS=['user32'] )
+		#release_env.Append( LIBS=['gdi32'] )
+		#release_env.Append( LIBS=['winspool'] )
+		#release_env.Append( LIBS=['comdlg32'] )
+		#release_env.Append( LIBS=['advapi32'] )
+		#release_env.Append( LIBS=['shell32'] )
+		#release_env.Append( LIBS=['ole32'] )
+		#release_env.Append( LIBS=['oleaut32'] )
+		#release_env.Append( LIBS=['uuid'] )
+		#release_env.Append( LIBS=['odbc32'] )
+		#release_env.Append( LIBS=['odbccp32'] )
+
 
 		#TODO: testEnv = env.Clone() 
 		#      testEnv.Program(['t1.c', '../Util.c']) 
@@ -76,12 +85,36 @@ if Platform().name == 'win32':
 		debug_env.Append( CPPFLAGS = ['/RTC1'] )				# Visual Studio: Basic Runtime Checks: Both (/RTC1, equiv. to /RTCsu)
 		debug_env.Append( CPPFLAGS = ['/MDd'] )					# Visual Studio: Runtime Library: Multi-threaded Debug DLL (/MDd)
 		debug_env.Append( CPPFLAGS = ['/W3'] )					# Visual Studio: Warning Level: Level 3 (/W3)
-		debug_env.Append( CPPFLAGS = ['/nologo'] )			# Visual Studio: Suppress Startup Banner: Yes (/nologo)
+		#debug_env.Append( CPPFLAGS = ['/nologo'] )			# Visual Studio: Suppress Startup Banner: Yes (/nologo)
 		#debug_env.Append( CPPFLAGS = ['/c'] )						# Visual Studio: ???????????????????????
 		debug_env.Append( CPPFLAGS = ['/ZI'] )					# Visual Studio: Debug Information Format: Program Database for Edit & Continue (/ZI)
-		debug_env.Append( CPPFLAGS = ['/TP'] )					# Visual Studio: Compile as: Compile as C++ Code (/TP)
+		#debug_env.Append( CPPFLAGS = ['/TP'] )					# Visual Studio: Compile as: Compile as C++ Code (/TP)
 
-
+		# kernel32.lib
+		# user32.lib
+		# gdi32.lib
+		# winspool.lib
+		# comdlg32.lib
+		# advapi32.lib
+		# shell32.lib
+		# ole32.lib
+		# oleaut32.lib
+		# uuid.lib
+		# odbc32.lib
+		# odbccp32.lib
+		
+		#debug_env.Append( LIBS=['kernel32'] )
+		#debug_env.Append( LIBS=['user32'] )
+		#debug_env.Append( LIBS=['gdi32'] )
+		#debug_env.Append( LIBS=['winspool'] )
+		#debug_env.Append( LIBS=['comdlg32'] )
+		#debug_env.Append( LIBS=['advapi32'] )
+		#debug_env.Append( LIBS=['shell32'] )
+		#debug_env.Append( LIBS=['ole32'] )
+		#debug_env.Append( LIBS=['oleaut32'] )
+		#debug_env.Append( LIBS=['uuid'] )
+		#debug_env.Append( LIBS=['odbc32'] )
+		#debug_env.Append( LIBS=['odbccp32'] )		
 
 		#env.Append( LIBS=['iphlpapi'] )
 
