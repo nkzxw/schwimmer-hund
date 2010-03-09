@@ -2,104 +2,153 @@
 # Scons
 #			Version Stable 1.2.0 no funciona con Visual Studio 2008. Usar version Latest. Ejemplo: 1.2.0.d20100117
 #	OS Environment Variables
-#			BOOST_ROOT = C:\Program Files\boost\boost_1_42_0\
+#			BOOST_ROOT = C:/Program Files/boost/boost_1_42_0/
 #     BOOST_VERSION = 1_42
-#     DEV_CPP_HOME = Z:\Development\CPP
-#     DEV_HOME = Z:\Development\
-#			GCC_VERSION = 44 #Para POSIX
+#     DEV_CPP_HOME = Z:/Development/CPP
+#     DEV_HOME = Z:/Development/
+#			GCC_VERSION = 44 #Solo para POSIX
 #
 #		Con mas de un Visual Studio instalado... especificar version ... en este caso...
 #     MSVC_VERSION = 9.0
 #		Para Visual C++ Express, agregar en las variables de ambiente:
-#			INCLUDE="C:\Program Files\Microsoft SDKs\Windows\v6.0A\Include;C:\Program Files\Microsoft Visual Studio 9.0\VC\include"
-#			LIB="C:\Program Files\Microsoft SDKs\Windows\v6.0A\Lib;C:\Program Files\Microsoft Visual Studio 9.0\VC\lib"
+#			INCLUDE="C:/Program Files/Microsoft SDKs/Windows/v6.0A/Include;C:/Program Files/Microsoft Visual Studio 9.0/VC/include"
+#			LIB="C:/Program Files/Microsoft SDKs/Windows/v6.0A/Lib;C:/Program Files/Microsoft Visual Studio 9.0/VC/lib"
 
-#TODO: usar... DEV_HOME o DEV_ROOT
 #TODO: hacer .bat para compilar en caso de que use varios compiladores...
-#TODO: Sconscript -> http://www.scons.org/doc/0.96.1/HTML/scons-user/x1826.html
 
 import os
 
-env_test = Environment(ENV = os.environ)
+PROJECT_NAME = 'schwimmer-hund'
+BOOST_ROOT = os.environ['BOOST_ROOT']
+BOOST_ROOT_LIB = BOOST_ROOT + '/stage/lib'
+BOOST_VERSION = os.environ['BOOST_VERSION']
+SRC_DIR = os.environ['DEV_CPP_HOME'] + '/' + PROJECT_NAME + '/src/'
+BIN_DIR = os.environ['DEV_CPP_HOME'] + '/' + PROJECT_NAME + '/bin/'
 
-PROJECT_NAME = 'schwimmer-hund'   #TODO: Reemplazar en todos lados donde figure hardcodeado el nombre del proyecto...
-
-BOOST_ROOT_LIB = os.environ['BOOST_ROOT'] + '/stage/lib'
-SRC_DIR = os.environ['DEV_CPP_HOME'] + '/schwimmer-hund/src/'
-BIN_DIR = os.environ['DEV_CPP_HOME'] + '/schwimmer-hund/bin/'
-
-#print 'BOOST_ROOT: ' + os.environ['BOOST_ROOT']
-#print 'BOOST_VERSION: ' + os.environ['BOOST_VERSION']
-#print 'GCC_VERSION: ' + os.environ['GCC_VERSION']
-#print 'DEV_CPP_HOME: ' + os.environ['DEV_CPP_HOME']
+#print 'BOOST_ROOT: ' + BOOST_ROOT
 #print 'BOOST_ROOT_LIB: ' + BOOST_ROOT_LIB
+#print 'BOOST_VERSION: ' + BOOST_VERSION
 #print 'SRC_DIR: ' + SRC_DIR
-print 'BIN_DIR: ' + BIN_DIR
+#print 'BIN_DIR: ' + BIN_DIR
+
+
+if Platform().name == 'win32':
+		#print "--WIN32 Platform"
+
+		PLATFORM_STR = Platform().name + '-vc90'
+		print 'PLATFORM_STR: ' + PLATFORM_STR
+
+
+		COMPILER_VERSION = '9.0'
 
 
 
-#bin = "#export/$PLATFORM/bin"
-#env = Environment( 
+
+		#COMPILE RELASE:  /O2 /Oi /GL /D "_MBCS" /FD /EHsc /MD /Gy  /W3 /nologo /c /Zi /TP
+
+		
+		#env = Environment(platform = 'win32')        
+		release_env = Environment ( BINDIR = BIN_DIR, MSVC_VERSION = COMPILER_VERSION )
+		release_env.Append( CPPFLAGS = ['/O2'] )		  	# Visual Studio: Optimization: Maximize Speed (/O2)
+		release_env.Append( CPPFLAGS = ['/Oi'] )		  	# Visual Studio: Enable Intrinsic Functions: Yes (/Oi)
+		release_env.Append( CPPFLAGS = ['/GL'] )		  	# Visual Studio: Whole Program Optimization: Enable link-time code generation (/GL)
+		release_env.Append( CPPDEFINES = ['_MBCS'] )		# Visual Studio: Preprocessor Definitions
+		release_env.Append( CPPFLAGS = ['/FD'] )		  	# Visual Studio: ????????????????????????????
+		release_env.Append( CPPFLAGS = ['/EHsc'] )			# Visual Studio: Enable C++ Exceptions
+		release_env.Append( CPPFLAGS = ['/MD'] )		  	# Visual Studio: Runtime Library: Multi-threaded DLL (/MD)
+		release_env.Append( CPPFLAGS = ['/Gy'] )		  	# Visual Studio: Enable Function-Level Linking: Yes (/Gy)
+		release_env.Append( CPPFLAGS = ['/W3'] )				# Visual Studio: Warning Level: Level 3 (/W3)
+		release_env.Append( CPPFLAGS = ['/nologo'] )		# Visual Studio: Suppress Startup Banner: Yes (/nologo)
+		#release_env.Append( CPPFLAGS = ['/c'] )		  		# Visual Studio: ???????????????????????
+		release_env.Append( CPPFLAGS = ['/Zi'] )		  	# Visual Studio: Debug Information Format: Program Database (/Zi)
+		release_env.Append( CPPFLAGS = ['/TP'] )		  	# Visual Studio: Compile as: Compile as C++ Code (/TP)
+
+		#TODO: testEnv = env.Clone() 
+		#      testEnv.Program(['t1.c', '../Util.c']) 
+
+		#COMPILE DEBUG:   /Od /D "_MBCS" /Gm /EHsc /RTC1 /MDd  /W3 /nologo /c /ZI /TP
+		
+		debug_env = Environment ( BINDIR = BIN_DIR, MSVC_VERSION = COMPILER_VERSION )
+		debug_env.Append( CPPFLAGS = ['/Od'] )					# Visual Studio: Optimization: Disabled (/Od)
+		debug_env.Append( CPPDEFINES = ['_MBCS'] )			# Visual Studio: Preprocessor Definitions
+		debug_env.Append( CPPFLAGS = ['/Gm'] )					# Visual Studio: Enable Minimal Rebuild: Yes (/Gm)
+		debug_env.Append( CPPFLAGS = ['/EHsc'] )				# Visual Studio: Enable C++ Exceptions
+		debug_env.Append( CPPFLAGS = ['/RTC1'] )				# Visual Studio: Basic Runtime Checks: Both (/RTC1, equiv. to /RTCsu)
+		debug_env.Append( CPPFLAGS = ['/MDd'] )					# Visual Studio: Runtime Library: Multi-threaded Debug DLL (/MDd)
+		debug_env.Append( CPPFLAGS = ['/W3'] )					# Visual Studio: Warning Level: Level 3 (/W3)
+		debug_env.Append( CPPFLAGS = ['/nologo'] )			# Visual Studio: Suppress Startup Banner: Yes (/nologo)
+		#debug_env.Append( CPPFLAGS = ['/c'] )						# Visual Studio: ???????????????????????
+		debug_env.Append( CPPFLAGS = ['/ZI'] )					# Visual Studio: Debug Information Format: Program Database for Edit & Continue (/ZI)
+		debug_env.Append( CPPFLAGS = ['/TP'] )					# Visual Studio: Compile as: Compile as C++ Code (/TP)
 
 
 
-#esta consulta deberia ser quizas por el compilador mas que por la plataforma... que pasa con MinGW
-if env_test['PLATFORM'] == 'win32':
-	print "--WIN32 Platform"
-	#/O2 /Oi /GL /D "_MBCS" /FD /EHsc /MD /Gy /Fo"Release\\" /Fd"Release\vc90.pdb" /W3 /nologo /c /Zi /TP /errorReport:prompt
-	#/OUT:"E:\Development\CPP\p1945\subprojects\test_technologies\makefiles\vs2008\Release\test_technologies.exe" /NOLOGO /MANIFEST /MANIFESTFILE:"Release\test_technologies.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"E:\Development\CPP\p1945\subprojects\test_technologies\makefiles\vs2008\Release\test_technologies.pdb" /OPT:REF /OPT:ICF /LTCG /DYNAMICBASE /NXCOMPAT /MACHINE:X86 /ERRORREPORT:PROMPT kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib
-	#Debug -> CCFLAGS = ['/Zi']
+		#env.Append( LIBS=['iphlpapi'] )
 
-	#env = Environment(platform = 'win32')        
-	env = Environment ( BINDIR = 'Z:/Development/CPP/schwimmer-hund/bin/', MSVC_VERSION = '9.0' )
 	
-	
-	env.Append( CPPFLAGS = ['/EHsc'] )		# Visual Studio: Enable C++ Exceptions
-	#env.Append( CPPFLAGS = ['/MDd'] )		# Visual Studio: Multithread Debug DLL
-	env.Append( CPPFLAGS = ['/MD'] )		# Visual Studio: Multithread DLL
-	
-	
-	#env.Append( LIBS=['iphlpapi'] )
+elif Platform().name == 'posix':
 
+		GCC_VERSION = os.environ['GCC_VERSION']
+		#print 'GCC_VERSION: ' + GCC_VERSION
+		
+		PLATFORM_STR = Platform().name + '-gcc' + GCC_VERSION
+		print 'PLATFORM_STR: ' + PLATFORM_STR
 	
-elif env_test['PLATFORM'] == 'posix':
-	print "--POSIX Platform"
-	#env = Environment(platform = 'posix')
-	#env.Program('get_machine_id', ['../../src/main.cpp', '../../src/base64.cpp'], CPPPATH = ['/usr/local/include'])
-	#LIBPATH='.'  
+		#print "--POSIX Platform"
+		#release_env = Environment(platform = 'posix')
+		#release_env.Program('get_machine_id', ['../../src/main.cpp', '../../src/base64.cpp'], CPPPATH = ['/usr/local/include'])
+		#LIBPATH='.'  
+		
+		release_env = Environment( BINDIR = BIN_DIR )
+		release_env.Append( LIBS=['boost_thread-gcc' + GCC_VERSION + '-mt-d-' + BOOST_VERSION ] )
+		release_env.Append( LIBS=['boost_system-gcc' + GCC_VERSION + '-mt-d-' + BOOST_VERSION ] )
+		release_env.Append( LIBS=['boost_filesystem-gcc' + GCC_VERSION + '-mt-d-' + BOOST_VERSION] )
+		release_env.Append( LIBS=['boost_unit_test_framework-gcc' + GCC_VERSION + '-mt-d-' + BOOST_VERSION ] )
 	
-	env = Environment( BINDIR = 'Z:/Development/CPP/schwimmer-hund/bin/' )
-	env.Append( LIBS=['boost_thread-gcc' + os.environ['GCC_VERSION'] + '-mt-d-' + os.environ['BOOST_VERSION'] ] )
-	env.Append( LIBS=['boost_system-gcc' + os.environ['GCC_VERSION'] + '-mt-d-' + os.environ['BOOST_VERSION'] ] )
-	env.Append( LIBS=['boost_filesystem-gcc' + os.environ['GCC_VERSION'] + '-mt-d-' + os.environ['BOOST_VERSION']] )
-	env.Append( LIBS=['boost_unit_test_framework-gcc' + os.environ['GCC_VERSION'] + '-mt-d-' + os.environ['BOOST_VERSION'] ] )
+		debug_env = Environment( BINDIR = BIN_DIR )
+
  
 else:
-  print "--Other Platform"
-
-#foo = SConscript('Z:/Development/CPP/schwimmer-hund/src/libs/os_services/test/SConscript', src_dir='Z:/Development/CPP/schwimmer-hund/bin/', exports='env')
-#foo = SConscript('Z:/Development/CPP/schwimmer-hund/src/libs/os_services/test/SConscript', src_dir='build', exports='env')
-foo = SConscript('SConscript', src_dir='Z:/Development/CPP/schwimmer-hund/bin', exports='env')
+	  print 'Platform: ' + Platform().name + ' is not supported yet!'
+	  Exit(2)
 
 
-##env.BuildDir( 'Z:/Development/CPP/schwimmer-hund/bin/', 'Z:/Development/CPP/schwimmer-hund/src/libs/os_services/test/' )
-##env.BuildDir('build1/', 'src/')
-##env.BuildDir('build2/', 'src/')
-#
-#
-##env.Append( CPPPATH = [ os.environ['BOOST_ROOT'], 'Z:/Development/CPP/schwimmer-hund/src/' ] )
-#env.Append( CPPPATH = [ os.environ['BOOST_ROOT'], SRC_DIR ] )
-#env.Append( LIBPATH=[BOOST_ROOT_LIB] )
-#
-##env.Program('stress_test_creation_watcher', ['../../src/libs/os_services/test/stress_test_creation_watcher.cpp'])
-##env.Program('stress_test_file_generator', ['../../src/libs/os_services/test/stress_test_file_generator.cpp'])
-##env.Program('stress_test_file_generator_and_watcher', ['../../src/libs/os_services/test/stress_test_file_generator_and_watcher.cpp'])
-#
-#env.Program('test', ['../../src/libs/os_services/test/test.cpp'])
-##env.Program('test', ['Z:/Development/CPP/schwimmer-hund/bin/test.cpp'])
+
+release_env.Append( CPPPATH = [ BOOST_ROOT, SRC_DIR ] )
+release_env.Append( LIBPATH = [BOOST_ROOT_LIB] )
+
+debug_env.Append( CPPPATH = [ BOOST_ROOT, SRC_DIR ] )
+debug_env.Append( LIBPATH = [BOOST_ROOT_LIB] )
 
 
-#print env.Dump()
+#TODO: src_dir
+#foo = SConscript('SConscript', build_dir='Z:/Development/CPP/' + PROJECT_NAME + '/bin', duplicate=0, exports=['release_env', 'debug_env', 'BOOST_ROOT_LIB', 'SRC_DIR', 'BIN_DIR'])
+SConscript('SConscript', build_dir = BIN_DIR, duplicate=0, exports=['release_env', 'debug_env', 'PLATFORM_STR', 'BOOST_ROOT', 'BOOST_ROOT_LIB', 'SRC_DIR', 'BIN_DIR'])
+
+
+
+#print release_env.Dump()
+
+
+
+
+
+
+
+
+
+
+
+#---------------------- FIN 
+
+
+
+
+
+
+
+
+
 
 
 
@@ -150,7 +199,7 @@ foo = SConscript('SConscript', src_dir='Z:/Development/CPP/schwimmer-hund/bin', 
 #env = Environment()
 #env = Environment(platform = 'os2')
 #env = Environment(platform = 'posix')
-#print os.environ['BOOST_ROOT']
+#print BOOST_ROOT
 #print os.environ['PATH']
 #print env['ENV']['PATH']
 #env_test = Environment()

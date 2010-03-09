@@ -1,35 +1,36 @@
-import os
-Import('env')
+#TODO: ver que esta al pedo de todo estoo...
+import os 
 
-#TODO: todo esto tomarlo del SConstruct
-BOOST_ROOT_LIB = os.environ['BOOST_ROOT'] + '/stage/lib'
-SRC_DIR = os.environ['DEV_CPP_HOME'] + '/schwimmer-hund/src/'
-BIN_DIR = os.environ['DEV_CPP_HOME'] + '/schwimmer-hund/bin/'
+#TODO: ver que esta al pedo de todo estoo...
+Import('release_env', 'debug_env', 'PLATFORM_STR', 'BOOST_ROOT', 'BOOST_ROOT_LIB', 'SRC_DIR', 'BIN_DIR')
 
-
-
-
-
-#env.BuildDir( 'Z:/Development/CPP/schwimmer-hund/bin/', 'Z:/Development/CPP/schwimmer-hund/src/libs/os_services/test/' )
-#env.BuildDir('build1/', 'src/')
-#env.BuildDir('build2/', 'src/')
-
-
-#env.Append( CPPPATH = [ os.environ['BOOST_ROOT'], 'Z:/Development/CPP/schwimmer-hund/src/' ] )
-env.Append( CPPPATH = [ os.environ['BOOST_ROOT'], SRC_DIR ] )
-env.Append( LIBPATH=[BOOST_ROOT_LIB] )
-
-#env.Program('stress_test_creation_watcher', ['../../src/libs/os_services/test/stress_test_creation_watcher.cpp'])
-#env.Program('stress_test_file_generator', ['../../src/libs/os_services/test/stress_test_file_generator.cpp'])
-#env.Program('stress_test_file_generator_and_watcher', ['../../src/libs/os_services/test/stress_test_file_generator_and_watcher.cpp'])
-
-#env.Program('test', ['../../src/libs/os_services/test/test.cpp'])
-env.Program('test', ['Z:/Development/CPP/schwimmer-hund/src/libs/os_services/test/test.cpp'])
-#env.Program('test', ['build/test.cpp'])
+#print 'BOOST_ROOT: ' + BOOST_ROOT
+#print 'BOOST_ROOT_LIB: ' + BOOST_ROOT_LIB
+#print 'SRC_DIR: ' + SRC_DIR
+#print 'BIN_DIR: ' + BIN_DIR
 
 
 
 
 
 
-#print env.Dump()
+#release_env.Program('stress_test_creation_watcher', ['../../src/libs/os_services/test/stress_test_creation_watcher.cpp'])
+#release_env.Program('stress_test_file_generator', ['../../src/libs/os_services/test/stress_test_file_generator.cpp'])
+#release_env.Program('stress_test_file_generator_and_watcher', ['../../src/libs/os_services/test/stress_test_file_generator_and_watcher.cpp'])
+#release_env.Program('test', ['Z:/Development/CPP/schwimmer-hund/src/libs/os_services/test/test.cpp'])
+
+#release_env.Program('test_release', [ SRC_DIR + '/libs/os_services/test/test.cpp'])
+
+release_obj = release_env.Object('test-rel', [ SRC_DIR + '/libs/os_services/test/test.cpp'])
+release_env.Program('test_' + PLATFORM_STR + '_release', release_obj)
+
+
+#debug_env.Program('test_debug', [ SRC_DIR + '/libs/os_services/test/test.cpp'])
+
+debug_obj = debug_env.Object('test-dbg', [ SRC_DIR + '/libs/os_services/test/test.cpp'])
+debug_env.Program('test_' + PLATFORM_STR + '_debug', debug_obj)
+
+
+
+#print release_env.Dump()
+#print debug_env.Dump()
