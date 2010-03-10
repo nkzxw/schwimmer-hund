@@ -58,7 +58,7 @@ if Platform().name == 'win32':
 		release_env.Append( CPPFLAGS = ['/Zi'] )		  	# Visual Studio: Debug Information Format: Program Database (/Zi)
 		#release_env.Append( CPPFLAGS = ['/TP'] )		  	# Visual Studio: Compile as: Compile as C++ Code (/TP)
 
-		#release_env.Append( LIBS=['kernel32'] )
+		release_env.Append( LIBS=['kernel32'] )
 		#release_env.Append( LIBS=['user32'] )
 		#release_env.Append( LIBS=['gdi32'] )
 		#release_env.Append( LIBS=['winspool'] )
@@ -103,7 +103,7 @@ if Platform().name == 'win32':
 		# odbc32.lib
 		# odbccp32.lib
 		
-		#debug_env.Append( LIBS=['kernel32'] )
+		debug_env.Append( LIBS=['kernel32'] )
 		#debug_env.Append( LIBS=['user32'] )
 		#debug_env.Append( LIBS=['gdi32'] )
 		#debug_env.Append( LIBS=['winspool'] )

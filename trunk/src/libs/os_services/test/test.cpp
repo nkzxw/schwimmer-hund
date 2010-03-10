@@ -43,15 +43,23 @@ static void OnRenamed(renamed_event_args e) // object source,
 
 #if defined(linux) || defined(__linux) || defined(__linux__) || defined(__GNU__) || defined(__GLIBC__) || defined(__FreeBSD__) // || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__DragonFly__)
 
-std::string temp_path_1("/home/fernando/temp1/");
-std::string temp_path_2("/home/fernando/temp2/");
+//std::string temp_path_1("/home/fernando/temp1/");
+//std::string temp_path_2("/home/fernando/temp2/");
+
+std::string temp_path_1("./temp1/");
+std::string temp_path_2("./temp2/");
+
 
 #elif defined(__CYGWIN__)
 #  error Platform not supported
 #elif defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
 
-std::string temp_path_1("C:\\temp1\\");
-std::string temp_path_2("C:\\temp2\\");
+//std::string temp_path_1("C:\\temp1\\");
+//std::string temp_path_2("C:\\temp2\\");
+
+std::string temp_path_1(".\\temp1\\");
+std::string temp_path_2(".\\temp2\\");
+
 
 #elif defined(macintosh) || defined(__APPLE__) || defined(__APPLE_CC__)
 #  error No test for the moment
@@ -66,11 +74,19 @@ BOOST_AUTO_TEST_SUITE( my_suite )
 BOOST_AUTO_TEST_CASE( test_invalid_platform_path )
 {
 #if defined(linux) || defined(__linux) || defined(__linux__) || defined(__GNU__) || defined(__GLIBC__) || defined(__FreeBSD__) // || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__DragonFly__)
-	std::string invalid_path_1("C:\\temp1\\");
-	std::string invalid_path_2("C:\\temp2\\");
+	//std::string invalid_path_1("C:\\temp1\\");
+	//std::string invalid_path_2("C:\\temp2\\");
+
+	std::string invalid_path_1(".\\temp1\\");
+	std::string invalid_path_2(".\\temp2\\");
+
 #elif defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
-	std::string invalid_path_1("/home/fernando/temp1/");
-	std::string invalid_path_2("/home/fernando/temp2/");
+	//std::string invalid_path_1("/home/fernando/temp1/");
+	//std::string invalid_path_2("/home/fernando/temp2/");
+
+	std::string invalid_path_1("./temp1/");
+	std::string invalid_path_2("./temp2/");
+
 #endif
 
 	boost::shared_ptr<file_system_monitor> monitor(new file_system_monitor);
