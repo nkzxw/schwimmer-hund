@@ -1,37 +1,45 @@
+SCONS
 
+	DEBUG
+			cl /FoZ:\Development\CPP\schwimmer-hund\bin\stress_test_file_generator-dbg.obj /c Z:\Development\CPP\schwimmer-hund\src\libs\os_services\test\stress_test_file_generator.cpp /TP /nologo /Od /Gm /EHsc /RTC1 /MDd /W3 /ZI /D_MBCS "/IC:\Program Files\Boost\boost_1_42_0" /IZ:\Development\CPP\schwimmer-hund\src stress_test_file_generator.cpp
+			
+			link /nologo /OUT:Z:\Development\CPP\schwimmer-hund\bin\stress_test_file_generator_win32-vc90_debug.exe "/LIBPATH:C:\Program Files\Boost\boost_1_42_0\stage\lib" kernel32.lib Z:\Development\CPP\schwimmer-hund\bin\stress_test_file_generator-dbg.obj
+			stress_test_file_generator-dbg.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/OPT:ICF' specification
+			
 
+	RELEASE
 
-------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-MSVC Release Compiler
-	cl /O2 /Oi /GL /I "C:\Program Files\Boost\boost_1_42_0" /I "Z:\Development\\CPP\schwimmer-hund\src\\" /D "_MBCS" /FD /EHsc /MD /Gy /Fo"Release\\" /Fd"Release\vc90.pdb" /W3 /nologo /c /Zi /TP /errorReport:prompt
+			cl /FoZ:\Development\CPP\schwimmer-hund\bin\stress_test_file_generator-rel.obj /c Z:\Development\CPP\schwimmer-hund\src\libs\os_services\test\stress_test_file_generator.cpp /TP /nologo /O2 /Oi /GL /FD /EHsc /MD /Gy /W3 /Zi /D_MBCS "/IC:\Program Files\Boost\boost_1_42_0" /IZ:\Development\CPP\schwimmer-hund\src stress_test_file_generator.cpp
+			
+			link /nologo /OUT:Z:\Development\CPP\schwimmer-hund\bin\stress_test_file_generator_win32-vc90_release.exe "/LIBPATH:C:\Program Files\Boost\boost_1_42_0\stage\lib" kernel32.lib Z:\Development\CPP\schwimmer-hund\bin\stress_test_file_generator-rel.obj
+			stress_test_file_generator-rel.obj : MSIL .netmodule or module compiled with /GL found; restarting link with /LTCG; add /LTCG to the link command line to improve linker performance
+			
+----------------------------------------------------
 	
-MSVC Release Linker
-
-	link /OUT:"Z:\Development\CPP\schwimmer-hund\solution\vs2008\Release\boost_file_system_monitor.exe" /NOLOGO /LIBPATH:"C:\Program Files\Boost\boost_1_42_0\stage\lib" /MANIFEST /MANIFESTFILE:"Release\boost_file_system_monitor.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"z:\Development\CPP\schwimmer-hund\solution\vs2008\Release\boost_file_system_monitor.pdb" /OPT:REF /OPT:ICF /LTCG /DYNAMICBASE /NXCOMPAT /MACHINE:X86 /ERRORREPORT:PROMPT kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib
-
-
-------------------------------------------------------------------------------------------------------------------------------------------------------------
+	
+MSVC
 
 
-Scons Release Compiler	
-	cl /FoZ:\Development\CPP\schwimmer-hund\bin\test-rel.obj /c Z:\Development\CPP\schwimmer-hund\src\libs\os_services\test\test.cpp /TP /nologo /O2 /Oi /GL /FD /EHsc /MD /Gy /W3 /nologo /Zi /TP /D_MBCS "/IC:\Program Files\Boost\boost_1_42_0" /IZ:\Development\CPP\schwimmer-hund\srctest.cpp
+	DEBUG
+		
+		cl /Od /I "C:\Program Files\Boost\boost_1_42_0" /I "Z:\Development\\CPP\schwimmer-hund\src\\" /D "_MBCS" /Gm /EHsc /RTC1 /MDd /Fo"Debug\\" /Fd"Debug\vc90.pdb" /W3 /nologo /c /ZI /TP /errorReport:prompt
+		
+		link /OUT:"Z:\Development\CPP\schwimmer-hund\solution\vs2008\Debug\stress_file_generator.exe" /NOLOGO /LIBPATH:"C:\Program Files\Boost\boost_1_42_0\stage\lib" /MANIFEST /MANIFESTFILE:"Debug\stress_file_generator.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"z:\Development\CPP\schwimmer-hund\solution\vs2008\Debug\stress_file_generator.pdb" /DYNAMICBASE /NXCOMPAT /MACHINE:X86 /ERRORREPORT:PROMPT kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib
+		
+	RELEASE
+
+		cl /O2 /Oi /GL /I "C:\Program Files\Boost\boost_1_42_0" /I "Z:\Development\\CPP\schwimmer-hund\src\\" /D "_MBCS" /FD /EHsc /MD /Gy /Fo"Release\\" /Fd"Release\vc90.pdb" /W3 /nologo /c /Zi /TP /errorReport:prompt
+	
+		link /OUT:"Z:\Development\CPP\schwimmer-hund\solution\vs2008\Release\stress_file_generator.exe" /NOLOGO /LIBPATH:"C:\Program Files\Boost\boost_1_42_0\stage\lib" /MANIFEST /MANIFESTFILE:"Release\stress_file_generator.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"z:\Development\CPP\schwimmer-hund\solution\vs2008\Release\stress_file_generator.pdb" /OPT:REF /OPT:ICF /LTCG /DYNAMICBASE /NXCOMPAT /MACHINE:X86 /ERRORREPORT:PROMPT kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib
+		
+		
+----------------------------------------------------
 
 
-Scons Release Linker
-	link /nologo /OUT:Z:\Development\CPP\schwimmer-hund\bin\test_win32-vc90_release.exe "/LIBPATH:C:\Program Files\Boost\boost_1_42_0\stage\lib" Z:\Development\CPP\schwimmer-hund\bin\test-rel.obj
 
-				test-rel.obj : MSIL .netmodule or module compiled with /GL found; restarting link with /LTCG; add /LTCG to the link command line to improve linker performance
-
-
-
-------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-Scons Debug Compiler	
-	cl /FoZ:\Development\CPP\schwimmer-hund\bin\test-dbg.obj /c Z:\Development\CPP\schwimmer-hund\src\libs\os_services\test\test.cpp /TP /nologo /Od /Gm /EHsc /RTC1 /MDd /W3 /nologo /ZI /TP /D_MBCS "/IC:\Program Files\Boost\boost_1_42_0" /IZ:\Development\CPP\schwimmer-hund\srctest.cpp
-
-
-Scons Debug Linker
-	link /nologo /OUT:Z:\Development\CPP\schwimmer-hund\bin\test_win32-vc90_debug.exe "/LIBPATH:C:\Program Files\Boost\boost_1_42_0\stage\lib" Z:\Development\CPP\schwimmer-hund\bin\test-dbg.obj 
-
-			test-dbg.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/OPT:ICF' specification
+	
+		link   Z:\Development\CPP\schwimmer-hund\bin\stress_test_file_generator-rel.obj
+			
+			
+		link   /MANIFEST /MANIFESTFILE:"Release\stress_file_generator.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"z:\Development\CPP\schwimmer-hund\solution\vs2008\Release\stress_file_generator.pdb" /OPT:REF /OPT:ICF /LTCG /DYNAMICBASE /NXCOMPAT /MACHINE:X86 /ERRORREPORT:PROMPT 
+	
