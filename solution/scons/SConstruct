@@ -50,7 +50,10 @@ if Platform().name == 'win32':
 		release_env.Append( CPPDEFINES = ['_MBCS'] )		# Visual Studio: Preprocessor Definitions
 		release_env.Append( CPPFLAGS = ['/FD'] )		  	# Visual Studio: ????????????????????????????
 		release_env.Append( CPPFLAGS = ['/EHsc'] )			# Visual Studio: Enable C++ Exceptions
-		release_env.Append( CPPFLAGS = ['/MD'] )		  	# Visual Studio: Runtime Library: Multi-threaded DLL (/MD)
+		
+		#release_env.Append( CPPFLAGS = ['/MD'] )		  	# Visual Studio: Runtime Library: Multi-threaded DLL (/MD)
+		release_env.Append( CPPFLAGS = ['/MT'] )		  	# Visual Studio: Runtime Library: Multi-threaded (/MT)
+		
 		release_env.Append( CPPFLAGS = ['/Gy'] )		  	# Visual Studio: Enable Function-Level Linking: Yes (/Gy)
 		release_env.Append( CPPFLAGS = ['/W3'] )				# Visual Studio: Warning Level: Level 3 (/W3)
 		#release_env.Append( CPPFLAGS = ['/nologo'] )		# Visual Studio: Suppress Startup Banner: Yes (/nologo)
@@ -58,7 +61,14 @@ if Platform().name == 'win32':
 		release_env.Append( CPPFLAGS = ['/Zi'] )		  	# Visual Studio: Debug Information Format: Program Database (/Zi)
 		#release_env.Append( CPPFLAGS = ['/TP'] )		  	# Visual Studio: Compile as: Compile as C++ Code (/TP)
 
-		release_env.Append( LIBS=['kernel32'] )
+
+		#LIBCPMT.LIB				Multithreaded, static link																						/MT			_MT
+		#MSVCPRT.LIB				Multithreaded, dynamic link (import library for MSVCP90.dll)					/MD			_MT, _DLL
+		#LIBCPMTD.LIB				Multithreaded, static link																						/MTd		_DEBUG, _MT
+		#MSVCPRTD.LIB				Multithreaded, dynamic link (import library for MSVCP90D.DLL)					/MDd		_DEBUG, _MT, _DLL
+
+
+		#release_env.Append( LIBS=['kernel32'] )
 		#release_env.Append( LIBS=['user32'] )
 		#release_env.Append( LIBS=['gdi32'] )
 		#release_env.Append( LIBS=['winspool'] )
@@ -83,7 +93,10 @@ if Platform().name == 'win32':
 		debug_env.Append( CPPFLAGS = ['/Gm'] )					# Visual Studio: Enable Minimal Rebuild: Yes (/Gm)
 		debug_env.Append( CPPFLAGS = ['/EHsc'] )				# Visual Studio: Enable C++ Exceptions
 		debug_env.Append( CPPFLAGS = ['/RTC1'] )				# Visual Studio: Basic Runtime Checks: Both (/RTC1, equiv. to /RTCsu)
-		debug_env.Append( CPPFLAGS = ['/MDd'] )					# Visual Studio: Runtime Library: Multi-threaded Debug DLL (/MDd)
+		
+		#debug_env.Append( CPPFLAGS = ['/MDd'] )					# Visual Studio: Runtime Library: Multi-threaded Debug DLL (/MDd)
+		debug_env.Append( CPPFLAGS = ['/MTd'] )					# Visual Studio: Runtime Library: Multi-threaded Debug (/MTd)
+		
 		debug_env.Append( CPPFLAGS = ['/W3'] )					# Visual Studio: Warning Level: Level 3 (/W3)
 		#debug_env.Append( CPPFLAGS = ['/nologo'] )			# Visual Studio: Suppress Startup Banner: Yes (/nologo)
 		#debug_env.Append( CPPFLAGS = ['/c'] )						# Visual Studio: ???????????????????????
@@ -103,7 +116,7 @@ if Platform().name == 'win32':
 		# odbc32.lib
 		# odbccp32.lib
 		
-		debug_env.Append( LIBS=['kernel32'] )
+		#debug_env.Append( LIBS=['kernel32'] )
 		#debug_env.Append( LIBS=['user32'] )
 		#debug_env.Append( LIBS=['gdi32'] )
 		#debug_env.Append( LIBS=['winspool'] )
