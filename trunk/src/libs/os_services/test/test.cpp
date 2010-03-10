@@ -46,8 +46,8 @@ static void OnRenamed(renamed_event_args e) // object source,
 //std::string temp_path_1("/home/fernando/temp1/");
 //std::string temp_path_2("/home/fernando/temp2/");
 
-std::string temp_path_1("./temp1/");
-std::string temp_path_2("./temp2/");
+std::string temp_path_1("./test_dir/temp1/");
+std::string temp_path_2("./test_dir/temp2/");
 
 
 #elif defined(__CYGWIN__)
@@ -57,8 +57,8 @@ std::string temp_path_2("./temp2/");
 //std::string temp_path_1("C:\\temp1\\");
 //std::string temp_path_2("C:\\temp2\\");
 
-std::string temp_path_1(".\\temp1\\");
-std::string temp_path_2(".\\temp2\\");
+std::string temp_path_1(".\\test_dir\\temp1\\");
+std::string temp_path_2(".\\test_dir\\temp2\\");
 
 
 #elif defined(macintosh) || defined(__APPLE__) || defined(__APPLE_CC__)
@@ -77,15 +77,15 @@ BOOST_AUTO_TEST_CASE( test_invalid_platform_path )
 	//std::string invalid_path_1("C:\\temp1\\");
 	//std::string invalid_path_2("C:\\temp2\\");
 
-	std::string invalid_path_1(".\\temp1\\");
-	std::string invalid_path_2(".\\temp2\\");
+	std::string invalid_path_1(".\\test_dir\\temp1\\");
+	std::string invalid_path_2(".\\test_dir\\temp2\\");
 
 #elif defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
 	//std::string invalid_path_1("/home/fernando/temp1/");
 	//std::string invalid_path_2("/home/fernando/temp2/");
 
-	std::string invalid_path_1("./temp1/");
-	std::string invalid_path_2("./temp2/");
+	std::string invalid_path_1("./test_dir/temp1/");
+	std::string invalid_path_2("./test_dir/temp2/");
 
 #endif
 
