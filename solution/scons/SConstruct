@@ -134,12 +134,15 @@ elif Platform().name == 'posix':
 		
 		#PONER: -O0 -g3 -Wall -fmessage-length=0 -MMD -MP 
 		
-		
+	
 		release_env = Environment( BINDIR = BIN_DIR )
 		release_env.Append( LIBS=['boost_thread-gcc' + GCC_VERSION + '-mt-d-' + BOOST_VERSION ] )
 		release_env.Append( LIBS=['boost_system-gcc' + GCC_VERSION + '-mt-d-' + BOOST_VERSION ] )
 		release_env.Append( LIBS=['boost_filesystem-gcc' + GCC_VERSION + '-mt-d-' + BOOST_VERSION] )
 		release_env.Append( LIBS=['boost_unit_test_framework-gcc' + GCC_VERSION + '-mt-d-' + BOOST_VERSION ] )
+
+		release_env.Append( LINKFLAGS = ['-s'] )		  	# GCC: Strip
+
 	
 		debug_env = Environment( BINDIR = BIN_DIR )
 		debug_env.Append( LIBS=['boost_thread-gcc' + GCC_VERSION + '-mt-d-' + BOOST_VERSION ] )
