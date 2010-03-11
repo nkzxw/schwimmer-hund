@@ -1,2 +1,10 @@
 # Probar que pasa cuando hay un error en una funcion dentro de una DLL. Dicha DLL tiene que ser cargada bajo demanda "LoadLibrary" o bien automaticamente.
      Si la DLL falla en uno de los dos programas, que pasa con el otro????
+
+
+# GCC Dynamic Linking and Static
+
+# Unit Test de RANDOM generator y RANDOM Watcher
+
+# Agregar Manifiesto dentro de los ejecutables con Dynamic Linking
+
