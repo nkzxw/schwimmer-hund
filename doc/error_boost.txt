@@ -1,0 +1,6 @@
+cl /FoD:\Development\CPP\schwimmer-hund\bin\test-dbg.obj /c D:\Development\CPP\schwimmer-hund\src\libs\os_services\test\test.cpp /TP /nologo /Od /Gm /EHsc /RTC1 /MTd /W3 /ZI /D_MBC
+S "/IC:\Program Files\Boost\boost_1_42_0" /ID:\Development\CPP\schwimmer-hund\src
+test.cpp
+c:\program files\boost\boost_1_42_0\boost\config\auto_link.hpp(297) : fatal error C1189: #error :  "Mixing a dll boost library with a static runtime is a really bad idea..."
+scons: *** [D:\Development\CPP\schwimmer-hund\bin\test-dbg.obj] Error 2
+scons: building terminated because of errors.
