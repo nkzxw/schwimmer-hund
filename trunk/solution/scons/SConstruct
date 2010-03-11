@@ -50,10 +50,6 @@ if Platform().name == 'win32':
 		release_env.Append( CPPDEFINES = ['_MBCS'] )		# Visual Studio: Preprocessor Definitions
 		release_env.Append( CPPFLAGS = ['/FD'] )		  	# Visual Studio: ????????????????????????????
 		release_env.Append( CPPFLAGS = ['/EHsc'] )			# Visual Studio: Enable C++ Exceptions
-		
-		#release_env.Append( CPPFLAGS = ['/MD'] )		  	# Visual Studio: Runtime Library: Multi-threaded DLL (/MD)
-		release_env.Append( CPPFLAGS = ['/MT'] )		  	# Visual Studio: Runtime Library: Multi-threaded (/MT)
-		
 		release_env.Append( CPPFLAGS = ['/Gy'] )		  	# Visual Studio: Enable Function-Level Linking: Yes (/Gy)
 		release_env.Append( CPPFLAGS = ['/W3'] )				# Visual Studio: Warning Level: Level 3 (/W3)
 		#release_env.Append( CPPFLAGS = ['/nologo'] )		# Visual Studio: Suppress Startup Banner: Yes (/nologo)
@@ -82,6 +78,17 @@ if Platform().name == 'win32':
 		#release_env.Append( LIBS=['odbccp32'] )
 
 
+
+		release_static_env = release_env.Clone() 
+
+
+		release_env.Append( CPPFLAGS = ['/MD'] )		  	# Visual Studio: Runtime Library: Multi-threaded DLL (/MD)
+		release_static_env.Append( CPPFLAGS = ['/MT'] )		  	# Visual Studio: Runtime Library: Multi-threaded (/MT)
+
+
+
+
+
 		#TODO: testEnv = env.Clone() 
 		#      testEnv.Program(['t1.c', '../Util.c']) 
 
@@ -95,7 +102,7 @@ if Platform().name == 'win32':
 		debug_env.Append( CPPFLAGS = ['/RTC1'] )				# Visual Studio: Basic Runtime Checks: Both (/RTC1, equiv. to /RTCsu)
 		
 		#debug_env.Append( CPPFLAGS = ['/MDd'] )					# Visual Studio: Runtime Library: Multi-threaded Debug DLL (/MDd)
-		debug_env.Append( CPPFLAGS = ['/MTd'] )					# Visual Studio: Runtime Library: Multi-threaded Debug (/MTd)
+		#debug_env.Append( CPPFLAGS = ['/MTd'] )					# Visual Studio: Runtime Library: Multi-threaded Debug (/MTd)
 		
 		debug_env.Append( CPPFLAGS = ['/W3'] )					# Visual Studio: Warning Level: Level 3 (/W3)
 		#debug_env.Append( CPPFLAGS = ['/nologo'] )			# Visual Studio: Suppress Startup Banner: Yes (/nologo)
@@ -173,13 +180,17 @@ else:
 release_env.Append( CPPPATH = [ BOOST_ROOT, SRC_DIR ] )
 release_env.Append( LIBPATH = [BOOST_ROOT_LIB] )
 
+release_static_env.Append( CPPPATH = [ BOOST_ROOT, SRC_DIR ] )
+release_static_env.Append( LIBPATH = [BOOST_ROOT_LIB] )
+
+
 debug_env.Append( CPPPATH = [ BOOST_ROOT, SRC_DIR ] )
 debug_env.Append( LIBPATH = [BOOST_ROOT_LIB] )
 
 
 #TODO: src_dir
-#foo = SConscript('SConscript', build_dir='Z:/Development/CPP/' + PROJECT_NAME + '/bin', duplicate=0, exports=['release_env', 'debug_env', 'BOOST_ROOT_LIB', 'SRC_DIR', 'BIN_DIR'])
-SConscript('SConscript', build_dir = BIN_DIR, duplicate=0, exports=['release_env', 'debug_env', 'PLATFORM_STR', 'BOOST_ROOT', 'BOOST_ROOT_LIB', 'SRC_DIR', 'BIN_DIR'])
+#foo = SConscript('SConscript', build_dir='Z:/Development/CPP/' + PROJECT_NAME + '/bin', duplicate=0, exports=['release_env', 'release_static_env', 'debug_env', 'BOOST_ROOT_LIB', 'SRC_DIR', 'BIN_DIR'])
+SConscript('SConscript', build_dir = BIN_DIR, duplicate=0, exports=['release_env', 'release_static_env', 'debug_env', 'PLATFORM_STR', 'BOOST_ROOT', 'BOOST_ROOT_LIB', 'SRC_DIR', 'BIN_DIR'])
 
 
 
