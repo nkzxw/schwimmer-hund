@@ -9,6 +9,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stress_file_watcher", "..\.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stress_test_file_generator_and_watcher", "..\..\projects\stress_test_file_generator_and_watcher\stress_test_file_generator_and_watcher.vcproj", "{63DD2824-6B4E-49E5-89C8-BF00EED71A7F}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stress_file_generator", "..\..\projects\stress_random_file_generator\stress_random_file_generator.vcproj", "{A16994B8-1D2F-4D38-A758-D736EDE390BE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -31,6 +33,10 @@ Global
 		{63DD2824-6B4E-49E5-89C8-BF00EED71A7F}.Debug|Win32.Build.0 = Debug|Win32
 		{63DD2824-6B4E-49E5-89C8-BF00EED71A7F}.Release|Win32.ActiveCfg = Release|Win32
 		{63DD2824-6B4E-49E5-89C8-BF00EED71A7F}.Release|Win32.Build.0 = Release|Win32
+		{A16994B8-1D2F-4D38-A758-D736EDE390BE}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A16994B8-1D2F-4D38-A758-D736EDE390BE}.Debug|Win32.Build.0 = Debug|Win32
+		{A16994B8-1D2F-4D38-A758-D736EDE390BE}.Release|Win32.ActiveCfg = Release|Win32
+		{A16994B8-1D2F-4D38-A758-D736EDE390BE}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
