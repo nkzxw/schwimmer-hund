@@ -60,7 +60,7 @@ void stress_file_removal( const std::string& dir, int max_files )
 
 }
 
-void stress_file_creation(	const std::string& dir, int max_files )
+void stress_file_creation( const std::string& dir, int max_files )
 {
 	ptime now = second_clock::local_time();
 	//std::cout << to_simple_string(now) << std::endl;
@@ -88,6 +88,7 @@ void stress_file_creation(	const std::string& dir, int max_files )
 	//std::cout << to_simple_string(now) << std::endl;
 	std::cout << now << std::endl;
 }
+
 
 void stress_thread( const std::string& dir, int max_files )
 {
