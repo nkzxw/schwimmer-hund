@@ -15,33 +15,48 @@ using namespace boost::os_services;
 
 
 
-typedef std::list<std::string> collection_type;
-//typedef std::vector<std::string> collection_type;
-collection_type file_collection;
+//typedef std::list<std::string> collection_type;
+////typedef std::vector<std::string> collection_type;
+//collection_type file_collection;
 
+
+std::ofstream log_file;
 
 
 // Event Handlers
-//static void OnChanged(filesystem_event_args e) // object source,
-//{
-//	std::cout << "Changed: '" << e.full_path << "'" << std::endl;
-//}
+static void OnChanged(filesystem_event_args e) // object source,
+{
+	//std::cout << "Changed: '" << e.full_path << "'" << std::endl;
+
+	ptime now = second_clock::local_time();
+	log_file << now << " - Action: CHANGED - File: '" << e.full_path << "'" << std::endl;
+}
 
 static void OnCreated(filesystem_event_args e) // object source,
 {
-	file_collection.push_back(e.name);
+	//file_collection.push_back(e.name);
 	//std::cout << "Created: '" << e.full_path << "'" << std::endl;
+
+	ptime now = second_clock::local_time();
+	log_file << now << " - Action: CREATED - File: '" << e.full_path << "'" << std::endl;
 }
 
-//static void OnDeleted(filesystem_event_args e) // object source,
-//{
-//	std::cout << "Deleted: '" << e.full_path << "'" << std::endl;
-//}
+static void OnDeleted(filesystem_event_args e) // object source,
+{
+	//std::cout << "Deleted: '" << e.full_path << "'" << std::endl;
 
-//static void OnRenamed(renamed_event_args e) // object source,
-//{
-//	std::cout << "File: '" << e.old_full_path << "' renamed to: '" << e.full_path  << "'" << std::endl;
-//}
+	ptime now = second_clock::local_time();
+	log_file << now << " - Action: REMOVED - File: '" << e.full_path << "'" << std::endl;
+
+}
+
+static void OnRenamed(renamed_event_args e) // object source,
+{
+	//std::cout << "File: '" << e.old_full_path << "' renamed to: '" << e.full_path  << "'" << std::endl;
+
+	ptime now = second_clock::local_time();
+	log_file << now << " - Action: RENAMED - Source File: '" << e.old_full_path << "' - Target File: '" << e.full_path << "'" << std::endl;
+}
 
 
 
@@ -63,6 +78,10 @@ int main(int argc, char* argv[] )
 		max_files = boost::lexical_cast<int>(argv[2]);
 	}
 
+
+
+	
+	log_file.open ("log_file_watcher.txt");
 
 	{
 		//file_collection.reserve(max_files);
@@ -103,26 +122,26 @@ int main(int argc, char* argv[] )
 	}
 
 
-	std::cout << "Files: " << file_collection.size() << std::endl;
+	//std::cout << "Files: " << file_collection.size() << std::endl;
 
-	int previous_file_index = -1;
-	for (collection_type::const_iterator it = file_collection.begin(); it!=file_collection.end(); ++it)
-	{
-		//int tempPos = (*it).find('.')-1;
-		std::string temp = (*it).substr( 1, (*it).find('.')-1 );
-		int index = boost::lexical_cast<int>(temp);
+	//int previous_file_index = -1;
+	//for (collection_type::const_iterator it = file_collection.begin(); it!=file_collection.end(); ++it)
+	//{
+	//	//int tempPos = (*it).find('.')-1;
+	//	std::string temp = (*it).substr( 1, (*it).find('.')-1 );
+	//	int index = boost::lexical_cast<int>(temp);
 
-		if ( previous_file_index == index-1 )
-		{
-			std::cout << *it << std::endl;
-		}
-		else
-		{
-			std::cout << "------------------------" << std::endl;
-		}
+	//	if ( previous_file_index == index-1 )
+	//	{
+	//		std::cout << *it << std::endl;
+	//	}
+	//	else
+	//	{
+	//		std::cout << "------------------------" << std::endl;
+	//	}
 
-		previous_file_index  = index;
-	}
+	//	previous_file_index  = index;
+	//}
 
 
 
