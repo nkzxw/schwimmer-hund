@@ -73,11 +73,8 @@ void stress_random_thread( const std::string& dir, int max_operations )
 				ss << i;
 				ss << file_ext;
 
-				boost::filesystem::path temp_path( ss.str() );
-				std::string file = temp_path.native_file_string();
-
-				file_list.push_back( file );
-				instructions_file << action << "|" << file << std::endl;
+				file_list.push_back( ss.str() );
+				instructions_file << action << "|" << ss.str() << std::endl;
 
 				break;
 			}
@@ -86,11 +83,6 @@ void stress_random_thread( const std::string& dir, int max_operations )
 				if ( file_list.size() > 0)
 				{
 					std::vector<std::string>::iterator it = get_random_pos_from_vector(vector_generator, file_list);
-
-					boost::filesystem::path temp_path( *it );
-					std::string file = temp_path.native_file_string();
-
-
 					instructions_file << action << "|" << *it << std::endl;
 				}
 				break;
@@ -101,21 +93,15 @@ void stress_random_thread( const std::string& dir, int max_operations )
 				{
 					std::vector<std::string>::iterator it = get_random_pos_from_vector(vector_generator, file_list);
 
-					boost::filesystem::path temp_path( *it );
-					std::string source_file = temp_path.native_file_string();
-
 					std::stringstream target;
 					target << dir;
 					target << file_name;
 					target << i;
 					target << file_ext;
 
-					boost::filesystem::path temp_path_2( target.str() );
-					std::string target_file = temp_path_2.native_file_string();
+					instructions_file << action << "|" << *it << "|" << target.str() << std::endl;
 
-					instructions_file << action << "|" << source_file << "|" << target_file << std::endl;
-
-					*it = target_file;
+					*it = target.str();
 				}
 
 				break;
@@ -125,14 +111,9 @@ void stress_random_thread( const std::string& dir, int max_operations )
 				if ( file_list.size() > 0)
 				{
 					std::vector<std::string>::iterator it = get_random_pos_from_vector(vector_generator, file_list);
+					instructions_file << action << "|" << *it << std::endl;
 
-					boost::filesystem::path temp_path( *it );
-					std::string file = temp_path.native_file_string();
-
-
-					instructions_file << action << "|" << file << std::endl;
-
-					file_list.erase(std::remove(file_list.begin(), file_list.end(), file), file_list.end()); 
+					file_list.erase(std::remove(file_list.begin(), file_list.end(), *it), file_list.end()); 
 				}
 
 				break;
