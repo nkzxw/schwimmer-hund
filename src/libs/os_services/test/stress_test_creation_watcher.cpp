@@ -99,11 +99,13 @@ int main(int argc, char* argv[] )
 			//TODO: mapear los notify filters de Windows con otras plataformas...
 
 			monitor->set_notify_filters( notify_filters::last_access | notify_filters::last_write | notify_filters::file_name | notify_filters::directory_name );
-			monitor->set_filter("*.txt"); //TODO: implementar este filtro
-			//monitor->set_changed_event_handler(OnChanged);
+			
+			//monitor->set_filter("*.txt"); //TODO: implementar este filtro
+			
+			monitor->set_changed_event_handler(OnChanged);
 			monitor->set_created_event_handler(OnCreated);
-			//monitor->set_deleted_event_handler(OnDeleted);
-			//monitor->set_renamed_event_handler(OnRenamed);
+			monitor->set_deleted_event_handler(OnDeleted);
+			monitor->set_renamed_event_handler(OnRenamed);
 
 			monitor->start();
 
@@ -144,6 +146,7 @@ int main(int argc, char* argv[] )
 	//}
 
 
+	log_file.close();
 
 	std::cout << "Press Enter to Exit" << std::endl;
 	std::cin.get();

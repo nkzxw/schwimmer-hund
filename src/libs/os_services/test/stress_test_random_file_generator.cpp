@@ -88,7 +88,7 @@ void stress_random_thread( const std::string& dir, int max_operations )
 	std::vector<std::string> file_list;
 
 	
-	std::cout << "Press Enter to begin with file ??? process" << std::endl;
+	std::cout << "Press Enter to begin with the process" << std::endl;
 	std::cin.get();
 
 
