@@ -28,6 +28,22 @@ const std::string file_name = "a";
 const std::string file_ext = ".txt";
 
 
+
+
+
+//TODO: actiones que impliquen la modificacion de atributos del archivo.
+//           ver como hace FileSystemWatchet para capturar estos eventos...
+struct action_type
+{
+	static const int create = 0;
+	static const int change = 1;
+	static const int rename = 2;
+	static const int remove = 3;
+};
+
+
+
+
 void stress_file_removal( const std::string& dir, int max_files )
 {
 	ptime now = second_clock::local_time();

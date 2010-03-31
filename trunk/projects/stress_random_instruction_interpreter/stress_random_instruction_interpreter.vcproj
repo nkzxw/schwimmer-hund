@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9,00"
 	Name="stress_random_instruction_interpreter"
-	ProjectGUID="{A16994B8-1D2F-4D38-A758-D736EDE390BE}"
+	ProjectGUID="{F359963C-0AD3-49C3-B33D-F18036B28350}"
 	RootNamespace="stress_random_instruction_interpreter"
 	TargetFrameworkVersion="196613"
 	>
