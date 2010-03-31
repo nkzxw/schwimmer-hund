@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9,00"
 	Name="stress_random_instruction_generator"
-	ProjectGUID="{A16994B8-1D2F-4D38-A758-D736EDE390BE}"
+	ProjectGUID="{29606A8C-F84D-4BF9-9011-F5CAC91F5A99}"
 	RootNamespace="stress_random_instruction_generator"
 	TargetFrameworkVersion="196613"
 	>
@@ -167,7 +167,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\src\libs\os_services\test\stress_test_random_file_generator.cpp"
+				RelativePath="..\..\src\libs\os_services\test\stress_test_random_instruction_generator.cpp"
 				>
 			</File>
 		</Filter>
