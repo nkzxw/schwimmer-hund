@@ -6,8 +6,6 @@
 
 # GCC Dynamic Linking and Static
 
-# Unit Test de RANDOM generator y RANDOM Watcher
-
 # Agregar Manifiesto dentro de los ejecutables con Dynamic Linking
 
 # Error Boost
@@ -33,3 +31,5 @@
 # hacer testing de todas las versiones
 
 # terminar builder con Scons
+
+# Unit Test de RANDOM generator y RANDOM Watcher
