@@ -35,7 +35,7 @@
 //
 //	if (argc > 1)
 //	{
-//		std::string dir = argv[1];
+//		dir = argv[1];
 //		//max_files = boost::lexical_cast<int>(argv[1]);
 //	}
 //

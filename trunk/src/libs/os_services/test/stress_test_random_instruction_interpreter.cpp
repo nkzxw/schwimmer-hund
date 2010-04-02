@@ -121,24 +121,22 @@ void stress_thread( const std::string& dir, const std::string& instructions_file
 int main(int argc, char* argv[] )
 {
 	std::string dir = default_dir;
-	int max_files = default_max_files;
+	std::string instruction_file_path = default_instruction_file_path;
 
 	if (argc > 1)
 	{
-		std::string dir = argv[1];
-		//max_files = boost::lexical_cast<int>(argv[1]);
+		dir = argv[1];
 	}
 
 	if (argc > 2)
 	{
-		//std::string temp = argv[2];
-		max_files = boost::lexical_cast<int>(argv[2]);
+		instruction_file_path = argv[2];
 	}
 
-	//boost::thread thrd( boost::bind(&stress_thread, dir, max_files) );
+	//boost::thread thrd( boost::bind(&stress_thread, dir, instruction_file_path) );
 	//thrd.join();
 
-	stress_thread(dir, max_files);
+	stress_thread(dir, instruction_file_path);
 
 	std::cout << "Press Enter to Exit" << std::endl;
 	std::cin.get();
