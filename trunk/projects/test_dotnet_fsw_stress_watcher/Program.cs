@@ -11,6 +11,10 @@ namespace test_dotnet_fsw_stress_watcher
 
         static TextWriter logFile;
 
+        const string defaultDir = ".\\test_dir\\temp1\\";
+        const string fileName = "a";
+        const string fileExt = ".txt";
+
         // Event Handlers
         private static void OnChanged(object source, FileSystemEventArgs e)
         {
@@ -42,24 +46,14 @@ namespace test_dotnet_fsw_stress_watcher
         {
 
             string dir = defaultDir;
-            int maxFiles = defaultMaxFiles;
 
             if (args.Length > 1)
 	        {
                 dir = args[1];
 	        }
 
-            if (args.Length > 2)
-	        {
-                
-                maxFiles = Convert.ToInt32( args[2] );
-	        }
-
-
             logFile = new StreamWriter("log_file_watcher.txt"); //TODO: esta hardcodeado
-
-
-            
+           
             
             FileSystemWatcher watcher = new FileSystemWatcher();
 
