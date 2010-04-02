@@ -9,7 +9,7 @@ namespace test_dotnet_fsw_stress_watcher
     class Program
     {
 
-        TextWriter logFile;
+        static TextWriter logFile;
 
         // Event Handlers
         private static void OnChanged(object source, FileSystemEventArgs e)
@@ -37,23 +37,23 @@ namespace test_dotnet_fsw_stress_watcher
 
 
 
-        int main(int argc, char* argv[] )
+
+        static void Main(string[] args)
         {
-	        std::string dir = default_dir;
-	        int max_files = default_max_files;
 
-	        if (argc > 1)
+            string dir = defaultDir;
+            int maxFiles = defaultMaxFiles;
+
+            if (args.Length > 1)
 	        {
-		        dir = argv[1];
-		        //max_files = boost::lexical_cast<int>(argv[1]);
+                dir = args[1];
 	        }
 
-	        if (argc > 2)
+            if (args.Length > 2)
 	        {
-		        //std::string temp = argv[2];
-		        max_files = boost::lexical_cast<int>(argv[2]);
+                
+                maxFiles = Convert.ToInt32( args[2] );
 	        }
-
 
 
             logFile = new StreamWriter("log_file_watcher.txt"); //TODO: esta hardcodeado
@@ -64,20 +64,13 @@ namespace test_dotnet_fsw_stress_watcher
             FileSystemWatcher watcher = new FileSystemWatcher();
 
             watcher.Path = dir;
-            
 	        watcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName;
-			
 	        //watcher.set_filter("*.txt"); //TODO: implementar este filtro
-			
             watcher.Changed += new FileSystemEventHandler(OnChanged);
             watcher.Created += new FileSystemEventHandler(OnChanged);
             watcher.Deleted += new FileSystemEventHandler(OnChanged);
             watcher.Renamed += new RenamedEventHandler(OnRenamed);
-
 	        watcher.EnableRaisingEvents = true;
-
-
-
 
             // Wait for the user to quit the program.
             Console.WriteLine("Press \'q\' to quit the sample.");
@@ -88,13 +81,8 @@ namespace test_dotnet_fsw_stress_watcher
 	        logFile.Close();
 
 	        Console.WriteLine("Press Enter to Exit" );
-	        std::cin.get();
+            Console.ReadLine();
 
-	        return 0;
-        }
-
-        static void Main(string[] args)
-        {
         }
     }
 }
