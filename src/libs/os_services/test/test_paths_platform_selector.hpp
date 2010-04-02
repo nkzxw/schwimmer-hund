@@ -23,6 +23,7 @@ const std::string default_dir = ".\\test_dir\\temp1\\";
 
 
 const int default_max_files = 10000;
+const std::string default_instruction_file_path = "instructions_file.txt";
 
 const std::string file_name = "a";
 const std::string file_ext = ".txt";
