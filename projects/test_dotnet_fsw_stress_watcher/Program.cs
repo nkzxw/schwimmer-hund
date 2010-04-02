@@ -35,6 +35,7 @@ namespace test_dotnet_fsw_stress_watcher
 
         private static void OnRenamed(object source, RenamedEventArgs e)
         {
+            //TODO: cambiar el formato para que coincida con la version C++
             logFile.WriteLine( DateTime.Now + " - Action: RENAMED - Source File: '" + e.OldFullPath + "' - Target File: '" + e.FullPath + "'" );
         }
 
@@ -56,13 +57,14 @@ namespace test_dotnet_fsw_stress_watcher
            
             
             FileSystemWatcher watcher = new FileSystemWatcher();
+            watcher.InternalBufferSize = 16384;
 
             watcher.Path = dir;
 	        watcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName;
 	        //watcher.set_filter("*.txt"); //TODO: implementar este filtro
             watcher.Changed += new FileSystemEventHandler(OnChanged);
-            watcher.Created += new FileSystemEventHandler(OnChanged);
-            watcher.Deleted += new FileSystemEventHandler(OnChanged);
+            watcher.Created += new FileSystemEventHandler(OnCreated);
+            watcher.Deleted += new FileSystemEventHandler(OnDeleted);
             watcher.Renamed += new RenamedEventHandler(OnRenamed);
 	        watcher.EnableRaisingEvents = true;
 
