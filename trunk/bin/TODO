@@ -1,0 +1,4 @@
+- Dejar solo binarios...
+- Los resultados de ejecuciones de pruebas tienen que guardarse en otro lado.
+- Los archivos necesarios para ejecutar las pruebas tienen que guardarse en otro lado.
+- Borrar los archivos generados luego de las ejecuciones
