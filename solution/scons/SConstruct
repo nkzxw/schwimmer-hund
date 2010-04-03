@@ -191,10 +191,12 @@ elif Platform().name == 'posix':
 		#release_dynamic_env.Program('get_machine_id', ['../../src/main.cpp', '../../src/base64.cpp'], CPPPATH = ['/usr/local/include'])
 		#LIBPATH='.'  
 		
-		#PONER: -O0 -g3 -Wall -fmessage-length=0 -MMD -MP 
+		#TODO: PONER: -O0 -g3 -Wall -fmessage-length=0 -MMD -MP 
 	
+
+		#TODO: esto esta usando DLL's en DEBUG...
 		release_dynamic_env = Environment( BINDIR = BIN_DIR )
-		release_dynamic_env.Append( LIBS=['boost_thread-gcc' + GCC_VERSION + '-mt-d-' + BOOST_VERSION ] )
+		release_dynamic_env.Append( LIBS=['boost_thread-gcc' + GCC_VERSION + '-mt-d-' + BOOST_VERSION ] )		#VER DE CAMBIAR ALGO EN BOOST_VERSION... sacarle los puntos
 		release_dynamic_env.Append( LIBS=['boost_system-gcc' + GCC_VERSION + '-mt-d-' + BOOST_VERSION ] )
 		release_dynamic_env.Append( LIBS=['boost_filesystem-gcc' + GCC_VERSION + '-mt-d-' + BOOST_VERSION] )
 		release_dynamic_env.Append( LIBS=['boost_unit_test_framework-gcc' + GCC_VERSION + '-mt-d-' + BOOST_VERSION ] )
