@@ -100,8 +100,8 @@ if Platform().name == 'win32':
 
 		#-------------------------------- Release Static
 
-		release_static_env = common_release_env.Clone() 
 		release_dynamic_env = common_release_env.Clone() 
+		release_static_env = common_release_env.Clone() 
 
 		release_dynamic_env.Append( CPPFLAGS = ['/MD'] )			# Visual Studio: Runtime Library: Multi-threaded DLL (/MD)
 		release_static_env.Append( CPPFLAGS = ['/MT'] )		  	# Visual Studio: Runtime Library: Multi-threaded (/MT)
@@ -200,6 +200,9 @@ elif Platform().name == 'posix':
 		release_dynamic_env.Append( LIBS=['boost_unit_test_framework-gcc' + GCC_VERSION + '-mt-d-' + BOOST_VERSION ] )
 
 		release_dynamic_env.Append( LINKFLAGS = ['-s'] )		  	# GCC: Strip
+
+	
+		release_static_env = release_dynamic_env.Clone() 
 
 	
 		debug_env = Environment( BINDIR = BIN_DIR )
