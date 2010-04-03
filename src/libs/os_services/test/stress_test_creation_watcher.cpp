@@ -1,5 +1,7 @@
 //TODO: comentarios
 
+#include <ostream>
+#include <fstream>
 #include <iostream>
 #include <sstream>
 #include <string>
