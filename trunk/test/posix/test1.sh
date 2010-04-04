@@ -1,4 +1,7 @@
-# http://www.freeos.com/guides/lsst/ch03sec06.html
+#TODO: leyenda de shell script
+
+
+# References: http://www.freeos.com/guides/lsst/ch03sec06.html
 
 
 #TODO: asegurarse que los directorios existan

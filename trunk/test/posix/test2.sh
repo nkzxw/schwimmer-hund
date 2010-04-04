@@ -1,3 +1,7 @@
+#TODO: leyenda de shell script
+
+
+
 # http://www.freeos.com/guides/lsst/ch03sec06.html
 
 

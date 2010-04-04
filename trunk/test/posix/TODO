@@ -1,0 +1,18 @@
+FreeBSD
+
+	* hacer un test similar al test2, pero generar una gran cantidad de archivos 
+	  en el directorio para que el proceso demore más y ver si entra la creacion 
+	  del hardlink1B en el mismo listado y da lugar a confusion
+
+	* ver que a veces el test2 al hacer el "rm -rf" da segmentation fault.
+
+	* verificar que al crear un archivo desde shell script, no se quede esperando
+	  por la finalizacion de la trata del evento...
+
+
+
+Generales
+	
+	* test de stress rigurosos, ver el hecho para Windows/FileSystemWatcher
+
+	* hacer test similares para Linux
