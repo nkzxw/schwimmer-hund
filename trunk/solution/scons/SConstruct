@@ -39,7 +39,7 @@ DEBUG_BUILD_DIR = BUILD_DIR + '/debug/'
 
 
 if Platform().name == 'win32':
-		#print "--WIN32 Platform"
+		print "--WIN32 Platform"
 		
 		#RELEASE_BUILD_DIR = BUILD_DIR + '/windows/release/'
 		#DEBUG_BUILD_DIR = BUILD_DIR + '/windows/debug/'
@@ -108,7 +108,7 @@ if Platform().name == 'win32':
 
 
 elif Platform().name == 'posix':
-		#print "--POSIX Platform"
+		print "--POSIX Platform"
 
 		#RELEASE_BUILD_DIR = BUILD_DIR + '/posix/release/'
 		#DEBUG_BUILD_DIR = BUILD_DIR + '/posix/debug/'
@@ -125,10 +125,6 @@ elif Platform().name == 'posix':
 	
 		common_env = Environment ( ) #TODO: ver que pasa si hay dos versiones de GCC u otro compilador instalados
 		#print common_env.Dump()
-		
-		common_env.Append( CPPDEFINES = ['_MBCS'] )		# Visual Studio: Preprocessor Definitions
-		common_env.Append( CPPFLAGS = ['/EHsc'] )			# Visual Studio: Enable C++ Exceptions
-		common_env.Append( CPPFLAGS = ['/W3'] )				# Visual Studio: Warning Level: Level 3 (/W3)
 	
 		#-------------------------------- Release
 
