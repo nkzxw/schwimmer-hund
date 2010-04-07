@@ -1,7 +1,17 @@
 @echo off
-
 cls      
-scons
+
+if "%MSVC_VERSION%" == "" goto default
+
+scons -Q PROJECT_NAME=schwimmer-hund COMPILER_NAME=vc COMPILER_VERSION=%MSVC_VERSION%
+
+:default
+scons -Q PROJECT_NAME=schwimmer-hund COMPILER_NAME=vc COMPILER_VERSION=9.0
+goto :eof
+
+
+
+
 
 
 
