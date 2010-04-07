@@ -8,18 +8,15 @@
 #     DEV_HOME = Z:/Development/
 #
 #			GCC_VERSION = 4.4 				#Solo para POSIX
-#			MSVC_VERSION = 9.0			#Solo para WIN32 / 64
+#			MSVC_VERSION = 9.0			  #Solo para WIN32 / 64
 #
 #		Para Visual C++ Express, agregar en las variables de ambiente:
 #			INCLUDE="C:/Program Files/Microsoft SDKs/Windows/v6.0A/Include;C:/Program Files/Microsoft Visual Studio 9.0/VC/include"
 #			LIB="C:/Program Files/Microsoft SDKs/Windows/v6.0A/Lib;C:/Program Files/Microsoft Visual Studio 9.0/VC/lib"
 
-#TODO: hacer .bat para compilar en caso de que use varios compiladores...
-
 import os
 import string
 
-#PROJECT_NAME = 'schwimmer-hund'
 PROJECT_NAME = ARGUMENTS.get('PROJECT_NAME', '')
 #print PROJECT_NAME
 
@@ -27,31 +24,31 @@ BOOST_ROOT = os.environ['BOOST_ROOT']
 BOOST_ROOT_LIB = BOOST_ROOT + '/stage/lib'
 BOOST_VERSION = os.environ['BOOST_VERSION']
 SRC_DIR = os.environ['DEV_CPP_HOME'] + '/' + PROJECT_NAME + '/src/'
-BIN_DIR = os.environ['DEV_CPP_HOME'] + '/' + PROJECT_NAME + '/build/'
+BUILD_DIR = os.environ['DEV_CPP_HOME'] + '/' + PROJECT_NAME + '/build/'
+RELEASE_BUILD_DIR = BUILD_DIR + '/release/'
+DEBUG_BUILD_DIR = BUILD_DIR + '/debug/'
+
 
 #print 'BOOST_ROOT: ' + BOOST_ROOT
 #print 'BOOST_ROOT_LIB: ' + BOOST_ROOT_LIB
 #print 'BOOST_VERSION: ' + BOOST_VERSION
 #print 'SRC_DIR: ' + SRC_DIR
-#print 'BIN_DIR: ' + BIN_DIR
+#print 'BUILD_DIR: ' + BUILD_DIR
+#print 'RELEASE_BUILD_DIR: ' + RELEASE_BUILD_DIR
+#print 'DEBUG_BUILD_DIR: ' + DEBUG_BUILD_DIR
 
 
 if Platform().name == 'win32':
 		#print "--WIN32 Platform"
 		
-		RELEASE_BIN_DIR = BIN_DIR + '/windows/release/'
-		DEBUG_BIN_DIR = BIN_DIR + '/windows/debug/'
-		BIN_DIR = BIN_DIR + '/windows/release/'
+		#RELEASE_BUILD_DIR = BUILD_DIR + '/windows/release/'
+		#DEBUG_BUILD_DIR = BUILD_DIR + '/windows/debug/'
+		#BUILD_DIR = BUILD_DIR + '/windows/release/'
 		
-		COMPILER_NAME = ARGUMENTS.get('COMPILER_NAME', 'vc')
-		COMPILER_VERSION = ARGUMENTS.get('COMPILER_VERSION', '9.0')
+		COMPILER_NAME = ARGUMENTS.get('COMPILER_NAME', 'vc')					#TODO: poner variables globales DEFAULT_WIN32_COMPILER_NAME
+		COMPILER_VERSION = ARGUMENTS.get('COMPILER_VERSION', '9.0')	  #TODO: poner variables globales DEFAULT_WIN32_COMPILER_VERSION
 		#print COMPILER_NAME
 		#print COMPILER_VERSION
-		
-		#if COMPILER_VERSION == '0':
-		#   print "Error: Falta especificar variable de ambiente MSVC_VERSION. Ejemplo MSVC_VERSION=9.0"
-		#   exit(0)		
-		
 		
 		PLATFORM_STR = Platform().name + '-' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "")
 		#print 'PLATFORM_STR: ' + PLATFORM_STR
@@ -59,31 +56,23 @@ if Platform().name == 'win32':
 		#COMPILE RELASE:  /O2 /Oi /GL /D "_MBCS" /FD /EHsc /MD /Gy  /W3 /nologo /c /Zi /TP
 
 		#TODO: probar esto en un ambiente que tenga instaladas dos versiones de MSVC y ver que figura en el DUMP para el compilador correspindiente... IDEM GCC
-			#release_dynamic_env = Environment ( BINDIR = BIN_DIR )
+			#release_dynamic_env = Environment ( BINDIR = BUILD_DIR )
 			#print release_dynamic_env.Dump()
 
-
-		##pepe_env = Environment ( BINDIR = BIN_DIR )
-		#pepe_env = Environment ( BINDIR = BIN_DIR )
-		##print pepe_env.Dump()
-		#
-		#pepe_env['BINDIR'] = RELEASE_BIN_DIR;
-		#print pepe_env['BINDIR']
-		#print pepe_env['CXX']
-		
-
-
 		#env = Environment(platform = 'win32')
-		common_env = Environment ( MSVC_VERSION = COMPILER_VERSION ) #BINDIR = BIN_DIR,
+		common_env = Environment ( MSVC_VERSION = COMPILER_VERSION )
 		#print common_env.Dump()
 		
 		common_env.Append( CPPDEFINES = ['_MBCS'] )		# Visual Studio: Preprocessor Definitions
 		common_env.Append( CPPFLAGS = ['/EHsc'] )			# Visual Studio: Enable C++ Exceptions
 		common_env.Append( CPPFLAGS = ['/W3'] )				# Visual Studio: Warning Level: Level 3 (/W3)
 
+
+
+		#-------------------------------- Release
 	
 		common_release_env = common_env.Clone() 
-		common_release_env['BINDIR'] = RELEASE_BIN_DIR
+		common_release_env['BINDIR'] = RELEASE_BUILD_DIR
 		common_release_env.Append( CPPFLAGS = ['/O2'] )		  	# Visual Studio: Optimization: Maximize Speed (/O2)
 		common_release_env.Append( CPPFLAGS = ['/Oi'] )		  	# Visual Studio: Enable Intrinsic Functions: Yes (/Oi)
 		common_release_env.Append( CPPFLAGS = ['/GL'] )		  	# Visual Studio: Whole Program Optimization: Enable link-time code generation (/GL)
@@ -100,95 +89,88 @@ if Platform().name == 'win32':
 		release_static_env.Append( CPPFLAGS = ['/MT'] )		  	# Visual Studio: Runtime Library: Multi-threaded (/MT)
 
 
-
-
 		#-------------------------------- Debug
 
 		#COMPILE DEBUG:   /Od /D "_MBCS" /Gm /EHsc /RTC1 /MDd  /W3 /nologo /c /ZI /TP
 		
-		debug_env = common_env.Clone()
-		debug_env['BINDIR'] = DEBUG_BIN_DIR
-		debug_env.Append( CPPFLAGS = ['/Od'] )					# Visual Studio: Optimization: Disabled (/Od)
-		debug_env.Append( CPPFLAGS = ['/Gm'] )					# Visual Studio: Enable Minimal Rebuild: Yes (/Gm)
-		debug_env.Append( CPPFLAGS = ['/RTC1'] )				# Visual Studio: Basic Runtime Checks: Both (/RTC1, equiv. to /RTCsu)
-		debug_env.Append( CPPFLAGS = ['/ZI'] )					# Visual Studio: Debug Information Format: Program Database for Edit & Continue (/ZI)
+		common_debug_env = common_env.Clone()
+		common_debug_env['BINDIR'] = DEBUG_BUILD_DIR
+		common_debug_env.Append( CPPFLAGS = ['/Od'] )					# Visual Studio: Optimization: Disabled (/Od)
+		common_debug_env.Append( CPPFLAGS = ['/Gm'] )					# Visual Studio: Enable Minimal Rebuild: Yes (/Gm)
+		common_debug_env.Append( CPPFLAGS = ['/RTC1'] )				# Visual Studio: Basic Runtime Checks: Both (/RTC1, equiv. to /RTCsu)
+		common_debug_env.Append( CPPFLAGS = ['/ZI'] )					# Visual Studio: Debug Information Format: Program Database for Edit & Continue (/ZI)
 
-		#debug_env.Append( CPPFLAGS = ['/MDd'] )					# Visual Studio: Runtime Library: Multi-threaded Debug DLL (/MDd)
-		#debug_env.Append( CPPFLAGS = ['/MTd'] )					# Visual Studio: Runtime Library: Multi-threaded Debug (/MTd)
+		debug_dynamic_env = common_debug_env.Clone() 
+		debug_static_env = common_debug_env.Clone() 
 
-
-		#YA AGREGADOS AUTOMATICAMENTE POR SCONS
-			#debug_env.Append( CPPFLAGS = ['/nologo'] )			# Visual Studio: Suppress Startup Banner: Yes (/nologo)
-			#debug_env.Append( CPPFLAGS = ['/c'] )						# Visual Studio: ???????????????????????
-			#debug_env.Append( CPPFLAGS = ['/TP'] )					# Visual Studio: Compile as: Compile as C++ Code (/TP)
+		debug_dynamic_env.Append( CPPFLAGS = ['/MDd'] )				# Visual Studio: Runtime Library: Multi-threaded Debug DLL (/MDd)
+		debug_static_env.Append( CPPFLAGS = ['/MTd'] )		  		# Visual Studio: Runtime Library: Multi-threaded Debug (/MTd)
 
 
-
-
-
-		
-		#debug_env = Environment ( MSVC_VERSION = COMPILER_VERSION ) #BINDIR = BIN_DIR,
-		#debug_env.Append( CPPFLAGS = ['/Od'] )					# Visual Studio: Optimization: Disabled (/Od)
-		#debug_env.Append( CPPDEFINES = ['_MBCS'] )			# Visual Studio: Preprocessor Definitions
-		#debug_env.Append( CPPFLAGS = ['/Gm'] )					# Visual Studio: Enable Minimal Rebuild: Yes (/Gm)
-		#debug_env.Append( CPPFLAGS = ['/EHsc'] )				# Visual Studio: Enable C++ Exceptions
-		#debug_env.Append( CPPFLAGS = ['/RTC1'] )				# Visual Studio: Basic Runtime Checks: Both (/RTC1, equiv. to /RTCsu)
-		#
-		##debug_env.Append( CPPFLAGS = ['/MDd'] )					# Visual Studio: Runtime Library: Multi-threaded Debug DLL (/MDd)
-		##debug_env.Append( CPPFLAGS = ['/MTd'] )					# Visual Studio: Runtime Library: Multi-threaded Debug (/MTd)
-		#
-		#debug_env.Append( CPPFLAGS = ['/W3'] )					# Visual Studio: Warning Level: Level 3 (/W3)
-		##debug_env.Append( CPPFLAGS = ['/nologo'] )			# Visual Studio: Suppress Startup Banner: Yes (/nologo)
-		##debug_env.Append( CPPFLAGS = ['/c'] )						# Visual Studio: ???????????????????????
-		#debug_env.Append( CPPFLAGS = ['/ZI'] )					# Visual Studio: Debug Information Format: Program Database for Edit & Continue (/ZI)
-		##debug_env.Append( CPPFLAGS = ['/TP'] )					# Visual Studio: Compile as: Compile as C++ Code (/TP)
-
-
-	
 elif Platform().name == 'posix':
 		#print "--POSIX Platform"
 
-		RELEASE_BIN_DIR = BIN_DIR + '/posix/release/'
-		DEBUG_BIN_DIR = BIN_DIR + '/posix/debug/'
-		BIN_DIR = BIN_DIR + '/posix/release/'
+		#RELEASE_BUILD_DIR = BUILD_DIR + '/posix/release/'
+		#DEBUG_BUILD_DIR = BUILD_DIR + '/posix/debug/'
+		#BUILD_DIR = BUILD_DIR + '/posix/release/'
+
 		COMPILER_NAME = ARGUMENTS.get('COMPILER_NAME', 'gcc')
 
 		COMPILER_VERSION = ARGUMENTS.get('COMPILER_VERSION', '4.4')
 		#print 'COMPILER_VERSION: ' + COMPILER_VERSION
 		
-		#GCC_VERSION = os.environ['GCC_VERSION']
-		##print 'GCC_VERSION: ' + GCC_VERSION
-		
 		PLATFORM_STR = Platform().name + '-' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "")
 		print 'PLATFORM_STR: ' + PLATFORM_STR
 	
-		#release_dynamic_env = Environment(platform = 'posix')
-		#release_dynamic_env.Program('get_machine_id', ['../../src/main.cpp', '../../src/base64.cpp'], CPPPATH = ['/usr/local/include'])
-		#LIBPATH='.'  
-		
-		#TODO: PONER: -O0 -g3 -Wall -fmessage-length=0 -MMD -MP 
 	
+		common_env = Environment ( ) #TODO: ver que pasa si hay dos versiones de GCC u otro compilador instalados
+		#print common_env.Dump()
+		
+		common_env.Append( CPPDEFINES = ['_MBCS'] )		# Visual Studio: Preprocessor Definitions
+		common_env.Append( CPPFLAGS = ['/EHsc'] )			# Visual Studio: Enable C++ Exceptions
+		common_env.Append( CPPFLAGS = ['/W3'] )				# Visual Studio: Warning Level: Level 3 (/W3)
+	
+		#-------------------------------- Release
+
+		#COMPILE RELEASE:   #TODO
+		#TODO: PONER: -O0 -g3 -Wall -fmessage-length=0 -MMD -MP 
 
 		#TODO: esto esta usando DLL's en DEBUG...
-		release_dynamic_env = Environment(  ) #BINDIR = BIN_DIR
-		release_dynamic_env['BINDIR'] = RELEASE_BIN_DIR
-		release_dynamic_env.Append( LIBS=['boost_thread-' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "") + '-mt-d-' + BOOST_VERSION ] )		#VER DE CAMBIAR ALGO EN BOOST_VERSION... sacarle los puntos
-		release_dynamic_env.Append( LIBS=['boost_system-' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "") + '-mt-d-' + BOOST_VERSION ] )
-		release_dynamic_env.Append( LIBS=['boost_filesystem-' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "") + '-mt-d-' + BOOST_VERSION] )
-		release_dynamic_env.Append( LIBS=['boost_unit_test_framework-' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "") + '-mt-d-' + BOOST_VERSION ] )
-		release_dynamic_env.Append( LINKFLAGS = ['-s'] )		  	# GCC: Strip
+		common_release_env = common_env.Clone() 
+		common_release_env['BINDIR'] = RELEASE_BUILD_DIR
+		common_release_env.Append( LIBS=['boost_thread-' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "") + '-mt-d-' + BOOST_VERSION ] )		#VER DE CAMBIAR ALGO EN BOOST_VERSION... sacarle los puntos
+		common_release_env.Append( LIBS=['boost_system-' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "") + '-mt-d-' + BOOST_VERSION ] )
+		common_release_env.Append( LIBS=['boost_filesystem-' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "") + '-mt-d-' + BOOST_VERSION] )
+		common_release_env.Append( LIBS=['boost_unit_test_framework-' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "") + '-mt-d-' + BOOST_VERSION ] )
+		common_release_env.Append( LINKFLAGS = ['-s'] )		  	# GCC: Strip
 
-	
-		release_static_env = release_dynamic_env.Clone() 
+		release_dynamic_env = common_release_env.Clone() 
+		release_static_env = common_release_env.Clone() 
 
+		#release_dynamic_env.Append( CPPFLAGS = ['/MD'] )			#TODO: ver como hacer esto con GCC
+		#release_static_env.Append( CPPFLAGS = ['/MT'] )		  #TODO: ver como hacer esto con GCC
 	
-		debug_env = Environment(  ) # BINDIR = BIN_DIR
-		debug_env['BINDIR'] = DEBUG_BIN_DIR
-		debug_env.Append( CPPFLAGS = ['-g'] )					
-		debug_env.Append( LIBS=['boost_thread-' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "") + '-mt-d-' + BOOST_VERSION ] )
-		debug_env.Append( LIBS=['boost_system-' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "") + '-mt-d-' + BOOST_VERSION ] )
-		debug_env.Append( LIBS=['boost_filesystem-' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "") + '-mt-d-' + BOOST_VERSION] )
-		debug_env.Append( LIBS=['boost_unit_test_framework-' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "") + '-mt-d-' + BOOST_VERSION ] )
+		
+		#-------------------------------- Debug
+
+		#COMPILE DEBUG:   #TODO
+		
+		common_debug_env = common_env.Clone()
+		common_debug_env['BINDIR'] = DEBUG_BUILD_DIR
+		common_debug_env.Append( CPPFLAGS = ['-g'] )					
+		common_debug_env.Append( LIBS=['boost_thread-' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "") + '-mt-d-' + BOOST_VERSION ] )
+		common_debug_env.Append( LIBS=['boost_system-' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "") + '-mt-d-' + BOOST_VERSION ] )
+		common_debug_env.Append( LIBS=['boost_filesystem-' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "") + '-mt-d-' + BOOST_VERSION] )
+		common_debug_env.Append( LIBS=['boost_unit_test_framework-' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "") + '-mt-d-' + BOOST_VERSION ] )
+
+		debug_dynamic_env = common_debug_env.Clone() 
+		debug_static_env = common_debug_env.Clone() 
+
+		#debug_dynamic_env.Append( CPPFLAGS = ['/MDd'] )				#TODO: ver como hacer esto con GCC
+		#debug_static_env.Append( CPPFLAGS = ['/MTd'] )		  		# Visual Studio: Runtime Library: Multi-threaded Debug (/MTd)		
+		
+		
+		
 
  
 else:
@@ -204,14 +186,17 @@ release_static_env.Append( CPPPATH = [ BOOST_ROOT, SRC_DIR ] )
 release_static_env.Append( LIBPATH = [BOOST_ROOT_LIB] )
 
 
-debug_env.Append( CPPPATH = [ BOOST_ROOT, SRC_DIR ] )
-debug_env.Append( LIBPATH = [BOOST_ROOT_LIB] )
+debug_dynamic_env.Append( CPPPATH = [ BOOST_ROOT, SRC_DIR ] )
+debug_dynamic_env.Append( LIBPATH = [BOOST_ROOT_LIB] )
+
+debug_static_env.Append( CPPPATH = [ BOOST_ROOT, SRC_DIR ] )
+debug_static_env.Append( LIBPATH = [BOOST_ROOT_LIB] )
 
 
 #TODO: src_dir
-#foo = SConscript('SConscript', build_dir='Z:/Development/CPP/' + PROJECT_NAME + '/bin', duplicate=0, exports=['release_dynamic_env', 'release_static_env', 'debug_env', 'BOOST_ROOT_LIB', 'SRC_DIR', 'BIN_DIR'])
-SConscript('SConscript', build_dir = BIN_DIR, duplicate=0, exports=['release_dynamic_env', 'release_static_env', 'debug_env', 'PLATFORM_STR', 'BOOST_ROOT', 'BOOST_ROOT_LIB', 'SRC_DIR', 'BIN_DIR'])
-
+#foo = SConscript('SConscript', build_dir='Z:/Development/CPP/' + PROJECT_NAME + '/bin', duplicate=0, exports=['release_dynamic_env', 'release_static_env', 'debug_dynamic_env', 'debug_static_env', 'BOOST_ROOT_LIB', 'SRC_DIR', 'BUILD_DIR'])
+#SConscript('SConscript', build_dir = BUILD_DIR, duplicate=0, exports=['release_dynamic_env', 'release_static_env', 'debug_dynamic_env', 'debug_static_env', 'PLATFORM_STR', 'BOOST_ROOT', 'BOOST_ROOT_LIB', 'SRC_DIR', 'BUILD_DIR'])
+SConscript('SConscript', build_dir = BUILD_DIR, duplicate=0, exports=['release_dynamic_env', 'release_static_env', 'debug_dynamic_env', 'debug_static_env', 'PLATFORM_STR', 'SRC_DIR'])
 
 
 #print release_dynamic_env.Dump()
@@ -230,6 +215,10 @@ SConscript('SConscript', build_dir = BIN_DIR, duplicate=0, exports=['release_dyn
 
 
 
+		#LIBCPMT.LIB				Multithreaded, static link																						/MT			_MT
+		#MSVCPRT.LIB				Multithreaded, dynamic link (import library for MSVCP90.dll)					/MD			_MT, _DLL
+		#LIBCPMTD.LIB				Multithreaded, static link																						/MTd		_DEBUG, _MT
+		#MSVCPRTD.LIB				Multithreaded, dynamic link (import library for MSVCP90D.DLL)					/MDd		_DEBUG, _MT, _DLL
 
 
 
@@ -239,10 +228,13 @@ SConscript('SConscript', build_dir = BIN_DIR, duplicate=0, exports=['release_dyn
 			#common_release_env.Append( CPPFLAGS = ['/c'] )		  		# Visual Studio: ???????????????????????
 			#common_release_env.Append( CPPFLAGS = ['/TP'] )		  	# Visual Studio: Compile as: Compile as C++ Code (/TP)
 
-		#LIBCPMT.LIB				Multithreaded, static link																						/MT			_MT
-		#MSVCPRT.LIB				Multithreaded, dynamic link (import library for MSVCP90.dll)					/MD			_MT, _DLL
-		#LIBCPMTD.LIB				Multithreaded, static link																						/MTd		_DEBUG, _MT
-		#MSVCPRTD.LIB				Multithreaded, dynamic link (import library for MSVCP90D.DLL)					/MDd		_DEBUG, _MT, _DLL
+		#YA AGREGADOS AUTOMATICAMENTE POR SCONS
+			#debug_env.Append( CPPFLAGS = ['/nologo'] )			# Visual Studio: Suppress Startup Banner: Yes (/nologo)
+			#debug_env.Append( CPPFLAGS = ['/c'] )						# Visual Studio: ???????????????????????
+			#debug_env.Append( CPPFLAGS = ['/TP'] )					# Visual Studio: Compile as: Compile as C++ Code (/TP)
+
+
+
 
 
 		#release_dynamic_env.Append( LIBS=['kernel32'] )
@@ -295,6 +287,21 @@ SConscript('SConscript', build_dir = BIN_DIR, duplicate=0, exports=['release_dyn
 
 
 
+		#debug_env = Environment ( MSVC_VERSION = COMPILER_VERSION )
+		#debug_env.Append( CPPFLAGS = ['/Od'] )					# Visual Studio: Optimization: Disabled (/Od)
+		#debug_env.Append( CPPDEFINES = ['_MBCS'] )			# Visual Studio: Preprocessor Definitions
+		#debug_env.Append( CPPFLAGS = ['/Gm'] )					# Visual Studio: Enable Minimal Rebuild: Yes (/Gm)
+		#debug_env.Append( CPPFLAGS = ['/EHsc'] )				# Visual Studio: Enable C++ Exceptions
+		#debug_env.Append( CPPFLAGS = ['/RTC1'] )				# Visual Studio: Basic Runtime Checks: Both (/RTC1, equiv. to /RTCsu)
+		#
+		##debug_env.Append( CPPFLAGS = ['/MDd'] )					# Visual Studio: Runtime Library: Multi-threaded Debug DLL (/MDd)
+		##debug_env.Append( CPPFLAGS = ['/MTd'] )					# Visual Studio: Runtime Library: Multi-threaded Debug (/MTd)
+		#
+		#debug_env.Append( CPPFLAGS = ['/W3'] )					# Visual Studio: Warning Level: Level 3 (/W3)
+		##debug_env.Append( CPPFLAGS = ['/nologo'] )			# Visual Studio: Suppress Startup Banner: Yes (/nologo)
+		##debug_env.Append( CPPFLAGS = ['/c'] )						# Visual Studio: ???????????????????????
+		#debug_env.Append( CPPFLAGS = ['/ZI'] )					# Visual Studio: Debug Information Format: Program Database for Edit & Continue (/ZI)
+		##debug_env.Append( CPPFLAGS = ['/TP'] )					# Visual Studio: Compile as: Compile as C++ Code (/TP)
 
 
 

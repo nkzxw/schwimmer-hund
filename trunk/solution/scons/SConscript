@@ -2,24 +2,48 @@
 import os 
 
 #TODO: ver que esta al pedo de todo estoo...
-Import('release_dynamic_env', 'release_static_env', 'debug_env', 'PLATFORM_STR', 'BOOST_ROOT', 'BOOST_ROOT_LIB', 'SRC_DIR', 'BIN_DIR')
+Import('release_dynamic_env', 'release_static_env', 'debug_dynamic_env', 'debug_static_env', 'PLATFORM_STR', 'SRC_DIR')
+#Import('release_dynamic_env', 'release_static_env', 'debug_dynamic_env', 'debug_static_env', 'PLATFORM_STR', 'BOOST_ROOT', 'BOOST_ROOT_LIB', 'SRC_DIR', 'BUILD_DIR')
 
 #print 'BOOST_ROOT: ' + BOOST_ROOT
 #print 'BOOST_ROOT_LIB: ' + BOOST_ROOT_LIB
 #print 'SRC_DIR: ' + SRC_DIR
-#print 'BIN_DIR: ' + BIN_DIR
+#print 'BUILD_DIR: ' + BUILD_DIR
 
 #print 'PLATFORM_STR: ' + PLATFORM_STR
 
 
 
+# -------------- stress_test_creation_watcher
 
-
-
-
-release_obj = release_dynamic_env.Object('stress_test_creation_watcher-dynamic-rel', [ SRC_DIR + '/libs/os_services/test/stress_test_creation_watcher.cpp'])
+#release_obj = release_dynamic_env.Object('stress_test_creation_watcher-dynamic-rel', [ SRC_DIR + '/libs/os_services/test/stress_test_creation_watcher.cpp'])
+obj = release_dynamic_env.Object('stress_test_creation_watcher-dynamic-rel', [ SRC_DIR + '/libs/os_services/test/stress_test_creation_watcher.cpp'])
 #release_dynamic_env.Program('stress_test_creation_watcher_' + PLATFORM_STR + '_dynamic_release', release_obj, CPPFLAGS = ['/MD'] ) #TODO: porque aca esta el MD ?????????
-release_dynamic_env.Program('stress_test_creation_watcher_' + PLATFORM_STR + '_dynamic_release', release_obj ) 
+release_dynamic_env.Program('stress_test_creation_watcher_' + PLATFORM_STR + '_dynamic_release', obj ) 
+
+#release_obj = release_static_env.Object('stress_test_creation_watcher-static-rel', [ SRC_DIR + '/libs/os_services/test/stress_test_creation_watcher.cpp'])
+obj = release_static_env.Object('stress_test_creation_watcher-static-rel', [ SRC_DIR + '/libs/os_services/test/stress_test_creation_watcher.cpp'])
+#release_static_env.Program('stress_test_creation_watcher_' + PLATFORM_STR + '_static_release', release_obj, CPPFLAGS = ['/MT'] )
+release_static_env.Program('stress_test_creation_watcher_' + PLATFORM_STR + '_static_release', obj )
+
+#debug_obj = debug_dynamic_env.Object('stress_test_creation_watcher-dynamic-dbg', [ SRC_DIR + '/libs/os_services/test/stress_test_creation_watcher.cpp'])
+obj = debug_dynamic_env.Object('stress_test_creation_watcher-dynamic-dbg', [ SRC_DIR + '/libs/os_services/test/stress_test_creation_watcher.cpp'])
+debug_dynamic_env.Program('stress_test_creation_watcher_' + PLATFORM_STR + '_dynamic_debug', obj)
+
+#debug_obj = debug_static_env.Object('stress_test_creation_watcher-static-dbg', [ SRC_DIR + '/libs/os_services/test/stress_test_creation_watcher.cpp'])
+obj = debug_static_env.Object('stress_test_creation_watcher-static-dbg', [ SRC_DIR + '/libs/os_services/test/stress_test_creation_watcher.cpp'])
+debug_static_env.Program('stress_test_creation_watcher_' + PLATFORM_STR + '_static_debug', obj)
+
+
+
+# -------------- stress_test_creation_watcher
+
+
+
+
+
+
+
 
 #release_obj = release_dynamic_env.Object('stress_test_file_generator-rel', [ SRC_DIR + '/libs/os_services/test/stress_test_file_generator.cpp'])
 #release_dynamic_env.Program('stress_test_file_generator_' + PLATFORM_STR + '_release', release_obj)
@@ -33,9 +57,6 @@ release_dynamic_env.Program('stress_test_creation_watcher_' + PLATFORM_STR + '_d
 
 
 
-release_obj = release_static_env.Object('stress_test_creation_watcher-static-rel', [ SRC_DIR + '/libs/os_services/test/stress_test_creation_watcher.cpp'])
-#release_static_env.Program('stress_test_creation_watcher_' + PLATFORM_STR + '_static_release', release_obj, CPPFLAGS = ['/MT'] )
-release_static_env.Program('stress_test_creation_watcher_' + PLATFORM_STR + '_static_release', release_obj )
 
 
 
@@ -44,17 +65,15 @@ release_static_env.Program('stress_test_creation_watcher_' + PLATFORM_STR + '_st
 
 
 
-#debug_obj = debug_env.Object('stress_test_creation_watcher-dbg', [ SRC_DIR + '/libs/os_services/test/stress_test_creation_watcher.cpp'])
-#debug_env.Program('stress_test_creation_watcher_' + PLATFORM_STR + '_debug', debug_obj)
 
-#debug_obj = debug_env.Object('stress_test_file_generator-dbg', [ SRC_DIR + '/libs/os_services/test/stress_test_file_generator.cpp'])
-#debug_env.Program('stress_test_file_generator_' + PLATFORM_STR + '_debug', debug_obj)
+#debug_obj = debug_dynamic_env.Object('stress_test_file_generator-dynamic-dbg', [ SRC_DIR + '/libs/os_services/test/stress_test_file_generator.cpp'])
+#debug_dynamic_env.Program('stress_test_file_generator_' + PLATFORM_STR + '_dynamic_debug', debug_obj)
 
-#debug_obj = debug_env.Object('stress_test_file_generator_and_watcher-dbg', [ SRC_DIR + '/libs/os_services/test/stress_test_file_generator_and_watcher.cpp'])
-#debug_env.Program('stress_test_file_generator_and_watcher_' + PLATFORM_STR + '_debug', debug_obj)
+#debug_obj = debug_dynamic_env.Object('stress_test_file_generator_and_watcher-dynamic-dbg', [ SRC_DIR + '/libs/os_services/test/stress_test_file_generator_and_watcher.cpp'])
+#debug_dynamic_env.Program('stress_test_file_generator_and_watcher_' + PLATFORM_STR + '_dynamic_debug', debug_obj)
 
-#debug_obj = debug_env.Object('test-dbg', [ SRC_DIR + '/libs/os_services/test/test.cpp'])
-#debug_env.Program('test_' + PLATFORM_STR + '_debug', debug_obj)
+#debug_obj = debug_dynamic_env.Object('test-dynamic-dbg', [ SRC_DIR + '/libs/os_services/test/test.cpp'])
+#debug_dynamic_env.Program('test_' + PLATFORM_STR + '_dynamic_debug', debug_obj)
 
 
 
