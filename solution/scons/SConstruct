@@ -6,7 +6,7 @@
 #     BOOST_VERSION = 1_42
 #     DEV_CPP_HOME = Z:/Development/CPP
 #     DEV_HOME = Z:/Development/
-
+#
 #			GCC_VERSION = 4.4 				#Solo para POSIX
 #			MSVC_VERSION = 9.0			#Solo para WIN32 / 64
 #
@@ -81,14 +81,7 @@ if Platform().name == 'win32':
 		common_env.Append( CPPFLAGS = ['/EHsc'] )			# Visual Studio: Enable C++ Exceptions
 		common_env.Append( CPPFLAGS = ['/W3'] )				# Visual Studio: Warning Level: Level 3 (/W3)
 
-
-
-
-
-
-		#-------------------------------- Release Dynamic
-		
-		
+	
 		common_release_env = common_env.Clone() 
 		common_release_env['BINDIR'] = RELEASE_BIN_DIR
 		common_release_env.Append( CPPFLAGS = ['/O2'] )		  	# Visual Studio: Optimization: Maximize Speed (/O2)
@@ -98,33 +91,7 @@ if Platform().name == 'win32':
 		common_release_env.Append( CPPFLAGS = ['/Gy'] )		  	# Visual Studio: Enable Function-Level Linking: Yes (/Gy)
 		common_release_env.Append( CPPFLAGS = ['/Zi'] )		  	# Visual Studio: Debug Information Format: Program Database (/Zi)
 
-		#YA AGREGADOS AUTOMATICAMENTE POR SCONS
-			#common_release_env.Append( CPPFLAGS = ['/nologo'] )		# Visual Studio: Suppress Startup Banner: Yes (/nologo)		
-			#common_release_env.Append( CPPFLAGS = ['/c'] )		  		# Visual Studio: ???????????????????????
-			#common_release_env.Append( CPPFLAGS = ['/TP'] )		  	# Visual Studio: Compile as: Compile as C++ Code (/TP)
 
-		#LIBCPMT.LIB				Multithreaded, static link																						/MT			_MT
-		#MSVCPRT.LIB				Multithreaded, dynamic link (import library for MSVCP90.dll)					/MD			_MT, _DLL
-		#LIBCPMTD.LIB				Multithreaded, static link																						/MTd		_DEBUG, _MT
-		#MSVCPRTD.LIB				Multithreaded, dynamic link (import library for MSVCP90D.DLL)					/MDd		_DEBUG, _MT, _DLL
-
-
-		#release_dynamic_env.Append( LIBS=['kernel32'] )
-		#release_dynamic_env.Append( LIBS=['user32'] )
-		#release_dynamic_env.Append( LIBS=['gdi32'] )
-		#release_dynamic_env.Append( LIBS=['winspool'] )
-		#release_dynamic_env.Append( LIBS=['comdlg32'] )
-		#release_dynamic_env.Append( LIBS=['advapi32'] )
-		#release_dynamic_env.Append( LIBS=['shell32'] )
-		#release_dynamic_env.Append( LIBS=['ole32'] )
-		#release_dynamic_env.Append( LIBS=['oleaut32'] )
-		#release_dynamic_env.Append( LIBS=['uuid'] )
-		#release_dynamic_env.Append( LIBS=['odbc32'] )
-		#release_dynamic_env.Append( LIBS=['odbccp32'] )
-
-
-
-		#-------------------------------- Release Static
 
 		release_dynamic_env = common_release_env.Clone() 
 		release_static_env = common_release_env.Clone() 
@@ -176,33 +143,6 @@ if Platform().name == 'win32':
 		#debug_env.Append( CPPFLAGS = ['/ZI'] )					# Visual Studio: Debug Information Format: Program Database for Edit & Continue (/ZI)
 		##debug_env.Append( CPPFLAGS = ['/TP'] )					# Visual Studio: Compile as: Compile as C++ Code (/TP)
 
-		# kernel32.lib
-		# user32.lib
-		# gdi32.lib
-		# winspool.lib
-		# comdlg32.lib
-		# advapi32.lib
-		# shell32.lib
-		# ole32.lib
-		# oleaut32.lib
-		# uuid.lib
-		# odbc32.lib
-		# odbccp32.lib
-		
-		#debug_env.Append( LIBS=['kernel32'] )
-		#debug_env.Append( LIBS=['user32'] )
-		#debug_env.Append( LIBS=['gdi32'] )
-		#debug_env.Append( LIBS=['winspool'] )
-		#debug_env.Append( LIBS=['comdlg32'] )
-		#debug_env.Append( LIBS=['advapi32'] )
-		#debug_env.Append( LIBS=['shell32'] )
-		#debug_env.Append( LIBS=['ole32'] )
-		#debug_env.Append( LIBS=['oleaut32'] )
-		#debug_env.Append( LIBS=['uuid'] )
-		#debug_env.Append( LIBS=['odbc32'] )
-		#debug_env.Append( LIBS=['odbccp32'] )		
-
-		#env.Append( LIBS=['iphlpapi'] )
 
 	
 elif Platform().name == 'posix':
@@ -287,6 +227,75 @@ SConscript('SConscript', build_dir = BIN_DIR, duplicate=0, exports=['release_dyn
 
 
 #---------------------- FIN 
+
+
+
+
+
+
+
+		#YA AGREGADOS AUTOMATICAMENTE POR SCONS
+			#common_release_env.Append( CPPFLAGS = ['/nologo'] )		# Visual Studio: Suppress Startup Banner: Yes (/nologo)		
+			#common_release_env.Append( CPPFLAGS = ['/c'] )		  		# Visual Studio: ???????????????????????
+			#common_release_env.Append( CPPFLAGS = ['/TP'] )		  	# Visual Studio: Compile as: Compile as C++ Code (/TP)
+
+		#LIBCPMT.LIB				Multithreaded, static link																						/MT			_MT
+		#MSVCPRT.LIB				Multithreaded, dynamic link (import library for MSVCP90.dll)					/MD			_MT, _DLL
+		#LIBCPMTD.LIB				Multithreaded, static link																						/MTd		_DEBUG, _MT
+		#MSVCPRTD.LIB				Multithreaded, dynamic link (import library for MSVCP90D.DLL)					/MDd		_DEBUG, _MT, _DLL
+
+
+		#release_dynamic_env.Append( LIBS=['kernel32'] )
+		#release_dynamic_env.Append( LIBS=['user32'] )
+		#release_dynamic_env.Append( LIBS=['gdi32'] )
+		#release_dynamic_env.Append( LIBS=['winspool'] )
+		#release_dynamic_env.Append( LIBS=['comdlg32'] )
+		#release_dynamic_env.Append( LIBS=['advapi32'] )
+		#release_dynamic_env.Append( LIBS=['shell32'] )
+		#release_dynamic_env.Append( LIBS=['ole32'] )
+		#release_dynamic_env.Append( LIBS=['oleaut32'] )
+		#release_dynamic_env.Append( LIBS=['uuid'] )
+		#release_dynamic_env.Append( LIBS=['odbc32'] )
+		#release_dynamic_env.Append( LIBS=['odbccp32'] )
+
+
+
+
+
+		# kernel32.lib
+		# user32.lib
+		# gdi32.lib
+		# winspool.lib
+		# comdlg32.lib
+		# advapi32.lib
+		# shell32.lib
+		# ole32.lib
+		# oleaut32.lib
+		# uuid.lib
+		# odbc32.lib
+		# odbccp32.lib
+		
+		#debug_env.Append( LIBS=['kernel32'] )
+		#debug_env.Append( LIBS=['user32'] )
+		#debug_env.Append( LIBS=['gdi32'] )
+		#debug_env.Append( LIBS=['winspool'] )
+		#debug_env.Append( LIBS=['comdlg32'] )
+		#debug_env.Append( LIBS=['advapi32'] )
+		#debug_env.Append( LIBS=['shell32'] )
+		#debug_env.Append( LIBS=['ole32'] )
+		#debug_env.Append( LIBS=['oleaut32'] )
+		#debug_env.Append( LIBS=['uuid'] )
+		#debug_env.Append( LIBS=['odbc32'] )
+		#debug_env.Append( LIBS=['odbccp32'] )		
+		#env.Append( LIBS=['iphlpapi'] )
+
+
+
+
+
+
+
+
 
 
 
