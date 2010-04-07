@@ -36,13 +36,7 @@ debug_static_env.Program('stress_test_creation_watcher_' + PLATFORM_STR + '_stat
 
 
 
-# -------------- stress_test_creation_watcher
-
-
-
-
-
-
+# -------------- 
 
 
 #release_obj = release_dynamic_env.Object('stress_test_file_generator-rel', [ SRC_DIR + '/libs/os_services/test/stress_test_file_generator.cpp'])
@@ -53,17 +47,6 @@ debug_static_env.Program('stress_test_creation_watcher_' + PLATFORM_STR + '_stat
 
 #release_obj = release_dynamic_env.Object('test-rel', [ SRC_DIR + '/libs/os_services/test/test.cpp'])
 #release_dynamic_env.Program('test_' + PLATFORM_STR + '_release', release_obj)
-
-
-
-
-
-
-
-
-
-
-
 
 
 #debug_obj = debug_dynamic_env.Object('stress_test_file_generator-dynamic-dbg', [ SRC_DIR + '/libs/os_services/test/stress_test_file_generator.cpp'])
