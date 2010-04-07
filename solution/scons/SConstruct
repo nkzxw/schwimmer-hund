@@ -38,6 +38,9 @@ DEBUG_BUILD_DIR = BUILD_DIR + '/debug/'
 #print 'DEBUG_BUILD_DIR: ' + DEBUG_BUILD_DIR
 
 
+#TODO: Win32: Intel compiler
+#TODO: Win32: MinGW compiler
+
 if Platform().name == 'win32':
 		print "--WIN32 Platform"
 		
