@@ -9,6 +9,7 @@ Import('release_dynamic_env', 'release_static_env', 'debug_env', 'PLATFORM_STR',
 #print 'SRC_DIR: ' + SRC_DIR
 #print 'BIN_DIR: ' + BIN_DIR
 
+#print 'PLATFORM_STR: ' + PLATFORM_STR
 
 
 

@@ -6,7 +6,8 @@
 #     BOOST_VERSION = 1_42
 #     DEV_CPP_HOME = Z:/Development/CPP
 #     DEV_HOME = Z:/Development/
-#			GCC_VERSION = 44 				#Solo para POSIX
+
+#			GCC_VERSION = 4.4 				#Solo para POSIX
 #			MSVC_VERSION = 9.0			#Solo para WIN32 / 64
 #
 #		Para Visual C++ Express, agregar en las variables de ambiente:
@@ -18,7 +19,10 @@
 import os
 import string
 
-PROJECT_NAME = 'schwimmer-hund'
+#PROJECT_NAME = 'schwimmer-hund'
+PROJECT_NAME = ARGUMENTS.get('PROJECT_NAME', '')
+#print PROJECT_NAME
+
 BOOST_ROOT = os.environ['BOOST_ROOT']
 BOOST_ROOT_LIB = BOOST_ROOT + '/stage/lib'
 BOOST_VERSION = os.environ['BOOST_VERSION']
@@ -39,14 +43,20 @@ if Platform().name == 'win32':
 		DEBUG_BIN_DIR = BIN_DIR + '/windows/debug/'
 		BIN_DIR = BIN_DIR + '/windows/release/'
 		
-		COMPILER_VERSION = os.environ['MSVC_VERSION']
-		#print 'COMPILER_VERSION: ' + COMPILER_VERSION
+		COMPILER_NAME = ARGUMENTS.get('COMPILER_NAME', 'vc')
+		COMPILER_VERSION = ARGUMENTS.get('COMPILER_VERSION', '9.0')
+		#print COMPILER_NAME
+		#print COMPILER_VERSION
 		
-		PLATFORM_STR = Platform().name + '-vc' + string.replace(COMPILER_VERSION, ".", "")
+		#if COMPILER_VERSION == '0':
+		#   print "Error: Falta especificar variable de ambiente MSVC_VERSION. Ejemplo MSVC_VERSION=9.0"
+		#   exit(0)		
+		
+		
+		PLATFORM_STR = Platform().name + '-' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "")
 		#print 'PLATFORM_STR: ' + PLATFORM_STR
 
 		#COMPILE RELASE:  /O2 /Oi /GL /D "_MBCS" /FD /EHsc /MD /Gy  /W3 /nologo /c /Zi /TP
-
 
 		#TODO: probar esto en un ambiente que tenga instaladas dos versiones de MSVC y ver que figura en el DUMP para el compilador correspindiente... IDEM GCC
 			#release_dynamic_env = Environment ( BINDIR = BIN_DIR )
@@ -65,6 +75,7 @@ if Platform().name == 'win32':
 
 		#env = Environment(platform = 'win32')
 		common_env = Environment ( MSVC_VERSION = COMPILER_VERSION ) #BINDIR = BIN_DIR,
+		#print common_env.Dump()
 		
 		common_env.Append( CPPDEFINES = ['_MBCS'] )		# Visual Studio: Preprocessor Definitions
 		common_env.Append( CPPFLAGS = ['/EHsc'] )			# Visual Studio: Enable C++ Exceptions
@@ -200,12 +211,15 @@ elif Platform().name == 'posix':
 		RELEASE_BIN_DIR = BIN_DIR + '/posix/release/'
 		DEBUG_BIN_DIR = BIN_DIR + '/posix/debug/'
 		BIN_DIR = BIN_DIR + '/posix/release/'
-		
+		COMPILER_NAME = ARGUMENTS.get('COMPILER_NAME', 'gcc')
 
-		GCC_VERSION = os.environ['GCC_VERSION']
-		#print 'GCC_VERSION: ' + GCC_VERSION
+		COMPILER_VERSION = ARGUMENTS.get('COMPILER_VERSION', '4.4')
+		#print 'COMPILER_VERSION: ' + COMPILER_VERSION
 		
-		PLATFORM_STR = Platform().name + '-gcc' + GCC_VERSION
+		#GCC_VERSION = os.environ['GCC_VERSION']
+		##print 'GCC_VERSION: ' + GCC_VERSION
+		
+		PLATFORM_STR = Platform().name + '-' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "")
 		print 'PLATFORM_STR: ' + PLATFORM_STR
 	
 		#release_dynamic_env = Environment(platform = 'posix')
@@ -218,11 +232,10 @@ elif Platform().name == 'posix':
 		#TODO: esto esta usando DLL's en DEBUG...
 		release_dynamic_env = Environment(  ) #BINDIR = BIN_DIR
 		release_dynamic_env['BINDIR'] = RELEASE_BIN_DIR
-		release_dynamic_env.Append( LIBS=['boost_thread-gcc' + GCC_VERSION + '-mt-d-' + BOOST_VERSION ] )		#VER DE CAMBIAR ALGO EN BOOST_VERSION... sacarle los puntos
-		release_dynamic_env.Append( LIBS=['boost_system-gcc' + GCC_VERSION + '-mt-d-' + BOOST_VERSION ] )
-		release_dynamic_env.Append( LIBS=['boost_filesystem-gcc' + GCC_VERSION + '-mt-d-' + BOOST_VERSION] )
-		release_dynamic_env.Append( LIBS=['boost_unit_test_framework-gcc' + GCC_VERSION + '-mt-d-' + BOOST_VERSION ] )
-
+		release_dynamic_env.Append( LIBS=['boost_thread-' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "") + '-mt-d-' + BOOST_VERSION ] )		#VER DE CAMBIAR ALGO EN BOOST_VERSION... sacarle los puntos
+		release_dynamic_env.Append( LIBS=['boost_system-' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "") + '-mt-d-' + BOOST_VERSION ] )
+		release_dynamic_env.Append( LIBS=['boost_filesystem-' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "") + '-mt-d-' + BOOST_VERSION] )
+		release_dynamic_env.Append( LIBS=['boost_unit_test_framework-' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "") + '-mt-d-' + BOOST_VERSION ] )
 		release_dynamic_env.Append( LINKFLAGS = ['-s'] )		  	# GCC: Strip
 
 	
@@ -231,10 +244,11 @@ elif Platform().name == 'posix':
 	
 		debug_env = Environment(  ) # BINDIR = BIN_DIR
 		debug_env['BINDIR'] = DEBUG_BIN_DIR
-		debug_env.Append( LIBS=['boost_thread-gcc' + GCC_VERSION + '-mt-d-' + BOOST_VERSION ] )
-		debug_env.Append( LIBS=['boost_system-gcc' + GCC_VERSION + '-mt-d-' + BOOST_VERSION ] )
-		debug_env.Append( LIBS=['boost_filesystem-gcc' + GCC_VERSION + '-mt-d-' + BOOST_VERSION] )
-		debug_env.Append( LIBS=['boost_unit_test_framework-gcc' + GCC_VERSION + '-mt-d-' + BOOST_VERSION ] )
+		debug_env.Append( CPPFLAGS = ['-g'] )					
+		debug_env.Append( LIBS=['boost_thread-' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "") + '-mt-d-' + BOOST_VERSION ] )
+		debug_env.Append( LIBS=['boost_system-' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "") + '-mt-d-' + BOOST_VERSION ] )
+		debug_env.Append( LIBS=['boost_filesystem-' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "") + '-mt-d-' + BOOST_VERSION] )
+		debug_env.Append( LIBS=['boost_unit_test_framework-' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "") + '-mt-d-' + BOOST_VERSION ] )
 
  
 else:
@@ -400,3 +414,15 @@ SConscript('SConscript', build_dir = BIN_DIR, duplicate=0, exports=['release_dyn
 #print "-------------------------------------------------------------------------------------------------------------"
 #print os.environ['MSVC_VERSION']
 #print "-------------------------------------------------------------------------------------------------------------"
+
+
+
+
+
+
+
+
+
+
+		#COMPILER_VERSION = os.environ['MSVC_VERSION']
+		##print 'COMPILER_VERSION: ' + COMPILER_VERSION
