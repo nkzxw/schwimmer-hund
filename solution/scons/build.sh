@@ -14,9 +14,8 @@
 #fi
 
 
-VAR=${VAR:=default_value}
-
-echo $VAR
+#VAR=${VAR:=default_value}
+#echo $VAR
 
 
 if [ $GCC_VERSION == ""  ]
