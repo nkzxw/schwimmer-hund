@@ -17,17 +17,18 @@
 
 
 #if [ $GCC_VERSION == ""  ]
-#then
-#	echo "GCC_VERSION == ''"
-#	exit 1
-#fi
-#
-#
-#if [ $GCC_VERSION != ""  ]
-#then
-#	echo "GCC_VERSION != ''"
-#	exit 1
-#fi
+if $GCC_VERSION == ""
+then
+	echo "GCC_VERSION == ''"
+	exit 1
+fi
+
+
+if $GCC_VERSION != ""
+then
+	echo "GCC_VERSION != ''"
+	exit 1
+fi
 
 
 
