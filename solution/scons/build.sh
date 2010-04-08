@@ -17,7 +17,7 @@
 
 
 #if [ $GCC_VERSION == ""  ]
-if $GCC_VERSION == ""
+if [ $GCC_VERSION == "" ]
 then
 	echo "GCC_VERSION == ''"
 	exit 1
