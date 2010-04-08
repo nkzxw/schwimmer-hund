@@ -14,8 +14,13 @@
 #			INCLUDE="C:/Program Files/Microsoft SDKs/Windows/v6.0A/Include;C:/Program Files/Microsoft Visual Studio 9.0/VC/include"
 #			LIB="C:/Program Files/Microsoft SDKs/Windows/v6.0A/Lib;C:/Program Files/Microsoft Visual Studio 9.0/VC/lib"
 
+#TODO: eliminar los archivos OBJ y demas archivos que deban ser eliminados.
+#TODO: copiar los binarios correspondientes a los directorios BIN y/o TEST
+
 import os
 import string
+
+
 
 PROJECT_NAME = ARGUMENTS.get('PROJECT_NAME', '')
 #print PROJECT_NAME
