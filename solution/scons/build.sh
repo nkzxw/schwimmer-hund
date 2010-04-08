@@ -13,6 +13,12 @@
 #exit 1
 #fi
 
+
+VAR=${VAR:=default_value}
+
+echo $VAR
+
+
 if [ $GCC_VERSION == ""  ]
 then
 	echo "GCC_VERSION == ''"
