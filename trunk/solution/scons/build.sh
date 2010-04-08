@@ -1,4 +1,27 @@
+#!/bin/sh
+#
+# Script to ...
+#
+
 #TODO: 
+
+
+
+#if [ $# -eq 0 ]
+#then
+#echo "$0 : You must give/supply one integers"
+#exit 1
+#fi
+
+if [ $GCC_VERSION == ""  ]
+then
+	echo "GCC_VERSION == ''"
+	exit 1
+else
+	echo "GCC_VERSION != ''"
+	exit 1
+fi
+
 
 
 clear
