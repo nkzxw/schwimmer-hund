@@ -16,16 +16,11 @@
 #echo $VAR
 
 
-#if [ $GCC_VERSION == ""  ]
 if [ $GCC_VERSION == "" ]
 then
 	echo "GCC_VERSION == ''"
 	exit 1
-fi
-
-
-if [ $GCC_VERSION <> "" ]
-then
+else
 	echo "GCC_VERSION != ''"
 	exit 1
 fi
