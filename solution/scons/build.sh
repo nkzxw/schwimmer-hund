@@ -5,8 +5,6 @@
 
 #TODO: 
 
-
-
 #if [ $# -eq 0 ]
 #then
 #echo "$0 : You must give/supply one integers"
@@ -18,18 +16,18 @@
 #echo $VAR
 
 
-if [ $GCC_VERSION == ""  ]
-then
-	echo "GCC_VERSION == ''"
-	exit 1
-fi
-
-
-if [ $GCC_VERSION != ""  ]
-then
-	echo "GCC_VERSION != ''"
-	exit 1
-fi
+#if [ $GCC_VERSION == ""  ]
+#then
+#	echo "GCC_VERSION == ''"
+#	exit 1
+#fi
+#
+#
+#if [ $GCC_VERSION != ""  ]
+#then
+#	echo "GCC_VERSION != ''"
+#	exit 1
+#fi
 
 
 
