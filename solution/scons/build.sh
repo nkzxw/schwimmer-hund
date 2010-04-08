@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Script to ...
 #
@@ -16,8 +16,7 @@
 #echo $VAR
 
 
-if [ $GCC_VERSION == "" ]
-then
+if [ $GCC_VERSION == "" ]; then
 	echo "GCC_VERSION == ''"
 	exit 1
 else
