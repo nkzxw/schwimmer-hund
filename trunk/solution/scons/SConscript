@@ -4,7 +4,7 @@ import glob
 import os 
 
 #TODO: ver que esta al pedo de todo estoo...
-Import('release_dynamic_env', 'release_static_env', 'debug_dynamic_env', 'debug_static_env', 'PLATFORM_STR', 'SRC_DIR', 'OBJ_FILES_PATH')
+Import('release_dynamic_env', 'release_static_env', 'debug_dynamic_env', 'debug_static_env', 'PLATFORM_STR', 'SRC_DIR')
 
 #print 'BOOST_ROOT: ' + BOOST_ROOT
 #print 'BOOST_ROOT_LIB: ' + BOOST_ROOT_LIB
