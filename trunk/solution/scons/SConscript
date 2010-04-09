@@ -19,22 +19,29 @@ Import('release_dynamic_env', 'release_static_env', 'debug_dynamic_env', 'debug_
 
 #release_obj = release_dynamic_env.Object('stress_test_creation_watcher-dynamic-rel', [ SRC_DIR + '/libs/os_services/test/stress_test_creation_watcher.cpp'])
 obj = release_dynamic_env.Object('stress_test_creation_watcher-dynamic-rel', [ SRC_DIR + '/libs/os_services/test/stress_test_creation_watcher.cpp'])
+#print obj
 #release_dynamic_env.Program('stress_test_creation_watcher_' + PLATFORM_STR + '_dynamic_release', release_obj, CPPFLAGS = ['/MD'] ) #TODO: porque aca esta el MD ?????????
-release_dynamic_env.Program('stress_test_creation_watcher_' + PLATFORM_STR + '_dynamic_release', obj ) 
+stress_test_creation_watcher_dynamic_rel = release_dynamic_env.Program('stress_test_creation_watcher_' + PLATFORM_STR + '_dynamic_release', obj ) 
 
-#release_obj = release_static_env.Object('stress_test_creation_watcher-static-rel', [ SRC_DIR + '/libs/os_services/test/stress_test_creation_watcher.cpp'])
-obj = release_static_env.Object('stress_test_creation_watcher-static-rel', [ SRC_DIR + '/libs/os_services/test/stress_test_creation_watcher.cpp'])
-#release_static_env.Program('stress_test_creation_watcher_' + PLATFORM_STR + '_static_release', release_obj, CPPFLAGS = ['/MT'] )
-release_static_env.Program('stress_test_creation_watcher_' + PLATFORM_STR + '_static_release', obj )
 
-#debug_obj = debug_dynamic_env.Object('stress_test_creation_watcher-dynamic-dbg', [ SRC_DIR + '/libs/os_services/test/stress_test_creation_watcher.cpp'])
-obj = debug_dynamic_env.Object('stress_test_creation_watcher-dynamic-dbg', [ SRC_DIR + '/libs/os_services/test/stress_test_creation_watcher.cpp'])
-debug_dynamic_env.Program('stress_test_creation_watcher_' + PLATFORM_STR + '_dynamic_debug', obj)
+##release_obj = release_static_env.Object('stress_test_creation_watcher-static-rel', [ SRC_DIR + '/libs/os_services/test/stress_test_creation_watcher.cpp'])
+#obj = release_static_env.Object('stress_test_creation_watcher-static-rel', [ SRC_DIR + '/libs/os_services/test/stress_test_creation_watcher.cpp'])
+##release_static_env.Program('stress_test_creation_watcher_' + PLATFORM_STR + '_static_release', release_obj, CPPFLAGS = ['/MT'] )
+#release_static_env.Program('stress_test_creation_watcher_' + PLATFORM_STR + '_static_release', obj )
+#
+##debug_obj = debug_dynamic_env.Object('stress_test_creation_watcher-dynamic-dbg', [ SRC_DIR + '/libs/os_services/test/stress_test_creation_watcher.cpp'])
+#obj = debug_dynamic_env.Object('stress_test_creation_watcher-dynamic-dbg', [ SRC_DIR + '/libs/os_services/test/stress_test_creation_watcher.cpp'])
+#debug_dynamic_env.Program('stress_test_creation_watcher_' + PLATFORM_STR + '_dynamic_debug', obj)
+#
+##debug_obj = debug_static_env.Object('stress_test_creation_watcher-static-dbg', [ SRC_DIR + '/libs/os_services/test/stress_test_creation_watcher.cpp'])
+#obj = debug_static_env.Object('stress_test_creation_watcher-static-dbg', [ SRC_DIR + '/libs/os_services/test/stress_test_creation_watcher.cpp'])
+#debug_static_env.Program('stress_test_creation_watcher_' + PLATFORM_STR + '_static_debug', obj)
 
-#debug_obj = debug_static_env.Object('stress_test_creation_watcher-static-dbg', [ SRC_DIR + '/libs/os_services/test/stress_test_creation_watcher.cpp'])
-obj = debug_static_env.Object('stress_test_creation_watcher-static-dbg', [ SRC_DIR + '/libs/os_services/test/stress_test_creation_watcher.cpp'])
-debug_static_env.Program('stress_test_creation_watcher_' + PLATFORM_STR + '_static_debug', obj)
 
+
+#TODO: cambiar los paths...
+release_dynamic_env.Install('Z:\\Development\\CPP\\schwimmer-hund\\bin', stress_test_creation_watcher_dynamic_rel)  
+release_dynamic_env.Alias('install', 'Z:\\Development\\CPP\\schwimmer-hund\\bin')
 
 
 # -------------- 
@@ -58,21 +65,3 @@ debug_static_env.Program('stress_test_creation_watcher_' + PLATFORM_STR + '_stat
 
 #debug_obj = debug_dynamic_env.Object('test-dynamic-dbg', [ SRC_DIR + '/libs/os_services/test/test.cpp'])
 #debug_dynamic_env.Program('test_' + PLATFORM_STR + '_dynamic_debug', debug_obj)
-
-
-
-
-#print release_dynamic_env.Dump()
-#print debug_env.Dump()
-
-
-for filename in glob.glob( OBJ_FILES_PATH ) :
-    print filename
-    os.remove( filename )
-
-    
-    
-    
-os.remove( "Z:\\Development\\CPP\\schwimmer-hund\\build\\stress_test_creation_watcher-dynamic-dbg.obj" )     
-    
-
