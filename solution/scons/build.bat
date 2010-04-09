@@ -3,10 +3,10 @@ cls
 
 if "%MSVC_VERSION%" == "" goto default
 
-scons -Q -c PROJECT_NAME=schwimmer-hund COMPILER_NAME=vc COMPILER_VERSION=%MSVC_VERSION%
+scons PROJECT_NAME=schwimmer-hund COMPILER_NAME=vc COMPILER_VERSION=%MSVC_VERSION%
 
 :default
-scons -Q -c PROJECT_NAME=schwimmer-hund COMPILER_NAME=vc COMPILER_VERSION=9.0
+scons PROJECT_NAME=schwimmer-hund COMPILER_NAME=vc COMPILER_VERSION=9.0
 goto :eof
 
 
