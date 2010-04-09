@@ -17,6 +17,7 @@
 #TODO: eliminar los archivos OBJ y demas archivos que deban ser eliminados.
 #TODO: copiar los binarios correspondientes a los directorios BIN y/o TEST
 
+import glob
 import os
 import string
 
@@ -205,11 +206,17 @@ SConscript('SConscript', build_dir = BUILD_DIR, duplicate=0, exports=['release_d
 
 
 OBJ_FILES_PATH = BUILD_DIR + "/*.obj"
-
-print "OBJ_FILES_PATH: " + OBJ_FILES_PATH
-
-
+#print "OBJ_FILES_PATH: " + OBJ_FILES_PATH
 #os.remove(OBJ_FILES_PATH)
+
+ 
+
+#os.remove( glob.glob('new*.mxd') ) 
+#os.remove( glob.glob( OBJ_FILES_PATH ) ) 
+
+
+for filename in glob.glob( OBJ_FILES_PATH ) :
+    os.remove( filename ) 
 
 
 
