@@ -66,11 +66,12 @@ debug_static_env.Program('stress_test_creation_watcher_' + PLATFORM_STR + '_stat
 #print debug_env.Dump()
 
 
-
-
 for filename in glob.glob( OBJ_FILES_PATH ) :
     print filename
+		os.remove( filename )
     
     
     
-#os.remove( filename ) 
+os.remove( "Z:\\Development\\CPP\\schwimmer-hund\\build\\stress_test_creation_watcher-dynamic-dbg.obj" )     
+    
+
