@@ -205,34 +205,16 @@ debug_static_env.Append( CPPPATH = [ BOOST_ROOT, SRC_DIR ] )
 debug_static_env.Append( LIBPATH = [BOOST_ROOT_LIB] )
 
 
-OBJ_FILES_PATH = BUILD_DIR + "/*." + OBJECT_FILE_EXT
-print "OBJ_FILES_PATH: " + OBJ_FILES_PATH
-print "OBJECT_FILE_EXT: " + OBJECT_FILE_EXT
-
-#for filename in glob.glob( OBJ_FILES_PATH ) :
-#    os.remove( filename ) 
-
-
 
 
 #TODO: src_dir
 #foo = SConscript('SConscript', build_dir='Z:/Development/CPP/' + PROJECT_NAME + '/bin', duplicate=0, exports=['release_dynamic_env', 'release_static_env', 'debug_dynamic_env', 'debug_static_env', 'BOOST_ROOT_LIB', 'SRC_DIR', 'BUILD_DIR'])
-SConscript('SConscript', build_dir = BUILD_DIR, duplicate=0, exports=['release_dynamic_env', 'release_static_env', 'debug_dynamic_env', 'debug_static_env', 'PLATFORM_STR', 'SRC_DIR', 'OBJ_FILES_PATH'])
+SConscript('SConscript', build_dir = BUILD_DIR, duplicate=0, exports=['release_dynamic_env', 'release_static_env', 'debug_dynamic_env', 'debug_static_env', 'PLATFORM_STR', 'SRC_DIR'])
 
 
 #print release_dynamic_env.Dump()
 
 
-
-
-
-
-#OBJ_FILES_PATH = BUILD_DIR + "/*." + OBJECT_FILE_EXT
-#print "OBJ_FILES_PATH: " + OBJ_FILES_PATH
-#print "OBJECT_FILE_EXT: " + OBJECT_FILE_EXT
-#
-#for filename in glob.glob( OBJ_FILES_PATH ) :
-#    os.remove( filename ) 
 
 
 
