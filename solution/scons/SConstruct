@@ -33,6 +33,11 @@ BUILD_DIR = os.environ['DEV_CPP_HOME'] + '/' + PROJECT_NAME + "/build"
 #RELEASE_BUILD_DIR = os.environ['DEV_CPP_HOME'] + '\' + PROJECT_NAME + '\build\release'
 #DEBUG_BUILD_DIR = os.environ['DEV_CPP_HOME'] + '\' + PROJECT_NAME + '\build\debug'
 
+
+OBJ_DIR = os.path.join(os.getcwd(), 'obj/');
+#env = Environment(ENV=os.environ, CCFLAGS=['-O3','-Wall'], OBJPREFIX = OBJ_DIR)
+
+
 #print "os.environ['DEV_CPP_HOME'] : " + os.environ['DEV_CPP_HOME'] 
 #print 'BOOST_ROOT: ' + BOOST_ROOT
 #print 'BOOST_ROOT_LIB: ' + BOOST_ROOT_LIB
@@ -70,7 +75,7 @@ if Platform().name == 'win32':
 			#print release_dynamic_env.Dump()
 
 		#env = Environment(platform = 'win32')
-		common_env = Environment ( MSVC_VERSION = COMPILER_VERSION )
+		common_env = Environment ( MSVC_VERSION = COMPILER_VERSION, OBJPREFIX = OBJ_DIR )
 		#print common_env.Dump()
 		
 		common_env.Append( CPPDEFINES = ['_MBCS'] )		# Visual Studio: Preprocessor Definitions
@@ -134,7 +139,7 @@ elif Platform().name == 'posix':
 
 	
 	
-		common_env = Environment ( ) #TODO: ver que pasa si hay dos versiones de GCC u otro compilador instalados
+		common_env = Environment ( OBJPREFIX = OBJ_DIR ) #TODO: ver que pasa si hay dos versiones de GCC u otro compilador instalados
 		#print common_env.Dump()
 	
 		#-------------------------------- Release

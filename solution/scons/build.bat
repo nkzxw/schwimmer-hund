@@ -5,9 +5,28 @@ if "%MSVC_VERSION%" == "" goto default
 
 scons PROJECT_NAME=schwimmer-hund COMPILER_NAME=vc COMPILER_VERSION=%MSVC_VERSION%
 
+
+REM TODO: esto no se esta ejecutando
+scons PROJECT_NAME=schwimmer-hund COMPILER_NAME=vc COMPILER_VERSION=%MSVC_VERSION% install
+
+
+
+REM goto install
+
+
 :default
 scons PROJECT_NAME=schwimmer-hund COMPILER_NAME=vc COMPILER_VERSION=9.0
+scons PROJECT_NAME=schwimmer-hund COMPILER_NAME=vc COMPILER_VERSION=9.0 install
+
+
+REM :install
+
+
+
 goto :eof
+
+
+
 
 
 
