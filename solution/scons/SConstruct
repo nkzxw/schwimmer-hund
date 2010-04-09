@@ -62,6 +62,8 @@ if Platform().name == 'win32':
 		PLATFORM_STR = Platform().name + '-' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "")
 		#print 'PLATFORM_STR: ' + PLATFORM_STR
 
+		OBJECT_FILE_EXT = "obj"
+
 		#COMPILE RELASE:  /O2 /Oi /GL /D "_MBCS" /FD /EHsc /MD /Gy  /W3 /nologo /c /Zi /TP
 
 		#TODO: probar esto en un ambiente que tenga instaladas dos versiones de MSVC y ver que figura en el DUMP para el compilador correspindiente... IDEM GCC
@@ -127,7 +129,10 @@ elif Platform().name == 'posix':
 		#print 'COMPILER_VERSION: ' + COMPILER_VERSION
 		
 		PLATFORM_STR = Platform().name + '-' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "")
-		print 'PLATFORM_STR: ' + PLATFORM_STR
+		#print 'PLATFORM_STR: ' + PLATFORM_STR
+	
+		OBJECT_FILE_EXT = "o"
+
 	
 	
 		common_env = Environment ( ) #TODO: ver que pasa si hay dos versiones de GCC u otro compilador instalados
@@ -205,15 +210,13 @@ SConscript('SConscript', build_dir = BUILD_DIR, duplicate=0, exports=['release_d
 #print release_dynamic_env.Dump()
 
 
-OBJ_FILES_PATH = BUILD_DIR + "/*.obj"
-#print "OBJ_FILES_PATH: " + OBJ_FILES_PATH
+OBJ_FILES_PATH = BUILD_DIR + "/*." + OBJECT_FILE_EXT
+print "OBJ_FILES_PATH: " + OBJ_FILES_PATH
+print "OBJECT_FILE_EXT: " + OBJECT_FILE_EXT
+
 #os.remove(OBJ_FILES_PATH)
-
- 
-
 #os.remove( glob.glob('new*.mxd') ) 
 #os.remove( glob.glob( OBJ_FILES_PATH ) ) 
-
 
 for filename in glob.glob( OBJ_FILES_PATH ) :
     os.remove( filename ) 
