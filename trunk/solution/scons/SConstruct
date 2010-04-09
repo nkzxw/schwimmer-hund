@@ -29,7 +29,7 @@ BOOST_ROOT = os.environ['BOOST_ROOT']
 BOOST_ROOT_LIB = BOOST_ROOT + '/stage/lib'
 BOOST_VERSION = os.environ['BOOST_VERSION']
 SRC_DIR = os.environ['DEV_CPP_HOME'] + '/' + PROJECT_NAME + '/src/'
-BUILD_DIR = os.environ['DEV_CPP_HOME'] + '/' + PROJECT_NAME + '/build/'
+BUILD_DIR = os.environ['DEV_CPP_HOME'] + '/' + PROJECT_NAME + '/build'
 RELEASE_BUILD_DIR = BUILD_DIR + '/release/'
 DEBUG_BUILD_DIR = BUILD_DIR + '/debug/'
 
@@ -38,9 +38,9 @@ DEBUG_BUILD_DIR = BUILD_DIR + '/debug/'
 #print 'BOOST_ROOT_LIB: ' + BOOST_ROOT_LIB
 #print 'BOOST_VERSION: ' + BOOST_VERSION
 #print 'SRC_DIR: ' + SRC_DIR
-#print 'BUILD_DIR: ' + BUILD_DIR
-#print 'RELEASE_BUILD_DIR: ' + RELEASE_BUILD_DIR
-#print 'DEBUG_BUILD_DIR: ' + DEBUG_BUILD_DIR
+print 'BUILD_DIR: ' + BUILD_DIR
+print 'RELEASE_BUILD_DIR: ' + RELEASE_BUILD_DIR
+print 'DEBUG_BUILD_DIR: ' + DEBUG_BUILD_DIR
 
 
 #TODO: Win32: Intel compiler
@@ -206,6 +206,12 @@ SConscript('SConscript', build_dir = BUILD_DIR, duplicate=0, exports=['release_d
 #print release_dynamic_env.Dump()
 
 
+OBJ_FILES_PATH = RELEASE_BUILD_DIR + "/*.obj"
+
+print "OBJ_FILES_PATH: " + OBJ_FILES_PATH
+
+
+#os.remove(OBJ_FILES_PATH)
 
 
 
