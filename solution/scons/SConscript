@@ -69,4 +69,8 @@ debug_static_env.Program('stress_test_creation_watcher_' + PLATFORM_STR + '_stat
 
 
 for filename in glob.glob( OBJ_FILES_PATH ) :
-    os.remove( filename ) 
+    print filename
+    
+    
+    
+#os.remove( filename ) 
