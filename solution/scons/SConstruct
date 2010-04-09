@@ -20,27 +20,27 @@
 import os
 import string
 
-
-
 PROJECT_NAME = ARGUMENTS.get('PROJECT_NAME', '')
 #print PROJECT_NAME
+
 
 BOOST_ROOT = os.environ['BOOST_ROOT']
 BOOST_ROOT_LIB = BOOST_ROOT + '/stage/lib'
 BOOST_VERSION = os.environ['BOOST_VERSION']
 SRC_DIR = os.environ['DEV_CPP_HOME'] + '/' + PROJECT_NAME + '/src/'
-BUILD_DIR = os.environ['DEV_CPP_HOME'] + '/' + PROJECT_NAME + '/build'
-RELEASE_BUILD_DIR = BUILD_DIR + '/release/'
-DEBUG_BUILD_DIR = BUILD_DIR + '/debug/'
+#BUILD_DIR = os.environ['DEV_CPP_HOME'] + '/' + PROJECT_NAME + "/build/release"
+BUILD_DIR = os.environ['DEV_CPP_HOME'] + '/' + PROJECT_NAME + "/build"
+#RELEASE_BUILD_DIR = os.environ['DEV_CPP_HOME'] + '\' + PROJECT_NAME + '\build\release'
+#DEBUG_BUILD_DIR = os.environ['DEV_CPP_HOME'] + '\' + PROJECT_NAME + '\build\debug'
 
-
+#print "os.environ['DEV_CPP_HOME'] : " + os.environ['DEV_CPP_HOME'] 
 #print 'BOOST_ROOT: ' + BOOST_ROOT
 #print 'BOOST_ROOT_LIB: ' + BOOST_ROOT_LIB
 #print 'BOOST_VERSION: ' + BOOST_VERSION
 #print 'SRC_DIR: ' + SRC_DIR
-print 'BUILD_DIR: ' + BUILD_DIR
-print 'RELEASE_BUILD_DIR: ' + RELEASE_BUILD_DIR
-print 'DEBUG_BUILD_DIR: ' + DEBUG_BUILD_DIR
+#print 'BUILD_DIR: ' + BUILD_DIR
+#print 'RELEASE_BUILD_DIR: ' + RELEASE_BUILD_DIR
+#print 'DEBUG_BUILD_DIR: ' + DEBUG_BUILD_DIR
 
 
 #TODO: Win32: Intel compiler
@@ -80,15 +80,13 @@ if Platform().name == 'win32':
 		#-------------------------------- Release
 	
 		common_release_env = common_env.Clone() 
-		common_release_env['BINDIR'] = RELEASE_BUILD_DIR
+		common_release_env['BINDIR'] = BUILD_DIR   #RELEASE_BUILD_DIR
 		common_release_env.Append( CPPFLAGS = ['/O2'] )		  	# Visual Studio: Optimization: Maximize Speed (/O2)
 		common_release_env.Append( CPPFLAGS = ['/Oi'] )		  	# Visual Studio: Enable Intrinsic Functions: Yes (/Oi)
 		common_release_env.Append( CPPFLAGS = ['/GL'] )		  	# Visual Studio: Whole Program Optimization: Enable link-time code generation (/GL)
 		common_release_env.Append( CPPFLAGS = ['/FD'] )		  	# Visual Studio: ????????????????????????????
 		common_release_env.Append( CPPFLAGS = ['/Gy'] )		  	# Visual Studio: Enable Function-Level Linking: Yes (/Gy)
 		common_release_env.Append( CPPFLAGS = ['/Zi'] )		  	# Visual Studio: Debug Information Format: Program Database (/Zi)
-
-
 
 		release_dynamic_env = common_release_env.Clone() 
 		release_static_env = common_release_env.Clone() 
@@ -102,7 +100,7 @@ if Platform().name == 'win32':
 		#COMPILE DEBUG:   /Od /D "_MBCS" /Gm /EHsc /RTC1 /MDd  /W3 /nologo /c /ZI /TP
 		
 		common_debug_env = common_env.Clone()
-		common_debug_env['BINDIR'] = DEBUG_BUILD_DIR
+		common_debug_env['BINDIR'] = BUILD_DIR    #DEBUG_BUILD_DIR
 		common_debug_env.Append( CPPFLAGS = ['/Od'] )					# Visual Studio: Optimization: Disabled (/Od)
 		common_debug_env.Append( CPPFLAGS = ['/Gm'] )					# Visual Studio: Enable Minimal Rebuild: Yes (/Gm)
 		common_debug_env.Append( CPPFLAGS = ['/RTC1'] )				# Visual Studio: Basic Runtime Checks: Both (/RTC1, equiv. to /RTCsu)
@@ -141,7 +139,7 @@ elif Platform().name == 'posix':
 
 		#TODO: esto esta usando DLL's en DEBUG...
 		common_release_env = common_env.Clone() 
-		common_release_env['BINDIR'] = RELEASE_BUILD_DIR
+		common_release_env['BINDIR'] = BUILD_DIR    #RELEASE_BUILD_DIR
 		common_release_env.Append( LIBS=['boost_thread-' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "") + '-mt-d-' + BOOST_VERSION ] )		#VER DE CAMBIAR ALGO EN BOOST_VERSION... sacarle los puntos
 		common_release_env.Append( LIBS=['boost_system-' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "") + '-mt-d-' + BOOST_VERSION ] )
 		common_release_env.Append( LIBS=['boost_filesystem-' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "") + '-mt-d-' + BOOST_VERSION] )
@@ -160,7 +158,7 @@ elif Platform().name == 'posix':
 		#COMPILE DEBUG:   #TODO
 		
 		common_debug_env = common_env.Clone()
-		common_debug_env['BINDIR'] = DEBUG_BUILD_DIR
+		common_debug_env['BINDIR'] = BUILD_DIR     #DEBUG_BUILD_DIR
 		common_debug_env.Append( CPPFLAGS = ['-g'] )					
 		common_debug_env.Append( LIBS=['boost_thread-' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "") + '-mt-d-' + BOOST_VERSION ] )
 		common_debug_env.Append( LIBS=['boost_system-' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "") + '-mt-d-' + BOOST_VERSION ] )
@@ -206,7 +204,7 @@ SConscript('SConscript', build_dir = BUILD_DIR, duplicate=0, exports=['release_d
 #print release_dynamic_env.Dump()
 
 
-OBJ_FILES_PATH = RELEASE_BUILD_DIR + "/*.obj"
+OBJ_FILES_PATH = BUILD_DIR + "/*.obj"
 
 print "OBJ_FILES_PATH: " + OBJ_FILES_PATH
 
