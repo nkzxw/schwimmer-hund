@@ -1,9 +1,10 @@
 #TODO: ver que esta al pedo de todo estoo...
+
+import glob
 import os 
 
 #TODO: ver que esta al pedo de todo estoo...
-Import('release_dynamic_env', 'release_static_env', 'debug_dynamic_env', 'debug_static_env', 'PLATFORM_STR', 'SRC_DIR')
-#Import('release_dynamic_env', 'release_static_env', 'debug_dynamic_env', 'debug_static_env', 'PLATFORM_STR', 'BOOST_ROOT', 'BOOST_ROOT_LIB', 'SRC_DIR', 'BUILD_DIR')
+Import('release_dynamic_env', 'release_static_env', 'debug_dynamic_env', 'debug_static_env', 'PLATFORM_STR', 'SRC_DIR', 'OBJ_FILES_PATH')
 
 #print 'BOOST_ROOT: ' + BOOST_ROOT
 #print 'BOOST_ROOT_LIB: ' + BOOST_ROOT_LIB
@@ -63,3 +64,9 @@ debug_static_env.Program('stress_test_creation_watcher_' + PLATFORM_STR + '_stat
 
 #print release_dynamic_env.Dump()
 #print debug_env.Dump()
+
+
+
+
+for filename in glob.glob( OBJ_FILES_PATH ) :
+    os.remove( filename ) 
