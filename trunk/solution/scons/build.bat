@@ -3,22 +3,20 @@ cls
 
 if "%MSVC_VERSION%" == "" goto default
 
-REM call scons -c
+@REM call scons -c
 
+@REM TODO: esta fijo "vc" en este caso y no debería estarlo. AGREGAR UN COMPILER_NAME
 call scons PROJECT_NAME=schwimmer-hund COMPILER_NAME=vc COMPILER_VERSION=%MSVC_VERSION%
-
-REM TODO: esto no se esta ejecutando
 call scons PROJECT_NAME=schwimmer-hund COMPILER_NAME=vc COMPILER_VERSION=%MSVC_VERSION% install
 
-
-REM goto install
+goto :eof
 
 
 :default
 call scons PROJECT_NAME=schwimmer-hund COMPILER_NAME=vc COMPILER_VERSION=9.0
 call scons PROJECT_NAME=schwimmer-hund COMPILER_NAME=vc COMPILER_VERSION=9.0 install
 
-REM :install
+
 
 goto :eof
 
