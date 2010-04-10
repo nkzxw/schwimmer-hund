@@ -1,3 +1,9 @@
+#TODO: agregar RANDOM tests...
+#TODO: decidir que tipo de ejecutable se va a usar para testear ... dynamic vs static / RELEASE vs debug
+#TODO: ver como insertar el archivo .manifest en el ejecutable...
+
+
+
 import os
 import string
 
@@ -8,6 +14,53 @@ Import('release_dynamic_env', 'release_static_env', 'debug_dynamic_env', 'debug_
 #print 'SRC_DIR: ' + SRC_DIR
 #print 'BUILD_DIR: ' + BUILD_DIR
 #print 'PLATFORM_STR: ' + PLATFORM_STR
+
+
+
+# -------------- stress_random_instruction_generator
+
+obj = release_dynamic_env.Object('stress_random_instruction_generator_dynamic_rel', [ SRC_DIR + '/libs/os_services/test/stress_test_random_instruction_generator.cpp'])
+stress_random_instruction_generator_dynamic_rel = release_dynamic_env.Program('stress_random_instruction_generator_' + PLATFORM_STR + '_dynamic_release', obj ) #CPPFLAGS = ['/MD'] ) #TODO: porque aca esta el MD ?????????
+#print TEST_DIR + "/" + str( stress_random_instruction_generator_dynamic_rel[0] )
+Command(TEST_DIR + "/" + string.replace(str( stress_random_instruction_generator_dynamic_rel[0] ), "_" + PLATFORM_STR + "_dynamic_release", ""), BUILD_DIR + "/" + str ( stress_random_instruction_generator_dynamic_rel[0] ), Copy("$TARGET", "$SOURCE"))
+Command(TEST_DIR + "/" + string.replace(str( stress_random_instruction_generator_dynamic_rel[0] ), "_" + PLATFORM_STR + "_dynamic_release", "") + ".manifest", BUILD_DIR + "/" + str ( stress_random_instruction_generator_dynamic_rel[0] ) + ".manifest", Copy("$TARGET", "$SOURCE"))
+
+obj = release_static_env.Object('stress_random_instruction_generator_static_rel', [ SRC_DIR + '/libs/os_services/test/stress_test_random_instruction_generator.cpp'])
+stress_random_instruction_generator_static_rel = release_static_env.Program('stress_random_instruction_generator_' + PLATFORM_STR + '_static_release', obj )
+
+obj = debug_dynamic_env.Object('stress_random_instruction_generator_dynamic_dbg', [ SRC_DIR + '/libs/os_services/test/stress_test_random_instruction_generator.cpp'])
+stress_random_instruction_generator_dynamic_dbg = debug_dynamic_env.Program('stress_random_instruction_generator_' + PLATFORM_STR + '_dynamic_debug', obj)
+#Command(TEST_DIR + "/" + string.replace(str( stress_random_instruction_generator_dynamic_dbg[0] ), "_" + PLATFORM_STR, ""), BUILD_DIR + "/" + str ( stress_random_instruction_generator_dynamic_dbg[0] ), Copy("$TARGET", "$SOURCE"))
+#Command(TEST_DIR + "/" + string.replace(str( stress_random_instruction_generator_dynamic_dbg[0] ), "_" + PLATFORM_STR, "") + ".manifest", BUILD_DIR + "/" + str ( stress_random_instruction_generator_dynamic_dbg[0] ) + ".manifest", Copy("$TARGET", "$SOURCE"))
+
+obj = debug_static_env.Object('stress_random_instruction_generator_static_dbg', [ SRC_DIR + '/libs/os_services/test/stress_test_random_instruction_generator.cpp'])
+stress_random_instruction_generator_static_dbg = debug_static_env.Program('stress_random_instruction_generator_' + PLATFORM_STR + '_static_debug', obj)
+
+
+
+
+# -------------- stress_random_instruction_interpreter
+
+obj = release_dynamic_env.Object('stress_random_instruction_interpreter_dynamic_rel', [ SRC_DIR + '/libs/os_services/test/stress_test_random_instruction_interpreter.cpp'])
+stress_random_instruction_interpreter_dynamic_rel = release_dynamic_env.Program('stress_random_instruction_interpreter_' + PLATFORM_STR + '_dynamic_release', obj ) #CPPFLAGS = ['/MD'] ) #TODO: porque aca esta el MD ?????????
+#print TEST_DIR + "/" + str( stress_random_instruction_interpreter_dynamic_rel[0] )
+Command(TEST_DIR + "/" + string.replace(str( stress_random_instruction_interpreter_dynamic_rel[0] ), "_" + PLATFORM_STR + "_dynamic_release", ""), BUILD_DIR + "/" + str ( stress_random_instruction_interpreter_dynamic_rel[0] ), Copy("$TARGET", "$SOURCE"))
+Command(TEST_DIR + "/" + string.replace(str( stress_random_instruction_interpreter_dynamic_rel[0] ), "_" + PLATFORM_STR + "_dynamic_release", "") + ".manifest", BUILD_DIR + "/" + str ( stress_random_instruction_interpreter_dynamic_rel[0] ) + ".manifest", Copy("$TARGET", "$SOURCE"))
+
+obj = release_static_env.Object('stress_random_instruction_interpreter_static_rel', [ SRC_DIR + '/libs/os_services/test/stress_test_random_instruction_interpreter.cpp'])
+stress_random_instruction_interpreter_static_rel = release_static_env.Program('stress_random_instruction_interpreter_' + PLATFORM_STR + '_static_release', obj )
+
+obj = debug_dynamic_env.Object('stress_random_instruction_interpreter_dynamic_dbg', [ SRC_DIR + '/libs/os_services/test/stress_test_random_instruction_interpreter.cpp'])
+stress_random_instruction_interpreter_dynamic_dbg = debug_dynamic_env.Program('stress_random_instruction_interpreter_' + PLATFORM_STR + '_dynamic_debug', obj)
+#Command(TEST_DIR + "/" + string.replace(str( stress_random_instruction_interpreter_dynamic_dbg[0] ), "_" + PLATFORM_STR, ""), BUILD_DIR + "/" + str ( stress_random_instruction_interpreter_dynamic_dbg[0] ), Copy("$TARGET", "$SOURCE"))
+#Command(TEST_DIR + "/" + string.replace(str( stress_random_instruction_interpreter_dynamic_dbg[0] ), "_" + PLATFORM_STR, "") + ".manifest", BUILD_DIR + "/" + str ( stress_random_instruction_interpreter_dynamic_dbg[0] ) + ".manifest", Copy("$TARGET", "$SOURCE"))
+
+obj = debug_static_env.Object('stress_random_instruction_interpreter_static_dbg', [ SRC_DIR + '/libs/os_services/test/stress_test_random_instruction_interpreter.cpp'])
+stress_random_instruction_interpreter_static_dbg = debug_static_env.Program('stress_random_instruction_interpreter_' + PLATFORM_STR + '_static_debug', obj)
+
+
+
+
 
 
 # -------------- stress_test_creation_watcher
@@ -117,41 +170,27 @@ stress_test_file_generator_and_watcher_static_dbg = debug_static_env.Program('st
 
 
 
-# -------------- test
-
-obj = release_dynamic_env.Object('test_dynamic_rel', [ SRC_DIR + '/libs/os_services/test/test.cpp'])
-test_dynamic_rel = release_dynamic_env.Program('test_' + PLATFORM_STR + '_dynamic_release', obj)
-Command(TEST_DIR + "/" + string.replace(str( test_dynamic_rel[0] ), "_" + PLATFORM_STR + "_dynamic_release", ""), BUILD_DIR + "/" + str ( test_dynamic_rel[0] ), Copy("$TARGET", "$SOURCE"))
-Command(TEST_DIR + "/" + string.replace(str( test_dynamic_rel[0] ), "_" + PLATFORM_STR + "_dynamic_release", "") + ".manifest", BUILD_DIR + "/" + str ( test_dynamic_rel[0] ) + ".manifest", Copy("$TARGET", "$SOURCE"))
-
-obj = release_static_env.Object('test_static_rel', [ SRC_DIR + '/libs/os_services/test/test.cpp'])
-test_static_rel = release_static_env.Program('test_' + PLATFORM_STR + '_static_release', obj)
-
-obj = debug_dynamic_env.Object('test_dynamic_dbg', [ SRC_DIR + '/libs/os_services/test/test.cpp'])
-test_dynamic_dbg = debug_dynamic_env.Program('test_' + PLATFORM_STR + '_dynamic_debug', obj)
-
-obj = debug_static_env.Object('test_static_dbg', [ SRC_DIR + '/libs/os_services/test/test.cpp'])
-test_static_dbg = debug_static_env.Program('test_' + PLATFORM_STR + '_static_debug', obj)
-
-
-##release_dynamic_env.Install(BIN_DIR, test_dynamic_rel)  
-#release_dynamic_env.Install(TEST_DIR, test_dynamic_rel)  
+## -------------- test
 #
-##release_static_env.Install(BIN_DIR, test_static_rel)  
-#release_static_env.Install(TEST_DIR, test_static_rel)  
+#obj = release_dynamic_env.Object('test_dynamic_rel', [ SRC_DIR + '/libs/os_services/test/test.cpp'])
+#test_dynamic_rel = release_dynamic_env.Program('test_' + PLATFORM_STR + '_dynamic_release', obj)
+#Command(TEST_DIR + "/" + string.replace(str( test_dynamic_rel[0] ), "_" + PLATFORM_STR + "_dynamic_release", ""), BUILD_DIR + "/" + str ( test_dynamic_rel[0] ), Copy("$TARGET", "$SOURCE"))
+#Command(TEST_DIR + "/" + string.replace(str( test_dynamic_rel[0] ), "_" + PLATFORM_STR + "_dynamic_release", "") + ".manifest", BUILD_DIR + "/" + str ( test_dynamic_rel[0] ) + ".manifest", Copy("$TARGET", "$SOURCE"))
 #
-##debug_dynamic_env.Install(BIN_DIR, test_dynamic_dbg)  
-##debug_dynamic_env.Install(TEST_DIR, test_dynamic_dbg)  
+#obj = release_static_env.Object('test_static_rel', [ SRC_DIR + '/libs/os_services/test/test.cpp'])
+#test_static_rel = release_static_env.Program('test_' + PLATFORM_STR + '_static_release', obj)
 #
-##debug_static_env.Install(BIN_DIR, test_static_dbg)  
-##debug_static_env.Install(TEST_DIR, test_static_dbg)  
+#obj = debug_dynamic_env.Object('test_dynamic_dbg', [ SRC_DIR + '/libs/os_services/test/test.cpp'])
+#test_dynamic_dbg = debug_dynamic_env.Program('test_' + PLATFORM_STR + '_dynamic_debug', obj)
+#
+#obj = debug_static_env.Object('test_static_dbg', [ SRC_DIR + '/libs/os_services/test/test.cpp'])
+#test_static_dbg = debug_static_env.Program('test_' + PLATFORM_STR + '_static_debug', obj)
 
 
 
 
-#TODO: agregar RANDOM tests...
-#TODO: decidir que tipo de ejecutable se va a usar para testear ... dynamic vs static / RELEASE vs debug
-#TODO: ver como insertar el archivo .manifest en el ejecutable...
+
+
 
 
 
