@@ -1,6 +1,6 @@
 import os 
 
-Import('release_dynamic_env', 'release_static_env', 'debug_dynamic_env', 'debug_static_env', 'PLATFORM_STR', 'SRC_DIR', 'TEST_DIR') #'BIN_DIR',
+Import('release_dynamic_env', 'release_static_env', 'debug_dynamic_env', 'debug_static_env', 'PLATFORM_STR', 'SRC_DIR', 'BUILD_DIR', 'TEST_DIR') #'BIN_DIR',
 
 #print 'BOOST_ROOT: ' + BOOST_ROOT
 #print 'BOOST_ROOT_LIB: ' + BOOST_ROOT_LIB
@@ -13,12 +13,16 @@ Import('release_dynamic_env', 'release_static_env', 'debug_dynamic_env', 'debug_
 
 obj = release_dynamic_env.Object('stress_test_creation_watcher_dynamic_rel', [ SRC_DIR + '/libs/os_services/test/stress_test_creation_watcher.cpp'])
 stress_test_creation_watcher_dynamic_rel = release_dynamic_env.Program('stress_test_creation_watcher_' + PLATFORM_STR + '_dynamic_release', obj ) #CPPFLAGS = ['/MD'] ) #TODO: porque aca esta el MD ?????????
+#print TEST_DIR + "/" + str( stress_test_creation_watcher_dynamic_rel[0] )
+Command(TEST_DIR + "/" + str( stress_test_creation_watcher_dynamic_rel[0] ) + ".manifest", BUILD_DIR + "/" + str ( stress_test_creation_watcher_dynamic_rel[0] ) + ".manifest", Copy("$TARGET", "$SOURCE"))
 
 obj = release_static_env.Object('stress_test_creation_watcher_static_rel', [ SRC_DIR + '/libs/os_services/test/stress_test_creation_watcher.cpp'])
 stress_test_creation_watcher_static_rel = release_static_env.Program('stress_test_creation_watcher_' + PLATFORM_STR + '_static_release', obj )
 
 obj = debug_dynamic_env.Object('stress_test_creation_watcher_dynamic_dbg', [ SRC_DIR + '/libs/os_services/test/stress_test_creation_watcher.cpp'])
 stress_test_creation_watcher_dynamic_dbg = debug_dynamic_env.Program('stress_test_creation_watcher_' + PLATFORM_STR + '_dynamic_debug', obj)
+Command(TEST_DIR + "/" + str( stress_test_creation_watcher_dynamic_dbg[0] ) + ".manifest", BUILD_DIR + "/" + str ( stress_test_creation_watcher_dynamic_dbg[0] ) + ".manifest", Copy("$TARGET", "$SOURCE"))
+
 
 obj = debug_static_env.Object('stress_test_creation_watcher_static_dbg', [ SRC_DIR + '/libs/os_services/test/stress_test_creation_watcher.cpp'])
 stress_test_creation_watcher_static_dbg = debug_static_env.Program('stress_test_creation_watcher_' + PLATFORM_STR + '_static_debug', obj)
@@ -45,12 +49,14 @@ debug_static_env.Install(TEST_DIR, stress_test_creation_watcher_static_dbg)
 
 obj = release_dynamic_env.Object('stress_test_file_generator_dynamic_rel', [ SRC_DIR + '/libs/os_services/test/stress_test_file_generator.cpp'])
 stress_test_file_generator_dynamic_rel = release_dynamic_env.Program('stress_test_file_generator_' + PLATFORM_STR + '_dynamic_release', obj)
+Command(TEST_DIR + "/" + str( stress_test_file_generator_dynamic_rel[0] ) + ".manifest", BUILD_DIR + "/" + str ( stress_test_file_generator_dynamic_rel[0] ) + ".manifest", Copy("$TARGET", "$SOURCE"))
 
 obj = release_static_env.Object('stress_test_file_generator_static_rel', [ SRC_DIR + '/libs/os_services/test/stress_test_file_generator.cpp'])
 stress_test_file_generator_static_rel = release_static_env.Program('stress_test_file_generator_' + PLATFORM_STR + '_static_release', obj)
 
 obj = debug_dynamic_env.Object('stress_test_file_generator_dynamic_dbg', [ SRC_DIR + '/libs/os_services/test/stress_test_file_generator.cpp'])
 stress_test_file_generator_dynamic_dbg = debug_dynamic_env.Program('stress_test_file_generator_' + PLATFORM_STR + '_dynamic_debug', obj)
+Command(TEST_DIR + "/" + str( stress_test_file_generator_dynamic_dbg[0] ) + ".manifest", BUILD_DIR + "/" + str ( stress_test_file_generator_dynamic_dbg[0] ) + ".manifest", Copy("$TARGET", "$SOURCE"))
 
 obj = debug_static_env.Object('stress_test_file_generator_static_dbg', [ SRC_DIR + '/libs/os_services/test/stress_test_file_generator.cpp'])
 stress_test_file_generator_static_dbg = debug_static_env.Program('stress_test_file_generator_' + PLATFORM_STR + '_static_debug', obj)
@@ -79,12 +85,14 @@ debug_static_env.Install(TEST_DIR, stress_test_file_generator_static_dbg)
 
 obj = release_dynamic_env.Object('stress_test_file_generator_and_watcher_dynamic_rel', [ SRC_DIR + '/libs/os_services/test/stress_test_file_generator_and_watcher.cpp'])
 stress_test_file_generator_and_watcher_dynamic_rel = release_dynamic_env.Program('stress_test_file_generator_and_watcher_' + PLATFORM_STR + '_dynamic_release', obj)
+Command(TEST_DIR + "/" + str( stress_test_file_generator_and_watcher_dynamic_rel[0] ) + ".manifest", BUILD_DIR + "/" + str ( stress_test_file_generator_and_watcher_dynamic_rel[0] ) + ".manifest", Copy("$TARGET", "$SOURCE"))
 
 obj = release_static_env.Object('stress_test_file_generator_and_watcher_static_rel', [ SRC_DIR + '/libs/os_services/test/stress_test_file_generator_and_watcher.cpp'])
 stress_test_file_generator_and_watcher_static_rel = release_static_env.Program('stress_test_file_generator_and_watcher_' + PLATFORM_STR + '_static_release', obj)
 
 obj = debug_dynamic_env.Object('stress_test_file_generator_and_watcher_dynamic_dbg', [ SRC_DIR + '/libs/os_services/test/stress_test_file_generator_and_watcher.cpp'])
 stress_test_file_generator_and_watcher_dynamic_dbg = debug_dynamic_env.Program('stress_test_file_generator_and_watcher_' + PLATFORM_STR + '_dynamic_debug', obj)
+Command(TEST_DIR + "/" + str( stress_test_file_generator_and_watcher_dynamic_dbg[0] ) + ".manifest", BUILD_DIR + "/" + str ( stress_test_file_generator_and_watcher_dynamic_dbg[0] ) + ".manifest", Copy("$TARGET", "$SOURCE"))
 
 obj = debug_static_env.Object('stress_test_file_generator_and_watcher_static_dbg', [ SRC_DIR + '/libs/os_services/test/stress_test_file_generator_and_watcher.cpp'])
 stress_test_file_generator_and_watcher_static_dbg = debug_static_env.Program('stress_test_file_generator_and_watcher_' + PLATFORM_STR + '_static_debug', obj)
@@ -111,12 +119,14 @@ debug_static_env.Install(TEST_DIR, stress_test_file_generator_and_watcher_static
 
 obj = release_dynamic_env.Object('test_dynamic_rel', [ SRC_DIR + '/libs/os_services/test/test.cpp'])
 test_dynamic_rel = release_dynamic_env.Program('test_' + PLATFORM_STR + '_dynamic_release', obj)
+Command(TEST_DIR + "/" + str( test_dynamic_rel[0] ) + ".manifest", BUILD_DIR + "/" + str ( test_dynamic_rel[0] ) + ".manifest", Copy("$TARGET", "$SOURCE"))
 
 obj = release_static_env.Object('test_static_rel', [ SRC_DIR + '/libs/os_services/test/test.cpp'])
 test_static_rel = release_static_env.Program('test_' + PLATFORM_STR + '_static_release', obj)
 
 obj = debug_dynamic_env.Object('test_dynamic_dbg', [ SRC_DIR + '/libs/os_services/test/test.cpp'])
 test_dynamic_dbg = debug_dynamic_env.Program('test_' + PLATFORM_STR + '_dynamic_debug', obj)
+Command(TEST_DIR + "/" + str( test_dynamic_dbg[0] ) + ".manifest", BUILD_DIR + "/" + str ( test_dynamic_dbg[0] ) + ".manifest", Copy("$TARGET", "$SOURCE"))
 
 obj = debug_static_env.Object('test_static_dbg', [ SRC_DIR + '/libs/os_services/test/test.cpp'])
 test_static_dbg = debug_static_env.Program('test_' + PLATFORM_STR + '_static_debug', obj)
@@ -159,3 +169,6 @@ debug_dynamic_env.Alias('install', TEST_DIR)
 
 #debug_static_env.Alias('install', BIN_DIR)
 debug_static_env.Alias('install', TEST_DIR)
+
+
+
