@@ -222,7 +222,7 @@ debug_static_env.Append( LIBPATH = [BOOST_ROOT_LIB] )
 
 #TODO: src_dir
 #foo = SConscript('SConscript', build_dir='Z:/Development/CPP/' + PROJECT_NAME + '/bin', duplicate=0, exports=['release_dynamic_env', 'release_static_env', 'debug_dynamic_env', 'debug_static_env', 'BOOST_ROOT_LIB', 'SRC_DIR', 'BUILD_DIR'])
-SConscript('SConscript', build_dir = BUILD_DIR, duplicate=0, exports=['release_dynamic_env', 'release_static_env', 'debug_dynamic_env', 'debug_static_env', 'PLATFORM_STR', 'SRC_DIR', 'BIN_DIR', 'TEST_DIR'])
+SConscript('SConscript', build_dir = BUILD_DIR, duplicate=0, exports=['release_dynamic_env', 'release_static_env', 'debug_dynamic_env', 'debug_static_env', 'PLATFORM_STR', 'SRC_DIR', 'BUILD_DIR', 'TEST_DIR']) #, 'BIN_DIR'
 
 
 #print release_dynamic_env.Dump()
