@@ -27,15 +27,23 @@ PROJECT_NAME = ARGUMENTS.get('PROJECT_NAME', '')
 BOOST_ROOT = os.environ['BOOST_ROOT']
 BOOST_ROOT_LIB = BOOST_ROOT + '/stage/lib'
 BOOST_VERSION = os.environ['BOOST_VERSION']
-SRC_DIR = os.environ['DEV_CPP_HOME'] + '/' + PROJECT_NAME + '/src/'
-#BUILD_DIR = os.environ['DEV_CPP_HOME'] + '/' + PROJECT_NAME + "/build/release"
-BUILD_DIR = os.environ['DEV_CPP_HOME'] + '/' + PROJECT_NAME + "/build"
+
+PROJECT_PATH = os.environ['DEV_CPP_HOME'] + '/' + PROJECT_NAME
+
+SRC_DIR = PROJECT_PATH + '/src/'
+#BUILD_DIR = PROJECT_PATH + "/build/release"
+BUILD_DIR = PROJECT_PATH + "/build"
+
+
+BIN_DIR = PROJECT_PATH + "/bin"
+
+
+
 #RELEASE_BUILD_DIR = os.environ['DEV_CPP_HOME'] + '\' + PROJECT_NAME + '\build\release'
 #DEBUG_BUILD_DIR = os.environ['DEV_CPP_HOME'] + '\' + PROJECT_NAME + '\build\debug'
 
 
 OBJ_DIR = os.path.join(os.getcwd(), 'obj/');
-#env = Environment(ENV=os.environ, CCFLAGS=['-O3','-Wall'], OBJPREFIX = OBJ_DIR)
 
 
 #print "os.environ['DEV_CPP_HOME'] : " + os.environ['DEV_CPP_HOME'] 
@@ -52,7 +60,7 @@ OBJ_DIR = os.path.join(os.getcwd(), 'obj/');
 #TODO: Win32: MinGW compiler
 
 if Platform().name == 'win32':
-		print "--WIN32 Platform"
+		#print "--WIN32 Platform"
 		
 		#RELEASE_BUILD_DIR = BUILD_DIR + '/windows/release/'
 		#DEBUG_BUILD_DIR = BUILD_DIR + '/windows/debug/'
@@ -63,10 +71,13 @@ if Platform().name == 'win32':
 		#print COMPILER_NAME
 		#print COMPILER_VERSION
 		
-		PLATFORM_STR = Platform().name + '-' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "")
+		PLATFORM_STR = Platform().name + '_' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "")
 		#print 'PLATFORM_STR: ' + PLATFORM_STR
 
 		OBJECT_FILE_EXT = "obj"
+		
+		TEST_DIR = PROJECT_PATH + "/test/windows"
+
 
 		#COMPILE RELASE:  /O2 /Oi /GL /D "_MBCS" /FD /EHsc /MD /Gy  /W3 /nologo /c /Zi /TP
 
@@ -121,7 +132,7 @@ if Platform().name == 'win32':
 
 
 elif Platform().name == 'posix':
-		print "--POSIX Platform"
+		#print "--POSIX Platform"
 
 		#RELEASE_BUILD_DIR = BUILD_DIR + '/posix/release/'
 		#DEBUG_BUILD_DIR = BUILD_DIR + '/posix/debug/'
@@ -132,11 +143,13 @@ elif Platform().name == 'posix':
 		COMPILER_VERSION = ARGUMENTS.get('COMPILER_VERSION', '4.4')
 		#print 'COMPILER_VERSION: ' + COMPILER_VERSION
 		
-		PLATFORM_STR = Platform().name + '-' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "")
+		PLATFORM_STR = Platform().name + '_' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "")
 		#print 'PLATFORM_STR: ' + PLATFORM_STR
 	
 		OBJECT_FILE_EXT = "o"
 
+
+		TEST_DIR = PROJECT_PATH + "/test/posix"
 	
 	
 		common_env = Environment ( OBJPREFIX = OBJ_DIR ) #TODO: ver que pasa si hay dos versiones de GCC u otro compilador instalados
@@ -209,7 +222,7 @@ debug_static_env.Append( LIBPATH = [BOOST_ROOT_LIB] )
 
 #TODO: src_dir
 #foo = SConscript('SConscript', build_dir='Z:/Development/CPP/' + PROJECT_NAME + '/bin', duplicate=0, exports=['release_dynamic_env', 'release_static_env', 'debug_dynamic_env', 'debug_static_env', 'BOOST_ROOT_LIB', 'SRC_DIR', 'BUILD_DIR'])
-SConscript('SConscript', build_dir = BUILD_DIR, duplicate=0, exports=['release_dynamic_env', 'release_static_env', 'debug_dynamic_env', 'debug_static_env', 'PLATFORM_STR', 'SRC_DIR'])
+SConscript('SConscript', build_dir = BUILD_DIR, duplicate=0, exports=['release_dynamic_env', 'release_static_env', 'debug_dynamic_env', 'debug_static_env', 'PLATFORM_STR', 'SRC_DIR', 'BIN_DIR', 'TEST_DIR'])
 
 
 #print release_dynamic_env.Dump()
