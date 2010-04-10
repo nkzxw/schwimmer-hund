@@ -1,4 +1,5 @@
-import os 
+import os
+import string
 
 Import('release_dynamic_env', 'release_static_env', 'debug_dynamic_env', 'debug_static_env', 'PLATFORM_STR', 'SRC_DIR', 'BUILD_DIR', 'TEST_DIR') #'BIN_DIR',
 
@@ -14,7 +15,7 @@ Import('release_dynamic_env', 'release_static_env', 'debug_dynamic_env', 'debug_
 obj = release_dynamic_env.Object('stress_test_creation_watcher_dynamic_rel', [ SRC_DIR + '/libs/os_services/test/stress_test_creation_watcher.cpp'])
 stress_test_creation_watcher_dynamic_rel = release_dynamic_env.Program('stress_test_creation_watcher_' + PLATFORM_STR + '_dynamic_release', obj ) #CPPFLAGS = ['/MD'] ) #TODO: porque aca esta el MD ?????????
 #print TEST_DIR + "/" + str( stress_test_creation_watcher_dynamic_rel[0] )
-Command(TEST_DIR + "/" + str( stress_test_creation_watcher_dynamic_rel[0] ) + ".manifest", BUILD_DIR + "/" + str ( stress_test_creation_watcher_dynamic_rel[0] ) + ".manifest", Copy("$TARGET", "$SOURCE"))
+Command(TEST_DIR + "/" + string.replace(str( stress_test_creation_watcher_dynamic_rel[0] ), "_" + PLATFORM_STR, "") + ".manifest", BUILD_DIR + "/" + str ( stress_test_creation_watcher_dynamic_rel[0] ) + ".manifest", Copy("$TARGET", "$SOURCE"))
 
 obj = release_static_env.Object('stress_test_creation_watcher_static_rel', [ SRC_DIR + '/libs/os_services/test/stress_test_creation_watcher.cpp'])
 stress_test_creation_watcher_static_rel = release_static_env.Program('stress_test_creation_watcher_' + PLATFORM_STR + '_static_release', obj )
@@ -149,7 +150,7 @@ debug_static_env.Install(TEST_DIR, test_static_dbg)
 
 
 
-
+#TODO: agregar RANDOM tests...
 
 
 
