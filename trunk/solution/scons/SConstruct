@@ -109,7 +109,51 @@ if Platform().name == 'win32':
 		release_dynamic_env = common_release_env.Clone() 
 		release_static_env = common_release_env.Clone() 
 
-		release_dynamic_env.Append( CPPFLAGS = ['/MD'] )			# Visual Studio: Runtime Library: Multi-threaded DLL (/MD)
+		release_dynamic_env.Append( CPPFLAGS = ['/MD'] )						# Visual Studio: Runtime Library: Multi-threaded DLL (/MD)
+
+
+		release_dynamic_env.Append( LINKFLAGS = ['/MANIFEST'] )			# Visual Studio: Generate Manifest (/MANIFEST)
+		release_dynamic_env.Append( LINKFLAGS = ['/MANIFESTFILE:"stress_random_instruction_generator_win32_vc90_dynamic_debug.exe.intermediate.manifest"'] )
+		release_dynamic_env.Append( LINKFLAGS = ['/MANIFESTUAC:level=asInvoker'] )						
+		release_dynamic_env.Append( LINKFLAGS = ['/MANIFESTUAC:uiAccess=false'] )							
+		release_dynamic_env.Append( LINKFLAGS = ['/OPT:REF'] )
+		release_dynamic_env.Append( LINKFLAGS = ['/OPT:ICF'] ) 
+		release_dynamic_env.Append( LINKFLAGS = ['/LTCG'] )
+		release_dynamic_env.Append( LINKFLAGS = ['/DYNAMICBASE'] )
+		release_dynamic_env.Append( LINKFLAGS = ['/NXCOMPAT'] )
+		release_dynamic_env.Append( LINKFLAGS = ['/MACHINE:X86'] )
+		
+		
+				# kernel32.lib
+		# user32.lib
+		# gdi32.lib
+		# winspool.lib
+		# comdlg32.lib
+		# advapi32.lib
+		# shell32.lib
+		# ole32.lib
+		# oleaut32.lib
+		# uuid.lib
+		# odbc32.lib
+		# odbccp32.lib
+		
+		release_dynamic_env.Append( LIBS=['kernel32'] )
+		release_dynamic_env.Append( LIBS=['user32'] )
+		release_dynamic_env.Append( LIBS=['gdi32'] )
+		release_dynamic_env.Append( LIBS=['winspool'] )
+		release_dynamic_env.Append( LIBS=['comdlg32'] )
+		release_dynamic_env.Append( LIBS=['advapi32'] )
+		release_dynamic_env.Append( LIBS=['shell32'] )
+		release_dynamic_env.Append( LIBS=['ole32'] )
+		release_dynamic_env.Append( LIBS=['oleaut32'] )
+		release_dynamic_env.Append( LIBS=['uuid'] )
+		release_dynamic_env.Append( LIBS=['odbc32'] )
+		release_dynamic_env.Append( LIBS=['odbccp32'] )		
+		
+		
+		
+		
+		
 		release_static_env.Append( CPPFLAGS = ['/MT'] )		  	# Visual Studio: Runtime Library: Multi-threaded (/MT)
 
 
@@ -127,7 +171,8 @@ if Platform().name == 'win32':
 		debug_dynamic_env = common_debug_env.Clone() 
 		debug_static_env = common_debug_env.Clone() 
 
-		debug_dynamic_env.Append( CPPFLAGS = ['/MDd'] )				# Visual Studio: Runtime Library: Multi-threaded Debug DLL (/MDd)
+		debug_dynamic_env.Append( CPPFLAGS = ['/MDd'] )					# Visual Studio: Runtime Library: Multi-threaded Debug DLL (/MDd)
+		debug_dynamic_env.Append( LINKFLAGS = ['/MANIFEST'] )		# Visual Studio: Generate Manifest (/MANIFEST)
 		debug_static_env.Append( CPPFLAGS = ['/MTd'] )		  		# Visual Studio: Runtime Library: Multi-threaded Debug (/MTd)
 
 
