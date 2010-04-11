@@ -14,8 +14,13 @@
 #			INCLUDE="C:/Program Files/Microsoft SDKs/Windows/v6.0A/Include;C:/Program Files/Microsoft Visual Studio 9.0/VC/include"
 #			LIB="C:/Program Files/Microsoft SDKs/Windows/v6.0A/Lib;C:/Program Files/Microsoft Visual Studio 9.0/VC/lib"
 
-#TODO: eliminar los archivos OBJ y demas archivos que deban ser eliminados.
-#TODO: copiar los binarios correspondientes a los directorios BIN y/o TEST
+#TODOs SECTION
+	#TODO: Win32: Intel compiler
+	#TODO: Win32: MinGW compiler
+
+#END TODOs SECTION
+
+
 
 import os
 import string
@@ -25,25 +30,15 @@ PROJECT_NAME = ARGUMENTS.get('PROJECT_NAME', '')
 
 
 BOOST_ROOT = os.environ['BOOST_ROOT']
-BOOST_ROOT_LIB = BOOST_ROOT + '/stage/lib'
+
+BOOST_ROOT_LIB = os.path.join(BOOST_ROOT, 'stage/lib/');     #BOOST_ROOT + '/stage/lib';
 BOOST_VERSION = os.environ['BOOST_VERSION']
-
-PROJECT_PATH = os.environ['DEV_CPP_HOME'] + '/' + PROJECT_NAME
-
-SRC_DIR = PROJECT_PATH + '/src/'
-#BUILD_DIR = PROJECT_PATH + "/build/release"
-BUILD_DIR = PROJECT_PATH + "/build"
-
-
-BIN_DIR = PROJECT_PATH + "/bin"
-
-
-
-#RELEASE_BUILD_DIR = os.environ['DEV_CPP_HOME'] + '\' + PROJECT_NAME + '\build\release'
-#DEBUG_BUILD_DIR = os.environ['DEV_CPP_HOME'] + '\' + PROJECT_NAME + '\build\debug'
-
-
-OBJ_DIR = os.path.join(os.getcwd(), 'obj/');
+PROJECT_PATH = os.path.join(os.environ['DEV_CPP_HOME'], PROJECT_NAME);    #os.environ['DEV_CPP_HOME'] + '/' + PROJECT_NAME
+SRC_DIR = os.path.join(PROJECT_PATH, 'src/');    #PROJECT_PATH + '/src/'
+BUILD_DIR = os.path.join(PROJECT_PATH, 'build/');    #PROJECT_PATH + "/build"
+BIN_DIR = os.path.join(PROJECT_PATH, 'bin/');    #PROJECT_PATH + "/bin"
+#OBJ_DIR = os.path.join(os.getcwd(), 'obj/');
+OBJ_DIR = os.path.join(BUILD_DIR, 'obj/');
 
 
 #print "os.environ['DEV_CPP_HOME'] : " + os.environ['DEV_CPP_HOME'] 
@@ -52,31 +47,22 @@ OBJ_DIR = os.path.join(os.getcwd(), 'obj/');
 #print 'BOOST_VERSION: ' + BOOST_VERSION
 #print 'SRC_DIR: ' + SRC_DIR
 #print 'BUILD_DIR: ' + BUILD_DIR
-#print 'RELEASE_BUILD_DIR: ' + RELEASE_BUILD_DIR
-#print 'DEBUG_BUILD_DIR: ' + DEBUG_BUILD_DIR
 
 
-#TODO: Win32: Intel compiler
-#TODO: Win32: MinGW compiler
 
 if Platform().name == 'win32':
 		#print "--WIN32 Platform"
 		
-		#RELEASE_BUILD_DIR = BUILD_DIR + '/windows/release/'
-		#DEBUG_BUILD_DIR = BUILD_DIR + '/windows/debug/'
-		#BUILD_DIR = BUILD_DIR + '/windows/release/'
-		
 		COMPILER_NAME = ARGUMENTS.get('COMPILER_NAME', 'vc')					#TODO: poner variables globales DEFAULT_WIN32_COMPILER_NAME
 		COMPILER_VERSION = ARGUMENTS.get('COMPILER_VERSION', '9.0')	  #TODO: poner variables globales DEFAULT_WIN32_COMPILER_VERSION
+		PLATFORM_STR = Platform().name + '_' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "")
+		TEST_DIR = os.path.join(PROJECT_PATH, 'test/windows/');    #PROJECT_PATH + "/test/windows"
+
 		#print COMPILER_NAME
 		#print COMPILER_VERSION
 		
-		PLATFORM_STR = Platform().name + '_' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "")
 		#print 'PLATFORM_STR: ' + PLATFORM_STR
-
-		OBJECT_FILE_EXT = "obj"
-		
-		TEST_DIR = PROJECT_PATH + "/test/windows"
+	
 
 
 		#COMPILE RELASE:  /O2 /Oi /GL /D "_MBCS" /FD /EHsc /MD /Gy  /W3 /nologo /c /Zi /TP
@@ -98,7 +84,7 @@ if Platform().name == 'win32':
 		#-------------------------------- Release
 	
 		common_release_env = common_env.Clone() 
-		common_release_env['BINDIR'] = BUILD_DIR   #RELEASE_BUILD_DIR
+		common_release_env['BINDIR'] = BUILD_DIR
 		common_release_env.Append( CPPFLAGS = ['/O2'] )		  	# Visual Studio: Optimization: Maximize Speed (/O2)
 		common_release_env.Append( CPPFLAGS = ['/Oi'] )		  	# Visual Studio: Enable Intrinsic Functions: Yes (/Oi)
 		common_release_env.Append( CPPFLAGS = ['/GL'] )		  	# Visual Studio: Whole Program Optimization: Enable link-time code generation (/GL)
@@ -111,11 +97,9 @@ if Platform().name == 'win32':
 
 		release_dynamic_env.Append( CPPFLAGS = ['/MD'] )						# Visual Studio: Runtime Library: Multi-threaded DLL (/MD)
 
-
 		release_dynamic_env.Append( LINKFLAGS = ['/MANIFEST'] )			# Visual Studio: Generate Manifest (/MANIFEST)
-		release_dynamic_env.Append( LINKFLAGS = ['/MANIFESTFILE:"stress_random_instruction_generator_win32_vc90_dynamic_debug.exe.intermediate.manifest"'] )
-		release_dynamic_env.Append( LINKFLAGS = ['/MANIFESTUAC:level=asInvoker'] )						
-		release_dynamic_env.Append( LINKFLAGS = ['/MANIFESTUAC:uiAccess=false'] )							
+		#release_dynamic_env.Append( LINKFLAGS = ['/MANIFESTFILE:"${TARGET}.intermediate.manifest"'] )
+		release_dynamic_env.Append( LINKFLAGS = ['/MANIFESTUAC:level=\'asInvoker\' uiAccess=\'false\''] )
 		release_dynamic_env.Append( LINKFLAGS = ['/OPT:REF'] )
 		release_dynamic_env.Append( LINKFLAGS = ['/OPT:ICF'] ) 
 		release_dynamic_env.Append( LINKFLAGS = ['/LTCG'] )
@@ -124,7 +108,7 @@ if Platform().name == 'win32':
 		release_dynamic_env.Append( LINKFLAGS = ['/MACHINE:X86'] )
 		
 		
-				# kernel32.lib
+		# kernel32.lib
 		# user32.lib
 		# gdi32.lib
 		# winspool.lib
@@ -137,21 +121,18 @@ if Platform().name == 'win32':
 		# odbc32.lib
 		# odbccp32.lib
 		
-		release_dynamic_env.Append( LIBS=['kernel32'] )
-		release_dynamic_env.Append( LIBS=['user32'] )
-		release_dynamic_env.Append( LIBS=['gdi32'] )
-		release_dynamic_env.Append( LIBS=['winspool'] )
-		release_dynamic_env.Append( LIBS=['comdlg32'] )
-		release_dynamic_env.Append( LIBS=['advapi32'] )
-		release_dynamic_env.Append( LIBS=['shell32'] )
-		release_dynamic_env.Append( LIBS=['ole32'] )
-		release_dynamic_env.Append( LIBS=['oleaut32'] )
-		release_dynamic_env.Append( LIBS=['uuid'] )
-		release_dynamic_env.Append( LIBS=['odbc32'] )
-		release_dynamic_env.Append( LIBS=['odbccp32'] )		
-		
-		
-		
+		#release_dynamic_env.Append( LIBS=['kernel32'] )
+		#release_dynamic_env.Append( LIBS=['user32'] )
+		#release_dynamic_env.Append( LIBS=['gdi32'] )
+		#release_dynamic_env.Append( LIBS=['winspool'] )
+		#release_dynamic_env.Append( LIBS=['comdlg32'] )
+		#release_dynamic_env.Append( LIBS=['advapi32'] )
+		#release_dynamic_env.Append( LIBS=['shell32'] )
+		#release_dynamic_env.Append( LIBS=['ole32'] )
+		#release_dynamic_env.Append( LIBS=['oleaut32'] )
+		#release_dynamic_env.Append( LIBS=['uuid'] )
+		#release_dynamic_env.Append( LIBS=['odbc32'] )
+		#release_dynamic_env.Append( LIBS=['odbccp32'] )		
 		
 		
 		release_static_env.Append( CPPFLAGS = ['/MT'] )		  	# Visual Studio: Runtime Library: Multi-threaded (/MT)
@@ -179,22 +160,14 @@ if Platform().name == 'win32':
 elif Platform().name == 'posix':
 		#print "--POSIX Platform"
 
-		#RELEASE_BUILD_DIR = BUILD_DIR + '/posix/release/'
-		#DEBUG_BUILD_DIR = BUILD_DIR + '/posix/debug/'
-		#BUILD_DIR = BUILD_DIR + '/posix/release/'
-
 		COMPILER_NAME = ARGUMENTS.get('COMPILER_NAME', 'gcc')
-
 		COMPILER_VERSION = ARGUMENTS.get('COMPILER_VERSION', '4.4')
-		#print 'COMPILER_VERSION: ' + COMPILER_VERSION
-		
 		PLATFORM_STR = Platform().name + '_' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "")
+		TEST_DIR = os.path.join(PROJECT_PATH, 'test/posix/');    #PROJECT_PATH + "/test/posix"
+
+		#print 'COMPILER_VERSION: ' + COMPILER_VERSION
 		#print 'PLATFORM_STR: ' + PLATFORM_STR
 	
-		OBJECT_FILE_EXT = "o"
-
-
-		TEST_DIR = PROJECT_PATH + "/test/posix"
 	
 	
 		common_env = Environment ( OBJPREFIX = OBJ_DIR ) #TODO: ver que pasa si hay dos versiones de GCC u otro compilador instalados
@@ -207,7 +180,7 @@ elif Platform().name == 'posix':
 
 		#TODO: esto esta usando DLL's en DEBUG...
 		common_release_env = common_env.Clone() 
-		common_release_env['BINDIR'] = BUILD_DIR    #RELEASE_BUILD_DIR
+		common_release_env['BINDIR'] = BUILD_DIR
 		common_release_env.Append( LIBS=['boost_thread-' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "") + '-mt-d-' + BOOST_VERSION ] )		#VER DE CAMBIAR ALGO EN BOOST_VERSION... sacarle los puntos
 		common_release_env.Append( LIBS=['boost_system-' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "") + '-mt-d-' + BOOST_VERSION ] )
 		common_release_env.Append( LIBS=['boost_filesystem-' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "") + '-mt-d-' + BOOST_VERSION] )
@@ -267,7 +240,7 @@ debug_static_env.Append( LIBPATH = [BOOST_ROOT_LIB] )
 
 #TODO: src_dir
 #foo = SConscript('SConscript', build_dir='Z:/Development/CPP/' + PROJECT_NAME + '/bin', duplicate=0, exports=['release_dynamic_env', 'release_static_env', 'debug_dynamic_env', 'debug_static_env', 'BOOST_ROOT_LIB', 'SRC_DIR', 'BUILD_DIR'])
-SConscript('SConscript', build_dir = BUILD_DIR, duplicate=0, exports=['release_dynamic_env', 'release_static_env', 'debug_dynamic_env', 'debug_static_env', 'PLATFORM_STR', 'SRC_DIR', 'BUILD_DIR', 'TEST_DIR']) #, 'BIN_DIR'
+SConscript('SConscript', build_dir = BUILD_DIR, duplicate=0, exports=['release_dynamic_env', 'release_static_env', 'debug_dynamic_env', 'debug_static_env', 'PLATFORM_STR', 'SRC_DIR', 'BUILD_DIR', 'TEST_DIR'])
 
 
 #print release_dynamic_env.Dump()
@@ -414,36 +387,6 @@ SConscript('SConscript', build_dir = BUILD_DIR, duplicate=0, exports=['release_d
 #env = Environment(platform = 'cygwin')
 #env['CXX'] = 'g++'
 #------------------------------------------------------------------------------- 
-
-
-
-#TODO: como ponemos los PATHS no fijos? habria que incluir alguna variable de ambiente definida en el sistema operativo, como BOOST_ROOT
-
-
-
-#import os
-#num_cpu = int(os.environ.get('NUM_CPU', 2))
-#SetOption('num_jobs', num_cpu)
-#print "running with -j", GetOption('num_jobs')
-
-#env = Environment()
-#env = Environment(platform = 'os2')
-#env = Environment(platform = 'posix')
-#print BOOST_ROOT
-#print os.environ['PATH']
-#print env['ENV']['PATH']
-#env_test = Environment()
-#print 'INCLUDE: '
-##print env_test['ENV']['INCLUDE']
-#print os.environ['INCLUDE']
-#print 'LIB: '
-#print env_test['ENV']['LIB']
-
-
-
-
-
-
 
 
 
