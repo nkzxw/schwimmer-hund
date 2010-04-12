@@ -153,6 +153,7 @@ BOOST_AUTO_TEST_SUITE_END() //Paths
 //		//monitor->stop(); //TODO: implementar
 //
 //		std::cout << "Press Enter to Stop Monitoring..." << std::endl;
+//      std::cin.sync();
 //		std::cin.get();
 //
 //	}
@@ -193,6 +194,7 @@ BOOST_AUTO_TEST_SUITE_END() //Paths
 //		monitor->start();
 //
 //		std::cout << "Press Enter to Stop Monitoring..." << std::endl;
+//      std::cin.sync();
 //		std::cin.get();
 //
 //	}
@@ -237,6 +239,7 @@ BOOST_AUTO_TEST_SUITE_END() //Paths
 //		monitor->start();
 //
 //		std::cout << "Press Enter to Stop Monitoring..." << std::endl;
+//      std::cin.sync();
 //		std::cin.get();
 //
 //	}
@@ -281,6 +284,7 @@ BOOST_AUTO_TEST_SUITE_END() //Paths
 //		monitor->start();
 //
 //		std::cout << "Press Enter to Stop Monitoring..." << std::endl;
+//      std::cin.sync();
 //		std::cin.get();
 //
 //	}
@@ -325,6 +329,7 @@ BOOST_AUTO_TEST_SUITE_END() //Paths
 //		monitor->start();
 //
 //		std::cout << "Press Enter to Stop Monitoring..." << std::endl;
+//      std::cin.sync();
 //		std::cin.get();
 //
 //	}
@@ -370,6 +375,7 @@ BOOST_AUTO_TEST_SUITE_END() //Paths
 //		monitor->start(); //TODO: todavía no está definido que tiene que hacer la lib en este caso...
 //
 //		std::cout << "Press Enter to Stop Monitoring..." << std::endl;
+//      std::cin.sync();
 //		std::cin.get();
 //
 //	}

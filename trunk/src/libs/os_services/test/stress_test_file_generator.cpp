@@ -33,6 +33,7 @@ int main(int argc, char* argv[] )
 	stress_thread(dir, max_files);
 
 	std::cout << "Press Enter to Exit" << std::endl;
+	std::cin.sync();
 	std::cin.get();
 
 	return 0;

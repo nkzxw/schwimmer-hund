@@ -150,6 +150,7 @@ int main(int argc, char* argv[] )
 	log_file.close();
 
 	std::cout << "Press Enter to Exit" << std::endl;
+	std::cin.sync();
 	std::cin.get();
 
 	return 0;
