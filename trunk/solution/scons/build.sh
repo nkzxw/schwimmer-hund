@@ -17,7 +17,7 @@ echo SYSTEM_NAME: $SYSTEM_NAME
 #fi
 
 
-if ( $GCC_VERSION == "" )
+if [ $GCC_VERSION = "" ]
 then
 	scons -Q PROJECT_NAME=schwimmer-hund COMPILER_NAME=gcc COMPILER_VERSION=4.4 SYSTEM=$SYSTEM_NAME
 	scons -Q PROJECT_NAME=schwimmer-hund COMPILER_NAME=gcc COMPILER_VERSION=4.4 SYSTEM=$SYSTEM_NAME install
