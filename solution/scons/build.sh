@@ -13,7 +13,7 @@ export SYSTEM_NAME="$(uname)"
 
 
 
-echo "SYSTEM_NAME: " + $SYSTEM_NAME
+echo SYSTEM_NAME: $SYSTEM_NAME
 
 if [ $GCC_VERSION == "" ]; then
 	#echo "GCC_VERSION == ''"
