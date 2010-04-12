@@ -9,6 +9,7 @@
 #include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/random.hpp>
+#include <boost/thread.hpp>
 
 #include "test_paths_platform_selector.hpp" //definition of the paths
 
@@ -23,6 +24,8 @@ void edit_file( std::string file_name )
 	file_stream << "." << std::endl;
 	file_stream.flush();
 	file_stream.close();
+
+	boost::this_thread::sleep(5000);
 }
 
 
