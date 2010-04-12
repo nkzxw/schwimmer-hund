@@ -62,7 +62,7 @@ if Platform().name == 'win32':
 		COMPILER_NAME = ARGUMENTS.get('COMPILER_NAME', 'vc')					#TODO: poner variables globales DEFAULT_WIN32_COMPILER_NAME
 		COMPILER_VERSION = ARGUMENTS.get('COMPILER_VERSION', '9.0')	  #TODO: poner variables globales DEFAULT_WIN32_COMPILER_VERSION
 		PLATFORM_STR = Platform().name + '_' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "")
-		TEST_DIR = os.path.join(PROJECT_PATH, 'test/windows/');    #PROJECT_PATH + "/test/windows"
+		#TEST_DIR = os.path.join(PROJECT_PATH, 'test/windows/');    #PROJECT_PATH + "/test/windows"
 
 		#print COMPILER_NAME
 		#print COMPILER_VERSION
@@ -169,7 +169,7 @@ elif Platform().name == 'posix':
 		COMPILER_NAME = ARGUMENTS.get('COMPILER_NAME', 'gcc')
 		COMPILER_VERSION = ARGUMENTS.get('COMPILER_VERSION', '4.4')
 		PLATFORM_STR = Platform().name + '_' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "")
-		TEST_DIR = os.path.join(PROJECT_PATH, 'test/posix/');    #PROJECT_PATH + "/test/posix"
+		#TEST_DIR = os.path.join(PROJECT_PATH, 'test/posix/');    #PROJECT_PATH + "/test/posix"
 
 		#print 'COMPILER_VERSION: ' + COMPILER_VERSION
 		#print 'PLATFORM_STR: ' + PLATFORM_STR
