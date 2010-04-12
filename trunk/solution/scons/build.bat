@@ -6,15 +6,15 @@ if "%MSVC_VERSION%" == "" goto default
 @REM call scons -c
 
 @REM TODO: esta fijo "vc" en este caso y no debería estarlo. AGREGAR UN COMPILER_NAME
-call scons -Q PROJECT_NAME=schwimmer-hund COMPILER_NAME=vc COMPILER_VERSION=%MSVC_VERSION% OS_NAME=windows
-call scons -Q PROJECT_NAME=schwimmer-hund COMPILER_NAME=vc COMPILER_VERSION=%MSVC_VERSION% OS_NAME=windows install
+call scons -Q PROJECT_NAME=schwimmer-hund COMPILER_NAME=vc COMPILER_VERSION=%MSVC_VERSION% OS_NAME=Windows
+call scons -Q PROJECT_NAME=schwimmer-hund COMPILER_NAME=vc COMPILER_VERSION=%MSVC_VERSION% OS_NAME=Windows install
 
 goto :eof
 
 
 :default
-call scons -Q PROJECT_NAME=schwimmer-hund COMPILER_NAME=vc COMPILER_VERSION=9.0 OS_NAME=windows
-call scons -Q PROJECT_NAME=schwimmer-hund COMPILER_NAME=vc COMPILER_VERSION=9.0 OS_NAME=windows install
+call scons -Q PROJECT_NAME=schwimmer-hund COMPILER_NAME=vc COMPILER_VERSION=9.0 OS_NAME=Windows
+call scons -Q PROJECT_NAME=schwimmer-hund COMPILER_NAME=vc COMPILER_VERSION=9.0 OS_NAME=Windows install
 
 
 
