@@ -274,6 +274,11 @@ public: //private:  //TODO:
 								old_name.reset();
 							}
 
+							if ( event->mask & IN_MODIFY )
+							{
+								std::cout << "------------- IN_MODIFY -----------------" << std::endl;
+							}
+
 							notify_file_system_event_args( event->mask, directory_name, file_name);
 						}
 					}
@@ -307,26 +312,6 @@ protected:
 
 		//std::cout << "-------------------------------------------- action: " << action << std::endl;
 
-		
-
-			if ( action == change_types::created )
-			{
-				do_callback(created_handler_, filesystem_event_args(change_types::created, directory, name));
-			}
-			else if ( action == change_types::deleted )
-			{
-				do_callback(deleted_handler_, filesystem_event_args(change_types::deleted, directory, name));
-			}
-			else if ( action == change_types::created )
-			{
-				do_callback(changed_handler_, filesystem_event_args(change_types::changed, directory, name));
-			}
-			else
-			{
-				//TODO:
-				//Debug.Fail("Unknown FileSystemEvent action type!  Value: " + action);
-			}
-
 
 		//if (action & IN_CREATE)
 		//{
@@ -345,6 +330,29 @@ protected:
 		//	//TODO:
 		//	//Debug.Fail("Unknown FileSystemEvent action type!  Value: " + action);
 		//}
+
+		
+
+		if ( action == change_types::created )
+		{
+			do_callback(created_handler_, filesystem_event_args(change_types::created, directory, name));
+		}
+		else if ( action == change_types::deleted )
+		{
+			do_callback(deleted_handler_, filesystem_event_args(change_types::deleted, directory, name));
+		}
+		else if ( action == change_types::changed )
+		{
+			do_callback(changed_handler_, filesystem_event_args(change_types::changed, directory, name));
+		}
+		else
+		{
+			//TODO:
+			//Debug.Fail("Unknown FileSystemEvent action type!  Value: " + action);
+		}
+
+
+
 	}
 
 	//TODO:
