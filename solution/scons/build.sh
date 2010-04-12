@@ -5,7 +5,13 @@
 
 clear
 
-export SYSTEM_NAME='uname'
+#export SYSTEM_NAME='uname'
+
+uname
+export SYSTEM_NAME="$(uname)"
+
+
+
 
 echo "SYSTEM_NAME: " + $SYSTEM_NAME
 
