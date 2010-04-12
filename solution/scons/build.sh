@@ -11,7 +11,8 @@ uname
 export SYSTEM_NAME="$(uname)"
 echo SYSTEM_NAME: $SYSTEM_NAME
                                 
-if [ "a" == "a" ]; then
+if [ "a" == "a" ]
+then
 	echo dentro del if
 fi
 
