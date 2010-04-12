@@ -54,15 +54,15 @@ TEST_DIR = os.path.join(PROJECT_PATH, 'test', OS_NAME);
 
 
 #print "os.environ['DEV_CPP_HOME'] : " + os.environ['DEV_CPP_HOME'] 
-print 'BOOST_ROOT: ' + BOOST_ROOT
-print 'BOOST_ROOT_LIB: ' + BOOST_ROOT_LIB
-print 'BOOST_VERSION: ' + BOOST_VERSION
-print 'SRC_DIR: ' + SRC_DIR
-print 'BUILD_DIR: ' + BUILD_DIR
-print 'PROJECT_PATH: ' + PROJECT_PATH
-print 'BIN_DIR: ' + BIN_DIR
-print 'OBJ_DIR: ' + OBJ_DIR
-print 'TEST_DIR: ' + TEST_DIR
+#print 'BOOST_ROOT: ' + BOOST_ROOT
+#print 'BOOST_ROOT_LIB: ' + BOOST_ROOT_LIB
+#print 'BOOST_VERSION: ' + BOOST_VERSION
+#print 'SRC_DIR: ' + SRC_DIR
+#print 'BUILD_DIR: ' + BUILD_DIR
+#print 'PROJECT_PATH: ' + PROJECT_PATH
+#print 'BIN_DIR: ' + BIN_DIR
+#print 'OBJ_DIR: ' + OBJ_DIR
+#print 'TEST_DIR: ' + TEST_DIR
 
 
 
