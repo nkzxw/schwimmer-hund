@@ -23,10 +23,18 @@
 
 
 import os
+import platform
 import string
 
+uname = platform.uname()
+
+#print "uname: " + uname[0]
+print "uname: " + str (uname)
+
+
 PROJECT_NAME = ARGUMENTS.get('PROJECT_NAME', '')
-OS_NAME = ARGUMENTS.get('OS_NAME', '')
+#OS_NAME = ARGUMENTS.get('OS_NAME', '')
+OS_NAME = uname[0]
 #print PROJECT_NAME
 #print OS_NAME
 
