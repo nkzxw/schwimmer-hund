@@ -17,8 +17,10 @@
 
 void edit_file( std::string file_name )
 {
-	std::ofstream file_stream;
-	file_stream.open (file_name.c_str());
+	//std::ofstream file_stream;
+	//file_stream.open (file_name.c_str());
+
+	std::ofstream file_stream( file_name.c_str(), std::ios_base::app);
 	file_stream << "." << std::endl;
 	file_stream.close();
 }
