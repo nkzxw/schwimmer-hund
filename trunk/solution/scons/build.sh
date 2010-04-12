@@ -1,15 +1,13 @@
 #!/bin/sh
 #
-# Script to ...
+# Script to ... #TODO
 #
 
 clear
 
-#export OS_NAME='uname'
-
 uname
 export OS_NAME="$(uname)"
-echo OS_NAME: $OS_NAME
+#echo OS_NAME: $OS_NAME
                                 
 if [ $GCC_VERSION = "" ]
 then
