@@ -26,6 +26,7 @@ import os
 import string
 
 PROJECT_NAME = ARGUMENTS.get('PROJECT_NAME', '')
+OS_NAME = ARGUMENTS.get('OS_NAME', '')
 #print PROJECT_NAME
 
 
