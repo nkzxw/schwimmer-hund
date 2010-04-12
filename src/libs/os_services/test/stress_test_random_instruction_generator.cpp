@@ -41,6 +41,7 @@ void stress_random_thread( const std::string& dir, int max_operations )
 	std::vector<std::string> file_list;
 	
 	std::cout << "Press Enter to begin with the process" << std::endl;
+	std::cin.sync();
 	std::cin.get();
 
 
@@ -154,6 +155,7 @@ int main(int argc, char* argv[] )
 	stress_random_thread(dir, max_files);
 
 	std::cout << "Press Enter to Exit" << std::endl;
+	std::cin.sync();
 	std::cin.get();
 
 	return 0;
