@@ -274,10 +274,10 @@ public: //private:  //TODO:
 								old_name.reset();
 							}
 
-							if ( event->mask & IN_MODIFY )
-							{
-								std::cout << "------------- IN_MODIFY -----------------" << std::endl;
-							}
+							//if ( event->mask & IN_MODIFY )
+							//{
+							//	std::cout << "------------- IN_MODIFY -----------------" << std::endl;
+							//}
 
 							notify_file_system_event_args( event->mask, directory_name, file_name);
 						}
