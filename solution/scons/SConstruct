@@ -28,7 +28,7 @@ import string
 PROJECT_NAME = ARGUMENTS.get('PROJECT_NAME', '')
 OS_NAME = ARGUMENTS.get('OS_NAME', '')
 #print PROJECT_NAME
-print OS_NAME
+#print OS_NAME
 
 
 BOOST_ROOT = os.environ['BOOST_ROOT']
@@ -52,7 +52,7 @@ TEST_DIR = os.path.join(PROJECT_PATH, 'test', OS_NAME);
 #print 'BOOST_VERSION: ' + BOOST_VERSION
 #print 'SRC_DIR: ' + SRC_DIR
 #print 'BUILD_DIR: ' + BUILD_DIR
-print 'TEST_DIR: ' + TEST_DIR
+#print 'TEST_DIR: ' + TEST_DIR
 
 
 
