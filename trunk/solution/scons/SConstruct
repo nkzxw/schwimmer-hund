@@ -28,6 +28,7 @@ import string
 PROJECT_NAME = ARGUMENTS.get('PROJECT_NAME', '')
 OS_NAME = ARGUMENTS.get('OS_NAME', '')
 #print PROJECT_NAME
+print OS_NAME
 
 
 BOOST_ROOT = os.environ['BOOST_ROOT']
@@ -40,6 +41,9 @@ BUILD_DIR = os.path.join(PROJECT_PATH, 'build/');    #PROJECT_PATH + "/build"
 BIN_DIR = os.path.join(PROJECT_PATH, 'bin/');    #PROJECT_PATH + "/bin"
 #OBJ_DIR = os.path.join(os.getcwd(), 'obj/');
 OBJ_DIR = os.path.join(BUILD_DIR, 'obj/');
+TEST_DIR = os.path.join(PROJECT_PATH, 'test', OS_NAME);
+
+
 
 
 #print "os.environ['DEV_CPP_HOME'] : " + os.environ['DEV_CPP_HOME'] 
@@ -48,6 +52,7 @@ OBJ_DIR = os.path.join(BUILD_DIR, 'obj/');
 #print 'BOOST_VERSION: ' + BOOST_VERSION
 #print 'SRC_DIR: ' + SRC_DIR
 #print 'BUILD_DIR: ' + BUILD_DIR
+print 'TEST_DIR: ' + TEST_DIR
 
 
 
