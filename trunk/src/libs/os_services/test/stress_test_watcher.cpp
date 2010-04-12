@@ -110,7 +110,7 @@ int main(int argc, char* argv[] )
 
 			monitor->start();
 
-			std::cout << "Press Enter to Stop Monitoring..." << std::endl;
+			std::cout << "Press Enter to Stop Monitoring... XXXXXX ......" << std::endl;
 			std::cin.sync();
 			std::cin.get();
 		}
