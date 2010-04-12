@@ -29,7 +29,7 @@ import string
 uname = platform.uname()
 
 #print "uname: " + uname[0]
-print "uname: " + str (uname)
+#print "uname: " + str (uname)
 
 
 PROJECT_NAME = ARGUMENTS.get('PROJECT_NAME', '')
@@ -41,14 +41,14 @@ OS_NAME = uname[0]
 
 BOOST_ROOT = os.environ['BOOST_ROOT']
 
-BOOST_ROOT_LIB = os.path.join(BOOST_ROOT, 'stage/lib/');     #BOOST_ROOT + '/stage/lib';
+BOOST_ROOT_LIB = os.path.join(BOOST_ROOT, 'stage', 'lib');
 BOOST_VERSION = os.environ['BOOST_VERSION']
-PROJECT_PATH = os.path.join(os.environ['DEV_CPP_HOME'], PROJECT_NAME);    #os.environ['DEV_CPP_HOME'] + '/' + PROJECT_NAME
-SRC_DIR = os.path.join(PROJECT_PATH, 'src/');    #PROJECT_PATH + '/src/'
-BUILD_DIR = os.path.join(PROJECT_PATH, 'build/');    #PROJECT_PATH + "/build"
-BIN_DIR = os.path.join(PROJECT_PATH, 'bin/');    #PROJECT_PATH + "/bin"
-#OBJ_DIR = os.path.join(os.getcwd(), 'obj/');
-OBJ_DIR = os.path.join(BUILD_DIR, 'obj/');
+PROJECT_PATH = os.path.join(os.environ['DEV_CPP_HOME'], PROJECT_NAME);
+SRC_DIR = os.path.join(PROJECT_PATH, 'src');
+BUILD_DIR = os.path.join(PROJECT_PATH, 'build');
+BIN_DIR = os.path.join(PROJECT_PATH, 'bin');
+#OBJ_DIR = os.path.join(os.getcwd(), 'obj');
+OBJ_DIR = os.path.join(BUILD_DIR, 'obj');
 TEST_DIR = os.path.join(PROJECT_PATH, 'test', OS_NAME);
 
 
@@ -70,7 +70,6 @@ if Platform().name == 'win32':
 		COMPILER_NAME = ARGUMENTS.get('COMPILER_NAME', 'vc')					#TODO: poner variables globales DEFAULT_WIN32_COMPILER_NAME
 		COMPILER_VERSION = ARGUMENTS.get('COMPILER_VERSION', '9.0')	  #TODO: poner variables globales DEFAULT_WIN32_COMPILER_VERSION
 		PLATFORM_STR = Platform().name + '_' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "")
-		#TEST_DIR = os.path.join(PROJECT_PATH, 'test/windows/');    #PROJECT_PATH + "/test/windows"
 
 		#print COMPILER_NAME
 		#print COMPILER_VERSION
@@ -177,7 +176,6 @@ elif Platform().name == 'posix':
 		COMPILER_NAME = ARGUMENTS.get('COMPILER_NAME', 'gcc')
 		COMPILER_VERSION = ARGUMENTS.get('COMPILER_VERSION', '4.4')
 		PLATFORM_STR = Platform().name + '_' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "")
-		#TEST_DIR = os.path.join(PROJECT_PATH, 'test/posix/');    #PROJECT_PATH + "/test/posix"
 
 		#print 'COMPILER_VERSION: ' + COMPILER_VERSION
 		#print 'PLATFORM_STR: ' + PLATFORM_STR
