@@ -42,13 +42,13 @@ OS_NAME = uname[0]
 BOOST_ROOT = os.environ['BOOST_ROOT']
 BOOST_ROOT_LIB = os.path.join(BOOST_ROOT, 'stage', 'lib/');
 BOOST_VERSION = os.environ['BOOST_VERSION']
-PROJECT_PATH = os.path.join(os.environ['DEV_CPP_HOME'], PROJECT_NAME, '/');
+PROJECT_PATH = os.path.join(os.environ['DEV_CPP_HOME'], PROJECT_NAME);
 SRC_DIR = os.path.join(PROJECT_PATH, 'src/');
 BUILD_DIR = os.path.join(PROJECT_PATH, 'build/');
 BIN_DIR = os.path.join(PROJECT_PATH, 'bin/');
 #OBJ_DIR = os.path.join(os.getcwd(), 'obj/');
 OBJ_DIR = os.path.join(BUILD_DIR, 'obj/');
-TEST_DIR = os.path.join(PROJECT_PATH, 'test', OS_NAME, '/');
+TEST_DIR = os.path.join(PROJECT_PATH, 'test', OS_NAME);
 
 
 
