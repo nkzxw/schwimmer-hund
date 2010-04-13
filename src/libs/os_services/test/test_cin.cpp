@@ -17,6 +17,7 @@ void handle_thread()
 	while ( !exit_thread )
 	{
 		std::cout << ".";
+		std::cout.flush();
 
 		boost::system_time time = boost::get_system_time();
 		time += boost::posix_time::milliseconds(300);
