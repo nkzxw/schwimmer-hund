@@ -9,3 +9,5 @@ export OS_NAME="$(uname)"
 
 
 cd ../../test/$OS_NAME
+pwd
+exit 0
