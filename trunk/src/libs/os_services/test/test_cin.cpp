@@ -14,10 +14,13 @@ static bool exit_thread = false;
 
 void handle_thread()
 {
-	std::cout << ".";
 	while ( !exit_thread )
 	{
 		std::cout << ".";
+
+		boost::system_time time = boost::get_system_time();
+		time += boost::posix_time::milliseconds(300);
+		boost::thread::sleep(time);
 	}
 }
 
@@ -58,7 +61,6 @@ int main(int argc, char* argv[] )
 	//}
 
 
-	std::cout << "main" << std::endl;
 	typedef boost::shared_ptr<boost::thread> HeapThread;
 
 	HeapThread thread_;
