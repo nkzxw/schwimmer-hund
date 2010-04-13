@@ -10,12 +10,12 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
 
-static bool exit = false;
+static bool exit_thread = false;
 
 void handle_thread()
 {
 	std::cout << ".";
-	while ( !exit )
+	while ( !exit_thread )
 	{
 		std::cout << ".";
 	}
@@ -75,7 +75,7 @@ int main(int argc, char* argv[] )
 	std::cin.sync();
 	std::cin.get();
 
-	exit = true;
+	exit_thread = true;
 
 
 	std::cout << "Press Enter to Exit" << std::endl;
