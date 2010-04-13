@@ -14,6 +14,7 @@ static const exit = false;
 
 void handle_thread()
 {
+	std::cout << ".";
 	while ( !exit )
 	{
 		std::cout << ".";
@@ -57,6 +58,7 @@ int main(int argc, char* argv[] )
 	//}
 
 
+	std::cout << "main" << std::endl;
 	typedef boost::shared_ptr<boost::thread> HeapThread;
 
 	HeapThread thread_;
