@@ -48,7 +48,7 @@ void handle_thread_inotify()
 		std::cout.flush();
 
 		int length = ::read( file_descriptor_, buffer, BUF_LEN );
-
+		std::cout << "length: " << length << std::endl;
 
 		boost::system_time time = boost::get_system_time();
 		time += boost::posix_time::milliseconds(300);
@@ -134,7 +134,9 @@ int main(int argc, char* argv[] )
 	// ------------------------------------------------------------
 
 	file_descriptor_ = ::inotify_init();
+	std::cout << "file_descriptor_: " << file_descriptor_ << std::endl;
 	boost::uint32_t watch_descriptor = ::inotify_add_watch(file_descriptor_, "~/temp1", IN_CREATE | IN_DELETE | IN_MODIFY | IN_MOVED_FROM | IN_MOVED_TO);
+	std::cout << "watch_descriptor: " << watch_descriptor << std::endl;
 
 
 	typedef boost::shared_ptr<boost::thread> HeapThread;
