@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "test_dotnet_fsw_random_inte
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "test_dotnet_fsw_stress_watcher", "..\..\projects\test_dotnet_fsw_stress_watcher\test_dotnet_fsw_stress_watcher.csproj", "{80B767FC-E85A-494C-AF10-6234029EF27E}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_misc", "..\..\projects\test_misc\test_misc.vcproj", "{3AF4CAC7-9B11-411E-8C3C-9A9AFB064984}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -107,6 +109,16 @@ Global
 		{80B767FC-E85A-494C-AF10-6234029EF27E}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{80B767FC-E85A-494C-AF10-6234029EF27E}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{80B767FC-E85A-494C-AF10-6234029EF27E}.Release|Win32.ActiveCfg = Release|Any CPU
+		{3AF4CAC7-9B11-411E-8C3C-9A9AFB064984}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{3AF4CAC7-9B11-411E-8C3C-9A9AFB064984}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{3AF4CAC7-9B11-411E-8C3C-9A9AFB064984}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{3AF4CAC7-9B11-411E-8C3C-9A9AFB064984}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3AF4CAC7-9B11-411E-8C3C-9A9AFB064984}.Debug|Win32.Build.0 = Debug|Win32
+		{3AF4CAC7-9B11-411E-8C3C-9A9AFB064984}.Release|Any CPU.ActiveCfg = Release|Win32
+		{3AF4CAC7-9B11-411E-8C3C-9A9AFB064984}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{3AF4CAC7-9B11-411E-8C3C-9A9AFB064984}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{3AF4CAC7-9B11-411E-8C3C-9A9AFB064984}.Release|Win32.ActiveCfg = Release|Win32
+		{3AF4CAC7-9B11-411E-8C3C-9A9AFB064984}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
