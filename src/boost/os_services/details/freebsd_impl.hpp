@@ -694,7 +694,7 @@ public: //private:  //TODO:
 			struct kevent   kev;
 			int rc;
 
-			std::cout << "waiting for kernel event.." << std::endl;
+			//std::cout << "waiting for kernel event.." << std::endl;
 
 			//TODO: ver timeout
 			//rc = kevent(ctl->fd, NULL, 0, &kev, 1, NULL);

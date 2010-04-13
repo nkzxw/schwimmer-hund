@@ -25,9 +25,9 @@ void edit_file( std::string file_name )
 	file_stream.flush();
 	file_stream.close();
 
-	boost::system_time time = boost::get_system_time();
-	time += boost::posix_time::milliseconds(300);
-	boost::thread::sleep(time);
+	//boost::system_time time = boost::get_system_time();
+	//time += boost::posix_time::milliseconds(300);
+	//boost::thread::sleep(time);
 
 }
 
@@ -56,6 +56,8 @@ void stress_thread( const std::string& dir, const std::string& instructions_file
 
 	while ( !std::getline(instructions_file, line).eof() )
 	{
+		std::cout << "."; //progress
+
 		std::vector<std::string> strs;
 		boost::split(strs, line, boost::is_any_of("|"));
 
