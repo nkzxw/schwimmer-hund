@@ -10,7 +10,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
 
-static const exit = false;
+static bool exit = false;
 
 void handle_thread()
 {
