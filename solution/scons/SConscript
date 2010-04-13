@@ -18,6 +18,35 @@ Import('release_dynamic_env', 'release_static_env', 'debug_dynamic_env', 'debug_
 
 
 
+
+
+# -------------- test_cin
+
+obj = release_dynamic_env.Object('test_cin_dynamic_rel', [ SRC_DIR + '/libs/os_services/test/stress_test_random_instruction_generator.cpp'])
+test_cin_dynamic_rel = release_dynamic_env.Program('test_cin_' + PLATFORM_STR + '_dynamic_release', obj ) #CPPFLAGS = ['/MD'] ) 
+
+if Platform().name == 'win32':
+	release_dynamic_env.AddPostAction(test_cin_dynamic_rel, 'mt.exe -nologo -manifest ${TARGET}.manifest -outputresource:$TARGET;1')
+
+Command(TEST_DIR + "/" + string.replace(str( test_cin_dynamic_rel[0] ), "_" + PLATFORM_STR + "_dynamic_release", ""), BUILD_DIR + "/" + str ( test_cin_dynamic_rel[0] ), Copy("$TARGET", "$SOURCE"))
+
+
+obj = release_static_env.Object('test_cin_static_rel', [ SRC_DIR + '/libs/os_services/test/stress_test_random_instruction_generator.cpp'])
+test_cin_static_rel = release_static_env.Program('test_cin_' + PLATFORM_STR + '_static_release', obj )
+
+obj = debug_dynamic_env.Object('test_cin_dynamic_dbg', [ SRC_DIR + '/libs/os_services/test/stress_test_random_instruction_generator.cpp'])
+test_cin_dynamic_dbg = debug_dynamic_env.Program('test_cin_' + PLATFORM_STR + '_dynamic_debug', obj)
+
+if Platform().name == 'win32':
+	debug_dynamic_env.AddPostAction(test_cin_dynamic_dbg, 'mt.exe -nologo -manifest ${TARGET}.manifest -outputresource:$TARGET;1')
+
+
+obj = debug_static_env.Object('test_cin_static_dbg', [ SRC_DIR + '/libs/os_services/test/stress_test_random_instruction_generator.cpp'])
+test_cin_static_dbg = debug_static_env.Program('test_cin_' + PLATFORM_STR + '_static_debug', obj)
+
+
+
+
 # -------------- stress_random_instruction_generator
 
 obj = release_dynamic_env.Object('stress_random_instruction_generator_dynamic_rel', [ SRC_DIR + '/libs/os_services/test/stress_test_random_instruction_generator.cpp'])
