@@ -112,7 +112,9 @@ int main(int argc, char* argv[] )
 
 			std::cout << "Press Enter to Stop Monitoring... XXXXXX ......" << std::endl;
 			std::cin.sync();
-			std::cin.get();
+			//std::cin.get();
+			std::cin.peek();
+
 		}
 		catch (std::runtime_error& e)
 		{
