@@ -57,6 +57,7 @@ void stress_thread( const std::string& dir, const std::string& instructions_file
 	while ( !std::getline(instructions_file, line).eof() )
 	{
 		std::cout << "."; //progress
+		std::cout.flush();
 
 		std::vector<std::string> strs;
 		boost::split(strs, line, boost::is_any_of("|"));
