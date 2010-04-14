@@ -63,6 +63,7 @@ void stress_random_thread( const std::string& dir, int max_operations )
 	for (int i = 0; i<max_operations; ++i)
 	{
 		std::cout << "."; //progress
+		std::cout.flush();
 
 		int action = get_action();
 
