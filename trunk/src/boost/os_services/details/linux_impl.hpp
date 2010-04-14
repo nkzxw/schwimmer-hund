@@ -197,6 +197,14 @@ public: //private:  //TODO:
 			//printf("-- antes del read --\n");
 			char buffer[BUF_LEN];
 			int i = 0;
+
+
+			std::cout << "6B" << std::endl;
+			std::cin.sync();
+			std::cin.get();
+
+			std::cout << "file_descriptor_: " << file_descriptor_ << std::endl;
+
 			int length = ::read( file_descriptor_, buffer, BUF_LEN );
 
 			std::cout << "7" << std::endl;
