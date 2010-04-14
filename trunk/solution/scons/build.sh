@@ -9,6 +9,11 @@ clear
 #export OS_NAME="$(uname)"
 ##echo OS_NAME: $OS_NAME
 
+cd ../..
+svn update
+cd solution/scons
+
+
 #TODO: ver si se puede sacar la version de GCC por acá... o por el scons
                                 
 if [ $GCC_VERSION = "" ]
