@@ -64,6 +64,10 @@ public:
 				{
 					int ret_value = ::inotify_rm_watch( file_descriptor_, p.second );
 
+					std::cout << "8" << std::endl;
+					std::cin.sync();
+					std::cin.get();
+
 					if ( ret_value < 0 )
 					{
 						//TODO: analizar si esta es la forma optima de manejar errores.
@@ -98,7 +102,16 @@ public:
 	{
 		if (!is_initialized_)
 		{
+			std::cout << "3" << std::endl;
+			std::cin.sync();
+			std::cin.get();
+
 			file_descriptor_ = ::inotify_init();
+
+			std::cout << "4" << std::endl;
+			std::cin.sync();
+			std::cin.get();
+
 			if (file_descriptor_ < 0)
 			{
 				std::ostringstream oss;
@@ -128,6 +141,13 @@ public:
 		{
 			//TODO: ver si estos atributos como "IN_MODIFY" deben ir fijos o seteados desde afuera.
 			boost::uint32_t watch_descriptor = ::inotify_add_watch(file_descriptor_, it->first.c_str(), IN_CREATE | IN_DELETE | IN_MODIFY | IN_MOVED_FROM | IN_MOVED_TO);
+
+
+			std::cout << "5" << std::endl;
+			std::cin.sync();
+			std::cin.get();
+
+
 			//if (watch_descriptor == -1)
 			if (watch_descriptor < 0)
 			{
@@ -168,12 +188,20 @@ public: //private:  //TODO:
 	void handle_directory_changes()
 	{
 
+		std::cout << "6" << std::endl;
+		std::cin.sync();
+		std::cin.get();
+
 		while ( !closing_ )
 		{
 			//printf("-- antes del read --\n");
 			char buffer[BUF_LEN];
 			int i = 0;
 			int length = ::read( file_descriptor_, buffer, BUF_LEN );
+
+			std::cout << "7" << std::endl;
+			std::cin.sync();
+			std::cin.get();
 
 			//printf("length: %d\n", length);
 			//print_buffer(buffer, length);
