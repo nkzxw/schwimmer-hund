@@ -41,7 +41,6 @@ void handle_thread()
 
 void handle_thread_inotify()
 {
-
 	while ( !exit_thread )
 	{
 		std::cout << ".";
