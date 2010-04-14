@@ -35,8 +35,14 @@ void edit_file( std::string file_name )
 void stress_thread( const std::string& dir, const std::string& instructions_file_path )
 {
 	std::cout << "Press Enter to begin with the process" << std::endl;
+	//std::cin.sync();
+	//std::cin.get();
+
 	std::cin.sync();
-	std::cin.get();
+	std::cin.clear();
+	std::cin.peek();
+
+
 
 	//ptime now = second_clock::local_time();
 	////std::cout << to_simple_string(now) << std::endl;

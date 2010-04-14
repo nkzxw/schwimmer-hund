@@ -10,7 +10,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/random.hpp>
 
-#include "test_paths_platform_selector.hpp" //definition of the paths
+#include "test_paths_platform_selector.hpp" //definition of the paths //TODO: quitar de este hpp las cosas que no sean "Path Selection"
 
 typedef boost::minstd_rand base_generator_type;
 //typedef boost::mt19937 base_generator_type;
@@ -63,7 +63,7 @@ void stress_random_thread( const std::string& dir, int max_operations )
 	for (int i = 0; i<max_operations; ++i)
 	{
 		std::cout << "."; //progress
-		std::cout.flush();
+		std::cout.flush(); //TODO: investigar cual es el motivo por el cual hay que hacer flush siempre en Linux/FreeBSD
 
 		int action = get_action();
 
@@ -122,11 +122,7 @@ void stress_random_thread( const std::string& dir, int max_operations )
 
 				break;
 			}
-
 		}
-
-
-
 	}
 
 	instructions_file.close();
