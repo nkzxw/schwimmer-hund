@@ -106,9 +106,9 @@ int main(int argc, char* argv[] )
 	// Test3: OK
 	// ------------------------------------------------------------
 
-	//typedef boost::shared_ptr<boost::thread> HeapThread;
+	//typedef boost::shared_ptr<boost::thread> ThreadType;
 
-	//HeapThread thread_;
+	//ThreadType thread_;
 
 	////thread_.reset( new boost::thread( boost::bind(&linux_impl::handle_directory_changes, this) ) );
 	//thread_.reset( new boost::thread( handle_thread ) );
@@ -139,9 +139,9 @@ int main(int argc, char* argv[] )
 	std::cout << "watch_descriptor: " << watch_descriptor << std::endl;
 
 
-	typedef boost::shared_ptr<boost::thread> HeapThread;
+	typedef boost::shared_ptr<boost::thread> ThreadType;
 
-	HeapThread thread_;
+	ThreadType thread_;
 
 	//thread_.reset( new boost::thread( boost::bind(&linux_impl::handle_directory_changes, this) ) );
 	thread_.reset( new boost::thread( handle_thread_inotify ) );

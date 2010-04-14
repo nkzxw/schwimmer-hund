@@ -7,10 +7,10 @@
 #include <string>
 
 // C-Std Headers
-#include <cerrno>		//<errno.h>
-#include <cstdio>		//<stdio.h>
-#include <cstdlib>		//<stdlib.h>
-#include <cstring>		//<string.h>		// for strerror
+#include <cerrno>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>		// for strerror
 
 #include <sys/inotify.h>
 #include <sys/types.h>
@@ -37,7 +37,7 @@ namespace os_services {
 namespace detail {
 
 //TODO: si es necesario para todas las implementaciones, pasar a base_impl
-typedef boost::shared_ptr<boost::thread> HeapThread; //TODO: cambiar nombre
+typedef boost::shared_ptr<boost::thread> ThreadType; //TODO: cambiar nombre
 
 class linux_impl : public base_impl<linux_impl>
 {
@@ -75,7 +75,7 @@ public:
 				}
 			}
 
-			// TODO: parece que close(0) cierra el standard input (CIN)
+			// TODO: parece que close(0) cierra el standard input (CIN / stdin)
 			int ret_value = ::close( file_descriptor_ );
 
 			if ( ret_value < 0 )
@@ -381,7 +381,7 @@ protected:
 	}
 
 
-	HeapThread thread_;
+	ThreadType thread_;
 
 	bool is_initialized_;
 	int file_descriptor_; // file descriptor

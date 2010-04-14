@@ -1,3 +1,6 @@
+//TODO: comentarios
+
+
 // http://en.wikipedia.org/wiki/Kqueue
 // http://mark.heily.com/pnotify/
 /*
@@ -23,10 +26,10 @@ There are platforms that are not supported due to lack of developer resources. I
 #include <vector>
 
 // C-Std Headers
-#include <cerrno>		//<errno.h>
-#include <cstdio>		//<stdio.h>
-#include <cstdlib>		//<stdlib.h>
-#include <cstring>		//<string.h>		// for strerror
+#include <cerrno>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>	// for strerror
 
 #include <fcntl.h>
 #include <sys/types.h>
@@ -34,9 +37,6 @@ There are platforms that are not supported due to lack of developer resources. I
 #include <sys/stat.h>
 #include <sys/fcntl.h>
 #include <unistd.h>
-
-
-
 
 #include <boost/bind.hpp>
 #include <boost/filesystem/path.hpp>
@@ -140,11 +140,11 @@ struct fsitem
 
 
 //TODO: si es necesario para todas las implementaciones, pasar a base_impl
-typedef boost::shared_ptr<boost::thread> HeapThread; //TODO: cambiar nombre
+typedef boost::shared_ptr<boost::thread> ThreadType; //TODO: cambiar nombre
 
 
 
-//TODO: ver que pasa con NetBSD, OpenBSD, etc...
+//TODO: ver que pasa con NetBSD, OpenBSD, Darwin, MacOSX, etc... aparentemente lo soportan
 
 class freebsd_impl : public base_impl<freebsd_impl>
 {
@@ -1086,7 +1086,7 @@ protected:
 	//TODO: las tres funciones siguientes están duplicadas en windows_impl y freebsd_impl -> RESOLVER
 	// inline void notify_file_system_event_args( int action, const std::string& directory, const std::string& name )
 
-	HeapThread thread_;
+	ThreadType thread_;
 
 	bool is_initialized_;
 
