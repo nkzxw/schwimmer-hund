@@ -108,7 +108,11 @@ int main(int argc, char* argv[] )
 			monitor->set_deleted_event_handler(OnDeleted);
 			monitor->set_renamed_event_handler(OnRenamed);
 
-			//monitor->start();
+			std::cout << "1" << std::endl;
+			std::cin.sync();
+			std::cin.get();
+
+			monitor->start();
 
 			std::cout << "Press Enter to Stop Monitoring..." << std::endl;
 			std::cin.sync();
