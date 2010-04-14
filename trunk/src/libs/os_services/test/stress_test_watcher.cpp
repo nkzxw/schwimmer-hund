@@ -80,6 +80,10 @@ int main(int argc, char* argv[] )
 	}
 
 
+	dir = "/home/fernando/temp1";
+
+	std::cout << "dir: " << dir << std::endl;
+
 
 	
 	log_file.open ("log_file_watcher.txt");

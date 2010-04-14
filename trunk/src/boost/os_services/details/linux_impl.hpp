@@ -107,6 +107,8 @@ public:
 			std::cin.get();
 
 			file_descriptor_ = ::inotify_init();
+			std::cout << "file_descriptor_: " << file_descriptor_ << std::endl;
+
 
 			std::cout << "4" << std::endl;
 			std::cin.sync();
@@ -141,7 +143,7 @@ public:
 		{
 			//TODO: ver si estos atributos como "IN_MODIFY" deben ir fijos o seteados desde afuera.
 			boost::uint32_t watch_descriptor = ::inotify_add_watch(file_descriptor_, it->first.c_str(), IN_CREATE | IN_DELETE | IN_MODIFY | IN_MOVED_FROM | IN_MOVED_TO);
-
+			std::cout << "watch_descriptor: " << watch_descriptor << std::endl;
 
 			std::cout << "5" << std::endl;
 			std::cin.sync();
@@ -274,6 +276,7 @@ public: //private:  //TODO:
 						std::string file_name( event->name );
 
 						watch_descriptors_type::const_iterator it = std::find_if( watch_descriptors_.begin(), watch_descriptors_.end(), boost::bind( &pair_type::second, _1 ) == event->wd );
+
 						if ( it != watch_descriptors_.end() )
 						{
 							directory_name = it->first;
