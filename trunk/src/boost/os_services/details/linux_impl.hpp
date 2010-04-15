@@ -187,7 +187,7 @@ public: //private:  //TODO:
 			//printf("length: %d\n", length);
 			//print_buffer(buffer, length);
 
-			if (! closing_)
+			if ( ! closing_ )
 			{
 				if ( length < 0 )
 				{
@@ -239,9 +239,8 @@ public: //private:  //TODO:
 //						std::cout << "... NOTHING ..." << std::endl;
 //					}
 
-
-
-					if ( event->len ) //TODO: que espera hacer acá, mala práctica
+					//if ( event->len != 0) //TODO: que espera hacer acá?, mala práctica
+					if ( event->len ) //TODO: que espera hacer acá?, mala práctica
 					{
 
 						std::string file_name( event->name );
@@ -256,7 +255,6 @@ public: //private:  //TODO:
 						{
 							//TODO: que pasa si no lo encontramos en la lista... DEBERIA SER UN RUN-TIME ERROR
 						}
-
 
 						if ( event->mask & IN_MOVED_FROM )
 						{
@@ -279,6 +277,11 @@ public: //private:  //TODO:
 						{
 							if ( old_name )
 							{
+								std::cout << "------------- VER -------------" << std::endl;
+								std::cout << "file_name: '" << file_name << "'" << std::endl;
+								std::cout << "*old_name: '" << *old_name << "'" << std::endl;
+
+
 								//TODO: en este caso puede ser que se haya movido a otra carpeta no monitoreada, entonces sería un DELETE?
 								//notify_rename_event_args(change_types::renamed, directory_name, "", *old_name);
 								notify_file_system_event_args( change_types::deleted, directory_name, *old_name);
@@ -300,6 +303,11 @@ public: //private:  //TODO:
 
 				if (old_name)
 				{
+
+					std::cout << "------------- VER -------------" << std::endl;
+					std::cout << "file_name: '" << file_name << "'" << std::endl;
+					std::cout << "*old_name: '" << *old_name << "'" << std::endl;
+
 					//TODO: en este caso puede ser que se haya movido a otra carpeta no monitoreada
 					//notify_rename_event_args(change_types::renamed, directory_name, "", *old_name);
 					notify_file_system_event_args( change_types::deleted, directory_name, *old_name);
