@@ -282,6 +282,31 @@ public: //private:  //TODO:
 								std::cout << "*old_name: '" << *old_name << "'" << std::endl;
 
 
+								if ( event->mask & IN_MOVED_FROM )
+								{
+									std::cout << "MOVED FROM" << std::endl;
+								}
+								else if ( event->mask & IN_MOVED_TO )
+								{
+									std::cout << "MOVED TO" << std::endl;
+								}
+								else if ( event->mask & IN_CREATE )
+								{
+									std::cout << "CREATE" << std::endl;
+								}
+								else if ( event->mask & IN_DELETE )
+								{
+									std::cout << "DELETE" << std::endl;
+								}
+								else if ( event->mask & IN_MODIFY )
+								{
+									std::cout << "MODIFY" << std::endl;
+								}
+								else
+								{
+									std::cout << "... NOTHING ..." << std::endl;
+								}
+
 								//TODO: en este caso puede ser que se haya movido a otra carpeta no monitoreada, entonces sería un DELETE?
 								//notify_rename_event_args(change_types::renamed, directory_name, "", *old_name);
 								notify_file_system_event_args( change_types::deleted, directory_name, *old_name);
