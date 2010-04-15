@@ -213,6 +213,7 @@ public: //private:  //TODO:
 
 					} while( offset );
 
+					//TODO: esto ocasionaba problemas en Linux. Habria que evaluar si tambien pasa en Windows.
 					if (old_name)
 					{
 						notify_rename_event_args(change_types::renamed, directory_info->directory_name, "", *old_name);

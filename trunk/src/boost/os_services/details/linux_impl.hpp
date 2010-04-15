@@ -1,5 +1,8 @@
 //TODO: hacer build que no dependa de la librería dinamica
 //TODO: comentarios...
+//TODO: probar cuando se mueve un archivo a otra directorio monitoreada con otro Watch
+//TODO: probar cuando se mueve un archivo a otra directorio NO monitoreada 
+
 
 #ifndef BOOST_OS_SERVICES_DETAIL_LINUX_IMPL_HPP
 #define BOOST_OS_SERVICES_DETAIL_LINUX_IMPL_HPP
@@ -28,10 +31,9 @@
 #include <boost/os_services/notify_filters.hpp>
 
 //TODO: ver como arreglamos esto...
+//TODO: ver la posibilidad de que el buffer pueda ser seteado desde afuera...
 #define EVENT_SIZE  ( sizeof (struct inotify_event) )
 #define BUF_LEN     ( 1024 * ( EVENT_SIZE + 16 ) )
-//#define BUF_LEN     ( 2048 * ( EVENT_SIZE + 16 ) )
-
 
 namespace boost {
 namespace os_services {
@@ -279,37 +281,11 @@ public: //private:  //TODO:
 						{
 							if ( old_name )
 							{
-								std::cout << "------------- VER -------------" << std::endl;
-								std::cout << "file_name: '" << file_name << "'" << std::endl;
-								std::cout << "*old_name: '" << *old_name << "'" << std::endl;
+								//std::cout << "------------- VER -------------" << std::endl;
+								//std::cout << "file_name: '" << file_name << "'" << std::endl;
+								//std::cout << "*old_name: '" << *old_name << "'" << std::endl;
 
-
-								if ( event->mask & IN_MOVED_FROM )
-								{
-									std::cout << "MOVED FROM" << std::endl;
-								}
-								else if ( event->mask & IN_MOVED_TO )
-								{
-									std::cout << "MOVED TO" << std::endl;
-								}
-								else if ( event->mask & IN_CREATE )
-								{
-									std::cout << "CREATE" << std::endl;
-								}
-								else if ( event->mask & IN_DELETE )
-								{
-									std::cout << "DELETE" << std::endl;
-								}
-								else if ( event->mask & IN_MODIFY )
-								{
-									std::cout << "MODIFY" << std::endl;
-								}
-								else
-								{
-									std::cout << "... NOTHING ..." << std::endl;
-								}
-
-								//TODO: en este caso puede ser que se haya movido a otra carpeta no monitoreada, entonces sería un DELETE?
+								//TODO: en este caso puede ser que se haya movido a otro directorio no monitoreada, entonces sería un DELETE?
 								//notify_rename_event_args(change_types::renamed, directory_name, "", *old_name);
 								notify_file_system_event_args( change_types::deleted, directory_name, *old_name);
 								old_name.reset();
@@ -327,24 +303,6 @@ public: //private:  //TODO:
 					i += EVENT_SIZE + event->len;
 					//printf("--- while end -- i: %d\n", i);
 				}
-
-				//if (old_name)
-				//{
-
-				//	std::cout << "------------- VER -------------" << std::endl;
-				//	std::cout << "file_name: '" << "" << "'" << std::endl;
-				//	std::cout << "*old_name: '" << *old_name << "'" << std::endl;
-
-
-				//	std::cout << "i: " << i << std::endl;
-				//	std::cout << "length: " << length << std::endl;
-
-
-				//	//TODO: en este caso puede ser que se haya movido a otra carpeta no monitoreada
-				//	//notify_rename_event_args(change_types::renamed, directory_name, "", *old_name);
-				//	notify_file_system_event_args( change_types::deleted, directory_name, *old_name);
-				//	old_name.reset();
-				//}
 			}
 		}
 	}
