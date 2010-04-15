@@ -305,7 +305,7 @@ public: //private:  //TODO:
 				{
 
 					std::cout << "------------- VER -------------" << std::endl;
-					std::cout << "file_name: '" << file_name << "'" << std::endl;
+					std::cout << "file_name: '" << "" << "'" << std::endl;
 					std::cout << "*old_name: '" << *old_name << "'" << std::endl;
 
 					//TODO: en este caso puede ser que se haya movido a otra carpeta no monitoreada
