@@ -25,9 +25,9 @@ void edit_file( std::string file_name )
 	file_stream.flush();
 	file_stream.close();
 
-	//boost::system_time time = boost::get_system_time();
-	//time += boost::posix_time::milliseconds(300);
-	//boost::thread::sleep(time);
+	boost::system_time time = boost::get_system_time();
+	time += boost::posix_time::milliseconds(100);
+	boost::thread::sleep(time);
 
 }
 
