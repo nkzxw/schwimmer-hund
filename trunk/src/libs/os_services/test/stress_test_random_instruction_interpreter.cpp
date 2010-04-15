@@ -25,10 +25,14 @@ void edit_file( std::string file_name )
 	file_stream.flush();
 	file_stream.close();
 
-	boost::system_time time = boost::get_system_time();
-	time += boost::posix_time::milliseconds(100);
-	boost::thread::sleep(time);
+	//TODO: esto fue una solución temporal para verificar que FSM en Linux cuando habia 2 o más eventos CHANGES simultaneos al mismo archivo algunos se los morfaba.
+	//      con esta prueba le dimos un poco de tiempo entre CHANGE y CHANGE y asi se comprobó que el problema está en que el buffer del watcher parece que revienta.
+	//      para solucionarlo, vamos a incrementar el tamaño del buffer a ver si con eso alcanza.
+	//      Igualmente en una maquina más veloz, tendria nuevamente el mismo problema ya que el buffer no alcanzaria... (o si, porque el procesamiento del FSM seria más rapido tambien)
 
+	//boost::system_time time = boost::get_system_time();
+	//time += boost::posix_time::milliseconds(100);
+	//boost::thread::sleep(time);
 }
 
 
