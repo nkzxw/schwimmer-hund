@@ -218,8 +218,8 @@ public: //private:  //TODO:
 			std::cin.get();
 
 
-			//int length = ::read( file_descriptor_, buffer, BUF_LEN );
-			int length = 0;
+			int length = ::read( file_descriptor_, buffer, BUF_LEN );
+			//int length = 0;
 
 
 			std::cout << "7" << std::endl;
