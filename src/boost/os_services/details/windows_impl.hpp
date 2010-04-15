@@ -24,7 +24,7 @@ namespace boost {
 namespace os_services {
 namespace detail {
 
-typedef boost::shared_ptr<boost::thread> ThreadType; //TODO: renombrar
+typedef boost::shared_ptr<boost::thread> thread_type; //TODO: renombrar
 
 void directory_info_deleter(LPDIRECTORY_INFO ptr)
 {
@@ -295,7 +295,7 @@ protected:
 	VectorType directories_;
 
 	HANDLE completion_port_handle_; //HANDLE -> void*
-	ThreadType thread_;
+	thread_type thread_;
 	//bool is_started_;
 };
 

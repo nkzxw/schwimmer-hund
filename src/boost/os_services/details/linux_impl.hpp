@@ -37,7 +37,7 @@ namespace os_services {
 namespace detail {
 
 //TODO: si es necesario para todas las implementaciones, pasar a base_impl
-typedef boost::shared_ptr<boost::thread> ThreadType; //TODO: cambiar nombre
+typedef boost::shared_ptr<boost::thread> thread_type;
 
 class linux_impl : public base_impl<linux_impl>
 {
@@ -141,6 +141,9 @@ public:
 
 		for (watch_descriptors_type::iterator it =  watch_descriptors_.begin(); it != watch_descriptors_.end(); ++it )
 		{
+
+			std::cout << "it->first.c_str(): '" << it->first.c_str() << "'" << std::endl;
+
 			//TODO: ver si estos atributos como "IN_MODIFY" deben ir fijos o seteados desde afuera.
 			boost::uint32_t watch_descriptor = ::inotify_add_watch(file_descriptor_, it->first.c_str(), IN_CREATE | IN_DELETE | IN_MODIFY | IN_MOVED_FROM | IN_MOVED_TO);
 			std::cout << "watch_descriptor: " << watch_descriptor << std::endl;
@@ -199,7 +202,6 @@ public: //private:  //TODO:
 			//printf("-- antes del read --\n");
 			char buffer[BUF_LEN];
 			int i = 0;
-
 
 			std::cout << "6B" << std::endl;
 			std::cin.sync();
@@ -420,7 +422,7 @@ protected:
 	}
 
 
-	ThreadType thread_;
+	thread_type thread_;
 
 	bool is_initialized_;
 	int file_descriptor_; // file descriptor

@@ -31,7 +31,7 @@ public:
 	
 	file_system_monitor()
 		: is_started_(false)
-		, implementation_( new detail::FSMImplementationType ) //TODO: cambiar nombre "FSMImplementationType"
+		, implementation_( new detail::fsm_implementation_type ) //TODO: cambiar nombre "fsm_implementation_type"
 	{
 
 		//TODO: donde setear estos datos?????
@@ -129,7 +129,7 @@ private:
 	//std::string filter_;
 	//bool include_subdirectories_;
 
-	boost::shared_ptr<detail::FSMImplementationType> implementation_;
+	boost::shared_ptr<detail::fsm_implementation_type> implementation_;
 };
 
 } // namespace os_services

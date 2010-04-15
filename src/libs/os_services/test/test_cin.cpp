@@ -21,7 +21,7 @@ static bool exit_thread = false;
 #define BUF_LEN     ( 1024 * ( EVENT_SIZE + 16 ) )
 
 int file_descriptor_; 
-char buffer[BUF_LEN];
+
 
 
 
@@ -41,18 +41,17 @@ void handle_thread()
 
 void handle_thread_inotify()
 {
-
 	std::cout << "5" << std::endl;
 	std::cin.sync();
 	std::cin.get();
 
 	while ( !exit_thread )
 	{
+		char buffer[BUF_LEN];
 
 		std::cout << "6" << std::endl;
 		std::cin.sync();
 		std::cin.get();
-
 
 		std::cout << ".";
 		std::cout.flush();
@@ -64,12 +63,16 @@ void handle_thread_inotify()
 		std::cin.sync();
 		std::cin.get();
 
-
 		boost::system_time time = boost::get_system_time();
 		time += boost::posix_time::milliseconds(100);
 		boost::thread::sleep(time);
 	}
 }
+
+//TODO: TESTS
+//        1. poner el thread dentro de una clase
+//						thread_.reset( new boost::thread( boost::bind(&linux_impl::handle_directory_changes, this) ) );
+
 
 int main(int argc, char* argv[] )
 {
@@ -121,9 +124,9 @@ int main(int argc, char* argv[] )
 	// Test3: OK
 	// ------------------------------------------------------------
 
-	//typedef boost::shared_ptr<boost::thread> ThreadType;
+	//typedef boost::shared_ptr<boost::thread> thread_type;
 
-	//ThreadType thread_;
+	//thread_type thread_;
 
 	////thread_.reset( new boost::thread( boost::bind(&linux_impl::handle_directory_changes, this) ) );
 	//thread_.reset( new boost::thread( handle_thread ) );
@@ -148,17 +151,16 @@ int main(int argc, char* argv[] )
 	// Test4:
 	// ------------------------------------------------------------
 
-
 	std::cout << "1" << std::endl;
 	std::cin.sync();
 	std::cin.get();
 
+	file_descriptor_ = 0;
 	file_descriptor_ = ::inotify_init();
 
 	std::cout << "2" << std::endl;
 	std::cin.sync();
 	std::cin.get();
-
 
 	std::cout << "file_descriptor_: " << file_descriptor_ << std::endl;
 	boost::uint32_t watch_descriptor = ::inotify_add_watch(file_descriptor_, "/home/fernando/temp1", IN_CREATE | IN_DELETE | IN_MODIFY | IN_MOVED_FROM | IN_MOVED_TO);
@@ -168,9 +170,9 @@ int main(int argc, char* argv[] )
 	std::cin.sync();
 	std::cin.get();
 
-	typedef boost::shared_ptr<boost::thread> ThreadType;
+	typedef boost::shared_ptr<boost::thread> thread_type;
 
-	ThreadType thread_;
+	thread_type thread_;
 
 	//thread_.reset( new boost::thread( boost::bind(&linux_impl::handle_directory_changes, this) ) );
 	thread_.reset( new boost::thread( handle_thread_inotify ) );
@@ -179,16 +181,11 @@ int main(int argc, char* argv[] )
 	std::cin.sync();
 	std::cin.get();
 
-
-
 	std::cout << "Press Enter to Stop Monitoring... XXXXXX ......" << std::endl;
 	std::cin.sync();
 	std::cin.get();
 
-
 	// ------------------------------------------------------------
-
-
 
 	std::cout << "Press Enter to Exit" << std::endl;
 	std::cin.sync();
