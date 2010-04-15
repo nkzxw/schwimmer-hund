@@ -118,6 +118,14 @@ int main(int argc, char* argv[] )
 
 			monitor->start();
 
+			while (true)
+			{
+				std::cout << "." << std::endl;
+
+				boost::system_time time = boost::get_system_time();
+				time += boost::posix_time::milliseconds(500);
+				boost::thread::sleep(time);
+			}
 			std::cout << "Press Enter to Stop Monitoring..." << std::endl;
 			std::cin.sync();
 			std::cin.get();
