@@ -138,7 +138,7 @@ void stress_random_thread( const std::string& dir, int max_operations )
 int main(int argc, char* argv[] )
 {
 
-	std::cout << "std::time(0): " << std::time(0) << std::endl;
+	//std::cout << "std::time(0): " << std::time(0) << std::endl;
 
 	std::string dir = default_dir;
 	int max_files = default_max_files;
