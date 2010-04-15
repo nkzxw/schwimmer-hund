@@ -112,17 +112,17 @@ public:
 			throw (std::runtime_error(oss.str()));
 		}
 
-		directories_.push_back( DirectoryInfoPointerType( directory_info, directory_info_deleter ) );
+		directories_.push_back( directory_info_pointer_type( directory_info, directory_info_deleter ) );
 	}
 
-	//TODO: revisar que hacer con  las EXCEPTION-SPECIFICATION
+	//TODO: revisar que hacer con las EXCEPTION-SPECIFICATION
 	void start() //throw (std::runtime_error)
 	{
 		//TODO: is_started_ debe ser protegida con MUTEX.
 		//if (!is_started_)
 		//{
 			//TODO: BOOST_FOREACH
-			for (VectorType::const_iterator it = directories_.begin(); it!=directories_.end(); ++it)
+			for (vector_type::const_iterator it = directories_.begin(); it!=directories_.end(); ++it)
 			{
 				BOOL ret_value = ::ReadDirectoryChangesW ( (*it)->directory_handle, (*it)->buffer, MAX_BUFFER, this->include_subdirectories_ ? 1 : 0, this->notify_filters_, &(*it)->buffer_length, &(*it)->overlapped, NULL);
 
@@ -291,9 +291,9 @@ protected:
 	//watch_descriptors_type watch_descriptors_;
 	
 	//TODO: boost::ptr_vector
-	typedef boost::shared_ptr<DIRECTORY_INFO> DirectoryInfoPointerType; //TODO: cambiar nombre a minusculas
-	typedef std::vector<DirectoryInfoPointerType> VectorType;
-	VectorType directories_;
+	typedef boost::shared_ptr<DIRECTORY_INFO> directory_info_pointer_type;
+	typedef std::vector<directory_info_pointer_type> vector_type;
+	vector_type directories_;
 
 	HANDLE completion_port_handle_; //HANDLE -> void*
 	thread_type thread_;

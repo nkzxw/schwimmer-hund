@@ -101,8 +101,11 @@ public:
 
 	//void remove_directory_impl(const std::string& dir_name) // throw (std::invalid_argument);
 
-	void start()
+	//TODO: ver si hace falta hacer lo mismo para Windows
+	void initialize() //private
 	{
+		//std::cout << "void initialize()" << std::endl;
+
 		if (!is_initialized_)
 		{
 			file_descriptor_ = ::inotify_init();
@@ -116,6 +119,12 @@ public:
 			}
 			is_initialized_ = true;
 		}
+
+	}
+
+	void start()
+	{
+		initialize();
 
 //		BOOST_FOREACH(pair_type p, watch_descriptors_)
 //		{
@@ -135,7 +144,7 @@ public:
 
 		for (watch_descriptors_type::iterator it =  watch_descriptors_.begin(); it != watch_descriptors_.end(); ++it )
 		{
-			//TODO: ver si estos atributos como "IN_MODIFY" deben ir fijos o seteados desde afuera.
+			//TODO: ver si estos atributos como "IN_MODIFY" deben ir fijos o seteados desde afuera. Tienen que ser asignados por el usuario de acuerdo a lo que quiere monitorear... IDEM Windows... ver como se hace para espeficarle esto en Windows...
 			boost::uint32_t watch_descriptor = ::inotify_add_watch(file_descriptor_, it->first.c_str(), IN_CREATE | IN_DELETE | IN_MODIFY | IN_MOVED_FROM | IN_MOVED_TO);
 			//std::cout << "watch_descriptor: " << watch_descriptor << std::endl;
 

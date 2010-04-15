@@ -1,5 +1,7 @@
 //TODO: comentarios
 //TODO: ver si hay "limit of file descriptors per process" Puede llegar a complicar el monitoreo usando kqueue
+//TODO: ver que pasa con NetBSD, OpenBSD, Darwin, MacOSX, etc... aparentemente lo soportan
+
 
 // http://en.wikipedia.org/wiki/Kqueue
 // http://mark.heily.com/pnotify/
@@ -132,19 +134,8 @@ struct fsitem
 	//TODO: PONER PUNTERO A parent
 };
 
-
-
-
-
-
-
-
 //TODO: si es necesario para todas las implementaciones, pasar a base_impl
-typedef boost::shared_ptr<boost::thread> thread_type; //TODO: cambiar nombre
-
-
-
-//TODO: ver que pasa con NetBSD, OpenBSD, Darwin, MacOSX, etc... aparentemente lo soportan
+typedef boost::shared_ptr<boost::thread> thread_type;
 
 class freebsd_impl : public base_impl<freebsd_impl>
 {
@@ -156,7 +147,7 @@ public:
 
 //	~freebsd_impl()
 //	{
-//		//TODO: rehacer completamente el constructor...
+//		//TODO: rehacer completamente el destructor...
 //
 //		closing_ = true;
 //
@@ -205,8 +196,6 @@ public:
 	void add_directory_impl ( const std::string& dir_name ) //throw (std::invalid_argument, std::runtime_error)
 	{
 		//watch_descriptors_.push_back(std::make_pair<std::string, watch_data*>(dir_name, 0));
-
-
 		//boost::shared_ptr<fsitem> item(new fsitem);
 		watch_type item(new fsitem);
 		item->path = dir_name;		//boost::filesystem::path full_path( str_path, boost::filesystem::native );
@@ -214,11 +203,9 @@ public:
 
 		user_watchs_.push_back(item);
 	}
-
 	//void remove_directory_impl(const std::string& dir_name) // throw (std::invalid_argument);
 
-
-	//TODO: hacer lo mismo para linux.
+	//TODO: ver si hace falta hacer lo mismo para Windows
 	void initialize() //private
 	{
 		//std::cout << "void initialize()" << std::endl;
@@ -237,8 +224,6 @@ public:
 			is_initialized_ = true;
 		}
 	}
-
-
 
 	void create_watch( watch_type watch )
 	{
@@ -264,16 +249,11 @@ public:
 		}
 //			it->second = watch->wd;
 
-
 		// watch->wd ES IGUAL A watch_descriptor
-
-
-
 		//std::cout << "FILE: " << watch->path.native_file_string() << std::endl;
 
 		// TENEMOS UN FILE DESCRIPTOR POR WATCH
 		//if ((watch->fd = open(watch->path, O_RDONLY)) < 0)
-
 
 
 		struct stat st;
