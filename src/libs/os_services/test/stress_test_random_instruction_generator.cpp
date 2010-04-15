@@ -44,6 +44,7 @@ void stress_random_thread( const std::string& dir, int max_operations )
 
 	std::cout << "Press Enter to begin with the process" << std::endl;
 	std::cin.sync();
+	std::cin.clear();
 	std::cin.get();
 
 
@@ -162,6 +163,7 @@ int main(int argc, char* argv[] )
 
 	std::cout << "Press Enter to Exit" << std::endl;
 	std::cin.sync();
+	std::cin.clear();
 	std::cin.get();
 
 	return 0;
