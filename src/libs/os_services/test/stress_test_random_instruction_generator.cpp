@@ -5,6 +5,8 @@
 #include <sstream>
 #include <string>
 
+#include <ctime>            // std::time
+
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/lexical_cast.hpp>
@@ -39,7 +41,7 @@ typename Vector::iterator get_random_pos_from_vector(base_generator_type& genera
 void stress_random_thread( const std::string& dir, int max_operations )
 {
 	std::vector<std::string> file_list;
-	
+
 	std::cout << "Press Enter to begin with the process" << std::endl;
 	std::cin.sync();
 	std::cin.get();
@@ -51,9 +53,11 @@ void stress_random_thread( const std::string& dir, int max_operations )
 	std::string source_file_path = dir + file_name + file_ext;
 
 
-	//TODO: usar el tiempo actual como semilla... (VER EJEMPLO en libs de Boost)
-	base_generator_type generator(42u);			//boost::mt19937 rng;
-	base_generator_type vector_generator(42u);	//boost::mt19937 rng;
+	//base_generator_type generator(42u);				//boost::mt19937 rng;
+	//base_generator_type vector_generator(42u);		//boost::mt19937 rng;
+	base_generator_type generator(std::time(0));		//boost::mt19937 rng;
+	base_generator_type vector_generator(std::time(0));	//boost::mt19937 rng;
+
 	boost::uniform_int<> dist_four(0, 3);
 	boost::variate_generator<base_generator_type&, boost::uniform_int<> > get_action(generator, dist_four);
 
@@ -133,6 +137,9 @@ void stress_random_thread( const std::string& dir, int max_operations )
 
 int main(int argc, char* argv[] )
 {
+
+	std::cout << "std::time(0): " << std::time(0) << std::endl;
+
 	std::string dir = default_dir;
 	int max_files = default_max_files;
 
