@@ -1,5 +1,5 @@
 //TODO: comentarios
-
+//TODO: ver si hay "limit of file descriptors per process" Puede llegar a complicar el monitoreo usando kqueue
 
 // http://en.wikipedia.org/wiki/Kqueue
 // http://mark.heily.com/pnotify/

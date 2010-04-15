@@ -3,6 +3,8 @@
 //TODO: probar cuando se mueve un archivo a otra directorio monitoreada con otro Watch
 //TODO: probar cuando se mueve un archivo a otra directorio NO monitoreada 
 
+//TODO: Anteriormente a iNotify existía dNotify. Ver de usarlo cuando la version de Linux sea la indicada. http://en.wikipedia.org/wiki/Dnotify
+
 
 #ifndef BOOST_OS_SERVICES_DETAIL_LINUX_IMPL_HPP
 #define BOOST_OS_SERVICES_DETAIL_LINUX_IMPL_HPP
