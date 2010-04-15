@@ -40,17 +40,17 @@ namespace detail {
 
 // #ifdef BOOST_WINDOWS
 #if defined(linux) || defined(__linux) || defined(__linux__) || defined(__GNU__) || defined(__GLIBC__) 
-	typedef linux_impl FSMImplementationType;
+	typedef linux_impl fsm_implementation_type;
 #elif defined(__FreeBSD__) // || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__DragonFly__)
-	typedef freebsd_impl FSMImplementationType;
+	typedef freebsd_impl fsm_implementation_type;
 #elif defined(__CYGWIN__)
-	typedef unsupported_impl FSMImplementationType;
+	typedef unsupported_impl fsm_implementation_type;
 #elif defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
-	typedef windows_impl FSMImplementationType;
+	typedef windows_impl fsm_implementation_type;
 #elif defined(macintosh) || defined(__APPLE__) || defined(__APPLE_CC__)
-	typedef macosx_impl FSMImplementationType;
+	typedef macosx_impl fsm_implementation_type;
 #else
-	typedef unsupported_impl FSMImplementationType;
+	typedef unsupported_impl fsm_implementation_type;
 #endif
 
 	
@@ -65,7 +65,7 @@ namespace detail {
 //namespace detail
 //{
 //	//typedef FileSystemMonitorImpl<PlatformImpl> ImplementationType;
-//	typedef PlatformImpl FSMImplementationType;
+//	typedef PlatformImpl fsm_implementation_type;
 //} // namespace detail
 //} // namespace boost
 

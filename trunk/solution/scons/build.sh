@@ -13,6 +13,9 @@ cd ../..
 svn update
 cd solution/scons
 
+chmod a+x config.sh
+./config.sh
+
 
 #TODO: ver si se puede sacar la version de GCC por acá... o por el scons
                                 

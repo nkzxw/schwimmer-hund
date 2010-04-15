@@ -140,7 +140,7 @@ struct fsitem
 
 
 //TODO: si es necesario para todas las implementaciones, pasar a base_impl
-typedef boost::shared_ptr<boost::thread> ThreadType; //TODO: cambiar nombre
+typedef boost::shared_ptr<boost::thread> thread_type; //TODO: cambiar nombre
 
 
 
@@ -1086,7 +1086,7 @@ protected:
 	//TODO: las tres funciones siguientes están duplicadas en windows_impl y freebsd_impl -> RESOLVER
 	// inline void notify_file_system_event_args( int action, const std::string& directory, const std::string& name )
 
-	ThreadType thread_;
+	thread_type thread_;
 
 	bool is_initialized_;
 
