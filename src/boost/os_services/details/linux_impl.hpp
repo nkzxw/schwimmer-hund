@@ -49,23 +49,16 @@ public:
 
 	~linux_impl()
 	{
-		std::cout << "~linux_impl() - 1" << std::endl; 
+		std::cout << "~linux_impl() - 1" << std::endl;
 
 		closing_ = true;
 
-		std::cout << "~linux_impl() - 2" << std::endl; 
-
-		if ( thread_ )
-		{
-			thread_->join();
-		}
-
-		std::cout << "~linux_impl() - 3" << std::endl; 
-
+		std::cout << "~linux_impl() - 2" << std::endl;
 
 		if ( file_descriptor_ != 0 )
 		{
-			std::cout << "~linux_impl() - 4" << std::endl; 
+			std::cout << "~linux_impl() - 3" << std::endl;
+
 
 			BOOST_FOREACH(pair_type p, watch_descriptors_)
 			{
@@ -88,7 +81,8 @@ public:
 				}
 			}
 
-			std::cout << "~linux_impl() - 5" << std::endl; 
+
+			std::cout << "~linux_impl() - 4" << std::endl; 
 
 
 			// TODO: parece que close(0) cierra el standard input (CIN / stdin)
@@ -101,9 +95,16 @@ public:
 				throw (std::runtime_error(oss.str()));
 			}
 
-			std::cout << "~linux_impl() - 6" << std::endl; 
-
 		}
+
+		std::cout << "~linux_impl() - 5" << std::endl; 
+
+		if ( thread_ )
+		{
+			thread_->join();
+		}
+		std::cout << "~linux_impl() - 6" << std::endl; 
+
 	}
 
 	void add_directory_impl ( const std::string& dir_name ) //throw (std::invalid_argument, std::runtime_error)
