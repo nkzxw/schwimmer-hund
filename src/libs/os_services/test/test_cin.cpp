@@ -13,6 +13,50 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
 
+
+//-----------------------------------------------------
+
+#include <boost/bimap.hpp>
+#include <boost/filesystem/path.hpp>
+#include <boost/noncopyable.hpp>
+
+#include <boost/os_services/details/impl_selector.hpp>
+#include <boost/os_services/utils.hpp>
+
+#include <string>
+
+#include <boost/filesystem/path.hpp>
+
+#include <boost/os_services/event_args.hpp>
+#include <boost/os_services/event_handlers.hpp>
+#include <boost/os_services/utils.hpp> //TODO: deberia estar detro del directorio details
+
+#include <string>
+
+// C-Std Headers
+#include <cerrno>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>		// for strerror
+
+#include <sys/inotify.h>
+#include <sys/types.h>
+
+//#include <boost/bimap.hpp>
+//#include <boost/bimap/list_of.hpp>
+#include <boost/bind.hpp>
+#include <boost/foreach.hpp>
+#include <boost/integer.hpp>
+#include <boost/smart_ptr.hpp>
+#include <boost/thread.hpp>
+
+#include <boost/os_services/change_types.hpp>
+#include <boost/os_services/details/base_impl.hpp>
+#include <boost/os_services/notify_filters.hpp>
+
+
+//-----------------------------------------------------
+
 static bool exit_thread = false;
 
 
@@ -72,6 +116,7 @@ void handle_thread_inotify()
 //TODO: TESTS
 //        1. poner el thread dentro de una clase
 //						thread_.reset( new boost::thread( boost::bind(&linux_impl::handle_directory_changes, this) ) );
+//        2. libraries included
 
 
 int main(int argc, char* argv[] )
