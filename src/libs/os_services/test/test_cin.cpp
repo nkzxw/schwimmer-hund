@@ -124,7 +124,8 @@ void handle_thread()
 
 
 
-class XXX_impl : public base_impl<XXX_impl>
+
+class XXX_impl : public boost::os_services::detail::base_impl<XXX_impl>
 {
 public:
 
