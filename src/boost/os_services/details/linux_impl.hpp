@@ -29,8 +29,8 @@
 
 //TODO: ver como arreglamos esto...
 #define EVENT_SIZE  ( sizeof (struct inotify_event) )
-//#define BUF_LEN     ( 1024 * ( EVENT_SIZE + 16 ) )
-#define BUF_LEN     ( 2048 * ( EVENT_SIZE + 16 ) )
+#define BUF_LEN     ( 1024 * ( EVENT_SIZE + 16 ) )
+//#define BUF_LEN     ( 2048 * ( EVENT_SIZE + 16 ) )
 
 
 namespace boost {
@@ -173,6 +173,8 @@ public: //private:  //TODO:
 
 	void handle_directory_changes()
 	{
+		boost::optional<std::string> old_name;
+
 		while ( !closing_ )
 		{
 			//printf("-- antes del read --\n");
@@ -196,7 +198,6 @@ public: //private:  //TODO:
 					perror( "read" );
 				}
 
-				boost::optional<std::string> old_name;
 				std::string directory_name;
 
 
@@ -327,23 +328,23 @@ public: //private:  //TODO:
 					//printf("--- while end -- i: %d\n", i);
 				}
 
-				if (old_name)
-				{
+				//if (old_name)
+				//{
 
-					std::cout << "------------- VER -------------" << std::endl;
-					std::cout << "file_name: '" << "" << "'" << std::endl;
-					std::cout << "*old_name: '" << *old_name << "'" << std::endl;
-
-
-					std::cout << "i: " << i << std::endl;
-					std::cout << "length: " << length << std::endl;
+				//	std::cout << "------------- VER -------------" << std::endl;
+				//	std::cout << "file_name: '" << "" << "'" << std::endl;
+				//	std::cout << "*old_name: '" << *old_name << "'" << std::endl;
 
 
-					//TODO: en este caso puede ser que se haya movido a otra carpeta no monitoreada
-					//notify_rename_event_args(change_types::renamed, directory_name, "", *old_name);
-					notify_file_system_event_args( change_types::deleted, directory_name, *old_name);
-					old_name.reset();
-				}
+				//	std::cout << "i: " << i << std::endl;
+				//	std::cout << "length: " << length << std::endl;
+
+
+				//	//TODO: en este caso puede ser que se haya movido a otra carpeta no monitoreada
+				//	//notify_rename_event_args(change_types::renamed, directory_name, "", *old_name);
+				//	notify_file_system_event_args( change_types::deleted, directory_name, *old_name);
+				//	old_name.reset();
+				//}
 			}
 		}
 	}
