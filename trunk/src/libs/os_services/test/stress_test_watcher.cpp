@@ -80,9 +80,8 @@ int main(int argc, char* argv[] )
 	}
 
 
-	dir = "/home/fernando/temp1";
-
-	std::cout << "dir: " << dir << std::endl;
+	//dir = "/home/fernando/temp1";
+	//std::cout << "dir: " << dir << std::endl;
 
 
 	
@@ -112,44 +111,12 @@ int main(int argc, char* argv[] )
 			monitor->set_deleted_event_handler(OnDeleted);
 			monitor->set_renamed_event_handler(OnRenamed);
 
-			std::cout << "1" << std::endl;
-			//std::cin.sync();
-			//std::cin.get();
-
 			monitor->start();
 
-			int i = 0;
-			while (true)
-			{
-				std::cout << "." << std::endl;
+			std::cout << "Press Enter to Stop Monitoring..." << std::endl;
+			std::cin.sync();
+			std::cin.get();
 
-				if (i % 10 == 0 && i != 0)
-				{
-					std::cout << "Press Enter to Stop Monitoring..." << std::endl;
-					std::cin.sync();
-					std::cin.get();
-					std::cout << "Exiting..." << std::endl;
-					break;
-				}
-
-				boost::system_time time = boost::get_system_time();
-				time += boost::posix_time::milliseconds(500);
-				boost::thread::sleep(time);
-
-				++i;
-			}
-
-			//std::cout << "Press Enter to Stop Monitoring..." << std::endl;
-			//std::cin.sync();
-			//std::cin.get();
-   // 		std::cout << "Exiting..." << std::endl;
-
-
-			//std::cin.clear();
-			//std::cin.peek();
-			////std::cin.getline();
-			////std::cin.good();
-			////std::cin.sync_with_stdio();
 
 		}
 		catch (std::runtime_error& e)

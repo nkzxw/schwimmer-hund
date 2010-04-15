@@ -49,26 +49,15 @@ public:
 
 	~linux_impl()
 	{
-		std::cout << "~linux_impl() - 1" << std::endl;
-
 		closing_ = true;
-
-		std::cout << "~linux_impl() - 2" << std::endl;
 
 		if ( file_descriptor_ != 0 )
 		{
-			std::cout << "~linux_impl() - 3" << std::endl;
-
-
 			BOOST_FOREACH(pair_type p, watch_descriptors_)
 			{
 				if ( p.second != 0 )
 				{
 					int ret_value = ::inotify_rm_watch( file_descriptor_, p.second );
-
-					std::cout << "8" << std::endl;
-					//std::cin.sync();
-					//std::cin.get();
 
 					if ( ret_value < 0 )
 					{
@@ -81,10 +70,6 @@ public:
 				}
 			}
 
-
-			std::cout << "~linux_impl() - 4" << std::endl; 
-
-
 			// TODO: parece que close(0) cierra el standard input (CIN / stdin)
 			int ret_value = ::close( file_descriptor_ );
 
@@ -94,16 +79,12 @@ public:
 				oss << "Failed to close file descriptor - Reason: "; //TODO: ver que usar en Linux/BSD << GetLastError();
 				throw (std::runtime_error(oss.str()));
 			}
-
 		}
-
-		std::cout << "~linux_impl() - 5" << std::endl; 
 
 		if ( thread_ )
 		{
-			thread_->join();
+			thread_->join(); //TODO: darle un timeout al close, sino llegó a cerrarse hacer un kill...
 		}
-		std::cout << "~linux_impl() - 6" << std::endl; 
 
 	}
 
@@ -118,17 +99,8 @@ public:
 	{
 		if (!is_initialized_)
 		{
-			std::cout << "3" << std::endl;
-			//std::cin.sync();
-			//std::cin.get();
-
 			file_descriptor_ = ::inotify_init();
-			std::cout << "file_descriptor_: " << file_descriptor_ << std::endl;
-
-
-			std::cout << "4" << std::endl;
-			//std::cin.sync();
-			//std::cin.get();
+			//std::cout << "file_descriptor_: " << file_descriptor_ << std::endl;
 
 			if (file_descriptor_ < 0)
 			{
@@ -157,17 +129,9 @@ public:
 
 		for (watch_descriptors_type::iterator it =  watch_descriptors_.begin(); it != watch_descriptors_.end(); ++it )
 		{
-
-			std::cout << "it->first.c_str(): '" << it->first.c_str() << "'" << std::endl;
-
 			//TODO: ver si estos atributos como "IN_MODIFY" deben ir fijos o seteados desde afuera.
 			boost::uint32_t watch_descriptor = ::inotify_add_watch(file_descriptor_, it->first.c_str(), IN_CREATE | IN_DELETE | IN_MODIFY | IN_MOVED_FROM | IN_MOVED_TO);
-			std::cout << "watch_descriptor: " << watch_descriptor << std::endl;
-
-			std::cout << "5" << std::endl;
-			//std::cin.sync();
-			//std::cin.get();
-
+			//std::cout << "watch_descriptor: " << watch_descriptor << std::endl;
 
 			//if (watch_descriptor == -1)
 			if (watch_descriptor < 0)
@@ -208,39 +172,17 @@ public: //private:  //TODO:
 
 	void handle_directory_changes()
 	{
-
-		std::cout << "6" << std::endl;
-		//std::cin.sync();
-		//std::cin.get();
-
 		while ( !closing_ )
 		{
 			//printf("-- antes del read --\n");
 			char buffer[BUF_LEN];
 			int i = 0;
 
-			std::cout << "6B" << std::endl;
-			//std::cin.sync();
-			//std::cin.get();
-
-			std::cout << "file_descriptor_: " << file_descriptor_ << std::endl;
-
-			boost::system_time time = boost::get_system_time();
-			time += boost::posix_time::milliseconds(3000);
-			boost::thread::sleep(time);
-
-			std::cout << "6C" << std::endl;
-			//std::cin.sync();
-			//std::cin.get();
-
+			//boost::system_time time = boost::get_system_time();
+			//time += boost::posix_time::milliseconds(3000);
+			//boost::thread::sleep(time);
 
 			int length = ::read( file_descriptor_, buffer, BUF_LEN );
-			//int length = 0;
-
-
-			std::cout << "7" << std::endl;
-			//std::cin.sync();
-			//std::cin.get();
 
 			//printf("length: %d\n", length);
 			//print_buffer(buffer, length);
