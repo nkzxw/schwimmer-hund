@@ -123,7 +123,7 @@ int main(int argc, char* argv[] )
 			{
 				std::cout << "." << std::endl;
 
-				if (i % 10 == 0)
+				if (i % 10 == 0 && i != 0)
 				{
 					std::cout << "Press Enter to Stop Monitoring..." << std::endl;
 					std::cin.sync();
