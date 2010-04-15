@@ -139,10 +139,10 @@ int main(int argc, char* argv[] )
 				++i;
 			}
 
-			std::cout << "Press Enter to Stop Monitoring..." << std::endl;
-			std::cin.sync();
-			std::cin.get();
-    		std::cout << "Exiting..." << std::endl;
+			//std::cout << "Press Enter to Stop Monitoring..." << std::endl;
+			//std::cin.sync();
+			//std::cin.get();
+   // 		std::cout << "Exiting..." << std::endl;
 
 
 			//std::cin.clear();
