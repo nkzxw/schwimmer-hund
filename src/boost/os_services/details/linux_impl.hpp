@@ -65,8 +65,8 @@ public:
 					int ret_value = ::inotify_rm_watch( file_descriptor_, p.second );
 
 					std::cout << "8" << std::endl;
-					std::cin.sync();
-					std::cin.get();
+					//std::cin.sync();
+					//std::cin.get();
 
 					if ( ret_value < 0 )
 					{
@@ -103,16 +103,16 @@ public:
 		if (!is_initialized_)
 		{
 			std::cout << "3" << std::endl;
-			std::cin.sync();
-			std::cin.get();
+			//std::cin.sync();
+			//std::cin.get();
 
 			file_descriptor_ = ::inotify_init();
 			std::cout << "file_descriptor_: " << file_descriptor_ << std::endl;
 
 
 			std::cout << "4" << std::endl;
-			std::cin.sync();
-			std::cin.get();
+			//std::cin.sync();
+			//std::cin.get();
 
 			if (file_descriptor_ < 0)
 			{
@@ -149,8 +149,8 @@ public:
 			std::cout << "watch_descriptor: " << watch_descriptor << std::endl;
 
 			std::cout << "5" << std::endl;
-			std::cin.sync();
-			std::cin.get();
+			//std::cin.sync();
+			//std::cin.get();
 
 
 			//if (watch_descriptor == -1)
@@ -194,8 +194,8 @@ public: //private:  //TODO:
 	{
 
 		std::cout << "6" << std::endl;
-		std::cin.sync();
-		std::cin.get();
+		//std::cin.sync();
+		//std::cin.get();
 
 		while ( !closing_ )
 		{
@@ -204,8 +204,8 @@ public: //private:  //TODO:
 			int i = 0;
 
 			std::cout << "6B" << std::endl;
-			std::cin.sync();
-			std::cin.get();
+			//std::cin.sync();
+			//std::cin.get();
 
 			std::cout << "file_descriptor_: " << file_descriptor_ << std::endl;
 
@@ -214,8 +214,8 @@ public: //private:  //TODO:
 			boost::thread::sleep(time);
 
 			std::cout << "6C" << std::endl;
-			std::cin.sync();
-			std::cin.get();
+			//std::cin.sync();
+			//std::cin.get();
 
 
 			int length = ::read( file_descriptor_, buffer, BUF_LEN );
@@ -223,8 +223,8 @@ public: //private:  //TODO:
 
 
 			std::cout << "7" << std::endl;
-			std::cin.sync();
-			std::cin.get();
+			//std::cin.sync();
+			//std::cin.get();
 
 			//printf("length: %d\n", length);
 			//print_buffer(buffer, length);

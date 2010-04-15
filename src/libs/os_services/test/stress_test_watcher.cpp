@@ -113,19 +113,32 @@ int main(int argc, char* argv[] )
 			monitor->set_renamed_event_handler(OnRenamed);
 
 			std::cout << "1" << std::endl;
-			std::cin.sync();
-			std::cin.get();
+			//std::cin.sync();
+			//std::cin.get();
 
 			monitor->start();
 
+			int i = 0;
 			while (true)
 			{
 				std::cout << "." << std::endl;
 
+				if (i % 10 == 0)
+				{
+					std::cout << "Press Enter to Stop Monitoring..." << std::endl;
+					std::cin.sync();
+					std::cin.get();
+					std::cout << "Exiting..." << std::endl;
+					break;
+				}
+
 				boost::system_time time = boost::get_system_time();
 				time += boost::posix_time::milliseconds(500);
 				boost::thread::sleep(time);
+
+				++i;
 			}
+
 			std::cout << "Press Enter to Stop Monitoring..." << std::endl;
 			std::cin.sync();
 			std::cin.get();
