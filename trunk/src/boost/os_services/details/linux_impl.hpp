@@ -218,7 +218,7 @@ public: //private:  //TODO:
 			std::cin.get();
 
 
-			int length = ::read( file_descriptor_, buffer, BUF_LEN );
+			//int length = ::read( file_descriptor_, buffer, BUF_LEN );
 
 			std::cout << "7" << std::endl;
 			std::cin.sync();
