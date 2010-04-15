@@ -83,40 +83,88 @@ void handle_thread()
 	}
 }
 
-void handle_thread_inotify()
-{
-	std::cout << "5" << std::endl;
-	std::cin.sync();
-	std::cin.get();
-
-	while ( !exit_thread )
-	{
-		char buffer[BUF_LEN];
-
-		std::cout << "6" << std::endl;
-		std::cin.sync();
-		std::cin.get();
-
-		std::cout << ".";
-		std::cout.flush();
-
-		int length = ::read( file_descriptor_, buffer, BUF_LEN );
-		std::cout << "length: " << length << std::endl;
-
-		std::cout << "7" << std::endl;
-		std::cin.sync();
-		std::cin.get();
-
-		boost::system_time time = boost::get_system_time();
-		time += boost::posix_time::milliseconds(100);
-		boost::thread::sleep(time);
-	}
-}
+//void handle_thread_inotify()
+//{
+//	std::cout << "5" << std::endl;
+//	std::cin.sync();
+//	std::cin.get();
+//
+//	while ( !exit_thread )
+//	{
+//		char buffer[BUF_LEN];
+//
+//		std::cout << "6" << std::endl;
+//		std::cin.sync();
+//		std::cin.get();
+//
+//		std::cout << ".";
+//		std::cout.flush();
+//
+//		int length = ::read( file_descriptor_, buffer, BUF_LEN );
+//		std::cout << "length: " << length << std::endl;
+//
+//		std::cout << "7" << std::endl;
+//		std::cin.sync();
+//		std::cin.get();
+//
+//		boost::system_time time = boost::get_system_time();
+//		time += boost::posix_time::milliseconds(100);
+//		boost::thread::sleep(time);
+//	}
+//}
 
 //TODO: TESTS
 //        1. poner el thread dentro de una clase
-//						thread_.reset( new boost::thread( boost::bind(&linux_impl::handle_directory_changes, this) ) );
+//						thread_.reset( new boost::thread( boost::bind(&XXX_impl::handle_directory_changes, this) ) );
 //        2. libraries included
+
+
+
+
+
+
+
+class XXX_impl : public base_impl<XXX_impl>
+{
+public:
+
+	//void start()
+	//{
+	//	thread_.reset( new boost::thread( boost::bind(&XXX_impl::handle_directory_changes, this) ) );
+	//}
+
+public: 
+	void handle_directory_changes()
+	{
+		std::cout << "B5" << std::endl;
+		std::cin.sync();
+		std::cin.get();
+
+		while ( !exit_thread )
+		{
+			char buffer[BUF_LEN];
+
+			std::cout << "B6" << std::endl;
+			std::cin.sync();
+			std::cin.get();
+
+			std::cout << "B.";
+			std::cout.flush();
+
+			int length = ::read( file_descriptor_, buffer, BUF_LEN );
+			std::cout << "Blength: " << length << std::endl;
+
+			std::cout << "B7" << std::endl;
+			std::cin.sync();
+			std::cin.get();
+
+			boost::system_time time = boost::get_system_time();
+			time += boost::posix_time::milliseconds(100);
+			boost::thread::sleep(time);
+		}
+	}
+};
+
 
 
 int main(int argc, char* argv[] )
@@ -173,7 +221,7 @@ int main(int argc, char* argv[] )
 
 	//thread_type thread_;
 
-	////thread_.reset( new boost::thread( boost::bind(&linux_impl::handle_directory_changes, this) ) );
+	////thread_.reset( new boost::thread( boost::bind(&XXX_impl::handle_directory_changes, this) ) );
 	//thread_.reset( new boost::thread( handle_thread ) );
 
 	////if ( thread_ )
@@ -219,14 +267,17 @@ int main(int argc, char* argv[] )
 
 	thread_type thread_;
 
-	//thread_.reset( new boost::thread( boost::bind(&linux_impl::handle_directory_changes, this) ) );
-	thread_.reset( new boost::thread( handle_thread_inotify ) );
+	//thread_.reset( new boost::thread( handle_thread_inotify ) );
+
+	XXX_impl* impl = new XXX_impl;
+	//thread_.reset( new boost::thread( boost::bind(&XXX_impl::handle_directory_changes, this) ) );
+	thread_.reset( new boost::thread( boost::bind(&XXX_impl::handle_directory_changes, impl) ) );
 
 	std::cout << "4" << std::endl;
 	std::cin.sync();
 	std::cin.get();
 
-	std::cout << "Press Enter to Stop Monitoring... XXXXXX ......" << std::endl;
+	std::cout << "Press Enter to Stop Monitoring..." << std::endl;
 	std::cin.sync();
 	std::cin.get();
 
