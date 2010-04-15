@@ -209,6 +209,15 @@ public: //private:  //TODO:
 
 			std::cout << "file_descriptor_: " << file_descriptor_ << std::endl;
 
+			boost::system_time time = boost::get_system_time();
+			time += boost::posix_time::milliseconds(3000);
+			boost::thread::sleep(time);
+
+			std::cout << "6C" << std::endl;
+			std::cin.sync();
+			std::cin.get();
+
+
 			int length = ::read( file_descriptor_, buffer, BUF_LEN );
 
 			std::cout << "7" << std::endl;

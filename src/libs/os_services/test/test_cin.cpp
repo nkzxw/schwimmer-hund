@@ -257,6 +257,7 @@ int main(int argc, char* argv[] )
 	std::cin.sync();
 	std::cin.get();
 
+	std::cout << "dir: '" << dir << "'" << std::endl;
 	std::cout << "file_descriptor_: " << file_descriptor_ << std::endl;
 	boost::uint32_t watch_descriptor = ::inotify_add_watch(file_descriptor_, dir.c_str(), IN_CREATE | IN_DELETE | IN_MODIFY | IN_MOVED_FROM | IN_MOVED_TO);
 	std::cout << "watch_descriptor: " << watch_descriptor << std::endl;
