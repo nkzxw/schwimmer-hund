@@ -115,6 +115,7 @@ int main(int argc, char* argv[] )
 
 			std::cout << "Press Enter to Stop Monitoring..." << std::endl;
 			std::cin.sync();
+			std::cin.clear();
 			std::cin.get();
 
 
