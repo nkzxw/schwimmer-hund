@@ -79,11 +79,6 @@ public:
 
 	void start() //throw (std::runtime_error)
 	{
-
-		std::cout << "2" << std::endl;
-		//std::cin.sync();
-		//std::cin.get();
-
 		//TODO: is_started_ debe ser protegida con MUTEX.
 		if (!is_started_)
 		{
