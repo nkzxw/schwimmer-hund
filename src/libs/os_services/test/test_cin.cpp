@@ -245,6 +245,7 @@ int main(int argc, char* argv[] )
 	// Test4:
 	// ------------------------------------------------------------
 
+	std::string dir = "/home/fernando/temp1";
 	std::cout << "1" << std::endl;
 	std::cin.sync();
 	std::cin.get();
@@ -257,7 +258,7 @@ int main(int argc, char* argv[] )
 	std::cin.get();
 
 	std::cout << "file_descriptor_: " << file_descriptor_ << std::endl;
-	boost::uint32_t watch_descriptor = ::inotify_add_watch(file_descriptor_, "/home/fernando/temp1", IN_CREATE | IN_DELETE | IN_MODIFY | IN_MOVED_FROM | IN_MOVED_TO);
+	boost::uint32_t watch_descriptor = ::inotify_add_watch(file_descriptor_, dir.c_str(), IN_CREATE | IN_DELETE | IN_MODIFY | IN_MOVED_FROM | IN_MOVED_TO);
 	std::cout << "watch_descriptor: " << watch_descriptor << std::endl;
 
 	std::cout << "3" << std::endl;
