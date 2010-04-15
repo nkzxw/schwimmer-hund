@@ -111,6 +111,7 @@ void stress_thread( const std::string& dir, int max_files )
 {
 	std::cout << "Press Enter to begin with file creation process" << std::endl;
 	std::cin.sync();
+	std::cin.clear();
 	std::cin.get();
 
 	std::cout << "CREATING " << max_files << " files, please wait..." << std::endl;
@@ -119,6 +120,7 @@ void stress_thread( const std::string& dir, int max_files )
 
 	std::cout << "Press Enter to begin with file removal process" << std::endl;
 	std::cin.sync();
+	std::cin.clear();
 	std::cin.get();
 
 
