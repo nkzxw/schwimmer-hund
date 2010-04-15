@@ -333,6 +333,11 @@ public: //private:  //TODO:
 					std::cout << "file_name: '" << "" << "'" << std::endl;
 					std::cout << "*old_name: '" << *old_name << "'" << std::endl;
 
+
+					std::cout << "i: " << i << std::endl;
+					std::cout << "length: " << length << std::endl;
+
+
 					//TODO: en este caso puede ser que se haya movido a otra carpeta no monitoreada
 					//notify_rename_event_args(change_types::renamed, directory_name, "", *old_name);
 					notify_file_system_event_args( change_types::deleted, directory_name, *old_name);
