@@ -12,9 +12,9 @@ set host_uri=%1
 set host_password=%2
 set build_sh_file=%3
 
-    
-REM "C:\Program Files\putty\plink.exe" -pw %host_password% %host_uri% bash -l -c '. %host_make_sh% %host_project_dir%/%compressed_filename% %host_src_dir%'
-"C:\Program Files\putty\plink.exe" -pw %host_password% %host_uri% /home/fernando/dev/schwimmer-hund/solution/scons/build.sh
+
+echo Presione tecla para comenzar
+pause
 
 
 
@@ -23,10 +23,26 @@ REM echo %current_datetime%
 REM echo %DATE%
 REM echo %TIME%
 REM echo %host_uri%
-REM echo %host_project_dir%
 REM echo %host_password%
+REM echo %build_sh_file%
 REM echo %current_datetime%
 
+
+
+    
+REM "C:\Program Files\putty\plink.exe" -pw %host_password% %host_uri% bash -l -c '. %host_make_sh% %host_project_dir%/%compressed_filename% %host_src_dir%'
+REM "C:\Program Files\putty\plink.exe" -pw %host_password% %host_uri% %build_sh_file%
+"C:\Program Files\putty\plink.exe" -pw %host_password% %host_uri% bash -l -c '. %build_sh_file%'
+
+REM /home/fernando/dev/schwimmer-hund/solution/scons/build.sh
+
+
+
+
+
+
+echo Proceso finalizado, presione tecla para terminar.
+pause
 
 
 REM -------------------------------------------------------------------------------------------
