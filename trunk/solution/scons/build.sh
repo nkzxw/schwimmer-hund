@@ -9,9 +9,11 @@ clear
 #export OS_NAME="$(uname)"
 ##echo OS_NAME: $OS_NAME
 
-cd ../..
+cd ~/dev/schwimmer-hund/
+#cd ../..
 svn update
-cd solution/scons
+#cd solution/scons
+cd ~/dev/schwimmer-hund/solutions/scons
 
 chmod a+x config.sh
 ./config.sh
