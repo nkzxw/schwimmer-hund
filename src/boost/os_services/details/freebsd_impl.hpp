@@ -56,6 +56,11 @@ There are platforms that are not supported due to lack of developer resources. I
 //#define BUF_LEN     ( 1024 * ( EVENT_SIZE + 16 ) )
 
 
+//TODO: sacar, es solo para debug
+#include <boost/date_time/posix_time/posix_time.hpp>
+using namespace boost::posix_time;
+
+
 //TODO: sacar
 static const int WATCH_MAX = 20000;
 
