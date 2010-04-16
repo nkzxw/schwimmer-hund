@@ -308,7 +308,7 @@ public:
 			std::cout << "-------------------------------------------------------------------------------" << std::endl;
 			std::cout << "watch->fd: " << watch->fd << std::endl;
 			std::cout << "watch->wd: " << watch->wd << std::endl;
-			std::cout << "watch->path.native_file_string(): " << (watch->path.native_file_string() << std::endl;
+			std::cout << "watch->path.native_file_string(): " << watch->path.native_file_string() << std::endl;
 			std::cout << "-------------------------------------------------------------------------------" << std::endl;
 		}
 
