@@ -16,7 +16,7 @@ set build_sh_file=%3
 echo Presione tecla para comenzar
 pause
 
-
+echo Build in progress...
 
 REM echo %1
 REM echo %current_datetime%
