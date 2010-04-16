@@ -749,9 +749,11 @@ public: //private:  //TODO:
 				if (kev.fflags & NOTE_DELETE)
 				{
 					std::cout << "NOTE_DELETE -> PN_DELETE" << std::endl;
+
+					std::cout << "watch: " << watch << std::endl;
 					std::cout << "watch->fd: " << watch->fd << std::endl;
 					std::cout << "watch->parent_wd: " << watch->parent_wd << std::endl;
-					std::cout << "watch->path: " << watch->path.native_file_string() << std::endl;
+					//std::cout << "watch->path: " << watch->path.native_file_string() << std::endl;
 
 				}
 				if (kev.fflags & NOTE_RENAME)
@@ -845,6 +847,7 @@ public: //private:  //TODO:
 					std::cout << "NOTE_LINK -> XXXXXXXXX" << std::endl;
 				}
 
+				std::cout << "Creo que la linea siguiente da segmentation fault porque usa el watch->path" << std::endl;
 
 				/* Convert the kqueue(4) flags to pnotify_event flags */
 				//if (!watch->is_dir)
