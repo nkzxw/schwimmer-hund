@@ -1,0 +1,262 @@
+File removed: ./test_dir/temp1/a2868.txt
+File removed: ./test_dir/temp1/a2924.txt
+File removed: ./test_dir/temp1/a2949.txt
+File removed: ./test_dir/temp1/a2926.txt
+File removed: ./test_dir/temp1/a2977.txt
+File removed: ./test_dir/temp1/a2978.txt
+File removed: ./test_dir/temp1/a2982.txt
+File removed: ./test_dir/temp1/a3019.txt
+File removed: ./test_dir/temp1/a3050.txt
+File removed: ./test_dir/temp1/a3043.txt
+File removed: ./test_dir/temp1/a2989.txt
+File removed: ./test_dir/temp1/a3057.txt
+File removed: ./test_dir/temp1/a3053.txt
+File removed: ./test_dir/temp1/a3087.txt
+salio de kevent(...)
+salio de kevent(...)
+NOTE_WRITE -> PN_MODIFY
+NOTE_EXTEND -> PN_MODIFY
+salio de kevent(...)
+salio de kevent(...)
+salio de kevent(...)
+salio de kevent(...)
+salio de kevent(...)
+NOTE_WRITE -> PN_MODIFY
+NOTE_EXTEND -> PN_MODIFY
+salio de kevent(...)
+salio de kevent(...)
+salio de kevent(...)
+NOTE_WRITE -> PN_MODIFY
+NOTE_EXTEND -> PN_MODIFY
+salio de kevent(...)
+salio de kevent(...)
+salio de kevent(...)
+NOTE_WRITE -> PN_MODIFY
+NOTE_EXTEND -> PN_MODIFY
+salio de kevent(...)
+NOTE_WRITE -> PN_MODIFY
+NOTE_EXTEND -> PN_MODIFY
+salio de kevent(...)
+salio de kevent(...)
+salio de kevent(...)
+salio de kevent(...)
+salio de kevent(...)
+salio de kevent(...)
+NOTE_WRITE -> PN_MODIFY
+File created: ./test_dir/temp1/a3150.txt
+File created: ./test_dir/temp1/a3164.txt
+File created: ./test_dir/temp1/a3162.txt
+File created: ./test_dir/temp1/a3158.txt
+File created: ./test_dir/temp1/a3186.txt
+File created: ./test_dir/temp1/a3180.txt
+File created: ./test_dir/temp1/a3198.txt
+File created: ./test_dir/temp1/a3193.txt
+File created: ./test_dir/temp1/a3190.txt
+File created: ./test_dir/temp1/a3166.txt
+File created: ./test_dir/temp1/a3181.txt
+File created: ./test_dir/temp1/a3191.txt
+File created: ./test_dir/temp1/a3174.txt
+File created: ./test_dir/temp1/a3194.txt
+File created: ./test_dir/temp1/a3151.txt
+File created: ./test_dir/temp1/a3155.txt
+File created: ./test_dir/temp1/a3168.txt
+STAT ERROR
+File created: ./test_dir/temp1/a3170.txt
+File: ./test_dir/temp1/a2796.txt renamed to: ./test_dir/temp1/a3078.txt
+File: ./test_dir/temp1/a2862.txt renamed to: ./test_dir/temp1/a2894.txt
+File: ./test_dir/temp1/a2901.txt renamed to: ./test_dir/temp1/a3062.txt
+File: ./test_dir/temp1/a2953.txt renamed to: ./test_dir/temp1/a3171.txt
+File: ./test_dir/temp1/a2903.txt renamed to: ./test_dir/temp1/a3067.txt
+File: ./test_dir/temp1/a2965.txt renamed to: ./test_dir/temp1/a3068.txt
+File: ./test_dir/temp1/a2957.txt renamed to: ./test_dir/temp1/a3005.txt
+File: ./test_dir/temp1/a2970.txt renamed to: ./test_dir/temp1/a3112.txt
+File: ./test_dir/temp1/a3029.txt renamed to: ./test_dir/temp1/a3069.txt
+File: ./test_dir/temp1/a2997.txt renamed to: ./test_dir/temp1/a3184.txt
+File: ./test_dir/temp1/a3070.txt renamed to: ./test_dir/temp1/a3093.txt
+File: ./test_dir/temp1/a3145.txt renamed to: ./test_dir/temp1/a3163.txt
+File removed: ./test_dir/temp1/a2810.txt
+File removed: ./test_dir/temp1/a2841.txt
+File removed: ./test_dir/temp1/a3044.txt
+File removed: ./test_dir/temp1/a3049.txt
+File removed: ./test_dir/temp1/a3086.txt
+File removed: ./test_dir/temp1/a3060.txt
+File removed: ./test_dir/temp1/a3135.txt
+File removed: ./test_dir/temp1/a3147.txt
+File removed: ./test_dir/temp1/a3148.txt
+File removed: ./test_dir/temp1/a3121.txt
+File removed: ./test_dir/temp1/a3115.txt
+salio de kevent(...)
+salio de kevent(...)
+salio de kevent(...)
+salio de kevent(...)
+salio de kevent(...)
+NOTE_WRITE -> PN_MODIFY
+NOTE_EXTEND -> PN_MODIFY
+salio de kevent(...)
+NOTE_WRITE -> PN_MODIFY
+NOTE_EXTEND -> PN_MODIFY
+salio de kevent(...)
+salio de kevent(...)
+salio de kevent(...)
+NOTE_WRITE -> PN_MODIFY
+NOTE_EXTEND -> PN_MODIFY
+salio de kevent(...)
+NOTE_WRITE -> PN_MODIFY
+NOTE_EXTEND -> PN_MODIFY
+salio de kevent(...)
+salio de kevent(...)
+salio de kevent(...)
+salio de kevent(...)
+salio de kevent(...)
+NOTE_WRITE -> PN_MODIFY
+File created: ./test_dir/temp1/a3201.txt
+File created: ./test_dir/temp1/a3204.txt
+File: ./test_dir/temp1/a2901.txt renamed to: ./test_dir/temp1/a3062.txt
+File: ./test_dir/temp1/a2953.txt renamed to: ./test_dir/temp1/a3171.txt
+File: ./test_dir/temp1/a2903.txt renamed to: ./test_dir/temp1/a3209.txt
+File: ./test_dir/temp1/a2965.txt renamed to: ./test_dir/temp1/a3068.txt
+File: ./test_dir/temp1/a2957.txt renamed to: ./test_dir/temp1/a3005.txt
+File: ./test_dir/temp1/a2970.txt renamed to: ./test_dir/temp1/a3112.txt
+File: ./test_dir/temp1/a3029.txt renamed to: ./test_dir/temp1/a3199.txt
+File: ./test_dir/temp1/a2997.txt renamed to: ./test_dir/temp1/a3184.txt
+File: ./test_dir/temp1/a3070.txt renamed to: ./test_dir/temp1/a3093.txt
+File: ./test_dir/temp1/a3145.txt renamed to: ./test_dir/temp1/a3163.txt
+File: ./test_dir/temp1/a3168.txt renamed to: ./test_dir/temp1/a3202.txt
+File removed: ./test_dir/temp1/a2796.txt
+File removed: ./test_dir/temp1/a2862.txt
+File removed: ./test_dir/temp1/a3075.txt
+File removed: ./test_dir/temp1/a3098.txt
+salio de kevent(...)
+NOTE_WRITE -> PN_MODIFY
+NOTE_EXTEND -> PN_MODIFY
+salio de kevent(...)
+NOTE_WRITE -> PN_MODIFY
+NOTE_EXTEND -> PN_MODIFY
+salio de kevent(...)
+salio de kevent(...)
+salio de kevent(...)
+salio de kevent(...)
+NOTE_WRITE -> PN_MODIFY
+File created: ./test_dir/temp1/a3212.txt
+File: ./test_dir/temp1/a2840.txt renamed to: ./test_dir/temp1/a3213.txt
+File: ./test_dir/temp1/a2901.txt renamed to: ./test_dir/temp1/a3062.txt
+File: ./test_dir/temp1/a2953.txt renamed to: ./test_dir/temp1/a3171.txt
+File: ./test_dir/temp1/a2903.txt renamed to: ./test_dir/temp1/a3209.txt
+File: ./test_dir/temp1/a2965.txt renamed to: ./test_dir/temp1/a3068.txt
+File: ./test_dir/temp1/a2957.txt renamed to: ./test_dir/temp1/a3005.txt
+File: ./test_dir/temp1/a2970.txt renamed to: ./test_dir/temp1/a3210.txt
+File: ./test_dir/temp1/a3029.txt renamed to: ./test_dir/temp1/a3199.txt
+File: ./test_dir/temp1/a2997.txt renamed to: ./test_dir/temp1/a3184.txt
+File: ./test_dir/temp1/a3145.txt renamed to: ./test_dir/temp1/a3163.txt
+File: ./test_dir/temp1/a3128.txt renamed to: ./test_dir/temp1/a3215.txt
+File: ./test_dir/temp1/a3168.txt renamed to: ./test_dir/temp1/a3202.txt
+File removed: ./test_dir/temp1/a3084.txt
+File removed: ./test_dir/temp1/a3070.txt
+salio de kevent(...)
+salio de kevent(...)
+salio de kevent(...)
+NOTE_WRITE -> PN_MODIFY
+File created: ./test_dir/temp1/a3218.txt
+File: ./test_dir/temp1/a2840.txt renamed to: ./test_dir/temp1/a3213.txt
+File: ./test_dir/temp1/a2901.txt renamed to: ./test_dir/temp1/a3062.txt
+File: ./test_dir/temp1/a2953.txt renamed to: ./test_dir/temp1/a3171.txt
+File: ./test_dir/temp1/a2903.txt renamed to: ./test_dir/temp1/a3209.txt
+File: ./test_dir/temp1/a2965.txt renamed to: ./test_dir/temp1/a3068.txt
+File: ./test_dir/temp1/a2957.txt renamed to: ./test_dir/temp1/a3005.txt
+File: ./test_dir/temp1/a2970.txt renamed to: ./test_dir/temp1/a3210.txt
+File: ./test_dir/temp1/a3029.txt renamed to: ./test_dir/temp1/a3199.txt
+File: ./test_dir/temp1/a2997.txt renamed to: ./test_dir/temp1/a3184.txt
+File: ./test_dir/temp1/a3145.txt renamed to: ./test_dir/temp1/a3163.txt
+File: ./test_dir/temp1/a3128.txt renamed to: ./test_dir/temp1/a3215.txt
+File: ./test_dir/temp1/a3168.txt renamed to: ./test_dir/temp1/a3202.txt
+File: ./test_dir/temp1/a3204.txt renamed to: ./test_dir/temp1/a3219.txt
+File removed: ./test_dir/temp1/a3144.txt
+File removed: ./test_dir/temp1/a3174.txt
+salio de kevent(...)
+salio de kevent(...)
+salio de kevent(...)
+NOTE_WRITE -> PN_MODIFY
+File: ./test_dir/temp1/a2840.txt renamed to: ./test_dir/temp1/a3213.txt
+File: ./test_dir/temp1/a2901.txt renamed to: ./test_dir/temp1/a3062.txt
+File: ./test_dir/temp1/a2953.txt renamed to: ./test_dir/temp1/a3171.txt
+File: ./test_dir/temp1/a2903.txt renamed to: ./test_dir/temp1/a3209.txt
+File: ./test_dir/temp1/a2965.txt renamed to: ./test_dir/temp1/a3068.txt
+File: ./test_dir/temp1/a2957.txt renamed to: ./test_dir/temp1/a3005.txt
+File: ./test_dir/temp1/a3029.txt renamed to: ./test_dir/temp1/a3199.txt
+File: ./test_dir/temp1/a2997.txt renamed to: ./test_dir/temp1/a3184.txt
+File: ./test_dir/temp1/a3145.txt renamed to: ./test_dir/temp1/a3163.txt
+File: ./test_dir/temp1/a3128.txt renamed to: ./test_dir/temp1/a3215.txt
+File: ./test_dir/temp1/a3168.txt renamed to: ./test_dir/temp1/a3202.txt
+File: ./test_dir/temp1/a3204.txt renamed to: ./test_dir/temp1/a3219.txt
+File removed: ./test_dir/temp1/a2970.txt
+File removed: ./test_dir/temp1/a3158.txt
+File removed: ./test_dir/temp1/a3218.txt
+salio de kevent(...)
+salio de kevent(...)
+salio de kevent(...)
+salio de kevent(...)
+NOTE_WRITE -> PN_MODIFY
+NOTE_EXTEND -> PN_MODIFY
+salio de kevent(...)
+NOTE_WRITE -> PN_MODIFY
+NOTE_EXTEND -> PN_MODIFY
+salio de kevent(...)
+NOTE_WRITE -> PN_MODIFY
+File created: ./test_dir/temp1/a3225.txt
+File: ./test_dir/temp1/a2840.txt renamed to: ./test_dir/temp1/a3213.txt
+File: ./test_dir/temp1/a2901.txt renamed to: ./test_dir/temp1/a3062.txt
+File: ./test_dir/temp1/a2953.txt renamed to: ./test_dir/temp1/a3171.txt
+File: ./test_dir/temp1/a2903.txt renamed to: ./test_dir/temp1/a3209.txt
+File: ./test_dir/temp1/a2965.txt renamed to: ./test_dir/temp1/a3068.txt
+File: ./test_dir/temp1/a2957.txt renamed to: ./test_dir/temp1/a3005.txt
+File: ./test_dir/temp1/a3029.txt renamed to: ./test_dir/temp1/a3199.txt
+File: ./test_dir/temp1/a2997.txt renamed to: ./test_dir/temp1/a3184.txt
+File: ./test_dir/temp1/a3145.txt renamed to: ./test_dir/temp1/a3163.txt
+File: ./test_dir/temp1/a3128.txt renamed to: ./test_dir/temp1/a3215.txt
+File: ./test_dir/temp1/a3168.txt renamed to: ./test_dir/temp1/a3202.txt
+File: ./test_dir/temp1/a3204.txt renamed to: ./test_dir/temp1/a3219.txt
+salio de kevent(...)
+NOTE_WRITE -> PN_MODIFY
+NOTE_EXTEND -> PN_MODIFY
+salio de kevent(...)
+NOTE_WRITE -> PN_MODIFY
+File created: ./test_dir/temp1/a3230.txt
+File created: ./test_dir/temp1/a3231.txt
+File created: ./test_dir/temp1/a3232.txt
+STAT ERROR
+File: ./test_dir/temp1/a2840.txt renamed to: ./test_dir/temp1/a3213.txt
+File: ./test_dir/temp1/a2901.txt renamed to: ./test_dir/temp1/a3062.txt
+File: ./test_dir/temp1/a2953.txt renamed to: ./test_dir/temp1/a3171.txt
+File: ./test_dir/temp1/a2903.txt renamed to: ./test_dir/temp1/a3209.txt
+File: ./test_dir/temp1/a2965.txt renamed to: ./test_dir/temp1/a3068.txt
+File: ./test_dir/temp1/a2957.txt renamed to: ./test_dir/temp1/a3005.txt
+File: ./test_dir/temp1/a3029.txt renamed to: ./test_dir/temp1/a3199.txt
+File: ./test_dir/temp1/a2997.txt renamed to: ./test_dir/temp1/a3184.txt
+File: ./test_dir/temp1/a3145.txt renamed to: ./test_dir/temp1/a3163.txt
+File: ./test_dir/temp1/a3128.txt renamed to: ./test_dir/temp1/a3215.txt
+File: ./test_dir/temp1/a3168.txt renamed to: ./test_dir/temp1/a3202.txt
+File: ./test_dir/temp1/a3204.txt renamed to: ./test_dir/temp1/a3219.txt
+File removed: ./test_dir/temp1/a3150.txt
+File removed: ./test_dir/temp1/a3166.txt
+salio de kevent(...)
+salio de kevent(...)
+NOTE_WRITE -> PN_MODIFY
+File created: ./test_dir/temp1/a3237.txt
+File: ./test_dir/temp1/a2840.txt renamed to: ./test_dir/temp1/a3213.txt
+File: ./test_dir/temp1/a2901.txt renamed to: ./test_dir/temp1/a3062.txt
+File: ./test_dir/temp1/a2953.txt renamed to: ./test_dir/temp1/a3171.txt
+File: ./test_dir/temp1/a2903.txt renamed to: ./test_dir/temp1/a3209.txt
+File: ./test_dir/temp1/a2965.txt renamed to: ./test_dir/temp1/a3068.txt
+File: ./test_dir/temp1/a2957.txt renamed to: ./test_dir/temp1/a3005.txt
+File: ./test_dir/temp1/a3029.txt renamed to: ./test_dir/temp1/a3199.txt
+File: ./test_dir/temp1/a2997.txt renamed to: ./test_dir/temp1/a3184.txt
+File: ./test_dir/temp1/a3145.txt renamed to: ./test_dir/temp1/a3163.txt
+File: ./test_dir/temp1/a3128.txt renamed to: ./test_dir/temp1/a3215.txt
+File: ./test_dir/temp1/a3168.txt renamed to: ./test_dir/temp1/a3202.txt
+File: ./test_dir/temp1/a3204.txt renamed to: ./test_dir/temp1/a3219.txt
+File: ./test_dir/temp1/a3230.txt renamed to: ./test_dir/temp1/a3236.txt
+File: ./test_dir/temp1/a3232.txt renamed to: ./test_dir/temp1/a3234.txt
+salio de kevent(...)
+NOTE_DELETE -> PN_DELETE
+Segmentation fault: 11
+[fernando@pcbsd-8062 ~/dev/schwimmer-hund/test/FreeBSD]$
