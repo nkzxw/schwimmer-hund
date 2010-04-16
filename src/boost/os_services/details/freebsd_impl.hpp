@@ -269,8 +269,10 @@ public:
 			std::cout << "STAT ERROR -- 1 -- - Reason: " << std::strerror(errno) << std::endl;
 			std::cout << "watch->path.native_file_string(): " << watch->path.native_file_string() << std::endl;
 
-			ptime now = second_clock::local_time();
-			std::cout << now << std::endl;
+			//ptime now = second_clock::local_time();
+			//std::cout << now << std::endl;
+			ptime now = microsec_clock::local_time();
+			std::cout << to_iso_extended_string(now) << std::endl;
 
 
 			return;
@@ -433,8 +435,8 @@ public:
 					std::cout << "STAT ERROR -- 2 -- - Reason: " << std::strerror(errno) << std::endl;
 					std::cout << "dir_itr->path().native_file_string(): " << dir_itr->path().native_file_string() << std::endl;
 
-					ptime now = second_clock::local_time();
-					std::cout << now << std::endl;
+					ptime now = microsec_clock::local_time();
+					std::cout << to_iso_extended_string(now) << std::endl;
 
 				}
 
@@ -533,8 +535,8 @@ public:
 					std::cout << "STAT ERROR -- 3 -- - Reason: " << std::strerror(errno) << std::endl;
 					std::cout << "dir_itr->path().native_file_string(): " << dir_itr->path().native_file_string() << std::endl;
 
-					ptime now = second_clock::local_time();
-					std::cout << now << std::endl;
+					ptime now = microsec_clock::local_time();
+					std::cout << to_iso_extended_string(now) << std::endl;
 
 				}
 
