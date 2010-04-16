@@ -278,7 +278,6 @@ public:
 			//TODO:
 			oss << "opening path failed: - Reason: " << std::strerror(errno);
 			throw (std::invalid_argument(oss.str()));
-
 		}
 
 		//std::cout << "watch->fd: " << watch->fd << std::endl;
@@ -315,7 +314,9 @@ public:
 
 				// -> Windows no salta...
 				// -> Linux tampoco...
+				// -> FreeBSD: ????????????
 
+		//TODO: ver estos flags, deberia monitoriarse solo lo que el usuairo quiera monitorear...
 		kev->fflags = NOTE_DELETE |  NOTE_WRITE | NOTE_EXTEND | NOTE_ATTRIB | NOTE_LINK | NOTE_REVOKE; //| NOTE_RENAME
 
 
@@ -705,10 +706,9 @@ public: //private:  //TODO:
 
 			   Deleting a file in a watched directory causes two events:
 			     	NOTE_MODIFY on the directory
-				NOTE_DELETE on the file
-
+					NOTE_DELETE on the file
 			   We ignore the NOTE_DELETE on the file.
-		        */
+	        */
 			if (watch->parent_wd && kev.fflags & NOTE_DELETE)
 			{
 				//std::cout << "-*-*-*-*-*--*-*-*-*-** IGNORE NOTE_DELETE" << std::endl;
@@ -749,6 +749,11 @@ public: //private:  //TODO:
 				if (kev.fflags & NOTE_DELETE)
 				{
 					std::cout << "NOTE_DELETE -> PN_DELETE" << std::endl;
+					std::cout << "watch->fd: " << watch->fd << std::endl;
+					std::cout << "watch->path: " << watch->path.native_file_string() << std::endl;
+					std::cout << "watch->fd: " << watch->fd << std::endl;
+					std::cout << "watch->parent_wd: " << watch->parent_wd << std::endl;
+
 				}
 				if (kev.fflags & NOTE_RENAME)
 				{
