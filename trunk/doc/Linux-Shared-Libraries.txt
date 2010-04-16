@@ -189,6 +189,34 @@ sudo ln -s $BOOST_ROOT/stage/lib/libboost_filesystem-gcc42-mt-1_42.a            
 sudo ln -s $BOOST_ROOT/stage/lib/libboost_filesystem-gcc42-mt.a                          /usr/lib/libboost_filesystem-gcc42-mt.a                      
 
 
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_date_time-gcc42-d-1_42.a	                     /usr/lib/libboost_date_time-gcc42-d-1_42.a	                 
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_date_time-gcc42-d.a                           /usr/lib/libboost_date_time-gcc42-d.a                       
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_date_time-gcc42-1_42.a                        /usr/lib/libboost_date_time-gcc42-1_42.a                    
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_date_time-gcc42.a                             /usr/lib/libboost_date_time-gcc42.a                         
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_date_time-gcc42-mt-sd-1_42.a                  /usr/lib/libboost_date_time-gcc42-mt-sd-1_42.a              
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_date_time-gcc42-mt-sd.a                       /usr/lib/libboost_date_time-gcc42-mt-sd.a                   
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_date_time-gcc42-mt-s-1_42.a                   /usr/lib/libboost_date_time-gcc42-mt-s-1_42.a               
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_date_time-gcc42-mt-s.a                        /usr/lib/libboost_date_time-gcc42-mt-s.a                    
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_date_time-gcc42-sd-1_42.a                     /usr/lib/libboost_date_time-gcc42-sd-1_42.a                 
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_date_time-gcc42-sd.a                          /usr/lib/libboost_date_time-gcc42-sd.a                      
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_date_time-gcc42-s-1_42.a                      /usr/lib/libboost_date_time-gcc42-s-1_42.a                  
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_date_time-gcc42-s.a                           /usr/lib/libboost_date_time-gcc42-s.a                       
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_date_time-gcc42-mt-d-1_42.so.1.42.0           /usr/lib/libboost_date_time-gcc42-mt-d-1_42.so.1.42.0       
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_date_time-gcc42-mt-d-1_42.so                  /usr/lib/libboost_date_time-gcc42-mt-d-1_42.so              
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_date_time-gcc42-mt-d.so                       /usr/lib/libboost_date_time-gcc42-mt-d.so                   
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_date_time-gcc42-mt-1_42.so.1.42.0             /usr/lib/libboost_date_time-gcc42-mt-1_42.so.1.42.0         
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_date_time-gcc42-mt-1_42.so                    /usr/lib/libboost_date_time-gcc42-mt-1_42.so                
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_date_time-gcc42-mt.so                         /usr/lib/libboost_date_time-gcc42-mt.so                     
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_date_time-gcc42-d-1_42.so.1.42.0              /usr/lib/libboost_date_time-gcc42-d-1_42.so.1.42.0          
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_date_time-gcc42-d-1_42.so                     /usr/lib/libboost_date_time-gcc42-d-1_42.so                 
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_date_time-gcc42-d.so                          /usr/lib/libboost_date_time-gcc42-d.so                      
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_date_time-gcc42-1_42.so.1.42.0                /usr/lib/libboost_date_time-gcc42-1_42.so.1.42.0            
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_date_time-gcc42-1_42.so                       /usr/lib/libboost_date_time-gcc42-1_42.so                   
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_date_time-gcc42.so                            /usr/lib/libboost_date_time-gcc42.so                        
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_date_time-gcc42-mt-d-1_42.a                   /usr/lib/libboost_date_time-gcc42-mt-d-1_42.a               
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_date_time-gcc42-mt-d.a                        /usr/lib/libboost_date_time-gcc42-mt-d.a                    
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_date_time-gcc42-mt-1_42.a                     /usr/lib/libboost_date_time-gcc42-mt-1_42.a                 
+sudo ln -s $BOOST_ROOT/stage/lib/libboost_date_time-gcc42-mt.a                          /usr/lib/libboost_date_time-gcc42-mt.a                      
 
 ------------------------------------------------------------------------------------------------------------------------
 

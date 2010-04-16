@@ -199,6 +199,8 @@ elif Platform().name == 'posix':
 		common_release_env.Append( LIBS=['boost_system-' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "") + '-mt-d-' + BOOST_VERSION ] )
 		common_release_env.Append( LIBS=['boost_filesystem-' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "") + '-mt-d-' + BOOST_VERSION] )
 		common_release_env.Append( LIBS=['boost_unit_test_framework-' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "") + '-mt-d-' + BOOST_VERSION ] )
+		common_release_env.Append( LIBS=['boost_date_time-' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "") + '-mt-d-' + BOOST_VERSION] )
+
 		common_release_env.Append( LINKFLAGS = ['-s'] )		  	# GCC: Strip
 
 		release_dynamic_env = common_release_env.Clone() 
@@ -219,6 +221,7 @@ elif Platform().name == 'posix':
 		common_debug_env.Append( LIBS=['boost_system-' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "") + '-mt-d-' + BOOST_VERSION ] )
 		common_debug_env.Append( LIBS=['boost_filesystem-' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "") + '-mt-d-' + BOOST_VERSION] )
 		common_debug_env.Append( LIBS=['boost_unit_test_framework-' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "") + '-mt-d-' + BOOST_VERSION ] )
+		common_debug_env.Append( LIBS=['boost_date_time-' + COMPILER_NAME + string.replace(COMPILER_VERSION, ".", "") + '-mt-d-' + BOOST_VERSION] )
 
 		debug_dynamic_env = common_debug_env.Clone() 
 		debug_static_env = common_debug_env.Clone() 
