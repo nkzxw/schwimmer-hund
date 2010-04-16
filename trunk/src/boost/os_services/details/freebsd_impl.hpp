@@ -750,9 +750,8 @@ public: //private:  //TODO:
 				{
 					std::cout << "NOTE_DELETE -> PN_DELETE" << std::endl;
 					std::cout << "watch->fd: " << watch->fd << std::endl;
-					std::cout << "watch->path: " << watch->path.native_file_string() << std::endl;
-					std::cout << "watch->fd: " << watch->fd << std::endl;
 					std::cout << "watch->parent_wd: " << watch->parent_wd << std::endl;
+					std::cout << "watch->path: " << watch->path.native_file_string() << std::endl;
 
 				}
 				if (kev.fflags & NOTE_RENAME)
@@ -1005,7 +1004,7 @@ public: //private:  //TODO:
 //	}
 
 
-	void directory_event_handler( fsitem* head_dir )
+	void directory_event_handler( fsitem* head_dir ) //TODO: cambiarle el nombre porque un handler se confunde con un handler de un evento...
 	{
 //		std::cout << "void directory_event_handler( fsitem* head_dir )" << std::endl;
 //		std::cout << "head_dir->path.native_file_string(): " << head_dir->path.native_file_string() << std::endl;
