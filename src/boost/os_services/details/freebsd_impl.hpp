@@ -750,6 +750,14 @@ public: //private:  //TODO:
 				{
 					std::cout << "NOTE_DELETE -> PN_DELETE" << std::endl;
 
+					std::cout << "kev.ident: " << kev.ident << std::endl;
+					std::cout << "kev.filter: " << kev.filter << std::endl;
+					std::cout << "kev.flags: " << kev.flags << std::endl;
+					std::cout << "kev.fflags: " << kev.fflags << std::endl;
+					std::cout << "kev.data: " << kev.data << std::endl;
+					std::cout << "kev.udata: " << kev.udata << std::endl;
+
+
 					std::cout << "watch: " << watch << std::endl;
 					std::cout << "watch->fd: " << watch->fd << std::endl;
 					std::cout << "watch->parent_wd: " << watch->parent_wd << std::endl;
