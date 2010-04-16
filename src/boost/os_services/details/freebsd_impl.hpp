@@ -272,7 +272,7 @@ public:
 			//ptime now = second_clock::local_time();
 			//std::cout << now << std::endl;
 			ptime now = microsec_clock::local_time();
-			std::cout << to_iso_extended_string(now) << std::endl;
+			std::cout << to_iso_string(now) << std::endl;
 
 
 			return;
@@ -436,7 +436,7 @@ public:
 					std::cout << "dir_itr->path().native_file_string(): " << dir_itr->path().native_file_string() << std::endl;
 
 					ptime now = microsec_clock::local_time();
-					std::cout << to_iso_extended_string(now) << std::endl;
+					std::cout << to_iso_string(now) << std::endl;
 
 				}
 
@@ -536,7 +536,7 @@ public:
 					std::cout << "dir_itr->path().native_file_string(): " << dir_itr->path().native_file_string() << std::endl;
 
 					ptime now = microsec_clock::local_time();
-					std::cout << to_iso_extended_string(now) << std::endl;
+					std::cout << to_iso_string(now) << std::endl;
 
 				}
 
