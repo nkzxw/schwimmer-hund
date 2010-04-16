@@ -732,6 +732,7 @@ public: //private:  //TODO:
 			{
 				std::cout << "watch: " << watch << std::endl;
 				std::cout << "watch->fd: " << watch->fd << std::endl;
+				std::cout << "watch->wd: " << watch->wd << std::endl;
 				std::cout << "watch->parent_wd: " << watch->parent_wd << std::endl;
 
 
@@ -763,10 +764,10 @@ public: //private:  //TODO:
 					std::cout << "kev.udata: " << kev.udata << std::endl;
 
 
-					std::cout << "watch: " << watch << std::endl;
-					std::cout << "watch->fd: " << watch->fd << std::endl;
-					std::cout << "watch->parent_wd: " << watch->parent_wd << std::endl;
-					//std::cout << "watch->path: " << watch->path.native_file_string() << std::endl;
+					//std::cout << "watch: " << watch << std::endl;
+					//std::cout << "watch->fd: " << watch->fd << std::endl;
+					//std::cout << "watch->parent_wd: " << watch->parent_wd << std::endl;
+					////std::cout << "watch->path: " << watch->path.native_file_string() << std::endl;
 
 				}
 				if (kev.fflags & NOTE_RENAME)
