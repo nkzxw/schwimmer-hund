@@ -82,7 +82,7 @@ void stress_thread( const std::string& dir, const std::string& instructions_file
 						//ptime now = second_clock::local_time();
 						ptime now = microsec_clock::local_time();
 						
-						log_file << to_iso_extended_string(now) << " - Action: CREATED - File: '" << strs[1] << "'" << std::endl;
+						log_file << to_iso_string(now) << " - Action: CREATED - File: '" << strs[1] << "'" << std::endl;
 						//log_file << " - Action: CREATED - File: '" << strs[1] << "'" << std::endl;
 
 						
@@ -96,7 +96,7 @@ void stress_thread( const std::string& dir, const std::string& instructions_file
 					{
 						edit_file (strs[1]);
 						ptime now = microsec_clock::local_time();
-						log_file << to_iso_extended_string(now) << " - Action: CHANGED - File: '" << strs[1] << "'" << std::endl;
+						log_file << to_iso_string(now) << " - Action: CHANGED - File: '" << strs[1] << "'" << std::endl;
 						//log_file << " - Action: CHANGED - File: '" << strs[1] << "'" << std::endl;
 					}
 					break;
@@ -107,7 +107,7 @@ void stress_thread( const std::string& dir, const std::string& instructions_file
 					{
 						boost::filesystem::rename(strs[1], strs[2]);
 						ptime now = microsec_clock::local_time();
-						log_file << to_iso_extended_string(now) << " - Action: RENAMED - Source File: '" << strs[1] << "' - Target File: '" << strs[2] << "'" << std::endl;
+						log_file << to_iso_string(now) << " - Action: RENAMED - Source File: '" << strs[1] << "' - Target File: '" << strs[2] << "'" << std::endl;
 						//log_file << " - Action: RENAMED - Source File: '" << strs[1] << "' - Target File: '" << strs[2] << "'" << std::endl;
 					}
 					break;
@@ -118,7 +118,7 @@ void stress_thread( const std::string& dir, const std::string& instructions_file
 					{
 						boost::filesystem::remove( strs[1] );
 						ptime now = microsec_clock::local_time();
-						log_file << to_iso_extended_string(now) << " - Action: REMOVED - File: '" << strs[1] << "'" << std::endl;
+						log_file << to_iso_string(now) << " - Action: REMOVED - File: '" << strs[1] << "'" << std::endl;
 						//log_file << " - Action: REMOVED - File: '" << strs[1] << "'" << std::endl;
 					}
 					break;
