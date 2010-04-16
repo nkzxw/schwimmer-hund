@@ -79,9 +79,14 @@ void stress_thread( const std::string& dir, const std::string& instructions_file
 					if ( strs.size() > 1 )
 					{
 						boost::filesystem::copy_file( source_file_path, strs[1] );
-						ptime now = second_clock::local_time();
-						log_file << now << " - Action: CREATED - File: '" << strs[1] << "'" << std::endl;
+						//ptime now = second_clock::local_time();
+						ptime now = microsec_clock::local_time();
+						
+						log_file << to_iso_extended_string(now) << " - Action: CREATED - File: '" << strs[1] << "'" << std::endl;
 						//log_file << " - Action: CREATED - File: '" << strs[1] << "'" << std::endl;
+
+						
+
 					}
 					break;
 				}
@@ -90,8 +95,8 @@ void stress_thread( const std::string& dir, const std::string& instructions_file
 					if ( strs.size() > 1 )
 					{
 						edit_file (strs[1]);
-						ptime now = second_clock::local_time();
-						log_file << now << " - Action: CHANGED - File: '" << strs[1] << "'" << std::endl;
+						ptime now = microsec_clock::local_time();
+						log_file << to_iso_extended_string(now) << " - Action: CHANGED - File: '" << strs[1] << "'" << std::endl;
 						//log_file << " - Action: CHANGED - File: '" << strs[1] << "'" << std::endl;
 					}
 					break;
@@ -101,8 +106,8 @@ void stress_thread( const std::string& dir, const std::string& instructions_file
 					if ( strs.size() > 2 )
 					{
 						boost::filesystem::rename(strs[1], strs[2]);
-						ptime now = second_clock::local_time();
-						log_file << now << " - Action: RENAMED - Source File: '" << strs[1] << "' - Target File: '" << strs[2] << "'" << std::endl;
+						ptime now = microsec_clock::local_time();
+						log_file << to_iso_extended_string(now) << " - Action: RENAMED - Source File: '" << strs[1] << "' - Target File: '" << strs[2] << "'" << std::endl;
 						//log_file << " - Action: RENAMED - Source File: '" << strs[1] << "' - Target File: '" << strs[2] << "'" << std::endl;
 					}
 					break;
@@ -112,8 +117,8 @@ void stress_thread( const std::string& dir, const std::string& instructions_file
 					if ( strs.size() > 1 )
 					{
 						boost::filesystem::remove( strs[1] );
-						ptime now = second_clock::local_time();
-						log_file << now << " - Action: REMOVED - File: '" << strs[1] << "'" << std::endl;
+						ptime now = microsec_clock::local_time();
+						log_file << to_iso_extended_string(now) << " - Action: REMOVED - File: '" << strs[1] << "'" << std::endl;
 						//log_file << " - Action: REMOVED - File: '" << strs[1] << "'" << std::endl;
 					}
 					break;
