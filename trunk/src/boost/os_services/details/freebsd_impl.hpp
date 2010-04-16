@@ -261,7 +261,8 @@ public:
 		if ( lstat( watch->path.native_file_string().c_str(), &st) < 0)
 		{
 			//TODO: error
-			std::cout << "STAT ERROR" << std::endl;
+			std::cout << "STAT ERROR - Reason: " << std::strerror(errno) << std::endl;
+			std::cout << "watch->path.native_file_string(): " << watch->path.native_file_string() << std::endl;
 			return;
 		}
 
@@ -419,7 +420,8 @@ public:
 				if ( lstat( dir_itr->path().native_file_string().c_str(), &dir_st) < 0)
 				{
 					//TODO: manejo de errores
-					std::cout << "STAT ERROR" << std::endl;
+					std::cout << "STAT ERROR - Reason: " << std::strerror(errno) << std::endl;
+					std::cout << "dir_itr->path().native_file_string(): " << dir_itr->path().native_file_string() << std::endl;
 				}
 
 				//TODO: no me gusta esta busqueda lineal...
@@ -514,7 +516,8 @@ public:
 				if ( lstat( dir_itr->path().native_file_string().c_str(), &dir_st) < 0)
 				{
 					//TODO: manejo de errores
-					std::cout << "STAT ERROR" << std::endl;
+					std::cout << "STAT ERROR - Reason: " << std::strerror(errno) << std::endl;
+					std::cout << "dir_itr->path().native_file_string(): " << dir_itr->path().native_file_string() << std::endl;
 				}
 
 				//TODO: reemplazar por std::find o algo similar...
