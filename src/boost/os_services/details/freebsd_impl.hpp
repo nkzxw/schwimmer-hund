@@ -256,6 +256,7 @@ public:
 		//if ((watch->fd = open(watch->path, O_RDONLY)) < 0)
 
 
+		//TODO: que hace el lstat ??? Que pasa si da error ??????
 		struct stat st;
 		if ( lstat( watch->path.native_file_string().c_str(), &st) < 0)
 		{
@@ -280,7 +281,8 @@ public:
 			throw (std::invalid_argument(oss.str()));
 		}
 
-		//std::cout << "watch->fd: " << watch->fd << std::endl;
+
+		
 
 		if ( boost::filesystem::is_directory( watch->path ) )
 		{
@@ -300,6 +302,16 @@ public:
 			oss << "watch_max exceeded";
 			throw (std::invalid_argument(oss.str()));
 		}
+
+		if ( watch->fd == 0 )
+		{
+			std::cout << "-------------------------------------------------------------------------------" << std::endl;
+			std::cout << "watch->fd: " << watch->fd << std::endl;
+			std::cout << "watch->wd: " << watch->wd << std::endl;
+			std::cout << "watch->path.native_file_string(): " << (watch->path.native_file_string() << std::endl;
+			std::cout << "-------------------------------------------------------------------------------" << std::endl;
+		}
+
 
 		/* Create and populate a kevent structure */
 		//EV_SET(kev, watch->fd, EVFILT_VNODE, EV_ADD | EV_CLEAR, 0, 0, watch);
@@ -402,6 +414,7 @@ public:
 			{
 				bool found = false;
 
+				//TODO: que hace este lstat
 				struct stat dir_st;
 				if ( lstat( dir_itr->path().native_file_string().c_str(), &dir_st) < 0)
 				{
@@ -409,16 +422,18 @@ public:
 					std::cout << "STAT ERROR" << std::endl;
 				}
 
+				//TODO: no me gusta esta busqueda lineal...
 				//TODO: reemplazar por std::find o algo similar...
 				//TODO: user_watchs o all_watchs ?????? GUARDA!!!!
 				//Linear-search
 				for (watch_collection_type::iterator it =  head_dir->subitems.begin(); it != head_dir->subitems.end(); ++it )
 				{
 
+					//TODO: para que hago esto ? porque no comparar los path directamente? Funcionara ??
 					if (  (*it)->path.native_file_string() == dir_itr->path().native_file_string() )
 					{
 						//std::cout << "found filename: " << (*it)->path.native_file_string() << std::endl;
-//						std::cout << "(*it)->path.native_file_string(): " << (*it)->path.native_file_string() << std::endl;
+						//std::cout << "(*it)->path.native_file_string(): " << (*it)->path.native_file_string() << std::endl;
 						found = true;
 					}
 
@@ -512,7 +527,7 @@ public:
 					{
 						//std::cout << "found inode & filename: " << (*it)->path.native_file_string() << std::endl;
 						(*it)->mask = 0; //-999;
-//						std::cout << "(*it)->path.native_file_string(): " << (*it)->path.native_file_string() << std::endl;
+						//std::cout << "(*it)->path.native_file_string(): " << (*it)->path.native_file_string() << std::endl;
 						found_filename = true;
 						found_inode = true;
 					}
@@ -544,7 +559,8 @@ public:
 					watch_type item(new fsitem);
 					item->path = dir_itr->path();
 
-					std::cout << "File created: " << item->path.native_file_string() << std::endl;
+					//TODO: volver a habilitar hasta el fin de las pruebas
+					//std::cout << "File created: " << item->path.native_file_string() << std::endl;
 
 
 					//std::cout << "DEBUG 1" << std::endl;
@@ -602,7 +618,8 @@ public:
 							//std::cout << "found inode: " << (*it)->path.native_file_string() << " - " << (*it2)->path.native_file_string() << std::endl;
 							found = true;
 
-							std::cout << "File: " << (*it)->path.native_file_string() << " renamed to: " << (*it2)->path.native_file_string() << std::endl;
+							//TODO: volver a habilitar hasta el fin de las pruebas
+							//std::cout << "File: " << (*it)->path.native_file_string() << " renamed to: " << (*it2)->path.native_file_string() << std::endl;
 
 							(*it)->mask = PN_RENAME; //  -998;
 							(*it2)->mask = 0; //-999;	//NO PROCESAR
@@ -612,7 +629,8 @@ public:
 						if ( (*it)->path.native_file_string() == (*it2)->path.native_file_string() )
 						{
 							//TODO: que hacemos acá, ver cuando podría a generarse este caso... Me parece que nunca.
-							std::cout << "found filename: " << (*it)->path.native_file_string() << " - " << (*it2)->path.native_file_string() << std::endl;
+							//TODO: volver a habilitar hasta el fin de las pruebas
+							//std::cout << "found filename: " << (*it)->path.native_file_string() << " - " << (*it2)->path.native_file_string() << std::endl;
 							found = true;
 						}
 					}
@@ -633,7 +651,8 @@ public:
 				watch_type item(new fsitem);
 				item->path = (*it)->path;
 
-				std::cout << "File created: " << item->path.native_file_string() << std::endl;
+				//TODO: volver a habilitar hasta el fin de las pruebas
+				//std::cout << "File created: " << item->path.native_file_string() << std::endl;
 
 
 				//TODO: ver en el codigo de pnotify: /* Add a watch if it is a regular file */
@@ -688,7 +707,8 @@ public: //private:  //TODO:
 				return;
 			}
 
-			std::cout << "salio de kevent(...)" << std::endl;
+			//TODO: volver a habilitar hasta el fin de las pruebas
+			//std::cout << "salio de kevent(...)" << std::endl;
 
 //			std::cout << "kev.ident: " << kev.ident << std::endl;
 //			std::cout << "kev.filter: " << kev.filter << std::endl;
@@ -736,32 +756,32 @@ public: //private:  //TODO:
 				std::cout << "watch->parent_wd: " << watch->parent_wd << std::endl;
 
 
-				if (kev.fflags & NOTE_WRITE)
-				{
-					std::cout << "NOTE_WRITE -> PN_MODIFY" << std::endl;
-				}
-				if (kev.fflags & NOTE_TRUNCATE)
-				{
-					std::cout << "NOTE_TRUNCATE -> PN_MODIFY" << std::endl;
-				}
-				if (kev.fflags & NOTE_EXTEND)
-				{
-					std::cout << "NOTE_EXTEND -> PN_MODIFY" << std::endl;
-				}
-				if (kev.fflags & NOTE_ATTRIB)
-				{
-					std::cout << "NOTE_ATTRIB -> PN_ATTRIB" << std::endl;
-				}
+				//if (kev.fflags & NOTE_WRITE)
+				//{
+				//	std::cout << "NOTE_WRITE -> PN_MODIFY" << std::endl;
+				//}
+				//if (kev.fflags & NOTE_TRUNCATE)
+				//{
+				//	std::cout << "NOTE_TRUNCATE -> PN_MODIFY" << std::endl;
+				//}
+				//if (kev.fflags & NOTE_EXTEND)
+				//{
+				//	std::cout << "NOTE_EXTEND -> PN_MODIFY" << std::endl;
+				//}
+				//if (kev.fflags & NOTE_ATTRIB)
+				//{
+				//	std::cout << "NOTE_ATTRIB -> PN_ATTRIB" << std::endl;
+				//}
 				if (kev.fflags & NOTE_DELETE)
 				{
 					std::cout << "NOTE_DELETE -> PN_DELETE" << std::endl;
 
-					std::cout << "kev.ident: " << kev.ident << std::endl;
-					std::cout << "kev.filter: " << kev.filter << std::endl;
-					std::cout << "kev.flags: " << kev.flags << std::endl;
-					std::cout << "kev.fflags: " << kev.fflags << std::endl;
-					std::cout << "kev.data: " << kev.data << std::endl;
-					std::cout << "kev.udata: " << kev.udata << std::endl;
+					//std::cout << "kev.ident: " << kev.ident << std::endl;
+					//std::cout << "kev.filter: " << kev.filter << std::endl;
+					//std::cout << "kev.flags: " << kev.flags << std::endl;
+					//std::cout << "kev.fflags: " << kev.fflags << std::endl;
+					//std::cout << "kev.data: " << kev.data << std::endl;
+					//std::cout << "kev.udata: " << kev.udata << std::endl;
 
 
 					//std::cout << "watch: " << watch << std::endl;
@@ -772,9 +792,9 @@ public: //private:  //TODO:
 				}
 				if (kev.fflags & NOTE_RENAME)
 				{
-					std::cout << "NOTE_RENAME -> XXXXXXXXX" << std::endl;
-					std::cout << "watch->fd: " << watch->fd << std::endl;
-					std::cout << "OLDNAME: " << watch->path.native_file_string() << std::endl;
+					//std::cout << "NOTE_RENAME -> XXXXXXXXX" << std::endl;
+					//std::cout << "watch->fd: " << watch->fd << std::endl;
+					//std::cout << "OLDNAME: " << watch->path.native_file_string() << std::endl;
 
 
 					//
@@ -852,16 +872,16 @@ public: //private:  //TODO:
 				}
 
 
-				if (kev.fflags & NOTE_REVOKE)
-				{
-					std::cout << "NOTE_REVOKE -> XXXXXXXXX" << std::endl;
-				}
-				if (kev.fflags & NOTE_LINK)
-				{
-					std::cout << "NOTE_LINK -> XXXXXXXXX" << std::endl;
-				}
+				//if (kev.fflags & NOTE_REVOKE)
+				//{
+				//	std::cout << "NOTE_REVOKE -> XXXXXXXXX" << std::endl;
+				//}
+				//if (kev.fflags & NOTE_LINK)
+				//{
+				//	std::cout << "NOTE_LINK -> XXXXXXXXX" << std::endl;
+				//}
 
-				std::cout << "Creo que la linea siguiente da segmentation fault porque usa el watch->path" << std::endl;
+				//std::cout << "Creo que la linea siguiente da segmentation fault porque usa el watch->path" << std::endl;
 
 				/* Convert the kqueue(4) flags to pnotify_event flags */
 				//if (!watch->is_dir)
