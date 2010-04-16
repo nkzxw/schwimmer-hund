@@ -750,10 +750,7 @@ public: //private:  //TODO:
 
 			if (! closing_)
 			{
-				std::cout << "watch: " << watch << std::endl;
-				std::cout << "watch->fd: " << watch->fd << std::endl;
-				std::cout << "watch->wd: " << watch->wd << std::endl;
-				std::cout << "watch->parent_wd: " << watch->parent_wd << std::endl;
+
 
 
 				//if (kev.fflags & NOTE_WRITE)
@@ -776,6 +773,12 @@ public: //private:  //TODO:
 				{
 					std::cout << "NOTE_DELETE -> PN_DELETE" << std::endl;
 
+					std::cout << "watch: " << watch << std::endl;
+					std::cout << "watch->fd: " << watch->fd << std::endl;
+					std::cout << "watch->wd: " << watch->wd << std::endl;
+					std::cout << "watch->parent_wd: " << watch->parent_wd << std::endl;
+					//std::cout << "watch->path: " << watch->path.native_file_string() << std::endl;
+
 					//std::cout << "kev.ident: " << kev.ident << std::endl;
 					//std::cout << "kev.filter: " << kev.filter << std::endl;
 					//std::cout << "kev.flags: " << kev.flags << std::endl;
@@ -784,10 +787,6 @@ public: //private:  //TODO:
 					//std::cout << "kev.udata: " << kev.udata << std::endl;
 
 
-					//std::cout << "watch: " << watch << std::endl;
-					//std::cout << "watch->fd: " << watch->fd << std::endl;
-					//std::cout << "watch->parent_wd: " << watch->parent_wd << std::endl;
-					////std::cout << "watch->path: " << watch->path.native_file_string() << std::endl;
 
 				}
 				if (kev.fflags & NOTE_RENAME)
@@ -1078,7 +1077,7 @@ public: //private:  //TODO:
 				//std::cout << "DEBUG 9" << std::endl;
 
 
-				std::cout << "File removed: " << (*it)->path.native_file_string() << std::endl;
+				//std::cout << "File removed: " << (*it)->path.native_file_string() << std::endl;
 
 //				std::cout << "ELIMINANDO ITEM DE LA LISTA" << std::endl;
 //				std::cout << "(*it)->path.native_file_string(): " << (*it)->path.native_file_string() << std::endl;
