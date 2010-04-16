@@ -679,7 +679,7 @@ public: //private:  //TODO:
 
 			//TODO: ver timeout
 			//rc = kevent(ctl->fd, NULL, 0, &kev, 1, NULL);
-			rc = kevent(file_descriptor_, NULL, 0, &kev, 1, NULL);
+			rc = kevent ( file_descriptor_, NULL, 0, &kev, 1, NULL );
 			if ((rc < 0) || (kev.flags & EV_ERROR))
 			{
 				//TODO:
@@ -730,6 +730,11 @@ public: //private:  //TODO:
 
 			if (! closing_)
 			{
+				std::cout << "watch: " << watch << std::endl;
+				std::cout << "watch->fd: " << watch->fd << std::endl;
+				std::cout << "watch->parent_wd: " << watch->parent_wd << std::endl;
+
+
 				if (kev.fflags & NOTE_WRITE)
 				{
 					std::cout << "NOTE_WRITE -> PN_MODIFY" << std::endl;
