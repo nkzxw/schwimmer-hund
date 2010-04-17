@@ -18,6 +18,12 @@ pause
 
 echo Build in progress...
 
+REM cd ..\..
+REM svn commit
+REM C:\Program Files\TortoiseSVN\bin\TortoiseProc.exe /notempfile /command:"commit" /path:"..\.." &
+"C:\Program Files\TortoiseSVN\bin\TortoiseProc.exe" /notempfile /command:"commit" /path:"..\.."
+
+
 REM echo %1
 REM echo %current_datetime%
 REM echo %DATE%
@@ -59,6 +65,7 @@ REM http://the.earth.li/~sgtatham/putty/0.60/htmldoc/Chapter5.html
 REM http://osr507doc.sco.com/en/OSUserG/_Passing_to_shell_script.html
 REM http://cygwin.com/ml/cygwin/2004-05/msg00251.html
 REM http://www.robvanderwoude.com/if.php
+REM http://www.methylblue.com/blog/using-tortoisesvn-from-the-command-line/
 
 
 
