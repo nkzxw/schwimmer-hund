@@ -28,9 +28,9 @@ REM echo %1
 REM echo %current_datetime%
 REM echo %DATE%
 REM echo %TIME%
-REM echo %host_uri%
-REM echo %host_password%
-REM echo %build_sh_file%
+echo %host_uri%
+echo %host_password%
+echo %build_sh_file%
 REM echo %current_datetime%
 
 
