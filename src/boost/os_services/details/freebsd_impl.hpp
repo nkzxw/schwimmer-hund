@@ -818,9 +818,11 @@ public: //private:  //TODO:
 					std::cout << "event.udata: " << event.udata << std::endl;
 
 
+					//boost::optional<boost::filesystem::path> parent;
+					boost::filesystem::path parent;
+					std::cout << "temp Parent: " << parent.native_file_string() << std::endl;
 
-
-
+					//TODO: find
 					for (watch_collection_type::iterator it =  all_watches_.begin(); it != all_watches_.end(); ++it )
 					{
 						if ( watch->parent_watch_descriptor_ == (*it)->watch_descriptor_ )
