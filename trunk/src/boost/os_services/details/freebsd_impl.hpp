@@ -98,6 +98,10 @@ enum {
 #endif
 
 
+#ifndef O_EVTONLY
+#define O_EVTONLY O_RDONLY
+#endif
+
 
 
 namespace boost {
@@ -106,9 +110,9 @@ namespace detail {
 
 
 
-static const int next_watch_ = 0;			//TODO: analizar si es necesario 
+static int next_watch_ = 0;			//TODO: analizar si es necesario 
 //TODO: que onda????? esto esta en freebsd_impl
-static const int kqueue_file_descriptor_ = 0; //TODO: que onda????? esto esta en freebsd_impl
+static int kqueue_file_descriptor_ = 0; //TODO: que onda????? esto esta en freebsd_impl
 
 struct fs_item;				//forward-declaration
 struct struct user_entry;	//forward-declaration
@@ -167,7 +171,7 @@ struct user_entry
 	}
 
 	//TODO: ver que sentido tiene este metodo...
-	void add_watch( watch_type watch )
+	void add_watch( watch_type item )
 	{
 		all_watches_.push_back(item);
 	}
@@ -561,9 +565,6 @@ typedef std::vector<user_item_pointer> user_item_collection;
 //TODO: si es necesario para todas las implementaciones, pasar a base_impl
 typedef boost::shared_ptr<boost::thread> thread_type;
 
-#ifndef O_EVTONLY
-#define O_EVTONLY O_RDONLY
-#endif
 
 
 class freebsd_impl : public base_impl<freebsd_impl>
