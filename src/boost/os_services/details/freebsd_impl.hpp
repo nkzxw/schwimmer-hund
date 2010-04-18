@@ -701,6 +701,7 @@ public:
 		//std::cout << "void start()" << std::endl;
 		initialize();
 
+		//TODO: BOOST_FOREACH
 		for (watch_collection_type::iterator it =  user_watchs_.begin(); it != user_watchs_.end(); ++it )
 		{
 			create_watch( *it );
