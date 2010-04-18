@@ -132,7 +132,7 @@ struct fsitem
 	struct kevent event;
 	boost::uint32_t mask;	/**< Mask of monitored events */
 
-	int parent_wd;
+	int parent_watch_descriptor_;
 	watch_type parent;
 
 	//TODO: renombrar
@@ -474,13 +474,13 @@ public:
 //					//TODO: ver en el codigo de pnotify: /* Add a watch if it is a regular file */
 //					create_watch( item );
 //					item->mask = PN_CREATE;
-//					item->parent_wd = head_dir->watch_descriptor_;
+//					item->parent_watch_descriptor_ = head_dir->watch_descriptor_;
 //					item->parent = head_dir;
 //
 ////					std::cout << "PN_CREATE: " << PN_CREATE << std::endl;
 ////					std::cout << "item->path.native_file_string(): " << item->path.native_file_string() << std::endl;
 ////					std::cout << "item->mask: " << item->mask << std::endl;
-////					std::cout << "item->parent_wd: " << item->parent_wd << std::endl;
+////					std::cout << "item->parent_watch_descriptor_: " << item->parent_watch_descriptor_ << std::endl;
 //
 //
 //					head_dir->subitems.push_back(item);
@@ -594,7 +594,7 @@ public:
 //					//TODO: ver en el codigo de pnotify: /* Add a watch if it is a regular file */
 //					create_watch( item );
 //					item->mask = PN_CREATE;
-//					item->parent_wd = head_dir->watch_descriptor_;
+//					item->parent_watch_descriptor_ = head_dir->watch_descriptor_;
 //					//item->parent = head_dir;
 //					item->st_dev = dir_st.st_dev;
 //					item->st_ino = dir_st.st_ino;
@@ -615,7 +615,7 @@ public:
 //					watch_type item(new fsitem);
 //					item->path = dir_itr->path();
 //					item->mask = PN_CREATE;
-//					item->parent_wd = head_dir->watch_descriptor_;
+//					item->parent_watch_descriptor_ = head_dir->watch_descriptor_;
 //					item->st_dev = dir_st.st_dev;
 //					item->st_ino = dir_st.st_ino;
 //
@@ -686,7 +686,7 @@ public:
 //				//TODO: ver en el codigo de pnotify: /* Add a watch if it is a regular file */
 //				create_watch( item );
 //				item->mask = PN_CREATE;
-//				item->parent_wd = head_dir->watch_descriptor_;
+//				item->parent_watch_descriptor_ = head_dir->watch_descriptor_;
 //				item->st_dev = (*it)->st_dev;
 //				item->st_ino = (*it)->st_ino;
 //
@@ -752,7 +752,7 @@ public: //private:  //TODO:
 						NOTE_DELETE on the file
 				   We ignore the NOTE_DELETE on the file.
 				*/
-				//if ( watch->parent_wd && event.fflags & NOTE_DELETE )
+				//if ( watch->parent_watch_descriptor_ && event.fflags & NOTE_DELETE )
 				//{
 				//	std::cout << "-*-*-*-*-*--*-*-*-*-** IGNORE NOTE_DELETE" << std::endl;
 				//	//goto retry;
@@ -775,7 +775,7 @@ public: //private:  //TODO:
 					std::cout << "watch: " << watch << std::endl;
 					std::cout << "watch->fd: " << watch->file_descriptor_ << std::endl;
 					std::cout << "watch->wd: " << watch->watch_descriptor_ << std::endl;
-					std::cout << "watch->parent_wd: " << watch->parent_wd << std::endl;
+					std::cout << "watch->parent_watch_descriptor_: " << watch->parent_watch_descriptor_ << std::endl;
 					std::cout << "watch->path: " << watch->path.native_file_string() << std::endl;
 					std::cout << "watch->is_directory: " << watch->is_directory << std::endl;
 					std::cout << "watch->mask: " << watch->mask << std::endl;
@@ -801,7 +801,7 @@ public: //private:  //TODO:
 					std::cout << "watch: " << watch << std::endl;
 					std::cout << "watch->fd: " << watch->file_descriptor_ << std::endl;
 					std::cout << "watch->wd: " << watch->watch_descriptor_ << std::endl;
-					std::cout << "watch->parent_wd: " << watch->parent_wd << std::endl;
+					std::cout << "watch->parent_watch_descriptor_: " << watch->parent_watch_descriptor_ << std::endl;
 					std::cout << "watch->path: " << watch->path.native_file_string() << std::endl;
 
 					std::cout << "watch->is_directory: " << watch->is_directory << std::endl;
@@ -823,7 +823,7 @@ public: //private:  //TODO:
 
 					for (watch_collection_type::iterator it =  all_watches_.begin(); it != all_watches_.end(); ++it )
 					{
-						if ( watch->parent_wd == (*it)->wd )
+						if ( watch->parent_watch_descriptor_ == (*it)->watch_descriptor_ )
 						{
 							std::cout << "Parent: " << (*it)->path().native_file_string() << std::endl;
 						}
@@ -922,7 +922,7 @@ public: //private:  //TODO:
 					std::cout << "watch: " << watch << std::endl;
 					std::cout << "watch->fd: " << watch->file_descriptor_ << std::endl;
 					std::cout << "watch->wd: " << watch->watch_descriptor_ << std::endl;
-					std::cout << "watch->parent_wd: " << watch->parent_wd << std::endl;
+					std::cout << "watch->parent_watch_descriptor_: " << watch->parent_watch_descriptor_ << std::endl;
 					std::cout << "watch->path: " << watch->path.native_file_string() << std::endl;
 					std::cout << "watch->is_directory: " << watch->is_directory << std::endl;
 					std::cout << "watch->mask: " << watch->mask << std::endl;
@@ -1095,7 +1095,7 @@ public: //private:  //TODO:
 //					/* If the event happened within a watched directory,
 //					   add the filename and the parent watch descriptor.
 //					*/
-//					if (watch->parent_wd)
+//					if (watch->parent_watch_descriptor_)
 //					{
 //
 //						/* KLUDGE: remove the leading basename */
@@ -1109,7 +1109,7 @@ public: //private:  //TODO:
 //							fn++;
 //						}
 //
-//						evt->wd = watch->parent_wd;
+//						evt->wd = watch->parent_watch_descriptor_;
 //						/* FIXME: more error handling */
 //						(void) strncpy(evt->name, fn, strlen(fn));
 //					}
@@ -1137,7 +1137,7 @@ public: //private:  //TODO:
 //				//std::cout << "watch.fd: " << watch.fd << std::endl;
 
 				//TODO: ver este tema, porque se puede estar disparando contra el directorui
-//				if (watch->parent_wd && event.fflags & NOTE_DELETE)
+//				if (watch->parent_watch_descriptor_ && event.fflags & NOTE_DELETE)
 //				{
 //					dprintf("ignoring NOTE_DELETE on a watched file\n");
 //					goto retry;
