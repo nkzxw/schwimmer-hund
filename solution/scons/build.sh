@@ -13,7 +13,7 @@ cd ~/dev/schwimmer-hund/
 #cd ../..
 svn update
 #cd solution/scons
-cd ~/dev/schwimmer-hund/solutions/scons
+cd ~/dev/schwimmer-hund/solution/scons
 
 chmod a+x config.sh
 ./config.sh
