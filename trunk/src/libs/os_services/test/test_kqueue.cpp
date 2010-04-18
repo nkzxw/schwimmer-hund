@@ -8,7 +8,13 @@
 #include <sys/event.h>
 #include <sys/time.h> 
 
-#define O_EVTONLY EVFILT_VNODE
+
+//TODO: O_EVTONLY existe en MacOS pero no en FreeBSD
+
+#ifndef O_EVTONLY
+//#define O_EVTONLY EVFILT_VNODE
+#define O_EVTONLY O_RDONLY
+#endif
 
 int main(void)
 {
@@ -22,7 +28,6 @@ int main(void)
 		perror("kqueue");
 	}
 
-	//f = open("/home/fernando/temp1", O_RDONLY);
 	f = open("/home/fernando/temp1", O_EVTONLY);
 	
 	if (f == -1)
