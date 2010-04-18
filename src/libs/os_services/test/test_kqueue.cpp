@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h> 
@@ -30,12 +32,26 @@ int main(void)
 	for (;;) 
 	{
 		nev = kevent(kq, &change, 1, &event, 1, NULL);
+
+		
 		if (nev == -1)
 		{
 			perror("kevent");
 		}
 		else if (nev > 0) 
 		{
+			std::cout << "nev: " << nev << std::endl;
+
+			std::cout << "event.ident: " << event.ident << std::endl;
+			std::cout << "event.ident: " << event.ident << std::endl;
+			std::cout << "event.filter: " << event.filter << std::endl;
+			std::cout << "event.flags: " << event.flags << std::endl;
+			std::cout << "event.fflags: " << event.fflags << std::endl;
+			std::cout << "event.data: " << event.data << std::endl;
+			std::cout << "event.udata: " << event.udata << std::endl;
+
+
+
 			if (event.fflags & NOTE_EXTEND || event.fflags & NOTE_WRITE)
 			{
 				printf("NOTE_ATTRIB -> PN_ATTRIB\n");
