@@ -334,7 +334,8 @@ public:
 
 
 		//TODO: ver estos flags, deberia monitoriarse solo lo que el usuairo quiera monitorear...
-		unsigned int fflags = NOTE_DELETE |  NOTE_WRITE | NOTE_EXTEND | NOTE_ATTRIB | NOTE_LINK | NOTE_REVOKE; //| NOTE_RENAME
+		//unsigned int fflags = NOTE_DELETE |  NOTE_WRITE | NOTE_EXTEND | NOTE_ATTRIB | NOTE_LINK | NOTE_REVOKE; //| NOTE_RENAME;
+		unsigned int fflags = NOTE_DELETE |  NOTE_WRITE | NOTE_EXTEND | NOTE_ATTRIB | NOTE_LINK | NOTE_REVOKE | NOTE_RENAME;
 		//event->fflags = NOTE_DELETE |  NOTE_WRITE | NOTE_EXTEND | NOTE_ATTRIB | NOTE_LINK | NOTE_REVOKE; //| NOTE_RENAME
 		//| UKKQueueNotifyAboutAttributeChange];
 
