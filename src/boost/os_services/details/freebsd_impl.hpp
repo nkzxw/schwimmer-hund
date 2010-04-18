@@ -822,15 +822,59 @@ public: //private:  //TODO:
 					boost::filesystem::path parent;
 					std::cout << "temp Parent: " << parent.native_file_string() << std::endl;
 
+					if ( parent.empty() )
+					{
+						std::cout << "temp Parent Empty" << std::endl;
+					}
+
+					if ( parent.is_complete() )
+					{
+						std::cout << "temp Parent is_complete" << std::endl;
+					}
+
+					if ( parent )
+					{
+						std::cout << "temp Parent true" << std::endl;
+					}
+
+					if ( ! parent )
+					{
+						std::cout << "temp Parent false" << std::endl;
+					}
+
+				
+
+
+
 					//TODO: find
 					for (watch_collection_type::iterator it =  all_watches_.begin(); it != all_watches_.end(); ++it )
 					{
 						if ( watch->parent_watch_descriptor_ == (*it)->watch_descriptor_ )
 						{
-							std::cout << "Parent: " << (*it)->path.native_file_string() << std::endl;
+							parent = (*it)->path;
 						}
 					}
 
+					std::cout << "Parent: " << parent.native_file_string() << std::endl;
+					if ( parent.empty() )
+					{
+						std::cout << "Parent Empty" << std::endl;
+					}
+
+					if ( parent.is_complete() )
+					{
+						std::cout << "Parent is_complete" << std::endl;
+					}
+
+					if ( parent )
+					{
+						std::cout << "Parent true" << std::endl;
+					}
+
+					if ( ! parent )
+					{
+						std::cout << "Parent false" << std::endl;
+					}
 
 
 					//for ( boost::filesystem::directory_iterator dir_itr( head_dir->path ); dir_itr != end_iter; ++dir_itr )
