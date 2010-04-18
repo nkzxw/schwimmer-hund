@@ -110,10 +110,6 @@ namespace detail {
 
 
 
-//static int next_watch_ = 0;			//TODO: analizar si es necesario 
-////TODO: que onda????? esto esta en freebsd_impl
-//static int kqueue_file_descriptor_ = 0; //TODO: que onda????? esto esta en freebsd_impl
-
 static int next_watch_ = 0;			//TODO: analizar si es necesario 
 //TODO: que onda????? esto esta en freebsd_impl
 static int kqueue_file_descriptor_ = 0; //TODO: que onda????? esto esta en freebsd_impl
@@ -579,8 +575,8 @@ public:
 	freebsd_impl()
 		: is_initialized_(false), closing_(false) //, kqueue_file_descriptor_(0), next_watch_(0)
 	{
-		next_watch_ = 0;
-		kqueue_file_descriptor_ = 0;
+		//next_watch_ = 0;
+		//kqueue_file_descriptor_ = 0;
 	}
 
 //	~freebsd_impl()
@@ -639,7 +635,7 @@ public:
 		//TODO: asignar mask
 
 		user_item_pointer item(new user_entry);
-		item->path = dir_name;
+		item->path_ = dir_name;
 		user_watches_.push_back(item);
 	}
 	//void remove_directory_impl(const std::string& dir_name) // throw (std::invalid_argument);
@@ -1119,7 +1115,8 @@ public: //private:  //TODO:
 		//TODO: ????
 		//assert(ctl && watch);
 
-		scan_directory( head_dir );
+		head_dir->parent_user_entry->scan_directory( head_dir );
+		//scan_directory( head_dir );
 
 //		//std::cout << "DEBUG 6" << std::endl;
 //
