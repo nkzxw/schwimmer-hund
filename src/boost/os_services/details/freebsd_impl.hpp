@@ -810,12 +810,28 @@ public: //private:  //TODO:
 					std::cout << "watch->st_ino: " << watch->st_ino << std::endl;
 
 
-					std::cout << "event.ident: " << event.ident << std::endl;
-					std::cout << "event.filter: " << event.filter << std::endl;
-					std::cout << "event.flags: " << event.flags << std::endl;
-					std::cout << "event.fflags: " << event.fflags << std::endl;
-					std::cout << "event.data: " << event.data << std::endl;
-					std::cout << "event.udata: " << event.udata << std::endl;
+					//std::cout << "event.ident: " << event.ident << std::endl;
+					//std::cout << "event.filter: " << event.filter << std::endl;
+					//std::cout << "event.flags: " << event.flags << std::endl;
+					//std::cout << "event.fflags: " << event.fflags << std::endl;
+					//std::cout << "event.data: " << event.data << std::endl;
+					//std::cout << "event.udata: " << event.udata << std::endl;
+
+					boost::filesystem::path tparent;
+					if ( parent.empty() )
+					{
+						std::cout << "tparent Empty" << std::endl;
+					}
+					tparent = "/home/fernando";
+					if ( parent.empty() )
+					{
+						std::cout << "tparent Empty - 2" << std::endl;
+					}
+					if ( boost::filesystem::is_directory( tparent ) )
+					{
+						std::cout << "tparent is_directory" << std::endl;
+					}
+
 
 
 					//boost::optional<boost::filesystem::path> parent;
