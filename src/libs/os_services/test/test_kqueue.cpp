@@ -21,7 +21,9 @@ int main(void)
 		perror("kqueue");
 	}
 
-	f = open("/home/fernando/temp1", O_RDONLY);
+	//f = open("/home/fernando/temp1", O_RDONLY);
+	f = open("/home/fernando/temp1", O_EVTONLY);
+	
 	if (f == -1)
 	{
 		perror("open");
