@@ -831,7 +831,7 @@ public: //private:  //TODO:
 					{
 						boost::filesystem::directory_iterator end_iter;
 
-						//TODO: pasar a metodo statico
+						//TODO: pasar a metodo estatico
 						for ( boost::filesystem::directory_iterator dir_itr( parent ); dir_itr != end_iter; ++dir_itr )
 						{
 							struct stat dir_st;
@@ -1167,51 +1167,51 @@ public: //private:  //TODO:
 
 		scan_directory( head_dir );
 
-		//std::cout << "DEBUG 6" << std::endl;
-
-		watch_collection_type::iterator it = head_dir->subitems.begin();
-		while ( it != head_dir->subitems.end() )
-		{
-
-			//std::cout << "DEBUG 7" << std::endl;
-			//std::cout << "File removed: " << (*it)->path.native_file_string() << std::endl;
-
-			if ((*it)->mask == 0) /* Skip files that have not changed */
-			{
-				++it;
-				continue;
-			}
-
-			//std::cout << "DEBUG 8" << std::endl;
-
-
-			/* Remove the directory entry for a deleted file */
-			if ( (*it)->mask & PN_DELETE )
-			{
-				//std::cout << "DEBUG 9" << std::endl;
-
-
-				//std::cout << "File removed: " << (*it)->path.native_file_string() << std::endl;
-
-//				std::cout << "ELIMINANDO ITEM DE LA LISTA" << std::endl;
-//				std::cout << "(*it)->path.native_file_string(): " << (*it)->path.native_file_string() << std::endl;
-//				//std::cout << "(*it)->mask: " << (*it)->mask << std::endl;
-
-
-				it = head_dir->subitems.erase(it);
-			}
-			else
-			{
-				//std::cout << "DEBUG 10" << std::endl;
-
-				++it;
-			}
-
-			//std::cout << "DEBUG 11" << std::endl;
-
-
-		}
-		//std::cout << "DEBUG 12" << std::endl;
+//		//std::cout << "DEBUG 6" << std::endl;
+//
+//		watch_collection_type::iterator it = head_dir->subitems.begin();
+//		while ( it != head_dir->subitems.end() )
+//		{
+//
+//			//std::cout << "DEBUG 7" << std::endl;
+//			//std::cout << "File removed: " << (*it)->path.native_file_string() << std::endl;
+//
+//			if ((*it)->mask == 0) /* Skip files that have not changed */
+//			{
+//				++it;
+//				continue;
+//			}
+//
+//			//std::cout << "DEBUG 8" << std::endl;
+//
+//
+//			/* Remove the directory entry for a deleted file */
+//			if ( (*it)->mask & PN_DELETE )
+//			{
+//				//std::cout << "DEBUG 9" << std::endl;
+//
+//
+//				//std::cout << "File removed: " << (*it)->path.native_file_string() << std::endl;
+//
+////				std::cout << "ELIMINANDO ITEM DE LA LISTA" << std::endl;
+////				std::cout << "(*it)->path.native_file_string(): " << (*it)->path.native_file_string() << std::endl;
+////				//std::cout << "(*it)->mask: " << (*it)->mask << std::endl;
+//
+//
+//				it = head_dir->subitems.erase(it);
+//			}
+//			else
+//			{
+//				//std::cout << "DEBUG 10" << std::endl;
+//
+//				++it;
+//			}
+//
+//			//std::cout << "DEBUG 11" << std::endl;
+//
+//
+//		}
+//		//std::cout << "DEBUG 12" << std::endl;
 
 	}
 
