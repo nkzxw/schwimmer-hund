@@ -773,6 +773,11 @@ public: //private:  //TODO:
 					std::cout << "watch->wd: " << watch->watch_descriptor_ << std::endl;
 					std::cout << "watch->parent_wd: " << watch->parent_wd << std::endl;
 					std::cout << "watch->path: " << watch->path.native_file_string() << std::endl;
+					std::cout << "watch->is_directory: " << watch->is_directory << std::endl;
+					std::cout << "watch->mask: " << watch->mask << std::endl;
+					std::cout << "watch->st_dev: " << watch->st_dev << std::endl;
+					std::cout << "watch->st_ino: " << watch->st_ino << std::endl;
+
 
 					//std::cout << "kev.ident: " << kev.ident << std::endl;
 					//std::cout << "kev.filter: " << kev.filter << std::endl;
@@ -795,12 +800,18 @@ public: //private:  //TODO:
 					std::cout << "watch->parent_wd: " << watch->parent_wd << std::endl;
 					std::cout << "watch->path: " << watch->path.native_file_string() << std::endl;
 
-					//std::cout << "kev.ident: " << kev.ident << std::endl;
-					//std::cout << "kev.filter: " << kev.filter << std::endl;
-					//std::cout << "kev.flags: " << kev.flags << std::endl;
-					//std::cout << "kev.fflags: " << kev.fflags << std::endl;
-					//std::cout << "kev.data: " << kev.data << std::endl;
-					//std::cout << "kev.udata: " << kev.udata << std::endl;
+					std::cout << "watch->is_directory: " << watch->is_directory << std::endl;
+					std::cout << "watch->mask: " << watch->mask << std::endl;
+					std::cout << "watch->st_dev: " << watch->st_dev << std::endl;
+					std::cout << "watch->st_ino: " << watch->st_ino << std::endl;
+
+
+					std::cout << "kev.ident: " << kev.ident << std::endl;
+					std::cout << "kev.filter: " << kev.filter << std::endl;
+					std::cout << "kev.flags: " << kev.flags << std::endl;
+					std::cout << "kev.fflags: " << kev.fflags << std::endl;
+					std::cout << "kev.data: " << kev.data << std::endl;
+					std::cout << "kev.udata: " << kev.udata << std::endl;
 
 					std::cout << "--------------------------------------------------------------------------------------" << std::endl;
 
@@ -815,6 +826,11 @@ public: //private:  //TODO:
 					std::cout << "watch->wd: " << watch->watch_descriptor_ << std::endl;
 					std::cout << "watch->parent_wd: " << watch->parent_wd << std::endl;
 					std::cout << "watch->path: " << watch->path.native_file_string() << std::endl;
+					std::cout << "watch->is_directory: " << watch->is_directory << std::endl;
+					std::cout << "watch->mask: " << watch->mask << std::endl;
+					std::cout << "watch->st_dev: " << watch->st_dev << std::endl;
+					std::cout << "watch->st_ino: " << watch->st_ino << std::endl;
+
 
 					//std::cout << "kev.ident: " << kev.ident << std::endl;
 					//std::cout << "kev.filter: " << kev.filter << std::endl;
