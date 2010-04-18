@@ -122,21 +122,26 @@ struct fsitem
 	}
 
 	boost::filesystem::path path;
+	bool is_directory;
 
-	//TODO: uno de estos dos (fd y wd) no es necesario
-	int fd;	/**< kqueue(4) watched file descriptor */
-	int wd;	/**< Unique 'watch descriptor' */
+	//TODO: uno de estos dos (file_descriptor_ y watch_descriptor_) no es necesario
+	int file_descriptor_;	/**< kqueue(4) watched file descriptor */
+	int watch_descriptor_;	/**< Unique 'watch descriptor' */
 
 	//char            path[255 + 1];	//path[PATH_MAX + 1];	/**< Path associated with fd */
-	struct kevent kev;
+	struct kevent event;
 	boost::uint32_t mask;	/**< Mask of monitored events */
 
 	int parent_wd;
+	watch_type parent;
 
+	//TODO: renombrar
     dev_t st_dev; /* ID of device containing file */
     ino_t st_ino; /* inode number */
 
 	watch_collection_type subitems;
+
+	
 
 	//TODO: PONER PUNTERO A parent
 };
@@ -144,12 +149,17 @@ struct fsitem
 //TODO: si es necesario para todas las implementaciones, pasar a base_impl
 typedef boost::shared_ptr<boost::thread> thread_type;
 
+#ifndef O_EVTONLY
+#define O_EVTONLY O_RDONLY
+#endif
+
+
 class freebsd_impl : public base_impl<freebsd_impl>
 {
 public:
 
 	freebsd_impl()
-		: is_initialized_(false), closing_(false), file_descriptor_(0), next_watch_(0)
+		: is_initialized_(false), closing_(false), kqueue_file_descriptor_(0), next_watch_(0)
 	{}
 
 //	~freebsd_impl()
@@ -163,14 +173,14 @@ public:
 //			thread_->join();
 //		}
 //
-//		if ( file_descriptor_ != 0 )
+//		if ( kqueue_file_descriptor_ != 0 )
 //		{
 //			//TODO:
 ////			BOOST_FOREACH(pair_type p, watch_descriptors_)
 ////			{
 ////				if ( p.second != 0 )
 ////				{
-////					//int ret_value = ::inotify_rm_watch( file_descriptor_, p.second );
+////					//int ret_value = ::inotify_rm_watch( kqueue_file_descriptor_, p.second );
 ////					int ret_value = 0;
 ////
 ////					if ( ret_value < 0 )
@@ -184,7 +194,7 @@ public:
 ////			}
 //
 //			// TODO: parece que close(0) cierra el standard input (CIN)
-//			//int ret_value = ::close( file_descriptor_ );
+//			//int ret_value = ::close( kqueue_file_descriptor_ );
 //			int ret_value = 0;
 //
 //			if ( ret_value < 0 )
@@ -216,13 +226,12 @@ public:
 	void initialize() //private
 	{
 		//std::cout << "void initialize()" << std::endl;
-
 		if (!is_initialized_)
 		{
-			//std::cout << "file_descriptor_ = kqueue();" << std::endl;
+			kqueue_file_descriptor_ = kqueue(); //::kqueue();
+			//std::cout << "kqueue_file_descriptor_" << kqueue_file_descriptor_ << std::endl;
 
-			file_descriptor_ = kqueue(); //::kqueue();
-			if (file_descriptor_ < 0)
+			if ( kqueue_file_descriptor_ == -1 )   //< 0)
 			{
 				std::ostringstream oss;
 				oss << "Failed to initialize monitor - Reason: " << std::strerror(errno);
@@ -232,7 +241,7 @@ public:
 		}
 	}
 
-	void create_watch( watch_type watch )
+	void create_watch ( watch_type watch )
 	{
 //		std::cout << "void create_watch( watch_type watch )" << std::endl;
 //		std::cout << "watch->path.native_file_string(): " << watch->path.native_file_string() << std::endl;
@@ -244,23 +253,32 @@ public:
 		}
 
 		//TODO: en el constructor
-		watch->wd = 0;
-		struct kevent *kev = &watch->kev;
+		watch->watch_descriptor_ = 0;
+		watch->is_directory = false;
+
+		struct kevent *event = &watch->event;
 		int mask = watch->mask;
 
-		if (watch->wd < 0)
+		//TODO: y esto?????? nunca se ejecuta, cual es la razon ????
+		if (watch->watch_descriptor_ < 0)
 		{
 			std::ostringstream oss;
 			oss << "Failed to monitor directory - Directory: " << watch->path.native_file_string() << " - Reason: " << std::strerror(errno);
 			throw (std::invalid_argument(oss.str()));
 		}
-//			it->second = watch->wd;
 
-		// watch->wd ES IGUAL A watch_descriptor
-		//std::cout << "FILE: " << watch->path.native_file_string() << std::endl;
+		//if ( (watch->fd = open( watch->path.native_file_string().c_str(), O_RDONLY )) < 0)
+		watch->file_descriptor_ = open( watch->path.native_file_string().c_str(), O_EVTONLY )
+		if ( watch->file_descriptor_ == -1 ) //< 0
+		{
+			//warn("opening path `%s' failed", watch->path);
+			//return -1;
 
-		// TENEMOS UN FILE DESCRIPTOR POR WATCH
-		//if ((watch->fd = open(watch->path, O_RDONLY)) < 0)
+			std::ostringstream oss;
+			//TODO:
+			oss << "opening path failed: - Reason: " << std::strerror(errno);
+			throw (std::invalid_argument(oss.str()));
+		}
 
 
 		//TODO: que hace el lstat ??? Que pasa si da error ??????
@@ -276,39 +294,26 @@ public:
 			ptime now = microsec_clock::local_time();
 			std::cout << to_iso_string(now) << std::endl;
 
-
 			return;
 		}
 
 		watch->st_dev = st.st_dev;
 		watch->st_ino = st.st_ino;
 
-		//TODO: en Mac está la macro "O_EVTONLY". Parece que es conveniente usarla en reemplazo de "O_RDONLY"
-		//if ( (watch->fd = open( watch->path.native_file_string().c_str(), O_EVTONLY )) < 0)
-		if ( (watch->fd = open( watch->path.native_file_string().c_str(), O_RDONLY )) < 0)
-		{
-			//warn("opening path `%s' failed", watch->path);
-			//return -1;
-
-			std::ostringstream oss;
-			//TODO:
-			oss << "opening path failed: - Reason: " << std::strerror(errno);
-			throw (std::invalid_argument(oss.str()));
-		}
-
-
 		
 
 		if ( boost::filesystem::is_directory( watch->path ) )
 		{
-			scan_directory( watch );
+			watch->is_directory = true;
+			//scan_directory( watch );
+			scan_directory( watch.get() );
 		}
 
 		/* Generate a new watch ID */
 		/* FIXME - this never decreases and might fail */
 		//if ((watch->wd = ++ctl->next_wd) > WATCH_MAX)
 
-		if ( (watch->wd = ++next_watch_) > WATCH_MAX )
+		if ( (watch->watch_descriptor_ = ++next_watch_) > WATCH_MAX )
 		{
 			//warn("watch_max exceeded");
 			//return -1;
@@ -318,23 +323,23 @@ public:
 			throw (std::invalid_argument(oss.str()));
 		}
 
-		if ( watch->fd == 0 )
+		if ( watch->file_descriptor_ == 0 )
 		{
 			std::cout << "-------------------------------------------------------------------------------" << std::endl;
-			std::cout << "watch->fd: " << watch->fd << std::endl;
-			std::cout << "watch->wd: " << watch->wd << std::endl;
+			std::cout << "watch->fd: " << watch->file_descriptor_ << std::endl;
+			std::cout << "watch->wd: " << watch->watch_descriptor_ << std::endl;
 			std::cout << "watch->path.native_file_string(): " << watch->path.native_file_string() << std::endl;
 			std::cout << "-------------------------------------------------------------------------------" << std::endl;
 		}
 
 
-		/* Create and populate a kevent structure */
-		//EV_SET(kev, watch->fd, EVFILT_VNODE, EV_ADD | EV_CLEAR, 0, 0, watch);
-		EV_SET( kev, watch->fd, EVFILT_VNODE, EV_ADD | EV_CLEAR, 0, 0, watch.get() );
-		//EV_SET( &ev_change[foldersToWatch], fd[foldersToWatch], EVFILT_VNODE, EV_ADD | EV_CLEAR, vnode_events, 0, &(mpTaskInfo->mpControlInfo[foldersToWatch]) );
+		//TODO: ver estos flags, deberia monitoriarse solo lo que el usuairo quiera monitorear...
+		unsigned int fflags = NOTE_DELETE |  NOTE_WRITE | NOTE_EXTEND | NOTE_ATTRIB | NOTE_LINK | NOTE_REVOKE; //| NOTE_RENAME
+		//event->fflags = NOTE_DELETE |  NOTE_WRITE | NOTE_EXTEND | NOTE_ATTRIB | NOTE_LINK | NOTE_REVOKE; //| NOTE_RENAME
+		//| UKKQueueNotifyAboutAttributeChange];
 
-		//TODO: ver esto...
 
+		EV_SET( event, watch->file_descriptor_, EVFILT_VNODE, EV_ADD | EV_ENABLE | EV_ONESHOT | EV_CLEAR, fflags, 0, watch.get() );
 
 		//TODO: ver si Windows y Linux saltan cuando se mofica el nombre del directorio raiz monitoreado.
 		         // sino saltan, evisar que se use NOTE_RENAME con cualquier directorio raiz
@@ -342,10 +347,6 @@ public:
 				// -> Windows no salta...
 				// -> Linux tampoco...
 				// -> FreeBSD: ????????????
-
-		//TODO: ver estos flags, deberia monitoriarse solo lo que el usuairo quiera monitorear...
-		kev->fflags = NOTE_DELETE |  NOTE_WRITE | NOTE_EXTEND | NOTE_ATTRIB | NOTE_LINK | NOTE_REVOKE; //| NOTE_RENAME
-
 
 //		kev->fflags |= NOTE_RENAME; //Eliminado porque no sirve monitorear el dir raiz.
 //		kev->fflags |= NOTE_TRUNCATE; //TODO: ver
@@ -361,40 +362,39 @@ public:
 		//TODO: ver como mapear las constantes de BSD con las de la interfaz que vamos a exponer al usuario...
 		//TODO: vamos a tener que hacer algo similar a lo que estamos haciendo a continuacion...
 
-		if (mask & PN_ACCESS || mask & PN_MODIFY)
-		{
-			kev->fflags |= NOTE_ATTRIB;
-		}
+		//if (mask & PN_ACCESS || mask & PN_MODIFY)
+		//{
+		//	event->fflags |= NOTE_ATTRIB;
+		//}
 
-		if (mask & PN_CREATE)
-		{
-			kev->fflags |= NOTE_WRITE;
-		}
+		//if (mask & PN_CREATE)
+		//{
+		//	event->fflags |= NOTE_WRITE;
+		//}
 
-		if (mask & PN_DELETE)
-		{
-			kev->fflags |= NOTE_DELETE | NOTE_WRITE;
-		}
+		//if (mask & PN_DELETE)
+		//{
+		//	event->fflags |= NOTE_DELETE | NOTE_WRITE;
+		//}
 
-		if (mask & PN_MODIFY)
-		{
-			kev->fflags |= NOTE_WRITE | NOTE_TRUNCATE | NOTE_EXTEND;
-		}
+		//if (mask & PN_MODIFY)
+		//{
+		//	event->fflags |= NOTE_WRITE | NOTE_TRUNCATE | NOTE_EXTEND;
+		//}
 
-		if (mask & PN_ONESHOT)
-		{
-			kev->flags |= EV_ONESHOT;
-		}
+		//if (mask & PN_ONESHOT)
+		//{
+		//	event->flags |= EV_ONESHOT;
+		//}
 
 		//std::cout << "kev->flags: " << kev->flags << std::endl;
 
 		/* Add the kevent to the kernel event queue */
-		//if (kevent(ctl->fd, kev, 1, NULL, 0, NULL) < 0)
-		if (kevent(file_descriptor_, kev, 1, NULL, 0, NULL) < 0)
+		int return_code = kevent(kqueue_file_descriptor_, event, 1, NULL, 0, NULL);
+		if ( return_code == -1 ) //< 0)
 		{
 			//perror("kevent(2)");
 			//return -1;
-
 
 			std::ostringstream oss;
 			//TODO:
@@ -404,95 +404,94 @@ public:
 	}
 
 
-	//TODO: contemplar la opcion include_sub_directories_
-	void scan_directory( watch_type head_dir )
-	{
-		//std::cout << "void scan_directory( watch_type head_dir )" << std::endl;
-		//std::cout << "head_dir->path.native_file_string(): " << head_dir->path.native_file_string() << std::endl;
-
-
-		//TODO: STL --> std::transform o std::for_each o boost::lambda o BOOST_FOREACH
-		//TODO: watch_collection_type o all_watchs_type ?????? GUARDA!!!!
-
-		//std::cout << "head_dir->subitems.size(): " << head_dir->subitems.size() << std::endl;
-		for (watch_collection_type::iterator it =  head_dir->subitems.begin(); it != head_dir->subitems.end(); ++it )
-		{
-			(*it)->mask = PN_DELETE;
-		}
-
-		//std::cout << "-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.---..--..-.-.-.-...-.-.-.-.-.-.-." << std::endl;
-
-		boost::filesystem::directory_iterator end_iter;
-		for ( boost::filesystem::directory_iterator dir_itr( head_dir->path ); dir_itr != end_iter; ++dir_itr )
-		{
-			try
-			{
-				bool found = false;
-
-				//TODO: que hace este lstat
-				struct stat dir_st;
-				if ( lstat( dir_itr->path().native_file_string().c_str(), &dir_st) < 0)
-				{
-					//TODO: manejo de errores
-					std::cout << "STAT ERROR -- 2 -- - Reason: " << std::strerror(errno) << std::endl;
-					std::cout << "dir_itr->path().native_file_string(): " << dir_itr->path().native_file_string() << std::endl;
-
-					ptime now = microsec_clock::local_time();
-					std::cout << to_iso_string(now) << std::endl;
-
-				}
-
-				//TODO: no me gusta esta busqueda lineal...
-				//TODO: reemplazar por std::find o algo similar...
-				//TODO: user_watchs o all_watchs ?????? GUARDA!!!!
-				//Linear-search
-				for (watch_collection_type::iterator it =  head_dir->subitems.begin(); it != head_dir->subitems.end(); ++it )
-				{
-
-					//TODO: para que hago esto ? porque no comparar los path directamente? Funcionara ??
-					if (  (*it)->path.native_file_string() == dir_itr->path().native_file_string() )
-					{
-						//std::cout << "found filename: " << (*it)->path.native_file_string() << std::endl;
-						//std::cout << "(*it)->path.native_file_string(): " << (*it)->path.native_file_string() << std::endl;
-						found = true;
-					}
-
-					if ((dir_st.st_dev == (*it)->st_dev) &&  (dir_st.st_ino == (*it)->st_ino))
-					{
-						//std::cout << "found inode: " << (*it)->path.native_file_string() << " - " << dir_itr->path().native_file_string() << std::endl;
-					}
-
-
-				}
-
-				if ( !found )
-				{
-					//std::cout << "if ( !found )" << std::endl;
-
-					watch_type item(new fsitem);
-					item->path = dir_itr->path();
-
-					//TODO: ver en el codigo de pnotify: /* Add a watch if it is a regular file */
-					create_watch( item );
-					item->mask = PN_CREATE;
-					item->parent_wd = head_dir->wd;
-
-//					std::cout << "PN_CREATE: " << PN_CREATE << std::endl;
-//					std::cout << "item->path.native_file_string(): " << item->path.native_file_string() << std::endl;
-//					std::cout << "item->mask: " << item->mask << std::endl;
-//					std::cout << "item->parent_wd: " << item->parent_wd << std::endl;
-
-
-					head_dir->subitems.push_back(item);
-				}
-			}
-			catch ( const std::exception & ex )
-			{
-				std::cout << dir_itr->path().native_file_string() << " " << ex.what() << std::endl;
-			}
-		}
-
-	}
+//	//TODO: contemplar la opcion include_sub_directories_
+//	void scan_directory( watch_type head_dir )
+//	{
+//		//std::cout << "void scan_directory( watch_type head_dir )" << std::endl;
+//		//std::cout << "head_dir->path.native_file_string(): " << head_dir->path.native_file_string() << std::endl;
+//
+//		//TODO: STL --> std::transform o std::for_each o boost::lambda o BOOST_FOREACH
+//		//TODO: watch_collection_type o all_watchs_type ?????? GUARDA!!!!
+//
+//		//std::cout << "head_dir->subitems.size(): " << head_dir->subitems.size() << std::endl;
+//		for (watch_collection_type::iterator it =  head_dir->subitems.begin(); it != head_dir->subitems.end(); ++it )
+//		{
+//			(*it)->mask = PN_DELETE;
+//		}
+//
+//		//std::cout << "-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.---..--..-.-.-.-...-.-.-.-.-.-.-." << std::endl;
+//
+//		boost::filesystem::directory_iterator end_iter;
+//		for ( boost::filesystem::directory_iterator dir_itr( head_dir->path ); dir_itr != end_iter; ++dir_itr )
+//		{
+//			try
+//			{
+//				bool found = false;
+//
+//				struct stat dir_st;
+//				if ( lstat( dir_itr->path().native_file_string().c_str(), &dir_st) < 0)
+//				{
+//					//TODO: manejo de errores
+//					std::cout << "STAT ERROR -- 2 -- - Reason: " << std::strerror(errno) << std::endl;
+//					std::cout << "dir_itr->path().native_file_string(): " << dir_itr->path().native_file_string() << std::endl;
+//
+//					ptime now = microsec_clock::local_time();
+//					std::cout << to_iso_string(now) << std::endl;
+//
+//				}
+//
+//				//TODO: no me gusta esta busqueda lineal...
+//				//TODO: reemplazar por std::find o algo similar...
+//				//TODO: user_watchs o all_watchs ?????? GUARDA!!!!
+//				//Linear-search
+//				for (watch_collection_type::iterator it =  head_dir->subitems.begin(); it != head_dir->subitems.end(); ++it )
+//				{
+//
+//					//TODO: para que hago esto ? porque no comparar los path directamente? Funcionara ??
+//					if (  (*it)->path.native_file_string() == dir_itr->path().native_file_string() )
+//					{
+//						//std::cout << "found filename: " << (*it)->path.native_file_string() << std::endl;
+//						//std::cout << "(*it)->path.native_file_string(): " << (*it)->path.native_file_string() << std::endl;
+//						found = true;
+//					}
+//
+//					if ((dir_st.st_dev == (*it)->st_dev) &&  (dir_st.st_ino == (*it)->st_ino))
+//					{
+//						//std::cout << "found inode: " << (*it)->path.native_file_string() << " - " << dir_itr->path().native_file_string() << std::endl;
+//					}
+//
+//
+//				}
+//
+//				if ( !found )
+//				{
+//					//std::cout << "if ( !found )" << std::endl;
+//
+//					watch_type item(new fsitem);
+//					item->path = dir_itr->path();
+//
+//					//TODO: ver en el codigo de pnotify: /* Add a watch if it is a regular file */
+//					create_watch( item );
+//					item->mask = PN_CREATE;
+//					item->parent_wd = head_dir->watch_descriptor_;
+//					item->parent = head_dir;
+//
+////					std::cout << "PN_CREATE: " << PN_CREATE << std::endl;
+////					std::cout << "item->path.native_file_string(): " << item->path.native_file_string() << std::endl;
+////					std::cout << "item->mask: " << item->mask << std::endl;
+////					std::cout << "item->parent_wd: " << item->parent_wd << std::endl;
+//
+//
+//					head_dir->subitems.push_back(item);
+//				}
+//			}
+//			catch ( const std::exception & ex )
+//			{
+//				std::cout << dir_itr->path().native_file_string() << " " << ex.what() << std::endl;
+//			}
+//		}
+//
+//	}
 
 
 	void scan_directory( fsitem* head_dir )
@@ -593,7 +592,7 @@ public:
 					//TODO: ver en el codigo de pnotify: /* Add a watch if it is a regular file */
 					create_watch( item );
 					item->mask = PN_CREATE;
-					item->parent_wd = head_dir->wd;
+					item->parent_wd = head_dir->watch_descriptor_;
 					item->st_dev = dir_st.st_dev;
 					item->st_ino = dir_st.st_ino;
 
@@ -612,7 +611,7 @@ public:
 					watch_type item(new fsitem);
 					item->path = dir_itr->path();
 					item->mask = PN_CREATE;
-					item->parent_wd = head_dir->wd;
+					item->parent_wd = head_dir->watch_descriptor_;
 					item->st_dev = dir_st.st_dev;
 					item->st_ino = dir_st.st_ino;
 
@@ -683,7 +682,7 @@ public:
 				//TODO: ver en el codigo de pnotify: /* Add a watch if it is a regular file */
 				create_watch( item );
 				item->mask = PN_CREATE;
-				item->parent_wd = head_dir->wd;
+				item->parent_wd = head_dir->watch_descriptor_;
 				item->st_dev = (*it)->st_dev;
 				item->st_ino = (*it)->st_ino;
 
@@ -717,15 +716,14 @@ public: //private:  //TODO:
 		while ( !closing_ )
 		{
 //			struct pnotify_event *evp;
-			struct kevent   kev;
-			int rc;
+			struct kevent event;
+			int return_code;
 
 			//std::cout << "waiting for kernel event.." << std::endl;
 
 			//TODO: ver timeout
-			//rc = kevent(ctl->fd, NULL, 0, &kev, 1, NULL);
-			rc = kevent ( file_descriptor_, NULL, 0, &kev, 1, NULL );
-			if ((rc < 0) || (kev.flags & EV_ERROR))
+			return_code = kevent ( kqueue_file_descriptor_, NULL, 0, &event, 1, NULL );
+			if ( return_code == -1 || event.flags & EV_ERROR) //< 0
 			{
 				//TODO:
 				//warn("kevent(2) failed");
@@ -733,19 +731,9 @@ public: //private:  //TODO:
 				return;
 			}
 
-			//TODO: volver a habilitar hasta el fin de las pruebas
-			//std::cout << "salio de kevent(...)" << std::endl;
-
-//			std::cout << "kev.ident: " << kev.ident << std::endl;
-//			std::cout << "kev.filter: " << kev.filter << std::endl;
-//			std::cout << "kev.flags: " << kev.flags << std::endl;
-//			std::cout << "kev.fflags: " << kev.fflags << std::endl;
-//			std::cout << "kev.data: " << kev.data << std::endl;
-//			std::cout << "kev.udata: " << kev.udata << std::endl;
-
 			//TODO: esto puede ser un tema, porque el shared_ptr (watch_type) va a tener el contador en 1 y cuando salga de scope va a hacer delete de la memoria...
 //			watch_type watch( (fsitem*) kev.udata );
-			fsitem* watch =  (fsitem*) kev.udata;
+			fsitem* watch =  (fsitem*) event.udata;
 
 
 			/* Workaround:
@@ -755,10 +743,9 @@ public: //private:  //TODO:
 					NOTE_DELETE on the file
 			   We ignore the NOTE_DELETE on the file.
 	        */
-			if (watch->parent_wd && kev.fflags & NOTE_DELETE)
+			if (watch->parent_wd && event.fflags & NOTE_DELETE)
 			{
-				//std::cout << "-*-*-*-*-*--*-*-*-*-** IGNORE NOTE_DELETE" << std::endl;
-				//dprintf("ignoring NOTE_DELETE on a watched file\n");
+				std::cout << "-*-*-*-*-*--*-*-*-*-** IGNORE NOTE_DELETE" << std::endl;
 				//goto retry;
 				continue;
 			}
@@ -776,9 +763,6 @@ public: //private:  //TODO:
 
 			if (! closing_)
 			{
-
-
-
 				//if (kev.fflags & NOTE_WRITE)
 				//{
 				//	std::cout << "NOTE_WRITE -> PN_MODIFY" << std::endl;
@@ -795,13 +779,13 @@ public: //private:  //TODO:
 				//{
 				//	std::cout << "NOTE_ATTRIB -> PN_ATTRIB" << std::endl;
 				//}
-				if (kev.fflags & NOTE_DELETE)
+				if (event.fflags & NOTE_DELETE)
 				{
 					std::cout << "NOTE_DELETE -> PN_DELETE" << std::endl;
 
 					std::cout << "watch: " << watch << std::endl;
-					std::cout << "watch->fd: " << watch->fd << std::endl;
-					std::cout << "watch->wd: " << watch->wd << std::endl;
+					std::cout << "watch->fd: " << watch->file_descriptor_ << std::endl;
+					std::cout << "watch->wd: " << watch->watch_descriptor_ << std::endl;
 					std::cout << "watch->parent_wd: " << watch->parent_wd << std::endl;
 					//std::cout << "watch->path: " << watch->path.native_file_string() << std::endl;
 
@@ -815,7 +799,7 @@ public: //private:  //TODO:
 
 
 				}
-				if (kev.fflags & NOTE_RENAME)
+				if (event.fflags & NOTE_RENAME)
 				{
 					//std::cout << "NOTE_RENAME -> XXXXXXXXX" << std::endl;
 					//std::cout << "watch->fd: " << watch->fd << std::endl;
@@ -906,11 +890,28 @@ public: //private:  //TODO:
 				//	std::cout << "NOTE_LINK -> XXXXXXXXX" << std::endl;
 				//}
 
-				//std::cout << "Creo que la linea siguiente da segmentation fault porque usa el watch->path" << std::endl;
 
-				/* Convert the kqueue(4) flags to pnotify_event flags */
-				//if (!watch->is_dir)
-				if ( ! boost::filesystem::is_directory( watch->path ) )
+				//if ( boost::filesystem::is_directory( watch->path ) )
+				if ( watch->is_directory )
+				{
+					if (event.fflags & NOTE_WRITE)
+					{
+						directory_event_handler( watch );
+					}
+					else if (event.fflags & NOTE_DELETE)	//TODO: Handle the deletion of a watched directory
+					{
+						//warn("unimplemented - TODO");
+						//return -1;
+
+						//TODO: cerrar el monitoreo del directorio e hijos...y el file_descriptor_
+					}
+					else
+					{
+						//						warn("unknown event recieved");
+						//						return -1;
+					}
+				}
+				else
 				{
 //					if (kev.fflags & NOTE_WRITE)
 //						evt->mask |= PN_MODIFY;
@@ -960,35 +961,6 @@ public: //private:  //TODO:
 //					STAILQ_INSERT_TAIL(&ctl->event, evp, entries);
 //
 //					dprint_event(evt);
-
-				/* Handle events on directories */
-				}
-				else
-				{
-					/* When a file is added or deleted, NOTE_WRITE is set */
-					if (kev.fflags & NOTE_WRITE)
-					{
-						directory_event_handler( watch );
-
-						//std::cout << "DEBUG 13" << std::endl;
-
-//						if (kq_directory_event_handler(kev, ctl, watch) < 0)
-//						{
-//							warn("error processing diretory");
-//							return -1;
-//						}
-					}
-					/* FIXME: Handle the deletion of a watched directory */
-					else if (kev.fflags & NOTE_DELETE)
-					{
-//						warn("unimplemented - TODO");
-//						return -1;
-					}
-					else
-					{
-//						warn("unknown event recieved");
-//						return -1;
-					}
 
 				}
 
@@ -1137,7 +1109,7 @@ protected:
 	bool is_initialized_;
 
 	//TODO: cambiarle el nombre
-	int file_descriptor_; // file descriptor
+	int kqueue_file_descriptor_; // file descriptor
 	int next_watch_; //TODO: analizar si es necesario
 	bool closing_;
 
