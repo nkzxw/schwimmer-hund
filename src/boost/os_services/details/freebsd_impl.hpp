@@ -357,13 +357,6 @@ struct user_entry
 
 		watch_collection_type temp_file_list;
 
-		//		std::cout << "PN_CREATE: " << PN_CREATE << std::endl;
-		//		std::cout << "PN_ACCESS: " << PN_ACCESS << std::endl;
-		//		std::cout << "PN_DELETE: " << PN_DELETE << std::endl;
-		//		std::cout << "PN_MODIFY: " << PN_MODIFY << std::endl;
-		//		std::cout << "PN_ONESHOT: " << PN_ONESHOT << std::endl;
-		//		std::cout << "PN_ERROR: " << PN_ERROR << std::endl;
-
 		//TODO: STL --> std::transform o std::for_each o boost::lambda o BOOST_FOREACH
 		//TODO: watch_collection_type o all_watches_type ?????? GUARDA!!!!
 		for (watch_collection_type::iterator it =  head_dir->subitems.begin(); it != head_dir->subitems.end(); ++it )
@@ -392,15 +385,30 @@ struct user_entry
 
 					ptime now = microsec_clock::local_time();
 					std::cout << to_iso_string(now) << std::endl;
-
 				}
+
+				std::cout << "-----------------------------------------------------------------------" << std::endl;
+				std::cout << "dir_itr->path().native_file_string(): " << dir_itr->path().native_file_string() << std::endl;
+				std::cout << "dir_st.st_dev: " << dir_st.st_dev << std::endl;
+				std::cout << "dir_st.st_ino: " << dir_st.st_ino << std::endl;
+				std::cout << "-----------------------------------------------------------------------" << std::endl;
+
 
 				//TODO: reemplazar por std::find o algo similar...
 				//TODO: user_watchs o all_watchs ?????? GUARDA!!!!
 
 				//Linear-search
+				//for (watch_collection_type::iterator it =  head_dir->subitems.begin(); it != head_dir->subitems.end(); ++it )
 				for (watch_collection_type::iterator it =  head_dir->subitems.begin(); it != head_dir->subitems.end(); ++it )
 				{
+
+					std::cout << "-----------------------------------------------------------------------" << std::endl;
+					std::cout << "(*it)->path.native_file_string(): " << (*it)->path.native_file_string() << std::endl;
+					std::cout << "(*it)->st_dev: " << (*it)->st_dev << std::endl;
+					std::cout << "(*it)->st_ino: " << (*it)->st_ino << std::endl;
+					std::cout << "-----------------------------------------------------------------------" << std::endl;
+
+
 					if (  dir_st.st_dev == (*it)->st_dev && dir_st.st_ino == (*it)->st_ino && (*it)->path.native_file_string() == dir_itr->path().native_file_string() )
 					{
 						//std::cout << "found inode & filename: " << (*it)->path.native_file_string() << std::endl;
@@ -1055,56 +1063,8 @@ public: //private:  //TODO:
 	}
 
 	//TODO: cambiarle el nombre porque es parecido al event handler general y no se indica bien que hace cada uno...
-	//void directory_event_handler(struct kevent kev, struct pnotify_cb * ctl, struct pnotify_watch * watch)
-//	void directory_event_handler( watch_type head_dir )
-//	{
-//		struct pnotify_event *ev;
-//		struct dentry  *dptr, *dtmp;
-//
-//		//TODO: ????
-//		//assert(ctl && watch);
-//
-//		scan_directory( head_dir );
-//
-//
-//		for (watch_collection_type::iterator it =  head_dir->subitems.begin(); it != head_dir->subitems.end(); ++it )
-//		{
-//			if ((*it)->mask == 0) /* Skip files that have not changed */
-//			{
-//				continue;
-//			}
-//
-//			//TODO: manejar el evento...
-////			/* Construct a pnotify_event structure */
-////			if ((ev = calloc(1, sizeof(*ev))) == NULL)
-////			{
-////				warn("malloc failed");
-////				return -1;
-////			}
-////			ev->wd = watch->wd;
-////			ev->mask = dptr->mask;
-////			(void) strlcpy(ev->name, dptr->ent.d_name, sizeof(ev->name));
-////			dprint_event(ev);
-////
-////			/* Add the event to the list of pending events */
-////			STAILQ_INSERT_TAIL(&ctl->event, ev, entries);
-//
-//			/* Remove the directory entry for a deleted file */
-//			if ( (*it)->mask & PN_DELETE )
-//			{
-//				std::cout << "ELIMINANDO ITEM DE LA LISTA" << std::endl;
-//				std::cout << "(*it)->path.native_file_string(): " << (*it)->path.native_file_string() << std::endl;
-//
-////				LIST_REMOVE(dptr, entries);
-////				free(dptr);
-//			}
-//
-//		}
-//
-//	}
-
-
-	void directory_event_handler( fs_item* head_dir ) //TODO: cambiarle el nombre porque un handler se confunde con un handler de un evento...
+	//TODO: cambiarle el nombre porque un handler se confunde con un handler de un evento...
+	void directory_event_handler( fs_item* head_dir ) 
 	{
 //		std::cout << "void directory_event_handler( fsitem* head_dir )" << std::endl;
 //		std::cout << "head_dir->path.native_file_string(): " << head_dir->path.native_file_string() << std::endl;
@@ -1179,12 +1139,9 @@ protected:
 	//int next_watch_; //TODO: analizar si es necesario
 
 	bool closing_;
-
-	//watch_collection_type user_watches_;
 	user_item_collection user_watches_;
-	
 
-	//watch_collection_type all_watches_; //TODO: eliminar
+	//watch_collection_type all_watches_; //TODO: quizas haga falta contabilizar todos los watches en un solo lugar... VER
 	
 };
 
