@@ -110,10 +110,15 @@ namespace detail {
 
 
 
-static int next_watch_ = 0;			//TODO: analizar si es necesario 
-//TODO: que onda????? esto esta en freebsd_impl
-static int kqueue_file_descriptor_ = 0; //TODO: que onda????? esto esta en freebsd_impl
+//static int next_watch_ = 0;			//TODO: analizar si es necesario 
+////TODO: que onda????? esto esta en freebsd_impl
+//static int kqueue_file_descriptor_ = 0; //TODO: que onda????? esto esta en freebsd_impl
 
+static int next_watch_;			//TODO: analizar si es necesario 
+//TODO: que onda????? esto esta en freebsd_impl
+static int kqueue_file_descriptor_; //TODO: que onda????? esto esta en freebsd_impl
+
+	
 struct fs_item;				//forward-declaration
 struct struct user_entry;	//forward-declaration
 
@@ -573,7 +578,10 @@ public:
 
 	freebsd_impl()
 		: is_initialized_(false), closing_(false) //, kqueue_file_descriptor_(0), next_watch_(0)
-	{}
+	{
+		next_watch_ = 0;
+		kqueue_file_descriptor_ = 0;
+	}
 
 //	~freebsd_impl()
 //	{
