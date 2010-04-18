@@ -512,7 +512,7 @@ public:
 		//TODO: watch_collection_type o all_watchs_type ?????? GUARDA!!!!
 		for (watch_collection_type::iterator it =  head_dir->subitems.begin(); it != head_dir->subitems.end(); ++it )
 		{
-			(*it)->mask = PN_DELETE;
+			(*it)->mask = PN_DELETE;  //TODO: recursivo
 		}
 
 //		std::cout << "PN_DELETE: " << PN_DELETE << std::endl;
@@ -524,8 +524,6 @@ public:
 			try
 			{
 				//std::cout << "--- Finding File Name: " << dir_itr->path().native_file_string() << std::endl;
-
-
 				bool found_filename = false;
 				bool found_inode = false;
 
@@ -593,6 +591,7 @@ public:
 					create_watch( item );
 					item->mask = PN_CREATE;
 					item->parent_wd = head_dir->watch_descriptor_;
+					//item->parent = head_dir;
 					item->st_dev = dir_st.st_dev;
 					item->st_ino = dir_st.st_ino;
 
@@ -713,7 +712,7 @@ public: //private:  //TODO:
 
 	void handle_directory_changes()
 	{
-		while ( !closing_ )
+		while ( ! closing_ )
 		{
 //			struct pnotify_event *evp;
 			struct kevent event;
@@ -731,38 +730,101 @@ public: //private:  //TODO:
 				return;
 			}
 
-			//TODO: esto puede ser un tema, porque el shared_ptr (watch_type) va a tener el contador en 1 y cuando salga de scope va a hacer delete de la memoria...
-//			watch_type watch( (fsitem*) kev.udata );
-			fsitem* watch =  (fsitem*) event.udata;
-
-
-			/* Workaround:
-
-			   Deleting a file in a watched directory causes two events:
-			     	NOTE_MODIFY on the directory
-					NOTE_DELETE on the file
-			   We ignore the NOTE_DELETE on the file.
-	        */
-			if (watch->parent_wd && event.fflags & NOTE_DELETE)
-			{
-				std::cout << "-*-*-*-*-*--*-*-*-*-** IGNORE NOTE_DELETE" << std::endl;
-				//goto retry;
-				continue;
-			}
-
-//			std::cout << "----------------------------------------------------------------------------" << std::endl;
-//			std::cout << "watch->fd: " << watch->fd << std::endl;
-//			std::cout << "watch->wd: " << watch->wd << std::endl;
-//			std::cout << "watch->mask: " << watch->mask << std::endl;
-//			std::cout << "watch->path.native_file_string(): " << watch->path.native_file_string() << std::endl;
-//			std::cout << "----------------------------------------------------------------------------" << std::endl;
-
-
 
 
 
 			if (! closing_)
 			{
+
+				//TODO: esto puede ser un tema, porque el shared_ptr (watch_type) va a tener el contador en 1 y cuando salga de scope va a hacer delete de la memoria...
+				//			watch_type watch( (fsitem*) kev.udata );
+				fsitem* watch =  (fsitem*) event.udata;
+
+				/* Workaround:
+
+				   Deleting a file in a watched directory causes two events:
+			     		NOTE_MODIFY on the directory
+						NOTE_DELETE on the file
+				   We ignore the NOTE_DELETE on the file.
+				*/
+				//if ( watch->parent_wd && event.fflags & NOTE_DELETE )
+				//{
+				//	std::cout << "-*-*-*-*-*--*-*-*-*-** IGNORE NOTE_DELETE" << std::endl;
+				//	//goto retry;
+				//	continue;
+				//}
+
+	//			std::cout << "----------------------------------------------------------------------------" << std::endl;
+	//			std::cout << "watch->fd: " << watch->fd << std::endl;
+	//			std::cout << "watch->wd: " << watch->wd << std::endl;
+	//			std::cout << "watch->mask: " << watch->mask << std::endl;
+	//			std::cout << "watch->path.native_file_string(): " << watch->path.native_file_string() << std::endl;
+	//			std::cout << "----------------------------------------------------------------------------" << std::endl;
+
+
+
+				if (event.fflags & NOTE_DELETE)
+				{
+					std::cout << "---------------------------------- NOTE_DELETE ---------------------------------------" << std::endl;
+
+					std::cout << "watch: " << watch << std::endl;
+					std::cout << "watch->fd: " << watch->file_descriptor_ << std::endl;
+					std::cout << "watch->wd: " << watch->watch_descriptor_ << std::endl;
+					std::cout << "watch->parent_wd: " << watch->parent_wd << std::endl;
+					std::cout << "watch->path: " << watch->path.native_file_string() << std::endl;
+
+					//std::cout << "kev.ident: " << kev.ident << std::endl;
+					//std::cout << "kev.filter: " << kev.filter << std::endl;
+					//std::cout << "kev.flags: " << kev.flags << std::endl;
+					//std::cout << "kev.fflags: " << kev.fflags << std::endl;
+					//std::cout << "kev.data: " << kev.data << std::endl;
+					//std::cout << "kev.udata: " << kev.udata << std::endl;
+
+					std::cout << "--------------------------------------------------------------------------------------" << std::endl;
+				}
+
+
+				if (event.fflags & NOTE_RENAME)
+				{
+					std::cout << "---------------------------------- NOTE_RENAME ---------------------------------------" << std::endl;
+
+					std::cout << "watch: " << watch << std::endl;
+					std::cout << "watch->fd: " << watch->file_descriptor_ << std::endl;
+					std::cout << "watch->wd: " << watch->watch_descriptor_ << std::endl;
+					std::cout << "watch->parent_wd: " << watch->parent_wd << std::endl;
+					std::cout << "watch->path: " << watch->path.native_file_string() << std::endl;
+
+					//std::cout << "kev.ident: " << kev.ident << std::endl;
+					//std::cout << "kev.filter: " << kev.filter << std::endl;
+					//std::cout << "kev.flags: " << kev.flags << std::endl;
+					//std::cout << "kev.fflags: " << kev.fflags << std::endl;
+					//std::cout << "kev.data: " << kev.data << std::endl;
+					//std::cout << "kev.udata: " << kev.udata << std::endl;
+
+					std::cout << "--------------------------------------------------------------------------------------" << std::endl;
+
+				}
+
+				if (event.fflags & NOTE_WRITE)
+				{
+					std::cout << "---------------------------------- NOTE_WRITE ---------------------------------------" << std::endl;
+					
+					std::cout << "watch: " << watch << std::endl;
+					std::cout << "watch->fd: " << watch->file_descriptor_ << std::endl;
+					std::cout << "watch->wd: " << watch->watch_descriptor_ << std::endl;
+					std::cout << "watch->parent_wd: " << watch->parent_wd << std::endl;
+					std::cout << "watch->path: " << watch->path.native_file_string() << std::endl;
+
+					//std::cout << "kev.ident: " << kev.ident << std::endl;
+					//std::cout << "kev.filter: " << kev.filter << std::endl;
+					//std::cout << "kev.flags: " << kev.flags << std::endl;
+					//std::cout << "kev.fflags: " << kev.fflags << std::endl;
+					//std::cout << "kev.data: " << kev.data << std::endl;
+					//std::cout << "kev.udata: " << kev.udata << std::endl;
+					std::cout << "--------------------------------------------------------------------------------------" << std::endl;
+				}
+
+
 				//if (kev.fflags & NOTE_WRITE)
 				//{
 				//	std::cout << "NOTE_WRITE -> PN_MODIFY" << std::endl;
@@ -779,26 +841,7 @@ public: //private:  //TODO:
 				//{
 				//	std::cout << "NOTE_ATTRIB -> PN_ATTRIB" << std::endl;
 				//}
-				if (event.fflags & NOTE_DELETE)
-				{
-					std::cout << "NOTE_DELETE -> PN_DELETE" << std::endl;
 
-					std::cout << "watch: " << watch << std::endl;
-					std::cout << "watch->fd: " << watch->file_descriptor_ << std::endl;
-					std::cout << "watch->wd: " << watch->watch_descriptor_ << std::endl;
-					std::cout << "watch->parent_wd: " << watch->parent_wd << std::endl;
-					//std::cout << "watch->path: " << watch->path.native_file_string() << std::endl;
-
-					//std::cout << "kev.ident: " << kev.ident << std::endl;
-					//std::cout << "kev.filter: " << kev.filter << std::endl;
-					//std::cout << "kev.flags: " << kev.flags << std::endl;
-					//std::cout << "kev.fflags: " << kev.fflags << std::endl;
-					//std::cout << "kev.data: " << kev.data << std::endl;
-					//std::cout << "kev.udata: " << kev.udata << std::endl;
-
-
-
-				}
 				if (event.fflags & NOTE_RENAME)
 				{
 					//std::cout << "NOTE_RENAME -> XXXXXXXXX" << std::endl;
