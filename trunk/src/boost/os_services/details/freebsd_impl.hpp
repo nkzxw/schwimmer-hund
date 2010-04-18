@@ -734,11 +734,11 @@ public: //private:  //TODO:
 
 
 
-			if (! closing_)
+			if ( ! closing_ )
 			{
 
 				//TODO: esto puede ser un tema, porque el shared_ptr (watch_type) va a tener el contador en 1 y cuando salga de scope va a hacer delete de la memoria...
-				//			watch_type watch( (fsitem*) kev.udata );
+				//watch_type watch( (fsitem*) event.udata );
 				fsitem* watch =  (fsitem*) event.udata;
 
 				/* Workaround:
@@ -764,7 +764,7 @@ public: //private:  //TODO:
 
 
 
-				if (event.fflags & NOTE_DELETE)
+				if ( event.fflags & NOTE_DELETE )
 				{
 					std::cout << "---------------------------------- NOTE_DELETE ---------------------------------------" << std::endl;
 
@@ -779,18 +779,18 @@ public: //private:  //TODO:
 					std::cout << "watch->st_ino: " << watch->st_ino << std::endl;
 
 
-					//std::cout << "kev.ident: " << kev.ident << std::endl;
-					//std::cout << "kev.filter: " << kev.filter << std::endl;
-					//std::cout << "kev.flags: " << kev.flags << std::endl;
-					//std::cout << "kev.fflags: " << kev.fflags << std::endl;
-					//std::cout << "kev.data: " << kev.data << std::endl;
-					//std::cout << "kev.udata: " << kev.udata << std::endl;
+					//std::cout << "event.ident: " << event.ident << std::endl;
+					//std::cout << "event.filter: " << event.filter << std::endl;
+					//std::cout << "event.flags: " << event.flags << std::endl;
+					//std::cout << "event.fflags: " << event.fflags << std::endl;
+					//std::cout << "event.data: " << event.data << std::endl;
+					//std::cout << "event.udata: " << event.udata << std::endl;
 
 					std::cout << "--------------------------------------------------------------------------------------" << std::endl;
 				}
 
 
-				if (event.fflags & NOTE_RENAME)
+				if ( event.fflags & NOTE_RENAME )
 				{
 					std::cout << "---------------------------------- NOTE_RENAME ---------------------------------------" << std::endl;
 
@@ -806,18 +806,18 @@ public: //private:  //TODO:
 					std::cout << "watch->st_ino: " << watch->st_ino << std::endl;
 
 
-					std::cout << "kev.ident: " << kev.ident << std::endl;
-					std::cout << "kev.filter: " << kev.filter << std::endl;
-					std::cout << "kev.flags: " << kev.flags << std::endl;
-					std::cout << "kev.fflags: " << kev.fflags << std::endl;
-					std::cout << "kev.data: " << kev.data << std::endl;
-					std::cout << "kev.udata: " << kev.udata << std::endl;
+					std::cout << "event.ident: " << event.ident << std::endl;
+					std::cout << "event.filter: " << event.filter << std::endl;
+					std::cout << "event.flags: " << event.flags << std::endl;
+					std::cout << "event.fflags: " << event.fflags << std::endl;
+					std::cout << "event.data: " << event.data << std::endl;
+					std::cout << "event.udata: " << event.udata << std::endl;
 
 					std::cout << "--------------------------------------------------------------------------------------" << std::endl;
 
 				}
 
-				if (event.fflags & NOTE_WRITE)
+				if ( event.fflags & NOTE_WRITE )
 				{
 					std::cout << "---------------------------------- NOTE_WRITE ---------------------------------------" << std::endl;
 					
@@ -832,34 +832,34 @@ public: //private:  //TODO:
 					std::cout << "watch->st_ino: " << watch->st_ino << std::endl;
 
 
-					//std::cout << "kev.ident: " << kev.ident << std::endl;
-					//std::cout << "kev.filter: " << kev.filter << std::endl;
-					//std::cout << "kev.flags: " << kev.flags << std::endl;
-					//std::cout << "kev.fflags: " << kev.fflags << std::endl;
-					//std::cout << "kev.data: " << kev.data << std::endl;
-					//std::cout << "kev.udata: " << kev.udata << std::endl;
+					//std::cout << "event.ident: " << event.ident << std::endl;
+					//std::cout << "event.filter: " << event.filter << std::endl;
+					//std::cout << "event.flags: " << event.flags << std::endl;
+					//std::cout << "event.fflags: " << event.fflags << std::endl;
+					//std::cout << "event.data: " << event.data << std::endl;
+					//std::cout << "event.udata: " << event.udata << std::endl;
 					std::cout << "--------------------------------------------------------------------------------------" << std::endl;
 				}
 
 
-				//if (kev.fflags & NOTE_WRITE)
+				//if (event.fflags & NOTE_WRITE)
 				//{
 				//	std::cout << "NOTE_WRITE -> PN_MODIFY" << std::endl;
 				//}
-				//if (kev.fflags & NOTE_TRUNCATE)
+				//if (event.fflags & NOTE_TRUNCATE)
 				//{
 				//	std::cout << "NOTE_TRUNCATE -> PN_MODIFY" << std::endl;
 				//}
-				//if (kev.fflags & NOTE_EXTEND)
+				//if (event.fflags & NOTE_EXTEND)
 				//{
 				//	std::cout << "NOTE_EXTEND -> PN_MODIFY" << std::endl;
 				//}
-				//if (kev.fflags & NOTE_ATTRIB)
+				//if (event.fflags & NOTE_ATTRIB)
 				//{
 				//	std::cout << "NOTE_ATTRIB -> PN_ATTRIB" << std::endl;
 				//}
 
-				if (event.fflags & NOTE_RENAME)
+				if ( event.fflags & NOTE_RENAME )
 				{
 					//std::cout << "NOTE_RENAME -> XXXXXXXXX" << std::endl;
 					//std::cout << "watch->fd: " << watch->fd << std::endl;
@@ -941,11 +941,11 @@ public: //private:  //TODO:
 				}
 
 
-				//if (kev.fflags & NOTE_REVOKE)
+				//if (event.fflags & NOTE_REVOKE)
 				//{
 				//	std::cout << "NOTE_REVOKE -> XXXXXXXXX" << std::endl;
 				//}
-				//if (kev.fflags & NOTE_LINK)
+				//if (event.fflags & NOTE_LINK)
 				//{
 				//	std::cout << "NOTE_LINK -> XXXXXXXXX" << std::endl;
 				//}
@@ -973,18 +973,18 @@ public: //private:  //TODO:
 				}
 				else
 				{
-//					if (kev.fflags & NOTE_WRITE)
+//					if (event.fflags & NOTE_WRITE)
 //						evt->mask |= PN_MODIFY;
-//					if (kev.fflags & NOTE_TRUNCATE)
+//					if (event.fflags & NOTE_TRUNCATE)
 //						evt->mask |= PN_MODIFY;
-//					if (kev.fflags & NOTE_EXTEND)
+//					if (event.fflags & NOTE_EXTEND)
 //						evt->mask |= PN_MODIFY;
 //			#if TODO
 //					// not implemented yet
-//					if (kev.fflags & NOTE_ATTRIB)
+//					if (event.fflags & NOTE_ATTRIB)
 //						evt->mask |= PN_ATTRIB;
 //			#endif
-//					if (kev.fflags & NOTE_DELETE)
+//					if (event.fflags & NOTE_DELETE)
 //						evt->mask |= PN_DELETE;
 
 //					/* Construct a pnotify_event structure */
@@ -1030,8 +1030,8 @@ public: //private:  //TODO:
 
 
 
-				//watch = (struct pnotify_watch *) kev.udata;
-//				watch = (watch_data*) kev.udata;
+				//watch = (struct pnotify_watch *) event.udata;
+//				watch = (watch_data*) event.udata;
 
 //				std::cout << "watch->fd: " << watch->fd << std::endl;
 //				std::cout << "watch->wd: " << watch->wd << std::endl;
@@ -1039,7 +1039,7 @@ public: //private:  //TODO:
 //				//std::cout << "watch.fd: " << watch.fd << std::endl;
 
 				//TODO: ver este tema, porque se puede estar disparando contra el directorui
-//				if (watch->parent_wd && kev.fflags & NOTE_DELETE)
+//				if (watch->parent_wd && event.fflags & NOTE_DELETE)
 //				{
 //					dprintf("ignoring NOTE_DELETE on a watched file\n");
 //					goto retry;
