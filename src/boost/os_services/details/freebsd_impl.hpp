@@ -816,47 +816,7 @@ public: //private:  //TODO:
 					//std::cout << "event.data: " << event.data << std::endl;
 					//std::cout << "event.udata: " << event.udata << std::endl;
 
-					boost::filesystem::path tparent;
-					if ( tparent.empty() )
-					{
-						std::cout << "tparent Empty" << std::endl;
-					}
-					tparent = "/home/fernando";
-					if ( tparent.empty() )
-					{
-						std::cout << "tparent Empty - 2" << std::endl;
-					}
-					if ( boost::filesystem::is_directory( tparent ) )
-					{
-						std::cout << "tparent is_directory" << std::endl;
-					}
-
-					tparent = "/home/fernando/dev/schwimmer-hund/test/FreeBSD/test_dir/temp1/temp11B";
-					if ( tparent.empty() )
-					{
-						std::cout << "tparent Empty - 3" << std::endl;
-					}
-					if ( boost::filesystem::is_directory( tparent ) )
-					{
-						std::cout << "tparent is_directory -3" << std::endl;
-					}
-
-
-					//boost::optional<boost::filesystem::path> parent;
 					boost::filesystem::path parent;
-					std::cout << "temp Parent: " << parent.native_file_string() << std::endl;
-
-					if ( parent.empty() )
-					{
-						std::cout << "temp Parent Empty" << std::endl;
-					}
-
-					if ( parent.is_complete() )
-					{
-						std::cout << "temp Parent is_complete" << std::endl;
-					}
-
-	
 
 					//TODO: find
 					for (watch_collection_type::iterator it =  all_watches_.begin(); it != all_watches_.end(); ++it )
@@ -867,88 +827,37 @@ public: //private:  //TODO:
 						}
 					}
 
-					std::cout << "Parent: " << parent.native_file_string() << std::endl;
-					if ( parent.empty() )
+					if ( ! parent.empty() )
 					{
-						std::cout << "Parent Empty" << std::endl;
+						boost::filesystem::directory_iterator end_iter;
+
+						//TODO: pasar a metodo statico
+						for ( boost::filesystem::directory_iterator dir_itr( parent ); dir_itr != end_iter; ++dir_itr )
+						{
+							struct stat dir_st;
+							
+							int return_code = lstat( dir_itr->path().native_file_string().c_str(), &dir_st);
+							if ( return_code == -1)
+							{
+								//TODO: manejo de errores
+								std::cout << "STAT ERROR -- 4 -- - Reason: " << std::strerror(errno) << std::endl;
+								std::cout << "dir_itr->path().native_file_string(): " << dir_itr->path().native_file_string() << std::endl;
+
+								ptime now = microsec_clock::local_time();
+								std::cout << to_iso_string(now) << std::endl;
+							}
+							else
+							{
+								if (  dir_st.st_dev == watch->st_dev && dir_st.st_ino == watch->st_ino )
+								{
+									std::cout << "Nuevo Nombre de Archivo:  " << dir_itr->path().native_file_string() << std::endl;
+								}
+							}
+						}
 					}
 
-					if ( parent.is_complete() )
-					{
-						std::cout << "Parent is_complete" << std::endl;
-					}
 
 
-
-					//for ( boost::filesystem::directory_iterator dir_itr( head_dir->path ); dir_itr != end_iter; ++dir_itr )
-					//{
-					//	try
-					//	{
-					//		//std::cout << "--- Finding File Name: " << dir_itr->path().native_file_string() << std::endl;
-					//		bool found_filename = false;
-					//		bool found_inode = false;
-
-					//		struct stat dir_st;
-					//		if ( lstat( dir_itr->path().native_file_string().c_str(), &dir_st) < 0)
-					//		{
-					//			//TODO: manejo de errores
-					//			std::cout << "STAT ERROR -- 3 -- - Reason: " << std::strerror(errno) << std::endl;
-					//			std::cout << "dir_itr->path().native_file_string(): " << dir_itr->path().native_file_string() << std::endl;
-
-					//			ptime now = microsec_clock::local_time();
-					//			std::cout << to_iso_string(now) << std::endl;
-
-					//		}
-
-					//		//TODO: reemplazar por std::find o algo similar...
-					//		//TODO: user_watchs o all_watchs ?????? GUARDA!!!!
-
-					//		//Linear-search
-					//		for (watch_collection_type::iterator it =  head_dir->subitems.begin(); it != head_dir->subitems.end(); ++it )
-					//		{
-					//			if (  dir_st.st_dev == (*it)->st_dev && dir_st.st_ino == (*it)->st_ino && (*it)->path.native_file_string() == dir_itr->path().native_file_string() )
-					//			{
-					//				//std::cout << "found inode & filename: " << (*it)->path.native_file_string() << std::endl;
-					//				(*it)->mask = 0; //-999;
-					//				//std::cout << "(*it)->path.native_file_string(): " << (*it)->path.native_file_string() << std::endl;
-					//				found_filename = true;
-					//				found_inode = true;
-					//			}
-					//			else
-					//			{
-
-					//				if (  dir_st.st_dev == (*it)->st_dev && dir_st.st_ino == (*it)->st_ino )
-					//				{
-					//					//std::cout << "found inode: " << (*it)->path.native_file_string() << std::endl;
-					//					found_inode = true;
-					//				}
-
-					//				if ( (*it)->path.native_file_string() == dir_itr->path().native_file_string() )
-					//				{
-					//					//std::cout << "found filename: " << (*it)->path.native_file_string() << std::endl;
-					//					found_filename = true;
-					//				}
-					//			}
-					//		}
-
-
-					//		if ( !found_filename && !found_inode )	//Archivo nuevo
-					//		{
-					//			std::cout << "if ( !found_filename && !found_inode )" << std::endl;
-					//		}
-
-					//		if ( !found_filename && found_inode )
-					//		{
-					//			std::cout << "if ( !found_filename && found_inode )" << std::endl;
-					//		}
-
-
-					//	}
-					//	catch ( const std::exception & ex )
-					//	{
-					//		std::cout << dir_itr->path().native_file_string() << " " << ex.what() << std::endl;
-					//	}
-					//}
 
 
 
