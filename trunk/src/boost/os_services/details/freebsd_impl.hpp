@@ -817,12 +817,12 @@ public: //private:  //TODO:
 					//std::cout << "event.udata: " << event.udata << std::endl;
 
 					boost::filesystem::path tparent;
-					if ( parent.empty() )
+					if ( tparent.empty() )
 					{
 						std::cout << "tparent Empty" << std::endl;
 					}
 					tparent = "/home/fernando";
-					if ( parent.empty() )
+					if ( tparent.empty() )
 					{
 						std::cout << "tparent Empty - 2" << std::endl;
 					}
@@ -832,7 +832,7 @@ public: //private:  //TODO:
 					}
 
 					tparent = "/home/fernando/dev/schwimmer-hund/test/FreeBSD/test_dir/temp1/temp11B";
-					if ( parent.empty() )
+					if ( tparent.empty() )
 					{
 						std::cout << "tparent Empty - 3" << std::endl;
 					}
