@@ -827,7 +827,7 @@ public: //private:  //TODO:
 					{
 						if ( watch->parent_watch_descriptor_ == (*it)->watch_descriptor_ )
 						{
-							std::cout << "Parent: " << (*it)->path().native_file_string() << std::endl;
+							std::cout << "Parent: " << (*it)->path.native_file_string() << std::endl;
 						}
 					}
 
