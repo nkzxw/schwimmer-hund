@@ -788,14 +788,14 @@ public: //private:  //TODO:
 
 					boost::filesystem::path parent;
 
-					//TODO: find
-					for (watch_collection_type::iterator it =  all_watches_.begin(); it != all_watches_.end(); ++it )
-					{
-						if ( watch->parent_watch_descriptor_ == (*it)->watch_descriptor_ )
-						{
-							parent = (*it)->path;
-						}
-					}
+					////TODO: find
+					//for (watch_collection_type::iterator it =  all_watches_.begin(); it != all_watches_.end(); ++it )
+					//{
+					//	if ( watch->parent_watch_descriptor_ == (*it)->watch_descriptor_ )
+					//	{
+					//		parent = (*it)->path;
+					//	}
+					//}
 
 					if ( ! parent.empty() )
 					{
