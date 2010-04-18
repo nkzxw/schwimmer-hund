@@ -114,13 +114,13 @@ namespace detail {
 ////TODO: que onda????? esto esta en freebsd_impl
 //static int kqueue_file_descriptor_ = 0; //TODO: que onda????? esto esta en freebsd_impl
 
-static int next_watch_;			//TODO: analizar si es necesario 
+static int next_watch_ = 0;			//TODO: analizar si es necesario 
 //TODO: que onda????? esto esta en freebsd_impl
-static int kqueue_file_descriptor_; //TODO: que onda????? esto esta en freebsd_impl
+static int kqueue_file_descriptor_ = 0; //TODO: que onda????? esto esta en freebsd_impl
 
 	
 struct fs_item;				//forward-declaration
-struct struct user_entry;	//forward-declaration
+struct user_entry;	//forward-declaration
 
 //TODO: ver boost::ptr_vector
 typedef boost::shared_ptr<fs_item> watch_type;	//TODO: renombrar
