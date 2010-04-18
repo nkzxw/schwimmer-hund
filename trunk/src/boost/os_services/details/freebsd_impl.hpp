@@ -832,19 +832,7 @@ public: //private:  //TODO:
 						std::cout << "temp Parent is_complete" << std::endl;
 					}
 
-					if ( parent )
-					{
-						std::cout << "temp Parent true" << std::endl;
-					}
-
-					if ( ! parent )
-					{
-						std::cout << "temp Parent false" << std::endl;
-					}
-
-				
-
-
+	
 
 					//TODO: find
 					for (watch_collection_type::iterator it =  all_watches_.begin(); it != all_watches_.end(); ++it )
@@ -866,15 +854,6 @@ public: //private:  //TODO:
 						std::cout << "Parent is_complete" << std::endl;
 					}
 
-					if ( parent )
-					{
-						std::cout << "Parent true" << std::endl;
-					}
-
-					if ( ! parent )
-					{
-						std::cout << "Parent false" << std::endl;
-					}
 
 
 					//for ( boost::filesystem::directory_iterator dir_itr( head_dir->path ); dir_itr != end_iter; ++dir_itr )
