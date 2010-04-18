@@ -8,6 +8,7 @@
 #include <sys/event.h>
 #include <sys/time.h> 
 
+#define O_EVTONLY EVFILT_VNODE
 
 int main(void)
 {
