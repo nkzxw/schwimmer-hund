@@ -803,7 +803,6 @@ public: //private:  //TODO:
 					std::cout << "watch->wd: " << watch->watch_descriptor_ << std::endl;
 					std::cout << "watch->parent_watch_descriptor_: " << watch->parent_watch_descriptor_ << std::endl;
 					std::cout << "watch->path: " << watch->path.native_file_string() << std::endl;
-
 					std::cout << "watch->is_directory: " << watch->is_directory << std::endl;
 					std::cout << "watch->mask: " << watch->mask << std::endl;
 					std::cout << "watch->st_dev: " << watch->st_dev << std::endl;
@@ -832,6 +831,15 @@ public: //private:  //TODO:
 						std::cout << "tparent is_directory" << std::endl;
 					}
 
+					tparent = "/home/fernando/dev/schwimmer-hund/test/FreeBSD/test_dir/temp1/temp11B";
+					if ( parent.empty() )
+					{
+						std::cout << "tparent Empty - 3" << std::endl;
+					}
+					if ( boost::filesystem::is_directory( tparent ) )
+					{
+						std::cout << "tparent is_directory -3" << std::endl;
+					}
 
 
 					//boost::optional<boost::filesystem::path> parent;
