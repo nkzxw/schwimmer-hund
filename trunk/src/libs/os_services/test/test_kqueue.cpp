@@ -29,7 +29,7 @@ int main(void)
 
 	for (;;) 
 	{
-		nev = kevent(kq, &change, 1, &amp;event, 1, NULL);
+		nev = kevent(kq, &change, 1, &event, 1, NULL);
 		if (nev == -1)
 		{
 			perror("kevent");
@@ -49,28 +49,28 @@ int main(void)
 			{
 				printf("NOTE_WRITE -> PN_MODIFY\n");
 			}
-			if (event.fflags & NOTE_TRUNCATE)
-			{
-				printf("NOTE_TRUNCATE -> PN_MODIFY\n");
-			}
+			//if (event.fflags & NOTE_TRUNCATE)
+			//{
+			//	printf("NOTE_TRUNCATE -> PN_MODIFY\n");
+			//}
 			if (event.fflags & NOTE_EXTEND)
 			{
 				printf("NOTE_EXTEND -> PN_MODIFY\n");
 			}
-			if (kev.fflags & NOTE_DELETE)
+			if (event.fflags & NOTE_DELETE)
 			{
 				printf("NOTE_DELETE -> PN_DELETE\n");
 				break;
 			}
-			if (kev.fflags & NOTE_RENAME)
+			if (event.fflags & NOTE_RENAME)
 			{
-				//printf("NOTE_RENAME -> XXXXXXXXX\n");
+				printf("NOTE_RENAME -> XXXXXXXXX\n");
 			}
-			if (kev.fflags & NOTE_REVOKE)
+			if (event.fflags & NOTE_REVOKE)
 			{
 				printf("NOTE_REVOKE -> XXXXXXXXX\n");
 			}
-			if (kev.fflags & NOTE_LINK)
+			if (event.fflags & NOTE_LINK)
 			{
 				printf("NOTE_LINK -> XXXXXXXXX\n");
 			}
