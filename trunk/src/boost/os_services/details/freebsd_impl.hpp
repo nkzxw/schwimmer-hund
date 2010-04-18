@@ -575,48 +575,52 @@ public:
 
 				if ( !found_filename && !found_inode )	//Archivo nuevo
 				{
-//					std::cout << "if (!found_filename && found_inode)" << std::endl;
-//					std::cout << "dir_itr->path().native_file_string(): " << dir_itr->path().native_file_string() << std::endl;
-//					std::cout << "dir_st.st_dev: " << dir_st.st_dev << std::endl;
-//					std::cout << "dir_st.st_ino: " << dir_st.st_ino << std::endl;
-
-					watch_type item(new fsitem);
-					item->path = dir_itr->path();
-
-					//TODO: volver a habilitar hasta el fin de las pruebas
-					//std::cout << "File created: " << item->path.native_file_string() << std::endl;
+					std::cout << "if ( !found_filename && !found_inode )" << std::endl;
 
 
-					//std::cout << "DEBUG 1" << std::endl;
-
-					//TODO: ver en el codigo de pnotify: /* Add a watch if it is a regular file */
-					create_watch( item );
-					item->mask = PN_CREATE;
-					item->parent_wd = head_dir->watch_descriptor_;
-					//item->parent = head_dir;
-					item->st_dev = dir_st.st_dev;
-					item->st_ino = dir_st.st_ino;
-
-					head_dir->subitems.push_back(item);
-
-					//std::cout << "DEBUG 2" << std::endl;
+////					std::cout << "if (!found_filename && found_inode)" << std::endl;
+////					std::cout << "dir_itr->path().native_file_string(): " << dir_itr->path().native_file_string() << std::endl;
+////					std::cout << "dir_st.st_dev: " << dir_st.st_dev << std::endl;
+////					std::cout << "dir_st.st_ino: " << dir_st.st_ino << std::endl;
+//
+//					watch_type item(new fsitem);
+//					item->path = dir_itr->path();
+//
+//					//TODO: volver a habilitar hasta el fin de las pruebas
+//					//std::cout << "File created: " << item->path.native_file_string() << std::endl;
+//
+//
+//					//std::cout << "DEBUG 1" << std::endl;
+//
+//					//TODO: ver en el codigo de pnotify: /* Add a watch if it is a regular file */
+//					create_watch( item );
+//					item->mask = PN_CREATE;
+//					item->parent_wd = head_dir->watch_descriptor_;
+//					//item->parent = head_dir;
+//					item->st_dev = dir_st.st_dev;
+//					item->st_ino = dir_st.st_ino;
+//
+//					head_dir->subitems.push_back(item);
+//
+//					//std::cout << "DEBUG 2" << std::endl;
 				}
 
 				if ( !found_filename && found_inode )
 				{
-//					std::cout << "if ( !found_filename && found_inode )" << std::endl;
-//					std::cout << "dir_itr->path().native_file_string(): " << dir_itr->path().native_file_string() << std::endl;
-//					std::cout << "dir_st.st_dev: " << dir_st.st_dev << std::endl;
-//					std::cout << "dir_st.st_ino: " << dir_st.st_ino << std::endl;
-
-					watch_type item(new fsitem);
-					item->path = dir_itr->path();
-					item->mask = PN_CREATE;
-					item->parent_wd = head_dir->watch_descriptor_;
-					item->st_dev = dir_st.st_dev;
-					item->st_ino = dir_st.st_ino;
-
-					temp_file_list.push_back(item);
+					std::cout << "if ( !found_filename && found_inode )" << std::endl;
+////					std::cout << "if ( !found_filename && found_inode )" << std::endl;
+////					std::cout << "dir_itr->path().native_file_string(): " << dir_itr->path().native_file_string() << std::endl;
+////					std::cout << "dir_st.st_dev: " << dir_st.st_dev << std::endl;
+////					std::cout << "dir_st.st_ino: " << dir_st.st_ino << std::endl;
+//
+//					watch_type item(new fsitem);
+//					item->path = dir_itr->path();
+//					item->mask = PN_CREATE;
+//					item->parent_wd = head_dir->watch_descriptor_;
+//					item->st_dev = dir_st.st_dev;
+//					item->st_ino = dir_st.st_ino;
+//
+//					temp_file_list.push_back(item);
 				}
 
 
@@ -666,30 +670,30 @@ public:
 
 		//std::cout << "DEBUG 4" << std::endl;
 
-		for (watch_collection_type::iterator it =  temp_file_list.begin(); it != temp_file_list.end(); ++it )
-		{
-			if ( (*it)->mask != 0 ) //-999 )
-			{
-//				std::cout << "--- NEW FILE ---" << std::endl;
-//				std::cout << "(*it)->path.native_file_string(): " << (*it)->path.native_file_string() << std::endl;
-
-				watch_type item(new fsitem);
-				item->path = (*it)->path;
-
-				//TODO: volver a habilitar hasta el fin de las pruebas
-				//std::cout << "File created: " << item->path.native_file_string() << std::endl;
-
-
-				//TODO: ver en el codigo de pnotify: /* Add a watch if it is a regular file */
-				create_watch( item );
-				item->mask = PN_CREATE;
-				item->parent_wd = head_dir->watch_descriptor_;
-				item->st_dev = (*it)->st_dev;
-				item->st_ino = (*it)->st_ino;
-
-				head_dir->subitems.push_back(item);
-			}
-		}
+//		for (watch_collection_type::iterator it =  temp_file_list.begin(); it != temp_file_list.end(); ++it )
+//		{
+//			if ( (*it)->mask != 0 ) //-999 )
+//			{
+////				std::cout << "--- NEW FILE ---" << std::endl;
+////				std::cout << "(*it)->path.native_file_string(): " << (*it)->path.native_file_string() << std::endl;
+//
+//				watch_type item(new fsitem);
+//				item->path = (*it)->path;
+//
+//				//TODO: volver a habilitar hasta el fin de las pruebas
+//				//std::cout << "File created: " << item->path.native_file_string() << std::endl;
+//
+//
+//				//TODO: ver en el codigo de pnotify: /* Add a watch if it is a regular file */
+//				create_watch( item );
+//				item->mask = PN_CREATE;
+//				item->parent_wd = head_dir->watch_descriptor_;
+//				item->st_dev = (*it)->st_dev;
+//				item->st_ino = (*it)->st_ino;
+//
+//				head_dir->subitems.push_back(item);
+//			}
+//		}
 
 		//std::cout << "DEBUG 5" << std::endl;
 
