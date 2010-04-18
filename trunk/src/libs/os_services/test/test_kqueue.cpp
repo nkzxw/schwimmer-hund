@@ -19,7 +19,7 @@ int main(void)
 		perror("kqueue");
 	}
 
-	f = open("~/temp1", O_RDONLY);
+	f = open("/home/fernando/temp1", O_RDONLY);
 	if (f == -1)
 	{
 		perror("open");
