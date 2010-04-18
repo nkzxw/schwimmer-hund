@@ -212,13 +212,12 @@ public:
 
 	void add_directory_impl ( const std::string& dir_name ) //throw (std::invalid_argument, std::runtime_error)
 	{
-		//watch_descriptors_.push_back(std::make_pair<std::string, watch_data*>(dir_name, 0));
-		//boost::shared_ptr<fsitem> item(new fsitem);
 		watch_type item(new fsitem);
 		item->path = dir_name;		//boost::filesystem::path full_path( str_path, boost::filesystem::native );
 		//TODO: asignar mask
 
-		user_watchs_.push_back(item);
+		user_watches_.push_back(item);
+		all_watches_.push_back(item);
 	}
 	//void remove_directory_impl(const std::string& dir_name) // throw (std::invalid_argument);
 
@@ -413,7 +412,7 @@ public:
 //		//std::cout << "head_dir->path.native_file_string(): " << head_dir->path.native_file_string() << std::endl;
 //
 //		//TODO: STL --> std::transform o std::for_each o boost::lambda o BOOST_FOREACH
-//		//TODO: watch_collection_type o all_watchs_type ?????? GUARDA!!!!
+//		//TODO: watch_collection_type o all_watches_type ?????? GUARDA!!!!
 //
 //		//std::cout << "head_dir->subitems.size(): " << head_dir->subitems.size() << std::endl;
 //		for (watch_collection_type::iterator it =  head_dir->subitems.begin(); it != head_dir->subitems.end(); ++it )
@@ -511,7 +510,7 @@ public:
 //		std::cout << "PN_ERROR: " << PN_ERROR << std::endl;
 
 		//TODO: STL --> std::transform o std::for_each o boost::lambda o BOOST_FOREACH
-		//TODO: watch_collection_type o all_watchs_type ?????? GUARDA!!!!
+		//TODO: watch_collection_type o all_watches_type ?????? GUARDA!!!!
 		for (watch_collection_type::iterator it =  head_dir->subitems.begin(); it != head_dir->subitems.end(); ++it )
 		{
 			(*it)->mask = PN_DELETE;  //TODO: recursivo
@@ -706,7 +705,7 @@ public:
 		initialize();
 
 		//TODO: BOOST_FOREACH
-		for (watch_collection_type::iterator it =  user_watchs_.begin(); it != user_watchs_.end(); ++it )
+		for (watch_collection_type::iterator it =  user_watches_.begin(); it != user_watches_.end(); ++it )
 		{
 			create_watch( *it );
 		}
@@ -818,6 +817,100 @@ public: //private:  //TODO:
 					std::cout << "event.data: " << event.data << std::endl;
 					std::cout << "event.udata: " << event.udata << std::endl;
 
+
+
+
+
+					for (watch_collection_type::iterator it =  all_watches_.begin(); it != all_watches_.end(); ++it )
+					{
+						if ( watch->parent_wd == (*it)->wd )
+						{
+							std::cout << "Parent: " << (*it)->path().native_file_string() << std::endl;
+						}
+					}
+
+
+
+					//for ( boost::filesystem::directory_iterator dir_itr( head_dir->path ); dir_itr != end_iter; ++dir_itr )
+					//{
+					//	try
+					//	{
+					//		//std::cout << "--- Finding File Name: " << dir_itr->path().native_file_string() << std::endl;
+					//		bool found_filename = false;
+					//		bool found_inode = false;
+
+					//		struct stat dir_st;
+					//		if ( lstat( dir_itr->path().native_file_string().c_str(), &dir_st) < 0)
+					//		{
+					//			//TODO: manejo de errores
+					//			std::cout << "STAT ERROR -- 3 -- - Reason: " << std::strerror(errno) << std::endl;
+					//			std::cout << "dir_itr->path().native_file_string(): " << dir_itr->path().native_file_string() << std::endl;
+
+					//			ptime now = microsec_clock::local_time();
+					//			std::cout << to_iso_string(now) << std::endl;
+
+					//		}
+
+					//		//TODO: reemplazar por std::find o algo similar...
+					//		//TODO: user_watchs o all_watchs ?????? GUARDA!!!!
+
+					//		//Linear-search
+					//		for (watch_collection_type::iterator it =  head_dir->subitems.begin(); it != head_dir->subitems.end(); ++it )
+					//		{
+					//			if (  dir_st.st_dev == (*it)->st_dev && dir_st.st_ino == (*it)->st_ino && (*it)->path.native_file_string() == dir_itr->path().native_file_string() )
+					//			{
+					//				//std::cout << "found inode & filename: " << (*it)->path.native_file_string() << std::endl;
+					//				(*it)->mask = 0; //-999;
+					//				//std::cout << "(*it)->path.native_file_string(): " << (*it)->path.native_file_string() << std::endl;
+					//				found_filename = true;
+					//				found_inode = true;
+					//			}
+					//			else
+					//			{
+
+					//				if (  dir_st.st_dev == (*it)->st_dev && dir_st.st_ino == (*it)->st_ino )
+					//				{
+					//					//std::cout << "found inode: " << (*it)->path.native_file_string() << std::endl;
+					//					found_inode = true;
+					//				}
+
+					//				if ( (*it)->path.native_file_string() == dir_itr->path().native_file_string() )
+					//				{
+					//					//std::cout << "found filename: " << (*it)->path.native_file_string() << std::endl;
+					//					found_filename = true;
+					//				}
+					//			}
+					//		}
+
+
+					//		if ( !found_filename && !found_inode )	//Archivo nuevo
+					//		{
+					//			std::cout << "if ( !found_filename && !found_inode )" << std::endl;
+					//		}
+
+					//		if ( !found_filename && found_inode )
+					//		{
+					//			std::cout << "if ( !found_filename && found_inode )" << std::endl;
+					//		}
+
+
+					//	}
+					//	catch ( const std::exception & ex )
+					//	{
+					//		std::cout << dir_itr->path().native_file_string() << " " << ex.what() << std::endl;
+					//	}
+					//}
+
+
+
+
+
+
+
+
+
+
+
 					std::cout << "--------------------------------------------------------------------------------------" << std::endl;
 
 				}
@@ -873,7 +966,7 @@ public: //private:  //TODO:
 
 					//
 //					//TODO: buscar el directorio padre de la forma más eficiente posible a traves del parent_
-//					std::cout << "Parent: " << user_watchs_[0]->path.native_file_string() << std::endl;
+//					std::cout << "Parent: " << user_watches_[0]->path.native_file_string() << std::endl;
 //
 //
 //					struct stat old_st;
@@ -902,7 +995,7 @@ public: //private:  //TODO:
 //
 //					boost::filesystem::directory_iterator end_iter;
 //					//TODO: hardcode
-//					for ( boost::filesystem::directory_iterator dir_itr( user_watchs_[0]->path ); dir_itr != end_iter; ++dir_itr )
+//					for ( boost::filesystem::directory_iterator dir_itr( user_watches_[0]->path ); dir_itr != end_iter; ++dir_itr )
 //					{
 //						try
 //						{
@@ -1178,8 +1271,8 @@ protected:
 	int next_watch_; //TODO: analizar si es necesario
 	bool closing_;
 
-	watch_collection_type user_watchs_;
-	watch_collection_type all_watchs_;
+	watch_collection_type user_watches_;
+	watch_collection_type all_watches_;
 	
 };
 
