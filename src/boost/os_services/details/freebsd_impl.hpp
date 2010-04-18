@@ -268,7 +268,7 @@ public:
 		}
 
 		//if ( (watch->fd = open( watch->path.native_file_string().c_str(), O_RDONLY )) < 0)
-		watch->file_descriptor_ = open( watch->path.native_file_string().c_str(), O_EVTONLY )
+		watch->file_descriptor_ = open( watch->path.native_file_string().c_str(), O_EVTONLY );
 		if ( watch->file_descriptor_ == -1 ) //< 0
 		{
 			//warn("opening path `%s' failed", watch->path);
