@@ -577,31 +577,31 @@ public:
 					std::cout << "if ( !found_filename && !found_inode )" << std::endl;
 
 
-////					std::cout << "if (!found_filename && found_inode)" << std::endl;
-////					std::cout << "dir_itr->path().native_file_string(): " << dir_itr->path().native_file_string() << std::endl;
-////					std::cout << "dir_st.st_dev: " << dir_st.st_dev << std::endl;
-////					std::cout << "dir_st.st_ino: " << dir_st.st_ino << std::endl;
-//
-//					watch_type item(new fsitem);
-//					item->path = dir_itr->path();
-//
-//					//TODO: volver a habilitar hasta el fin de las pruebas
-//					//std::cout << "File created: " << item->path.native_file_string() << std::endl;
-//
-//
-//					//std::cout << "DEBUG 1" << std::endl;
-//
-//					//TODO: ver en el codigo de pnotify: /* Add a watch if it is a regular file */
-//					create_watch( item );
-//					item->mask = PN_CREATE;
-//					item->parent_watch_descriptor_ = head_dir->watch_descriptor_;
-//					//item->parent = head_dir;
-//					item->st_dev = dir_st.st_dev;
-//					item->st_ino = dir_st.st_ino;
-//
-//					head_dir->subitems.push_back(item);
-//
-//					//std::cout << "DEBUG 2" << std::endl;
+//					std::cout << "if (!found_filename && found_inode)" << std::endl;
+//					std::cout << "dir_itr->path().native_file_string(): " << dir_itr->path().native_file_string() << std::endl;
+//					std::cout << "dir_st.st_dev: " << dir_st.st_dev << std::endl;
+//					std::cout << "dir_st.st_ino: " << dir_st.st_ino << std::endl;
+
+					watch_type item(new fsitem);
+					item->path = dir_itr->path();
+
+					//TODO: volver a habilitar hasta el fin de las pruebas
+					//std::cout << "File created: " << item->path.native_file_string() << std::endl;
+
+
+					//std::cout << "DEBUG 1" << std::endl;
+
+					//TODO: ver en el codigo de pnotify: /* Add a watch if it is a regular file */
+					create_watch( item );
+					item->mask = PN_CREATE;
+					item->parent_watch_descriptor_ = head_dir->watch_descriptor_;
+					//item->parent = head_dir;
+					item->st_dev = dir_st.st_dev;
+					item->st_ino = dir_st.st_ino;
+
+					head_dir->subitems.push_back(item);
+
+					//std::cout << "DEBUG 2" << std::endl;
 				}
 
 				if ( !found_filename && found_inode )
