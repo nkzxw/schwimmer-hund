@@ -157,6 +157,16 @@ struct file_inode_info
 		}
 	}
 
+	
+	file_inode_info& operator=(const file_inode_info& other)
+	{
+		if ( this != &other )
+		{
+			this->device_id_ = other.device_id_;
+			this->inode_number_ = other.inode_number_;
+		}
+		return *this;
+	}
 
 	void set ( dev_t device_id, ino_t inode_number )
 	{
