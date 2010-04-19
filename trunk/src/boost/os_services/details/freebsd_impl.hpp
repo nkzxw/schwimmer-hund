@@ -76,17 +76,11 @@ enum {
 	PN_DELETE		= 0x1 << 2,
 	/** The modification time of a file has changed */
 	PN_MODIFY		= 0x1 << 3,
-
-
-
 	/** Automatically delete the watch after a matching event occurs */
 	PN_ONESHOT		= 0x1 << 4,
 	/** An error condition in the underlying kernel event queue */
 	PN_ERROR		= 0x1 << 5,
-
 	PN_RENAME		= 0x1 << 6
-
-
 } __PN_BITMASK;
 
 #define PN_ALL_EVENTS	(PN_ACCESS | PN_CREATE | PN_DELETE | PN_MODIFY | PN_RENAME)
@@ -98,28 +92,25 @@ enum {
 #endif
 
 
+//O_EVTONLY solo existe en MacOSX, no en FreeBSD
 #ifndef O_EVTONLY
 #define O_EVTONLY O_RDONLY
 #endif
-
 
 
 namespace boost {
 namespace os_services {
 namespace detail {
 
-
-
-//static int next_watch_ = 0;			//TODO: analizar si es necesario 
 //TODO: que onda????? esto esta en freebsd_impl
 static int kqueue_file_descriptor_ = 0; //TODO: que onda????? esto esta en freebsd_impl
 
 	
-struct fs_item;		//forward-declaration
+struct filesystem_item;		//forward-declaration
 struct user_entry;	//forward-declaration
 
 //TODO: ver boost::ptr_vector
-typedef boost::shared_ptr<fs_item> watch_type;			//TODO: renombrar
+typedef boost::shared_ptr<filesystem_item> watch_type;			//TODO: renombrar
 typedef std::vector<watch_type> watch_collection_type;	//TODO: renombrar
 
 //TODO: pasar a otro archivo...
@@ -191,8 +182,6 @@ struct file_inode_info
 		}
 	}
 
-
-
 	bool operator==(const file_inode_info& other) const
 	{
 		return ( this->device_id_ == other.device_id_ && this->inode_number_ == other.inode_number_ );
@@ -209,15 +198,15 @@ struct file_inode_info
 };
 
 //TODO: renombrar
-class fs_item
+class filesystem_item
 {
 public:
 	
-	typedef boost::shared_ptr<fs_item> pointer_type; 
+	typedef boost::shared_ptr<filesystem_item> pointer_type; 
 
 	//TODO: agegar metodo add_subitem
 
-	fs_item ( const boost::filesystem::path& path, user_entry* root_user_entry )
+	filesystem_item ( const boost::filesystem::path& path, user_entry* root_user_entry )
 		: root_user_entry_(root_user_entry), parent_(0), is_directory_(false), file_descriptor_(0) //, watch_descriptor_(0)
 	{
 		std::cout << "--------------------- fs_item ( const boost::filesystem::path& path, const user_entry* const root_user_entry ) ------------------------------" << std::endl;
@@ -226,7 +215,7 @@ public:
 		set_path( path );
 	}
 
-	fs_item ( const boost::filesystem::path& path, user_entry* root_user_entry, fs_item* parent )
+	filesystem_item ( const boost::filesystem::path& path, user_entry* root_user_entry, filesystem_item* parent )
 		: root_user_entry_(root_user_entry), parent_(parent), is_directory_(false), file_descriptor_(0) //, watch_descriptor_(0)
 	{
 		std::cout << "--------------------- fs_item ( const boost::filesystem::path& path, const user_entry* const root_user_entry, const fs_item* const parent ) ------------------------------" << std::endl;
@@ -235,10 +224,25 @@ public:
 		set_path( path );
 	}
 
-	~fs_item()
+	~filesystem_item()
 	{
+		//TODO: Eliminar los subitems 
+
 		std::cout << "--------------------- ~fsitem() ------------------------------" << std::endl;
 		//std::cout << "this->path.native_file_string(): " << this->path.native_file_string() << std::endl;
+
+		if ( this->file_descriptor_ != 0 )
+		{
+			int ret_value = close( this->file_descriptor_ ); //::close
+
+			if ( ret_value < 0 )
+			{
+				std::ostringstream oss;
+				oss << "Failed to close file descriptor - Reason: "; //TODO: ver que usar en Linux/BSD << GetLastError();
+				throw (std::runtime_error(oss.str()));
+			}
+		}
+
 	}
 
 	//bool operator==(const fs_item& other) const
@@ -247,7 +251,7 @@ public:
 	//}
 
 
-	bool is_equal(const fs_item& other) const
+	bool is_equal(const filesystem_item& other) const
 	{
 		return ( this->path_ == other.path_ && this->inode_info_ == other.inode_info_ );
 	}
@@ -257,7 +261,7 @@ public:
 		return ( this->path_ == other->path_ && this->inode_info_ == other->inode_info_ );
 	}
 
-	bool is_equal(fs_item* other) const
+	bool is_equal(filesystem_item* other) const
 	{
 		return ( this->path_ == other->path_ && this->inode_info_ == other->inode_info_ );
 	}
@@ -284,8 +288,7 @@ public:
 		this->inode_info_.set( this->path_ );
 	}
 
-
-	void add_subitem ( const fs_item& subitem )
+	void add_subitem ( const filesystem_item& subitem )
 	{
 		//TODO: completar
 	}
@@ -317,7 +320,7 @@ public: //private:
 	boost::uint32_t mask_;
 
 	//watch_type parent;
-	fs_item* parent_; //TODO: cambiar a watch_type
+	filesystem_item* parent_; //TODO: cambiar a watch_type
 
 	file_inode_info inode_info_;
 
@@ -348,7 +351,7 @@ struct user_entry
 	void initialize()
 	{
 		//TODO: estas dos instrucciones ponerlas en un factory
-		watch_type item ( new fs_item(path_, this) );
+		watch_type item ( new filesystem_item(path_, this) );
 		all_watches_.push_back(item);
 
 		head_ = item;
@@ -399,20 +402,6 @@ struct user_entry
 		{
 			scan_directory( watch.get() );
 		}
-
-		/* Generate a new watch ID */
-		/* FIXME - this never decreases and might fail */
-		//if ((watch->watch_descriptor_ = ++ctl->next_wd) > WATCH_MAX)
-
-		//if ( (watch->watch_descriptor_ = ++next_watch_) > WATCH_MAX )
-		//{
-		//	//warn("watch_max exceeded");
-		//	//return -1;
-		//	std::ostringstream oss;
-		//	//TODO:
-		//	oss << "watch_max exceeded";
-		//	throw (std::invalid_argument(oss.str()));
-		//}
 
 		if ( watch->file_descriptor_ == 0 )
 		{
@@ -494,7 +483,7 @@ struct user_entry
 	}
 
 	//TODO: contemplar la opcion include_sub_directories_
-	void scan_directory( fs_item* head_dir )
+	void scan_directory( filesystem_item* head_dir )
 	{
 		std::cout << "void scan_directory( fsitem* head_dir )" << std::endl;
 		std::cout << "head_dir->path.native_file_string(): " << head_dir->get_path().native_file_string() << std::endl;
@@ -582,7 +571,7 @@ struct user_entry
 					//std::cout << "dir_st.st_ino: " << dir_st.st_ino << std::endl;
 
 					//TODO: usar algun metodo que lo haga facil.. add_subitem o algo asi, quizas desde una factory
-					watch_type item ( new fs_item( dir_itr->path(), head_dir->root_user_entry_, head_dir) );
+					watch_type item ( new filesystem_item( dir_itr->path(), head_dir->root_user_entry_, head_dir) );
 					this->all_watches_.push_back(item);
 
 					create_watch( item );
@@ -712,9 +701,8 @@ class freebsd_impl : public base_impl<freebsd_impl>
 public:
 
 	freebsd_impl()
-		: is_initialized_(false), closing_(false) //, kqueue_file_descriptor_(0), next_watch_(0)
+		: is_initialized_(false), closing_(false) //, kqueue_file_descriptor_(0)
 	{
-		//next_watch_ = 0;
 		//kqueue_file_descriptor_ = 0;
 	}
 
@@ -849,7 +837,7 @@ public: //private:  //TODO:
 
 				//TODO: esto puede ser un tema, porque el shared_ptr (watch_type) va a tener el contador en 1 y cuando salga de scope va a hacer delete de la memoria...
 				//watch_type watch( (fsitem*) event.udata );
-				fs_item* watch = (fs_item*) event.udata; //TODO: reinterpret_cast<>
+				filesystem_item* watch = (filesystem_item*) event.udata; //TODO: reinterpret_cast<>
 
 				/* Workaround:
 
@@ -1256,7 +1244,7 @@ public: //private:  //TODO:
 
 	//TODO: cambiarle el nombre porque es parecido al event handler general y no se indica bien que hace cada uno...
 	//TODO: cambiarle el nombre porque un handler se confunde con un handler de un evento...
-	void directory_event_handler( fs_item* head_dir ) 
+	void directory_event_handler( filesystem_item* head_dir ) 
 	{
 //		std::cout << "void directory_event_handler( fsitem* head_dir )" << std::endl;
 //		std::cout << "head_dir->path.native_file_string(): " << head_dir->path.native_file_string() << std::endl;
@@ -1320,7 +1308,7 @@ public: //private:  //TODO:
 
 protected:
 
-	//TODO: las tres funciones siguientes están duplicadas en windows_impl y freebsd_impl -> RESOLVER
+	//TODO: las tres funciones siguientes estan duplicadas en windows_impl y freebsd_impl -> RESOLVER
 	// inline void notify_file_system_event_args( int action, const std::string& directory, const std::string& name )
 
 	thread_type thread_;
@@ -1328,13 +1316,10 @@ protected:
 	bool is_initialized_;
 
 	//int kqueue_file_descriptor_; // file descriptor
-	//int next_watch_; //TODO: analizar si es necesario
 
 	bool closing_;
 	user_item_collection user_watches_;
-
 	//watch_collection_type all_watches_; //TODO: quizas haga falta contabilizar todos los watches en un solo lugar... VER
-	
 };
 
 
