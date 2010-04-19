@@ -874,7 +874,7 @@ public: //private:  //TODO:
 				//TODO: if ( ! closing_ )
 				if ( queued_write_watch != 0 )
 				{
-					handle_write( watch );
+					handle_write( queued_write_watch );
 					queued_write_watch = 0;
 				}
 			}
