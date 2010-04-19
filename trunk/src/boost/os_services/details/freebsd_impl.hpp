@@ -849,6 +849,9 @@ public: //private:  //TODO:
 			now = microsec_clock::local_time();
 			std::cout << to_iso_string(now) << std::endl;
 
+			std::cout << "return_code: " << return_code << std::endl;
+
+
 			if ( return_code == -1 || event.flags & EV_ERROR) //< 0
 			{
 				//TODO:
