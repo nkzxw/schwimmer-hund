@@ -123,6 +123,62 @@ typedef boost::shared_ptr<fs_item> watch_type;	//TODO: renombrar
 typedef std::vector<watch_type> watch_collection_type; //TODO: renombrar
 
 
+struct file_inode_info
+{
+	file_inode_info ( )
+		: device_id_(0), inode_number_(0)
+	{}
+
+	file_inode_info ( dev_t device_id, ino_t inode_number )
+		: device_id_(device_id), inode_number_(inode_number)
+	{}
+
+	file_inode_info ( boost::filesystem::path path )
+	{
+		struct stat st;
+		
+		int return_code = lstat( path.native_file_string().c_str(), &st);
+		if ( return_code < 0)
+		{
+			//TODO: error
+			std::cout << "STAT ERROR -- on file_inode_info -- - Reason: " << std::strerror(errno) << std::endl;
+			std::cout << "watch->path.native_file_string(): " << watch->path.native_file_string() << std::endl;
+
+			//ptime now = second_clock::local_time();
+			//std::cout << now << std::endl;
+			ptime now = microsec_clock::local_time();
+			std::cout << to_iso_string(now) << std::endl;
+
+			return;
+		}
+		else
+		{
+			set ( st );
+		}
+	}
+
+
+	void set ( dev_t device_id, ino_t inode_number )
+	{
+		this->device_id_ = device_id;
+		this->inode_number_ = inode_number;
+	}
+
+	void set ( struct stat st )
+	{
+		this->device_id_ = st.st_dev;
+		this->inode_number_ = st.st_ino;
+	}
+
+	bool operator==(const file_inode_info& other) const
+	{
+		return ( this->device_id_ = other.device_id_ && this->inode_number_ == other.inode_number_ );
+	}
+
+	dev_t device_id_;
+	ino_t inode_number_;
+};
+
 //TODO: renombrar
 struct fs_item
 {
@@ -150,9 +206,7 @@ struct fs_item
 	//watch_type parent;
 	fs_item* parent; //TODO: cambiar a watch_type
 
-	//TODO: renombrar
-    dev_t st_dev; /* ID of device containing file */
-    ino_t st_ino; /* inode number */
+	file_inode_info inode_info_;
 
 	watch_collection_type subitems;
 
@@ -248,8 +302,7 @@ struct user_entry
 			return;
 		}
 
-		watch->st_dev = st.st_dev;
-		watch->st_ino = st.st_ino;
+		watch->inode_info_.set( st );
 
 		if ( boost::filesystem::is_directory( watch->path ) )
 		{
@@ -406,12 +459,12 @@ struct user_entry
 
 					//std::cout << "-----------------------------------------------------------------------" << std::endl;
 					//std::cout << "(*it)->path.native_file_string(): " << (*it)->path.native_file_string() << std::endl;
-					//std::cout << "(*it)->st_dev: " << (*it)->st_dev << std::endl;
-					//std::cout << "(*it)->st_ino: " << (*it)->st_ino << std::endl;
+					//std::cout << "(*it)->inode_info_.device_id: " << (*it)->inode_info_.device_id << std::endl;
+					//std::cout << "(*it)->inode_info_.inode_number: " << (*it)->inode_info_.inode_number << std::endl;
 					//std::cout << "-----------------------------------------------------------------------" << std::endl;
 
 
-					if (  dir_st.st_dev == (*it)->st_dev && dir_st.st_ino == (*it)->st_ino && (*it)->path.native_file_string() == dir_itr->path().native_file_string() )
+					if (  dir_st.st_dev == (*it)->inode_info_.device_id && dir_st.st_ino == (*it)->inode_info_.inode_number && (*it)->path.native_file_string() == dir_itr->path().native_file_string() )
 					{
 						//std::cout << "found inode & filename: " << (*it)->path.native_file_string() << std::endl;
 						(*it)->mask = 0; //-999;
@@ -422,7 +475,7 @@ struct user_entry
 					else
 					{
 
-						if (  dir_st.st_dev == (*it)->st_dev && dir_st.st_ino == (*it)->st_ino )
+						if (  dir_st.st_dev == (*it)->inode_info_.device_id && dir_st.st_ino == (*it)->inode_info_.inode_number )
 						{
 							//std::cout << "found inode: " << (*it)->path.native_file_string() << std::endl;
 							found_inode = true;
@@ -458,8 +511,10 @@ struct user_entry
 					item->parent_watch_descriptor_ = head_dir->watch_descriptor_;
 					item->parent = head_dir;
 					//item->parent = head_dir;
-					item->st_dev = dir_st.st_dev;
-					item->st_ino = dir_st.st_ino;
+
+					item->inode_info_.device_id_ = dir_st.st_dev;
+					item->inode_info_.inode_number_ = dir_st.st_ino;
+
 
 					head_dir->subitems.push_back(item);
 
@@ -479,8 +534,8 @@ struct user_entry
 					//                  this->all_watches_.push_back(item);
 					//					item->mask = PN_CREATE;
 					//					item->parent_watch_descriptor_ = head_dir->watch_descriptor_;
-					//					item->st_dev = dir_st.st_dev;
-					//					item->st_ino = dir_st.st_ino;
+					//					item->inode_info_.device_id = dir_st.st_dev;
+					//					item->inode_info_.inode_number = dir_st.st_ino;
 					//
 					//					temp_file_list.push_back(item);
 				}
@@ -504,7 +559,7 @@ struct user_entry
 				{
 					if ( (*it2)->mask != 0 ) //-999 )
 					{
-						if (  (*it)->st_dev == (*it2)->st_dev && (*it)->st_ino == (*it2)->st_ino )
+						if (  (*it)->inode_info_.device_id == (*it2)->inode_info_.device_id && (*it)->inode_info_.inode_number == (*it2)->inode_info_.inode_number )
 						{
 							//std::cout << "found inode: " << (*it)->path.native_file_string() << " - " << (*it2)->path.native_file_string() << std::endl;
 							found = true;
@@ -552,8 +607,8 @@ struct user_entry
 		//				create_watch( item );
 		//				item->mask = PN_CREATE;
 		//				item->parent_watch_descriptor_ = head_dir->watch_descriptor_;
-		//				item->st_dev = (*it)->st_dev;
-		//				item->st_ino = (*it)->st_ino;
+		//				item->inode_info_.device_id = (*it)->inode_info_.device_id;
+		//				item->inode_info_.inode_number = (*it)->inode_info_.inode_number;
 		//
 		//				head_dir->subitems.push_back(item);
 		//			}
@@ -758,8 +813,8 @@ public: //private:  //TODO:
 					std::cout << "watch->path: " << watch->path.native_file_string() << std::endl;
 					std::cout << "watch->is_directory: " << watch->is_directory << std::endl;
 					std::cout << "watch->mask: " << watch->mask << std::endl;
-					std::cout << "watch->st_dev: " << watch->st_dev << std::endl;
-					std::cout << "watch->st_ino: " << watch->st_ino << std::endl;
+					std::cout << "watch->inode_info_.device_id: " << watch->inode_info_.device_id_ << std::endl;
+					std::cout << "watch->inode_info_.inode_number: " << watch->inode_info_.inode_number_ << std::endl;
 
 					//std::cout << "event.ident: " << event.ident << std::endl;
 					//std::cout << "event.filter: " << event.filter << std::endl;
@@ -772,13 +827,13 @@ public: //private:  //TODO:
 					watch_collection_type::iterator it = watch->parent->subitems.begin();
 					while ( it != watch->parent->subitems.end() )
 					{
-						if ( watch->path == (*it)->path && watch->st_dev == (*it)->st_dev && watch->st_ino == (*it)->st_ino )
+						if ( watch->path == (*it)->path && watch->inode_info_.device_id_ == (*it)->inode_info_.device_id && watch->inode_info_.inode_number_ == (*it)->inode_info_.inode_number )
 						{
 							std::cout << "-----------------------------------------------------------------------" << std::endl;
 							std::cout << "File removed: " << std::endl;
 							std::cout << "(*it)->path.native_file_string(): " << (*it)->path.native_file_string() << std::endl;
-							std::cout << "(*it)->st_dev: " << (*it)->st_dev << std::endl;
-							std::cout << "(*it)->st_ino: " << (*it)->st_ino << std::endl;
+							std::cout << "(*it)->inode_info_.device_id: " << (*it)->inode_info_.device_id << std::endl;
+							std::cout << "(*it)->inode_info_.inode_number: " << (*it)->inode_info_.inode_number << std::endl;
 							std::cout << "-----------------------------------------------------------------------" << std::endl;
 
 
@@ -807,9 +862,8 @@ public: //private:  //TODO:
 					std::cout << "watch->path: " << watch->path.native_file_string() << std::endl;
 					std::cout << "watch->is_directory: " << watch->is_directory << std::endl;
 					std::cout << "watch->mask: " << watch->mask << std::endl;
-					std::cout << "watch->st_dev: " << watch->st_dev << std::endl;
-					std::cout << "watch->st_ino: " << watch->st_ino << std::endl;
-
+					std::cout << "watch->inode_info_.device_id: " << watch->inode_info_.device_id_ << std::endl;
+					std::cout << "watch->inode_info_.inode_number: " << watch->inode_info_.inode_number_ << std::endl;
 
 					//std::cout << "event.ident: " << event.ident << std::endl;
 					//std::cout << "event.filter: " << event.filter << std::endl;
@@ -830,17 +884,20 @@ public: //private:  //TODO:
 					//	}
 					//}
 
-					if ( watch->parent != 0 ) //TODO: cambiar cuando parent sea un shared_ptr
-					{
-						parent_path = watch->parent->path;
-					}
+					//if ( watch->parent != 0 ) //TODO: cambiar cuando parent sea un shared_ptr
+					//{
+					//	parent_path = watch->parent->path;
+					//}
+
+					parent_path = watch->root_user_entry->path_;
 
 					if ( ! parent_path.empty() )
 					{
 						boost::filesystem::directory_iterator end_iter;
 
 						//TODO: pasar a metodo estatico
-						for ( boost::filesystem::directory_iterator dir_itr( parent_path ); dir_itr != end_iter; ++dir_itr )
+						boost::filesystem::directory_iterator dir_itr( parent_path );
+						for ( ; dir_itr != end_iter; ++dir_itr )
 						{
 							struct stat dir_st;
 							
@@ -856,12 +913,33 @@ public: //private:  //TODO:
 							}
 							else
 							{
-								if (  dir_st.st_dev == watch->st_dev && dir_st.st_ino == watch->st_ino )
+								if (  dir_st.st_dev == watch->inode_info_.device_id_ && dir_st.st_ino == watch->inode_info_.inode_number_ )
 								{
-									std::cout << "Nuevo Nombre de Archivo:  " << dir_itr->path().native_file_string() << std::endl;
-									watch->path = dir_itr->path();
+									break;
 								}
 							}
+						}
+
+						if ( dir_itr != end_iter )
+						{
+							std::cout << "Nuevo Nombre de Archivo:  " << dir_itr->path().native_file_string() << std::endl;
+							watch->path = dir_itr->path();
+
+							//TODO: llamar a metodo para renombrar
+						}
+						else	
+						{
+							std::cout << "-----------------------------------------------------------------------" << std::endl;
+							std::cout << "File removed: " << std::endl;
+							std::cout << "watch->path: " << watch->path.native_file_string() << std::endl;
+ 							std::cout << "watch->inode_info_.device_id: " << watch->inode_info_.device_id_ << std::endl;
+							std::cout << "watch->inode_info_.inode_number: " << watch->inode_info_.inode_number_ << std::endl;
+							std::cout << "-----------------------------------------------------------------------" << std::endl;
+
+							//TODO: llamar a metodo para eliminar
+
+							//it = head_dir->subitems.erase(it);
+							break;						
 						}
 					}
 
@@ -881,8 +959,8 @@ public: //private:  //TODO:
 					std::cout << "watch->path: " << watch->path.native_file_string() << std::endl;
 					std::cout << "watch->is_directory: " << watch->is_directory << std::endl;
 					std::cout << "watch->mask: " << watch->mask << std::endl;
-					std::cout << "watch->st_dev: " << watch->st_dev << std::endl;
-					std::cout << "watch->st_ino: " << watch->st_ino << std::endl;
+					std::cout << "watch->inode_info_.device_id: " << watch->inode_info_.device_id_ << std::endl;
+					std::cout << "watch->inode_info_.inode_number: " << watch->inode_info_.inode_number_ << std::endl;
 
 
 					//std::cout << "event.ident: " << event.ident << std::endl;
