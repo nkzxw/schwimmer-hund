@@ -273,7 +273,7 @@ public:
 
 	void open ()
 	{
-		this->file_descriptor_ = open( path_.native_file_string().c_str(), O_EVTONLY );
+		this->file_descriptor_ = ::open( path_.native_file_string().c_str(), O_EVTONLY );
 		if ( this->file_descriptor_ == -1 ) //< 0
 		{
 			//warn("opening path `%s' failed", watch->path);
