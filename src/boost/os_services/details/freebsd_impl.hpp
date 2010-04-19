@@ -304,14 +304,21 @@ public:
 		return this->path_;
 	}
 
-public: //private:
+	bool is_directory() const
+	{
+		return this->is_directory_;
+	}
+
+private:
 	boost::filesystem::path path_;
 	bool is_directory_;
+
+public: //private:
 
 	int file_descriptor_;
 	//int watch_descriptor_; //TODO: analizar si es necesario
 
-	struct kevent event_;		//TODO: creo que no es necesario
+	//struct kevent event_;		//TODO: creo que no es necesario
 
 	boost::uint32_t mask_;
 
@@ -333,11 +340,11 @@ struct user_entry
 	//{
 	//}
 
-	~user_entry()
-	{
-		//std::cout << "--------------------- ~fsitem() ------------------------------" << std::endl;
-		//std::cout << "this->path.native_file_string(): " << this->path.native_file_string() << std::endl;
-	}
+	//~user_entry()
+	//{
+	//	//std::cout << "--------------------- ~fsitem() ------------------------------" << std::endl;
+	//	//std::cout << "this->path.native_file_string(): " << this->path.native_file_string() << std::endl;
+	//}
 
 	//TODO: ver que sentido tiene este metodo...
 	void add_watch( filesystem_item::pointer_type item )
@@ -368,7 +375,9 @@ struct user_entry
 			watch->mask_ = PN_ALL_EVENTS; //TODO: asignar lo que el usuario quiere monitorear...
 		}
 
-		struct kevent *event = &watch->event_;
+		//struct kevent *event = &watch->event_;
+		struct kevent event;
+
 		int mask = watch->mask_;
 
 		////TODO: y esto?????? nunca se ejecuta, cual es la razon ????
@@ -395,7 +404,7 @@ struct user_entry
 		//watch->inode_info_.set( watch->get_path() );
 		watch->open(); //TODO: catch errors
 
-		if ( watch->is_directory_ )
+		if ( watch->is_directory() )
 		{
 			scan_directory( watch.get() );
 		}
@@ -414,8 +423,8 @@ struct user_entry
 		//unsigned int fflags = NOTE_DELETE |  NOTE_WRITE | NOTE_EXTEND | NOTE_ATTRIB | NOTE_LINK | NOTE_REVOKE; //| NOTE_RENAME;
 		unsigned int fflags = NOTE_DELETE |  NOTE_WRITE | NOTE_EXTEND | NOTE_ATTRIB | NOTE_LINK | NOTE_REVOKE | NOTE_RENAME;
 
-		//EV_SET( event, watch->file_descriptor_, EVFILT_VNODE, EV_ADD | EV_ENABLE | EV_ONESHOT | EV_CLEAR, fflags, 0, watch.get() );
-		EV_SET( event, watch->file_descriptor_, EVFILT_VNODE, EV_ADD | EV_ENABLE | EV_CLEAR, fflags, 0, watch.get() );
+		//EV_SET( &event, watch->file_descriptor_, EVFILT_VNODE, EV_ADD | EV_ENABLE | EV_ONESHOT | EV_CLEAR, fflags, 0, watch.get() );
+		EV_SET( &event, watch->file_descriptor_, EVFILT_VNODE, EV_ADD | EV_ENABLE | EV_CLEAR, fflags, 0, watch.get() );
 
 		//TODO: ver si Windows y Linux saltan cuando se mofica el nombre del directorio raiz monitoreado.
 		// sino saltan, evisar que se use NOTE_RENAME con cualquier directorio raiz
@@ -465,8 +474,8 @@ struct user_entry
 
 		//std::cout << "kev->flags: " << kev->flags << std::endl;
 
-		/* Add the kevent to the kernel event queue */
-		int return_code = kevent(kqueue_file_descriptor_, event, 1, NULL, 0, NULL);
+		//int return_code = kevent(kqueue_file_descriptor_, event, 1, NULL, 0, NULL);
+		int return_code = kevent(kqueue_file_descriptor_, &event, 1, NULL, 0, NULL);
 		if ( return_code == -1 ) //< 0)
 		{
 			//perror("kevent(2)");
@@ -814,7 +823,7 @@ public: //private:  //TODO:
 					//std::cout << "watch->watch_descriptor_: " << watch->watch_descriptor_ << std::endl;
 					std::cout << "watch->parent: " << watch->parent_ << std::endl;
 					std::cout << "watch->path: " << watch->get_path().native_file_string() << std::endl;
-					std::cout << "watch->is_directory: " << watch->is_directory_ << std::endl;
+					std::cout << "watch->is_directory: " << watch->is_directory() << std::endl;
 					std::cout << "watch->mask_: " << watch->mask_ << std::endl;
 					std::cout << "watch->inode_info_.device_id_: " << watch->inode_info_.device_id_ << std::endl;
 					std::cout << "watch->inode_info_.inode_number_: " << watch->inode_info_.inode_number_ << std::endl;
@@ -862,7 +871,7 @@ public: //private:  //TODO:
 					std::cout << "watch->fd: " << watch->file_descriptor_ << std::endl;
 					std::cout << "watch->parent: " << watch->parent_ << std::endl;
 					std::cout << "watch->path: " << watch->get_path().native_file_string() << std::endl;
-					std::cout << "watch->is_directory: " << watch->is_directory_ << std::endl;
+					std::cout << "watch->is_directory: " << watch->is_directory() << std::endl;
 					std::cout << "watch->mask_: " << watch->mask_ << std::endl;
 					std::cout << "watch->inode_info_.device_id_: " << watch->inode_info_.device_id_ << std::endl;
 					std::cout << "watch->inode_info_.inode_number_: " << watch->inode_info_.inode_number_ << std::endl;
@@ -966,7 +975,7 @@ public: //private:  //TODO:
 					std::cout << "watch->fd: " << watch->file_descriptor_ << std::endl;
 					std::cout << "watch->parent: " << watch->parent_ << std::endl;
 					std::cout << "watch->path: " << watch->get_path().native_file_string() << std::endl;
-					std::cout << "watch->is_directory: " << watch->is_directory_ << std::endl;
+					std::cout << "watch->is_directory: " << watch->is_directory() << std::endl;
 					std::cout << "watch->mask_: " << watch->mask_ << std::endl;
 					std::cout << "watch->inode_info_.device_id_: " << watch->inode_info_.device_id_ << std::endl;
 					std::cout << "watch->inode_info_.inode_number_: " << watch->inode_info_.inode_number_ << std::endl;
@@ -1089,7 +1098,7 @@ public: //private:  //TODO:
 
 
 				//if ( boost::filesystem::is_directory( watch->path ) )
-				if ( watch->is_directory_ )
+				if ( watch->is_directory() )
 				{
 					if (event.fflags & NOTE_WRITE)
 					{
