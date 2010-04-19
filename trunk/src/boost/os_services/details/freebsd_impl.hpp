@@ -147,7 +147,8 @@ struct fs_item
 	boost::uint32_t mask;	/**< Mask of monitored events */
 
 	int parent_watch_descriptor_;
-	watch_type parent;
+	//watch_type parent;
+	fs_item* parent; //TODO: cambiar a watch_type
 
 	//TODO: renombrar
     dev_t st_dev; /* ID of device containing file */
@@ -155,7 +156,7 @@ struct fs_item
 
 	watch_collection_type subitems;
 
-	user_entry* parent_user_entry; //TODO: ver que pasa si agregamos el mismo directorio como dos user_entry distintos... el open da el mismo file descriptor?
+	user_entry* root_user_entry; //TODO: ver que pasa si agregamos el mismo directorio como dos user_entry distintos... el open da el mismo file descriptor?
 };
 
 
@@ -194,7 +195,7 @@ struct user_entry
 		//std::cout << "void create_watch( watch_type watch )" << std::endl;
 		//std::cout << "watch->path.native_file_string(): " << watch->path.native_file_string() << std::endl;
 
-		watch->parent_user_entry = this;
+		watch->root_user_entry = this;
 
 		//TODO: ver esto...
 		if ( watch->mask == 0 )
@@ -455,6 +456,7 @@ struct user_entry
 					create_watch( item );
 					item->mask = PN_CREATE;
 					item->parent_watch_descriptor_ = head_dir->watch_descriptor_;
+					item->parent = head_dir;
 					//item->parent = head_dir;
 					item->st_dev = dir_st.st_dev;
 					item->st_ino = dir_st.st_ino;
@@ -752,6 +754,7 @@ public: //private:  //TODO:
 					std::cout << "watch->fd: " << watch->file_descriptor_ << std::endl;
 					std::cout << "watch->wd: " << watch->watch_descriptor_ << std::endl;
 					std::cout << "watch->parent_watch_descriptor_: " << watch->parent_watch_descriptor_ << std::endl;
+					std::cout << "watch->parent: " << watch->parent << std::endl;
 					std::cout << "watch->path: " << watch->path.native_file_string() << std::endl;
 					std::cout << "watch->is_directory: " << watch->is_directory << std::endl;
 					std::cout << "watch->mask: " << watch->mask << std::endl;
@@ -787,8 +790,6 @@ public: //private:  //TODO:
 							++it;
 						}
 					}
-			
-
 
 					std::cout << "--------------------------------------------------------------------------------------" << std::endl;
 				}
@@ -802,6 +803,7 @@ public: //private:  //TODO:
 					std::cout << "watch->fd: " << watch->file_descriptor_ << std::endl;
 					std::cout << "watch->wd: " << watch->watch_descriptor_ << std::endl;
 					std::cout << "watch->parent_watch_descriptor_: " << watch->parent_watch_descriptor_ << std::endl;
+					std::cout << "watch->parent: " << watch->parent << std::endl;
 					std::cout << "watch->path: " << watch->path.native_file_string() << std::endl;
 					std::cout << "watch->is_directory: " << watch->is_directory << std::endl;
 					std::cout << "watch->mask: " << watch->mask << std::endl;
@@ -816,24 +818,29 @@ public: //private:  //TODO:
 					//std::cout << "event.data: " << event.data << std::endl;
 					//std::cout << "event.udata: " << event.udata << std::endl;
 
-					boost::filesystem::path parent;
+					boost::filesystem::path parent_path;
 
-					
-					//TODO: find
-					for (watch_collection_type::iterator it =  watch->parent_user_entry->all_watches_.begin(); it != watch->parent_user_entry->all_watches_.end(); ++it )
+				
+					////TODO: find
+					//for (watch_collection_type::iterator it =  watch->root_user_entry->all_watches_.begin(); it != watch->root_user_entry->all_watches_.end(); ++it )
+					//{
+					//	if ( watch->parent_watch_descriptor_ == (*it)->watch_descriptor_ )
+					//	{
+					//		parent_path = (*it)->path;
+					//	}
+					//}
+
+					if ( watch->parent != 0 )
 					{
-						if ( watch->parent_watch_descriptor_ == (*it)->watch_descriptor_ )
-						{
-							parent = (*it)->path;
-						}
+						parent_path = watch->parent->path;
 					}
 
-					if ( ! parent.empty() )
+					if ( ! parent_path.empty() )
 					{
 						boost::filesystem::directory_iterator end_iter;
 
 						//TODO: pasar a metodo estatico
-						for ( boost::filesystem::directory_iterator dir_itr( parent ); dir_itr != end_iter; ++dir_itr )
+						for ( boost::filesystem::directory_iterator dir_itr( parent_path ); dir_itr != end_iter; ++dir_itr )
 						{
 							struct stat dir_st;
 							
@@ -870,6 +877,7 @@ public: //private:  //TODO:
 					std::cout << "watch->fd: " << watch->file_descriptor_ << std::endl;
 					std::cout << "watch->wd: " << watch->watch_descriptor_ << std::endl;
 					std::cout << "watch->parent_watch_descriptor_: " << watch->parent_watch_descriptor_ << std::endl;
+					std::cout << "watch->parent: " << watch->parent << std::endl;
 					std::cout << "watch->path: " << watch->path.native_file_string() << std::endl;
 					std::cout << "watch->is_directory: " << watch->is_directory << std::endl;
 					std::cout << "watch->mask: " << watch->mask << std::endl;
@@ -1103,7 +1111,7 @@ public: //private:  //TODO:
 		//TODO: ????
 		//assert(ctl && watch);
 
-		head_dir->parent_user_entry->scan_directory( head_dir );
+		head_dir->root_user_entry->scan_directory( head_dir );
 		//scan_directory( head_dir );
 
 //		//std::cout << "DEBUG 6" << std::endl;
