@@ -26,7 +26,7 @@ struct filesystem_event_args
 		if (_path.native_file_string().size() > 0)
 		{
 			this->full_path = _path.native_file_string();
-			this->name = _path.filename()
+			this->name = _path.filename();
 		}
 	}
 
@@ -55,7 +55,7 @@ struct renamed_event_args : public filesystem_event_args
 		if (_old_path.native_file_string().size() > 0)
 		{
 			this->old_path = _old_path.native_file_string();
-			this->old_name = _old_path.filename()
+			this->old_name = _old_path.filename();
 		}
 	}
 
