@@ -210,26 +210,26 @@ struct file_inode_info
 //TODO: renombrar
 class fs_item
 {
-public;
+public:
 	//TODO: agegar metodo add_subitem
 
-	fs_item()
-		: is_directory_(false), file_descriptor_(0), watch_descriptor_(0), parent_(0), root_user_entry_(0)
+	fs_item ( const user_entry* const root_user_entry, const fs_item* const parent )
+		: root_user_entry_(root_user_entry), parent_(parent), is_directory_(false), file_descriptor_(0), watch_descriptor_(0), parent_(0), root_user_entry_(0)
 	{
-		std::cout << "--------------------- fsitem() ------------------------------" << std::endl;
+		std::cout << "--------------------- fs_item ( const user_entry* const root_user_entry, const fs_item* const parent ) ------------------------------" << std::endl;
 		//std::cout << "this->path.native_file_string(): " << this->path.native_file_string() << std::endl;
 	}
 
-	fs_item ( const boost::filesystem::path& path )
-		: path_(path), is_directory_(false), file_descriptor_(0), watch_descriptor_(0), parent_(0), root_user_entry_(0)
-	{
-		std::cout << "--------------------- fs_item(const boost::filesystem::path& path) ------------------------------" << std::endl;
+	//fs_item ( const boost::filesystem::path& path )
+	//	: path_(path), is_directory_(false), file_descriptor_(0), watch_descriptor_(0), parent_(0), root_user_entry_(0)
+	//{
+	//	std::cout << "--------------------- fs_item(const boost::filesystem::path& path) ------------------------------" << std::endl;
 
-		if ( boost::filesystem::is_directory( this->path_ ) )
-		{
-			this->is_directory_ = true;
-		}
-	}
+	//	if ( boost::filesystem::is_directory( this->path_ ) )
+	//	{
+	//		this->is_directory_ = true;
+	//	}
+	//}
 
 	~fs_item()
 	{
