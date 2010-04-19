@@ -203,16 +203,15 @@ public:
 	//TODO: agegar metodo add_subitem
 
 	filesystem_item ( const boost::filesystem::path& path, user_entry* root_user_entry )
-		: root_user_entry_(root_user_entry), parent_(0), is_directory_(false), file_descriptor_(0) //, watch_descriptor_(0)
+		: root_user_entry_(root_user_entry), parent_(0), is_directory_(false), file_descriptor_(0), mask_(PN_ALL_EVENTS) //TODO: asignar lo que el usuario quiere monitorear...
 	{
 		std::cout << "--------------------- fs_item ( const boost::filesystem::path& path, const user_entry* const root_user_entry ) ------------------------------" << std::endl;
 		//std::cout << "this->path.native_file_string(): " << this->path.native_file_string() << std::endl;
-
 		set_path( path );
 	}
 
 	filesystem_item ( const boost::filesystem::path& path, user_entry* root_user_entry, filesystem_item* parent )
-		: root_user_entry_(root_user_entry), parent_(parent), is_directory_(false), file_descriptor_(0) //, watch_descriptor_(0)
+		: root_user_entry_(root_user_entry), parent_(parent), is_directory_(false), file_descriptor_(0), mask_(PN_ALL_EVENTS) //TODO: asignar lo que el usuario quiere monitorear...
 	{
 		std::cout << "--------------------- fs_item ( const boost::filesystem::path& path, const user_entry* const root_user_entry, const fs_item* const parent ) ------------------------------" << std::endl;
 		//std::cout << "this->path.native_file_string(): " << this->path.native_file_string() << std::endl;
@@ -369,39 +368,11 @@ struct user_entry
 		//std::cout << "void create_watch( filesystem_item::pointer_type watch )" << std::endl;
 		//std::cout << "watch->path.native_file_string(): " << watch->path.native_file_string() << std::endl;
 
-		//TODO: ver esto...
-		if ( watch->mask_ == 0 )
-		{
-			watch->mask_ = PN_ALL_EVENTS; //TODO: asignar lo que el usuario quiere monitorear...
-		}
-
 		//struct kevent *event = &watch->event_;
 		struct kevent event;
 
 		int mask = watch->mask_;
 
-		////TODO: y esto?????? nunca se ejecuta, cual es la razon ????
-		//if (watch->watch_descriptor_ < 0)
-		//{
-		//	std::ostringstream oss;
-		//	oss << "Failed to monitor directory - Directory: " << watch->get_path().native_file_string() << " - Reason: " << std::strerror(errno);
-		//	throw (std::invalid_argument(oss.str()));
-		//}
-
-		////if ( (watch->fd = open( watch->path.native_file_string().c_str(), O_RDONLY )) < 0)
-		//watch->file_descriptor_ = open( watch->get_path().native_file_string().c_str(), O_EVTONLY );
-		//if ( watch->file_descriptor_ == -1 ) //< 0
-		//{
-		//	//warn("opening path `%s' failed", watch->path);
-		//	//return -1;
-
-		//	std::ostringstream oss;
-		//	//TODO:
-		//	oss << "opening path failed: - Reason: " << std::strerror(errno);
-		//	throw (std::invalid_argument(oss.str()));
-		//}
-
-		//watch->inode_info_.set( watch->get_path() );
 		watch->open(); //TODO: catch errors
 
 		if ( watch->is_directory() )
@@ -420,11 +391,9 @@ struct user_entry
 
 
 		//TODO: ver estos flags, deberia monitoriarse solo lo que el usuairo quiera monitorear...
-		//unsigned int fflags = NOTE_DELETE |  NOTE_WRITE | NOTE_EXTEND | NOTE_ATTRIB | NOTE_LINK | NOTE_REVOKE; //| NOTE_RENAME;
 		unsigned int fflags = NOTE_DELETE |  NOTE_WRITE | NOTE_EXTEND | NOTE_ATTRIB | NOTE_LINK | NOTE_REVOKE | NOTE_RENAME;
 
-		//EV_SET( &event, watch->file_descriptor_, EVFILT_VNODE, EV_ADD | EV_ENABLE | EV_ONESHOT | EV_CLEAR, fflags, 0, watch.get() );
-		EV_SET( &event, watch->file_descriptor_, EVFILT_VNODE, EV_ADD | EV_ENABLE | EV_CLEAR, fflags, 0, watch.get() );
+		EV_SET( &event, watch->file_descriptor_, EVFILT_VNODE, EV_ADD | EV_ENABLE | EV_CLEAR, fflags, 0, watch.get() ); // EV_ADD | EV_ENABLE | EV_ONESHOT | EV_CLEAR
 
 		//TODO: ver si Windows y Linux saltan cuando se mofica el nombre del directorio raiz monitoreado.
 		// sino saltan, evisar que se use NOTE_RENAME con cualquier directorio raiz
@@ -493,16 +462,6 @@ struct user_entry
 	{
 		std::cout << "void scan_directory( fsitem* head_dir )" << std::endl;
 		std::cout << "head_dir->path.native_file_string(): " << head_dir->get_path().native_file_string() << std::endl;
-
-		//filesystem_item::collection_type temp_file_list;
-
-		//TODO: STL --> std::transform o std::for_each o boost::lambda o BOOST_FOREACH
-		//TODO: filesystem_item::collection_type o all_watches_type ?????? GUARDA!!!!
-		//for (filesystem_item::collection_type::iterator it =  head_dir->subitems_.begin(); it != head_dir->subitems_.end(); ++it )
-		//{
-		//	(*it)->mask_ = PN_DELETE;  //TODO: recursivo
-		//}
-
 
 		boost::filesystem::directory_iterator end_iter;
 		for ( boost::filesystem::directory_iterator dir_itr( head_dir->get_path() ); dir_itr != end_iter; ++dir_itr )
@@ -575,56 +534,8 @@ struct user_entry
 					create_watch( item );
 					item->mask_ = PN_CREATE;
 					item->inode_info_ = inode_info;
-
 					head_dir->subitems_.push_back(item);
-
-					//std::cout << "DEBUG 2" << std::endl;
 				}
-
-
-				//if ( !found_filename && !found_inode )	//Archivo nuevo
-				//{
-				//	std::cout << "if ( !found_filename && !found_inode )" << std::endl;
-
-
-				//	//std::cout << "if (!found_filename && found_inode)" << std::endl;
-				//	//std::cout << "dir_itr->path().native_file_string(): " << dir_itr->path().native_file_string() << std::endl;
-				//	//std::cout << "dir_st.st_dev: " << dir_st.st_dev << std::endl;
-				//	//std::cout << "dir_st.st_ino: " << dir_st.st_ino << std::endl;
-
-				//	//TODO: usar algun metodo que lo haga facil.. add_subitem o algo asi, quizas desde una factory
-				//	filesystem_item::pointer_type item ( new filesystem_item( dir_itr->path(), head_dir->root_user_entry_, head_dir) );
-				//	this->all_watches_.push_back(item);
-
-				//	create_watch( item );
-				//	item->mask_ = PN_CREATE;
-				//	item->inode_info_ = inode_info;
-
-				//	head_dir->subitems_.push_back(item);
-
-				//	//std::cout << "DEBUG 2" << std::endl;
-				//}
-
-				//if ( !found_filename && found_inode )
-				//{
-				//	std::cout << "if ( !found_filename && found_inode )" << std::endl;
-				//	////					std::cout << "if ( !found_filename && found_inode )" << std::endl;
-				//	////					std::cout << "dir_itr->path().native_file_string(): " << dir_itr->path().native_file_string() << std::endl;
-				//	////					std::cout << "dir_st.st_dev: " << dir_st.st_dev << std::endl;
-				//	////					std::cout << "dir_st.st_ino: " << dir_st.st_ino << std::endl;
-				//	//
-				//	//					filesystem_item::pointer_type item(new fsitem);
-				//	//					item->path = dir_itr->path();
-				//	//                  this->all_watches_.push_back(item);
-				//	//					item->mask = PN_CREATE;
-				//	//					item->parent_watch_descriptor_ = head_dir->watch_descriptor_;
-				//	//					item->inode_info_.device_id_ = dir_st.st_dev;
-				//	//					item->inode_info_.inode_number_ = dir_st.st_ino;
-				//	//
-				//	//					temp_file_list.push_back(item);
-				//}
-
-
 			}
 			catch ( const std::exception & ex )
 			{
@@ -1004,74 +915,20 @@ public: //private:  //TODO:
 //		std::cout << "void directory_event_handler( fsitem* head_dir )" << std::endl;
 //		std::cout << "head_dir->path.native_file_string(): " << head_dir->path.native_file_string() << std::endl;
 
-		struct pnotify_event *ev;
-		struct dentry *dptr, *dtmp;
-
-		//TODO: ????
-		//assert(ctl && watch);
-
 		head_dir->root_user_entry_->scan_directory( head_dir );
-
-//		filesystem_item::collection_type::iterator it = head_dir->subitems.begin();
-//		while ( it != head_dir->subitems.end() )
-//		{
-//
-//			//std::cout << "DEBUG 7" << std::endl;
-//			//std::cout << "File removed: " << (*it)->path.native_file_string() << std::endl;
-//
-//			if ((*it)->mask_ == 0) /* Skip files that have not changed */
-//			{
-//				++it;
-//				continue;
-//			}
-//
-//			//std::cout << "DEBUG 8" << std::endl;
-//
-//
-//			/* Remove the directory entry for a deleted file */
-//			if ( (*it)->mask_ & PN_DELETE )
-//			{
-//				//std::cout << "DEBUG 9" << std::endl;
-//
-//
-//				//std::cout << "File removed: " << (*it)->path.native_file_string() << std::endl;
-//
-////				std::cout << "ELIMINANDO ITEM DE LA LISTA" << std::endl;
-////				std::cout << "(*it)->path.native_file_string(): " << (*it)->path.native_file_string() << std::endl;
-////				//std::cout << "(*it)->mask_: " << (*it)->mask_ << std::endl;
-//
-//
-//				it = head_dir->subitems.erase(it);
-//			}
-//			else
-//			{
-//				//std::cout << "DEBUG 10" << std::endl;
-//
-//				++it;
-//			}
-//
-//			//std::cout << "DEBUG 11" << std::endl;
-//
-//
-//		}
-//		//std::cout << "DEBUG 12" << std::endl;
-
 	}
 
 protected:
 
 	//TODO: las tres funciones siguientes estan duplicadas en windows_impl y freebsd_impl -> RESOLVER
-	// inline void notify_file_system_event_args( int action, const std::string& directory, const std::string& name )
 
 	thread_type thread_;
-
 	bool is_initialized_;
-
 	//int kqueue_file_descriptor_; // file descriptor
-
 	bool closing_;
 	user_item_collection user_watches_;
 	//filesystem_item::collection_type all_watches_; //TODO: quizas haga falta contabilizar todos los watches en un solo lugar... VER
+
 };
 
 
