@@ -322,17 +322,11 @@ struct user_entry
 		//std::cout << "void create_watch( watch_type watch )" << std::endl;
 		//std::cout << "watch->path.native_file_string(): " << watch->path.native_file_string() << std::endl;
 
-		watch->root_user_entry_ = this;
-
 		//TODO: ver esto...
 		if ( watch->mask_ == 0 )
 		{
 			watch->mask_ = PN_ALL_EVENTS; //TODO: asignar lo que el usuario quiere monitorear...
 		}
-
-		//TODO: en el constructor
-		watch->watch_descriptor_ = 0;
-		watch->is_directory_ = false;
 
 		struct kevent *event = &watch->event_;
 		int mask = watch->mask_;
@@ -357,25 +351,6 @@ struct user_entry
 			oss << "opening path failed: - Reason: " << std::strerror(errno);
 			throw (std::invalid_argument(oss.str()));
 		}
-
-
-		////TODO: que hace el lstat ??? Que pasa si da error ??????
-		//struct stat st;
-		//if ( lstat( watch->path.native_file_string().c_str(), &st) < 0)
-		//{
-		//	//TODO: error
-		//	std::cout << "STAT ERROR -- 1 -- - Reason: " << std::strerror(errno) << std::endl;
-		//	std::cout << "watch->path.native_file_string(): " << watch->path.native_file_string() << std::endl;
-
-		//	//ptime now = second_clock::local_time();
-		//	//std::cout << now << std::endl;
-		//	ptime now = microsec_clock::local_time();
-		//	std::cout << to_iso_string(now) << std::endl;
-
-		//	return;
-		//}
-		//watch->inode_info_.set( st );
-
 
 		watch->inode_info_.set( watch->get_path() );
 
