@@ -485,18 +485,15 @@ struct user_entry
 		std::cout << "void scan_directory( fsitem* head_dir )" << std::endl;
 		std::cout << "head_dir->path.native_file_string(): " << head_dir->get_path().native_file_string() << std::endl;
 
-		
-		filesystem_item::collection_type temp_file_list;
+		//filesystem_item::collection_type temp_file_list;
 
 		//TODO: STL --> std::transform o std::for_each o boost::lambda o BOOST_FOREACH
 		//TODO: filesystem_item::collection_type o all_watches_type ?????? GUARDA!!!!
-		for (filesystem_item::collection_type::iterator it =  head_dir->subitems_.begin(); it != head_dir->subitems_.end(); ++it )
-		{
-			(*it)->mask_ = PN_DELETE;  //TODO: recursivo
-		}
+		//for (filesystem_item::collection_type::iterator it =  head_dir->subitems_.begin(); it != head_dir->subitems_.end(); ++it )
+		//{
+		//	(*it)->mask_ = PN_DELETE;  //TODO: recursivo
+		//}
 
-		//		std::cout << "PN_DELETE: " << PN_DELETE << std::endl;
-		//		std::cout << "PN_CREATE: " << PN_CREATE << std::endl;
 
 		boost::filesystem::directory_iterator end_iter;
 		for ( boost::filesystem::directory_iterator dir_itr( head_dir->get_path() ); dir_itr != end_iter; ++dir_itr )
@@ -504,8 +501,9 @@ struct user_entry
 			try
 			{
 				//std::cout << "--- Finding File Name: " << dir_itr->path().native_file_string() << std::endl;
-				bool found_filename = false;
-				bool found_inode = false;
+				//bool found_filename = false;
+				//bool found_inode = false;
+				bool found = false;
 
 				file_inode_info inode_info( dir_itr->path() );
 
@@ -517,53 +515,46 @@ struct user_entry
 
 
 				//TODO: reemplazar por std::find o algo similar...
-				//TODO: user_watchs o all_watchs ?????? GUARDA!!!!
 
 				//Linear-search
 				//TODO: all_watches_ ?????
-				//for (filesystem_item::collection_type::iterator it =  head_dir->subitems.begin(); it != head_dir->subitems.end(); ++it )
 				for (filesystem_item::collection_type::iterator it =  head_dir->subitems_.begin(); it != head_dir->subitems_.end(); ++it )
 				{
-
 					//std::cout << "-----------------------------------------------------------------------" << std::endl;
 					//std::cout << "(*it)->path.native_file_string(): " << (*it)->path.native_file_string() << std::endl;
 					//std::cout << "(*it)->inode_info_.device_id_: " << (*it)->inode_info_.device_id_ << std::endl;
 					//std::cout << "(*it)->inode_info_.inode_number_: " << (*it)->inode_info_.inode_number_ << std::endl;
 					//std::cout << "-----------------------------------------------------------------------" << std::endl;
 
-					//if (  (*it)->inode_info_ == inode_info && (*it)->get_path().native_file_string() == dir_itr->path().native_file_string() )
 					if (  (*it)->is_equal ( inode_info, dir_itr->path() ) )
 					{
 						//std::cout << "found inode & filename: " << (*it)->path.native_file_string() << std::endl;
 						(*it)->mask_ = 0; //-999;
 						//std::cout << "(*it)->path.native_file_string(): " << (*it)->path.native_file_string() << std::endl;
-						found_filename = true;
-						found_inode = true;
+						//found_filename = true;
+						//found_inode = true;
+						found = true;
 					}
-					else
-					{
+					//else
+					//{
 
-						if (  (*it)->inode_info_ == inode_info  )
-						{
-							//std::cout << "found inode: " << (*it)->path.native_file_string() << std::endl;
-							found_inode = true;
-						}
+					//	if (  (*it)->inode_info_ == inode_info  )
+					//	{
+					//		//std::cout << "found inode: " << (*it)->path.native_file_string() << std::endl;
+					//		found_inode = true;
+					//	}
 
-						if ( (*it)->get_path() == dir_itr->path() )
-						{
-							//std::cout << "found filename: " << (*it)->path.native_file_string() << std::endl;
-							found_filename = true;
-						}
-					}
+					//	if ( (*it)->get_path() == dir_itr->path() )
+					//	{
+					//		//std::cout << "found filename: " << (*it)->path.native_file_string() << std::endl;
+					//		found_filename = true;
+					//	}
+					//}
 				}
 
-
-				if ( !found_filename && !found_inode )	//Archivo nuevo
+				if ( !found )	//Archivo nuevo
 				{
-					std::cout << "if ( !found_filename && !found_inode )" << std::endl;
-
-
-					//std::cout << "if (!found_filename && found_inode)" << std::endl;
+					std::cout << "if ( !found )" << std::endl;
 					//std::cout << "dir_itr->path().native_file_string(): " << dir_itr->path().native_file_string() << std::endl;
 					//std::cout << "dir_st.st_dev: " << dir_st.st_dev << std::endl;
 					//std::cout << "dir_st.st_ino: " << dir_st.st_ino << std::endl;
@@ -581,24 +572,48 @@ struct user_entry
 					//std::cout << "DEBUG 2" << std::endl;
 				}
 
-				if ( !found_filename && found_inode )
-				{
-					std::cout << "if ( !found_filename && found_inode )" << std::endl;
-					////					std::cout << "if ( !found_filename && found_inode )" << std::endl;
-					////					std::cout << "dir_itr->path().native_file_string(): " << dir_itr->path().native_file_string() << std::endl;
-					////					std::cout << "dir_st.st_dev: " << dir_st.st_dev << std::endl;
-					////					std::cout << "dir_st.st_ino: " << dir_st.st_ino << std::endl;
-					//
-					//					filesystem_item::pointer_type item(new fsitem);
-					//					item->path = dir_itr->path();
-					//                  this->all_watches_.push_back(item);
-					//					item->mask = PN_CREATE;
-					//					item->parent_watch_descriptor_ = head_dir->watch_descriptor_;
-					//					item->inode_info_.device_id_ = dir_st.st_dev;
-					//					item->inode_info_.inode_number_ = dir_st.st_ino;
-					//
-					//					temp_file_list.push_back(item);
-				}
+
+				//if ( !found_filename && !found_inode )	//Archivo nuevo
+				//{
+				//	std::cout << "if ( !found_filename && !found_inode )" << std::endl;
+
+
+				//	//std::cout << "if (!found_filename && found_inode)" << std::endl;
+				//	//std::cout << "dir_itr->path().native_file_string(): " << dir_itr->path().native_file_string() << std::endl;
+				//	//std::cout << "dir_st.st_dev: " << dir_st.st_dev << std::endl;
+				//	//std::cout << "dir_st.st_ino: " << dir_st.st_ino << std::endl;
+
+				//	//TODO: usar algun metodo que lo haga facil.. add_subitem o algo asi, quizas desde una factory
+				//	filesystem_item::pointer_type item ( new filesystem_item( dir_itr->path(), head_dir->root_user_entry_, head_dir) );
+				//	this->all_watches_.push_back(item);
+
+				//	create_watch( item );
+				//	item->mask_ = PN_CREATE;
+				//	item->inode_info_ = inode_info;
+
+				//	head_dir->subitems_.push_back(item);
+
+				//	//std::cout << "DEBUG 2" << std::endl;
+				//}
+
+				//if ( !found_filename && found_inode )
+				//{
+				//	std::cout << "if ( !found_filename && found_inode )" << std::endl;
+				//	////					std::cout << "if ( !found_filename && found_inode )" << std::endl;
+				//	////					std::cout << "dir_itr->path().native_file_string(): " << dir_itr->path().native_file_string() << std::endl;
+				//	////					std::cout << "dir_st.st_dev: " << dir_st.st_dev << std::endl;
+				//	////					std::cout << "dir_st.st_ino: " << dir_st.st_ino << std::endl;
+				//	//
+				//	//					filesystem_item::pointer_type item(new fsitem);
+				//	//					item->path = dir_itr->path();
+				//	//                  this->all_watches_.push_back(item);
+				//	//					item->mask = PN_CREATE;
+				//	//					item->parent_watch_descriptor_ = head_dir->watch_descriptor_;
+				//	//					item->inode_info_.device_id_ = dir_st.st_dev;
+				//	//					item->inode_info_.inode_number_ = dir_st.st_ino;
+				//	//
+				//	//					temp_file_list.push_back(item);
+				//}
 
 
 			}
@@ -607,76 +622,6 @@ struct user_entry
 				std::cout << dir_itr->path().native_file_string() << " " << ex.what() << std::endl;
 			}
 		}
-
-		//std::cout << "DEBUG 3" << std::endl;
-
-		for (filesystem_item::collection_type::iterator it =  head_dir->subitems_.begin(); it != head_dir->subitems_.end(); ++it )
-		{
-			if ( (*it)->mask_ != 0 ) //-999 )
-			{
-				bool found = false;
-				for (filesystem_item::collection_type::iterator it2 =  temp_file_list.begin(); it2 != temp_file_list.end(); ++it2 )
-				{
-					if ( (*it2)->mask_ != 0 ) //-999 )
-					{
-						if (  (*it)->inode_info_ == (*it2)->inode_info_ )
-						{
-							//std::cout << "found inode: " << (*it)->path.native_file_string() << " - " << (*it2)->path.native_file_string() << std::endl;
-							found = true;
-
-							//TODO: volver a habilitar hasta el fin de las pruebas
-							//std::cout << "File: " << (*it)->path.native_file_string() << " renamed to: " << (*it2)->path.native_file_string() << std::endl;
-
-							(*it)->mask_ = PN_RENAME; //  -998;
-							(*it2)->mask_ = 0; //-999;	//NO PROCESAR
-							break;
-						}
-
-						if ( (*it)->get_path() == (*it2)->get_path() )
-						{
-							//TODO: que hacemos acá, ver cuando podría a generarse este caso... Me parece que nunca.
-							//TODO: volver a habilitar hasta el fin de las pruebas
-							//std::cout << "found filename: " << (*it)->path.native_file_string() << " - " << (*it2)->path.native_file_string() << std::endl;
-							found = true;
-						}
-					}
-				}
-			}
-		}
-
-
-		//std::cout << "DEBUG 4" << std::endl;
-
-		//		for (filesystem_item::collection_type::iterator it =  temp_file_list.begin(); it != temp_file_list.end(); ++it )
-		//		{
-		//			if ( (*it)->mask_ != 0 ) //-999 )
-		//			{
-		////				std::cout << "--- NEW FILE ---" << std::endl;
-		////				std::cout << "(*it)->path.native_file_string(): " << (*it)->path.native_file_string() << std::endl;
-		//
-		//				filesystem_item::pointer_type item(new fsitem);
-		//				item->path = (*it)->path;
-		//
-		//              this->all_watches_.push_back(item);
-		//
-		//				//TODO: volver a habilitar hasta el fin de las pruebas
-		//				//std::cout << "File created: " << item->path.native_file_string() << std::endl;
-		//
-		//
-		//				//TODO: ver en el codigo de pnotify: /* Add a watch if it is a regular file */
-		//				create_watch( item );
-		//				item->mask_ = PN_CREATE;
-		//				item->parent_watch_descriptor_ = head_dir->watch_descriptor_;
-		//				item->inode_info_.device_id_ = (*it)->inode_info_.device_id_;
-		//				item->inode_info_.inode_number_ = (*it)->inode_info_.inode_number_;
-		//
-		//				head_dir->subitems.push_back(item);
-		//			}
-		//		}
-
-		//std::cout << "DEBUG 5" << std::endl;
-
-
 	}
 
 	boost::filesystem::path path_;
