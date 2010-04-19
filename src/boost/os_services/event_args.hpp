@@ -20,6 +20,16 @@ struct filesystem_event_args
 		}
 	}
 
+	filesystem_event_args(int _change_type, const boost::filesystem::path& _path )
+		: change_type(_change_type), name(""), full_path("")
+	{
+		if (_path.native_file_string().size() > 0)
+		{
+			this->full_path = _path.native_file_string();
+			this->name = _path.filename()
+		}
+	}
+
 	std::string name;
 	std::string full_path;
 	int change_type; //TODO: completar, enum WatcherChangeTypes de .Net
@@ -39,7 +49,17 @@ struct renamed_event_args : public filesystem_event_args
 		}
 	}
 
-	std::string old_full_path;
+	renamed_event_args(int _change_type, const boost::filesystem::path& _path, const boost::filesystem::path& _old_path)
+		: filesystem_event_args( _change_type, _path), old_name(""), old_full_path("")
+	{
+		if (_old_path.native_file_string().size() > 0)
+		{
+			this->old_path = _old_path.native_file_string();
+			this->old_name = _old_path.filename()
+		}
+	}
+
+	std::string old_full_path; //TODO: analizar si usar boost::filesystem::path
 	std::string old_name;
 };
 
