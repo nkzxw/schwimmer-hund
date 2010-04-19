@@ -237,6 +237,12 @@ public:
 		//std::cout << "this->path.native_file_string(): " << this->path.native_file_string() << std::endl;
 	}
 
+
+	void add_subitem ( const fs_item& subitem )
+	{
+
+	}
+
 	void set_path ( const boost::filesystem::path& path )
 	{
 		this->path_ = path;
@@ -252,7 +258,7 @@ public:
 		return this->path_;
 	}
 
-private:
+public: //private:
 	boost::filesystem::path path_;
 	bool is_directory_;
 
