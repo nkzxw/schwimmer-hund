@@ -61,9 +61,6 @@ There are platforms that are not supported due to lack of developer resources. I
 using namespace boost::posix_time;
 
 
-//TODO: sacar
-static const int WATCH_MAX = 20000;
-
 
 //TODO: sacar
 enum {
@@ -110,8 +107,11 @@ struct filesystem_item;		//forward-declaration
 struct user_entry;	//forward-declaration
 
 //TODO: ver boost::ptr_vector
-typedef boost::shared_ptr<filesystem_item> watch_type;			//TODO: renombrar
-typedef std::vector<watch_type> watch_collection_type;	//TODO: renombrar
+//typedef boost::shared_ptr<filesystem_item> watch_type;			//TODO: renombrar
+//typedef std::vector<watch_type> watch_collection_type;	//TODO: renombrar
+
+typedef std::vector<filesystem_item::pointer_type> watch_collection_type;	//TODO: renombrar
+
 
 //TODO: pasar a otro archivo...
 struct file_inode_info
@@ -256,7 +256,7 @@ public:
 		return ( this->path_ == other.path_ && this->inode_info_ == other.inode_info_ );
 	}
 
-	bool is_equal(const watch_type& other) const
+	bool is_equal(const filesystem_item::pointer_type& other) const
 	{
 		return ( this->path_ == other->path_ && this->inode_info_ == other->inode_info_ );
 	}
@@ -343,7 +343,7 @@ struct user_entry
 	}
 
 	//TODO: ver que sentido tiene este metodo...
-	void add_watch( watch_type item )
+	void add_watch( filesystem_item::pointer_type item )
 	{
 		all_watches_.push_back(item);
 	}
@@ -351,7 +351,7 @@ struct user_entry
 	void initialize()
 	{
 		//TODO: estas dos instrucciones ponerlas en un factory
-		watch_type item ( new filesystem_item(path_, this) );
+		filesystem_item::pointer_type item ( new filesystem_item(path_, this) );
 		all_watches_.push_back(item);
 
 		head_ = item;
@@ -360,9 +360,9 @@ struct user_entry
 
 	}
 
-	void create_watch ( watch_type watch )
+	void create_watch ( filesystem_item::pointer_type watch )
 	{
-		//std::cout << "void create_watch( watch_type watch )" << std::endl;
+		//std::cout << "void create_watch( filesystem_item::pointer_type watch )" << std::endl;
 		//std::cout << "watch->path.native_file_string(): " << watch->path.native_file_string() << std::endl;
 
 		//TODO: ver esto...
@@ -571,7 +571,7 @@ struct user_entry
 					//std::cout << "dir_st.st_ino: " << dir_st.st_ino << std::endl;
 
 					//TODO: usar algun metodo que lo haga facil.. add_subitem o algo asi, quizas desde una factory
-					watch_type item ( new filesystem_item( dir_itr->path(), head_dir->root_user_entry_, head_dir) );
+					filesystem_item::pointer_type item ( new filesystem_item( dir_itr->path(), head_dir->root_user_entry_, head_dir) );
 					this->all_watches_.push_back(item);
 
 					create_watch( item );
@@ -591,7 +591,7 @@ struct user_entry
 					////					std::cout << "dir_st.st_dev: " << dir_st.st_dev << std::endl;
 					////					std::cout << "dir_st.st_ino: " << dir_st.st_ino << std::endl;
 					//
-					//					watch_type item(new fsitem);
+					//					filesystem_item::pointer_type item(new fsitem);
 					//					item->path = dir_itr->path();
 					//                  this->all_watches_.push_back(item);
 					//					item->mask = PN_CREATE;
@@ -656,7 +656,7 @@ struct user_entry
 		////				std::cout << "--- NEW FILE ---" << std::endl;
 		////				std::cout << "(*it)->path.native_file_string(): " << (*it)->path.native_file_string() << std::endl;
 		//
-		//				watch_type item(new fsitem);
+		//				filesystem_item::pointer_type item(new fsitem);
 		//				item->path = (*it)->path;
 		//
 		//              this->all_watches_.push_back(item);
@@ -682,7 +682,7 @@ struct user_entry
 	}
 
 	boost::filesystem::path path_;
-	watch_type head_;						//este tiene la estructura de arbol
+	filesystem_item::pointer_type head_;						//este tiene la estructura de arbol
 	watch_collection_type all_watches_;
 };
 
@@ -757,7 +757,7 @@ public:
 	void add_directory_impl ( const std::string& dir_name ) //throw (std::invalid_argument, std::runtime_error)
 	{
 		//TODO: probar agregar el constructor a fsitem
-		//watch_type item(new fs_item);
+		//filesystem_item::pointer_type item(new fs_item);
 		//item->path = dir_name;		//boost::filesystem::path full_path( str_path, boost::filesystem::native );
 		//TODO: asignar mask
 
@@ -835,8 +835,8 @@ public: //private:  //TODO:
 			if ( ! closing_ )
 			{
 
-				//TODO: esto puede ser un tema, porque el shared_ptr (watch_type) va a tener el contador en 1 y cuando salga de scope va a hacer delete de la memoria...
-				//watch_type watch( (fsitem*) event.udata );
+				//TODO: esto puede ser un tema, porque el shared_ptr (filesystem_item::pointer_type) va a tener el contador en 1 y cuando salga de scope va a hacer delete de la memoria...
+				//filesystem_item::pointer_type watch( (fsitem*) event.udata );
 				filesystem_item* watch = (filesystem_item*) event.udata; //TODO: reinterpret_cast<>
 
 				/* Workaround:
