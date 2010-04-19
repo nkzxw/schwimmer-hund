@@ -880,17 +880,17 @@ public: //private:  //TODO:
 					handle_rename( watch );
 				}
 
-				if ( queued_write_watch != 0 )
-				{
-					handle_write( watch );
-					queued_write_watch = 0
-				}
+				//if ( queued_write_watch != 0 )
+				//{
+				//	handle_write( watch );
+				//	queued_write_watch = 0;
+				//}
 
 				if ( event.fflags & NOTE_WRITE )
 				{
 					//Encolamos un solo evento WRITE ya que siempre viene WRITE+RENAME... hacemos que primero se procese el evento rename y luego el write
-					//handle_write( watch );
-					queued_write_watch = watch;
+					handle_write( watch );
+					//queued_write_watch = watch;
 				}
 
 
