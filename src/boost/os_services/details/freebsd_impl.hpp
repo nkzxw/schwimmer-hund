@@ -33,12 +33,13 @@ There are platforms that are not supported due to lack of developer resources. I
 #include <cstdlib>
 #include <cstring>	// for strerror
 
-#include <fcntl.h>
-#include <sys/types.h>
-#include <sys/event.h>
-#include <sys/stat.h>
-#include <sys/fcntl.h>
 #include <unistd.h>
+
+#include <sys/event.h>
+#include <sys/fcntl.h>	//#include <fcntl.h>
+#include <sys/stat.h>
+#include <sys/time.h>
+#include <sys/types.h>
 
 #include <boost/bind.hpp>
 #include <boost/filesystem/path.hpp>
@@ -707,7 +708,7 @@ public: //private:  //TODO:
 		//TODO: llamar a metodo que lanza el evento...
 	}
 
-	void handle_renaming( filesystem_item* watch )
+	void handle_rename( filesystem_item* watch )
 	{
 		std::cout << "---------------------------------- NOTE_RENAME ---------------------------------------" << std::endl;
 
@@ -757,7 +758,7 @@ public: //private:  //TODO:
 
 	}
 
-	void handle_removing( filesystem_item* watch )
+	void handle_remove( filesystem_item* watch )
 	{
 		std::cout << "---------------------------------- NOTE_DELETE ---------------------------------------" << std::endl;
 
@@ -791,15 +792,63 @@ public: //private:  //TODO:
 		std::cout << "--------------------------------------------------------------------------------------" << std::endl;
 	}
 
+	void handle_write( filesystem_item* watch )
+	{
+		std::cout << "---------------------------------- NOTE_WRITE ---------------------------------------" << std::endl;
+
+		std::cout << "watch: " << watch << std::endl;
+		std::cout << "watch->fd: " << watch->file_descriptor_ << std::endl;
+		std::cout << "watch->parent: " << watch->parent_ << std::endl;
+		std::cout << "watch->path: " << watch->get_path().native_file_string() << std::endl;
+		std::cout << "watch->is_directory: " << watch->is_directory() << std::endl;
+		std::cout << "watch->mask_: " << watch->mask_ << std::endl;
+		std::cout << "watch->inode_info_.device_id_: " << watch->inode_info_.device_id_ << std::endl;
+		std::cout << "watch->inode_info_.inode_number_: " << watch->inode_info_.inode_number_ << std::endl;
+
+		//std::cout << "event.ident: " << event.ident << std::endl;
+		//std::cout << "event.filter: " << event.filter << std::endl;
+		//std::cout << "event.flags: " << event.flags << std::endl;
+		//std::cout << "event.fflags: " << event.fflags << std::endl;
+		//std::cout << "event.data: " << event.data << std::endl;
+		//std::cout << "event.udata: " << event.udata << std::endl;
+
+		if ( watch->is_directory() )
+		{
+			//directory_event_handler( watch );
+			//TODO: no está buena esta llamada... no me convence...
+			watch->root_user_entry_->scan_directory( watch );
+		}
+		else
+		{
+			//TODO: un archivo fue editado
+		}
+
+		std::cout << "--------------------------------------------------------------------------------------" << std::endl;
+
+	}
+
 	void handle_directory_changes()
 	{
+		filesystem_item* queued_write_watch = 0;
+
 		while ( ! closing_ )
 		{
 			struct kevent event;
-			int return_code;
 
 			//TODO: ver timeout
-			return_code = kevent ( kqueue_file_descriptor_, NULL, 0, &event, 1, NULL );
+			struct timespec *timeout;
+			timeout.tv_sec = 0;
+			timeout.tv_nsec = 100000; //100 milliseconds //TODO: sacar el hardcode
+
+			ptime now = microsec_clock::local_time();
+			std::cout << to_iso_string(now) << std::endl;
+
+			//int return_code = kevent ( kqueue_file_descriptor_, NULL, 0, &event, 1, NULL );
+			int return_code = kevent ( kqueue_file_descriptor_, NULL, 0, &event, 1, timeout );
+
+			now = microsec_clock::local_time();
+			std::cout << to_iso_string(now) << std::endl;
+
 			if ( return_code == -1 || event.flags & EV_ERROR) //< 0
 			{
 				//TODO:
@@ -823,49 +872,26 @@ public: //private:  //TODO:
 
 				if ( event.fflags & NOTE_DELETE )
 				{
-					handle_removing( watch );
+					handle_remove( watch );
 				}
 
 				if ( event.fflags & NOTE_RENAME )
 				{
-					handle_renaming( watch );
+					handle_rename( watch );
+				}
+
+				if ( queued_write_watch != 0 )
+				{
+					handle_write( watch );
+					queued_write_watch = 0
 				}
 
 				if ( event.fflags & NOTE_WRITE )
 				{
-					std::cout << "---------------------------------- NOTE_WRITE ---------------------------------------" << std::endl;
-					
-					std::cout << "watch: " << watch << std::endl;
-					std::cout << "watch->fd: " << watch->file_descriptor_ << std::endl;
-					std::cout << "watch->parent: " << watch->parent_ << std::endl;
-					std::cout << "watch->path: " << watch->get_path().native_file_string() << std::endl;
-					std::cout << "watch->is_directory: " << watch->is_directory() << std::endl;
-					std::cout << "watch->mask_: " << watch->mask_ << std::endl;
-					std::cout << "watch->inode_info_.device_id_: " << watch->inode_info_.device_id_ << std::endl;
-					std::cout << "watch->inode_info_.inode_number_: " << watch->inode_info_.inode_number_ << std::endl;
-
-					//std::cout << "event.ident: " << event.ident << std::endl;
-					//std::cout << "event.filter: " << event.filter << std::endl;
-					//std::cout << "event.flags: " << event.flags << std::endl;
-					//std::cout << "event.fflags: " << event.fflags << std::endl;
-					//std::cout << "event.data: " << event.data << std::endl;
-					//std::cout << "event.udata: " << event.udata << std::endl;
-
-					if ( watch->is_directory() )
-					{
-						directory_event_handler( watch );
-					}
-					else
-					{
-						//TODO: un archivo fue editado
-					}
-
-					std::cout << "--------------------------------------------------------------------------------------" << std::endl;
+					//Encolamos un solo evento WRITE ya que siempre viene WRITE+RENAME... hacemos que primero se procese el evento rename y luego el write
+					//handle_write( watch );
+					queued_write_watch = watch;
 				}
-
-
-
-
 
 
 
@@ -896,15 +922,13 @@ public: //private:  //TODO:
 		}
 	}
 
-	//TODO: cambiarle el nombre porque es parecido al event handler general y no se indica bien que hace cada uno...
-	//TODO: cambiarle el nombre porque un handler se confunde con un handler de un evento...
-	void directory_event_handler( filesystem_item* head_dir ) 
-	{
-//		std::cout << "void directory_event_handler( fsitem* head_dir )" << std::endl;
-//		std::cout << "head_dir->path.native_file_string(): " << head_dir->path.native_file_string() << std::endl;
-
-		head_dir->root_user_entry_->scan_directory( head_dir );
-	}
+//	void directory_event_handler( filesystem_item* head_dir ) 
+//	{
+////		std::cout << "void directory_event_handler( fsitem* head_dir )" << std::endl;
+////		std::cout << "head_dir->path.native_file_string(): " << head_dir->path.native_file_string() << std::endl;
+//
+//		head_dir->root_user_entry_->scan_directory( head_dir );
+//	}
 
 protected:
 
