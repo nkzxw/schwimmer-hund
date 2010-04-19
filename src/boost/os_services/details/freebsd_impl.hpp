@@ -106,11 +106,6 @@ static int kqueue_file_descriptor_ = 0; //TODO: que onda????? esto esta en freeb
 struct filesystem_item;		//forward-declaration
 struct user_entry;	//forward-declaration
 
-//TODO: ver boost::ptr_vector
-//typedef boost::shared_ptr<filesystem_item> watch_type;			//TODO: renombrar
-//typedef std::vector<watch_type> watch_collection_type;	//TODO: renombrar
-
-typedef std::vector<filesystem_item::pointer_type> watch_collection_type;	//TODO: renombrar
 
 
 //TODO: pasar a otro archivo...
@@ -202,7 +197,8 @@ class filesystem_item
 {
 public:
 	
-	typedef boost::shared_ptr<filesystem_item> pointer_type; 
+	typedef boost::shared_ptr<filesystem_item> pointer_type;
+	typedef std::vector<pointer_type> collection_type;
 
 	//TODO: agegar metodo add_subitem
 
@@ -324,7 +320,8 @@ public: //private:
 
 	file_inode_info inode_info_;
 
-	watch_collection_type subitems_;
+	//TODO: ver boost::ptr_vector
+	collection_type subitems_;
 
 	user_entry* root_user_entry_; //TODO: ver que pasa si agregamos el mismo directorio como dos user_entry distintos... el open da el mismo file descriptor?
 };
@@ -488,11 +485,12 @@ struct user_entry
 		std::cout << "void scan_directory( fsitem* head_dir )" << std::endl;
 		std::cout << "head_dir->path.native_file_string(): " << head_dir->get_path().native_file_string() << std::endl;
 
-		watch_collection_type temp_file_list;
+		
+		filesystem_item::collection_type temp_file_list;
 
 		//TODO: STL --> std::transform o std::for_each o boost::lambda o BOOST_FOREACH
-		//TODO: watch_collection_type o all_watches_type ?????? GUARDA!!!!
-		for (watch_collection_type::iterator it =  head_dir->subitems_.begin(); it != head_dir->subitems_.end(); ++it )
+		//TODO: filesystem_item::collection_type o all_watches_type ?????? GUARDA!!!!
+		for (filesystem_item::collection_type::iterator it =  head_dir->subitems_.begin(); it != head_dir->subitems_.end(); ++it )
 		{
 			(*it)->mask_ = PN_DELETE;  //TODO: recursivo
 		}
@@ -523,8 +521,8 @@ struct user_entry
 
 				//Linear-search
 				//TODO: all_watches_ ?????
-				//for (watch_collection_type::iterator it =  head_dir->subitems.begin(); it != head_dir->subitems.end(); ++it )
-				for (watch_collection_type::iterator it =  head_dir->subitems_.begin(); it != head_dir->subitems_.end(); ++it )
+				//for (filesystem_item::collection_type::iterator it =  head_dir->subitems.begin(); it != head_dir->subitems.end(); ++it )
+				for (filesystem_item::collection_type::iterator it =  head_dir->subitems_.begin(); it != head_dir->subitems_.end(); ++it )
 				{
 
 					//std::cout << "-----------------------------------------------------------------------" << std::endl;
@@ -612,12 +610,12 @@ struct user_entry
 
 		//std::cout << "DEBUG 3" << std::endl;
 
-		for (watch_collection_type::iterator it =  head_dir->subitems_.begin(); it != head_dir->subitems_.end(); ++it )
+		for (filesystem_item::collection_type::iterator it =  head_dir->subitems_.begin(); it != head_dir->subitems_.end(); ++it )
 		{
 			if ( (*it)->mask_ != 0 ) //-999 )
 			{
 				bool found = false;
-				for (watch_collection_type::iterator it2 =  temp_file_list.begin(); it2 != temp_file_list.end(); ++it2 )
+				for (filesystem_item::collection_type::iterator it2 =  temp_file_list.begin(); it2 != temp_file_list.end(); ++it2 )
 				{
 					if ( (*it2)->mask_ != 0 ) //-999 )
 					{
@@ -649,7 +647,7 @@ struct user_entry
 
 		//std::cout << "DEBUG 4" << std::endl;
 
-		//		for (watch_collection_type::iterator it =  temp_file_list.begin(); it != temp_file_list.end(); ++it )
+		//		for (filesystem_item::collection_type::iterator it =  temp_file_list.begin(); it != temp_file_list.end(); ++it )
 		//		{
 		//			if ( (*it)->mask_ != 0 ) //-999 )
 		//			{
@@ -683,7 +681,7 @@ struct user_entry
 
 	boost::filesystem::path path_;
 	filesystem_item::pointer_type head_;						//este tiene la estructura de arbol
-	watch_collection_type all_watches_;
+	filesystem_item::collection_type all_watches_;
 };
 
 typedef boost::shared_ptr<user_entry> user_item_pointer;
@@ -799,7 +797,7 @@ public:
 		}
 
 
-		//for (watch_collection_type::iterator it =  user_watches_.begin(); it != user_watches_.end(); ++it )
+		//for (filesystem_item::collection_type::iterator it =  user_watches_.begin(); it != user_watches_.end(); ++it )
 		//{
 		//	create_watch( *it );
 		//}
@@ -884,7 +882,7 @@ public: //private:  //TODO:
 					//std::cout << "event.udata: " << event.udata << std::endl;
 
 				
-					watch_collection_type::iterator it = watch->parent_->subitems_.begin();
+					filesystem_item::collection_type::iterator it = watch->parent_->subitems_.begin();
 					while ( it != watch->parent_->subitems_.end() )
 					{
 
@@ -935,7 +933,7 @@ public: //private:  //TODO:
 
 				
 					////TODO: find
-					//for (watch_collection_type::iterator it =  watch->root_user_entry->all_watches_.begin(); it != watch->root_user_entry->all_watches_.end(); ++it )
+					//for (filesystem_item::collection_type::iterator it =  watch->root_user_entry->all_watches_.begin(); it != watch->root_user_entry->all_watches_.end(); ++it )
 					//{
 					//	if ( watch->parent_watch_descriptor_ == (*it)->watch_descriptor_ )
 					//	{
@@ -1260,7 +1258,7 @@ public: //private:  //TODO:
 
 //		//std::cout << "DEBUG 6" << std::endl;
 //
-//		watch_collection_type::iterator it = head_dir->subitems.begin();
+//		filesystem_item::collection_type::iterator it = head_dir->subitems.begin();
 //		while ( it != head_dir->subitems.end() )
 //		{
 //
@@ -1319,7 +1317,7 @@ protected:
 
 	bool closing_;
 	user_item_collection user_watches_;
-	//watch_collection_type all_watches_; //TODO: quizas haga falta contabilizar todos los watches en un solo lugar... VER
+	//filesystem_item::collection_type all_watches_; //TODO: quizas haga falta contabilizar todos los watches en un solo lugar... VER
 };
 
 
