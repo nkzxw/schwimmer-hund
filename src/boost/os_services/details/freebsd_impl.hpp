@@ -135,28 +135,14 @@ struct file_inode_info
 
 	file_inode_info ( const boost::filesystem::path& path )
 	{
-		struct stat st;
-		
-		int return_code = lstat( path.native_file_string().c_str(), &st);
-		if ( return_code < 0)
-		{
-			//TODO: error
-			std::cout << "STAT ERROR -- on file_inode_info -- - Reason: " << std::strerror(errno) << std::endl;
-			std::cout << "watch->path.native_file_string(): " << path.native_file_string() << std::endl;
-
-			//ptime now = second_clock::local_time();
-			//std::cout << now << std::endl;
-			ptime now = microsec_clock::local_time();
-			std::cout << to_iso_string(now) << std::endl;
-
-			return;
-		}
-		else
-		{
-			set ( st );
-		}
+		set ( path );
 	}
 
+	file_inode_info ( const file_inode_info& other )
+	{
+		this->device_id_ = other.device_id_;
+		this->inode_number_ = other.inode_number_;
+	}
 	
 	file_inode_info& operator=(const file_inode_info& other)
 	{
@@ -179,6 +165,32 @@ struct file_inode_info
 		this->device_id_ = st.st_dev;
 		this->inode_number_ = st.st_ino;
 	}
+
+	void set ( const boost::filesystem::path& path )
+	{
+		struct stat st;
+
+		int return_code = lstat( path.native_file_string().c_str(), &st);
+		if ( return_code < 0)
+		{
+			//TODO: error
+			std::cout << "STAT ERROR -- on file_inode_info -- - Reason: " << std::strerror(errno) << std::endl;
+			std::cout << "watch->path.native_file_string(): " << path.native_file_string() << std::endl;
+
+			//ptime now = second_clock::local_time();
+			//std::cout << now << std::endl;
+			ptime now = microsec_clock::local_time();
+			std::cout << to_iso_string(now) << std::endl;
+
+			return;
+		}
+		else
+		{
+			set ( st );
+		}
+	}
+
+
 
 	bool operator==(const file_inode_info& other) const
 	{
@@ -309,23 +321,25 @@ struct user_entry
 		}
 
 
-		//TODO: que hace el lstat ??? Que pasa si da error ??????
-		struct stat st;
-		if ( lstat( watch->path.native_file_string().c_str(), &st) < 0)
-		{
-			//TODO: error
-			std::cout << "STAT ERROR -- 1 -- - Reason: " << std::strerror(errno) << std::endl;
-			std::cout << "watch->path.native_file_string(): " << watch->path.native_file_string() << std::endl;
+		////TODO: que hace el lstat ??? Que pasa si da error ??????
+		//struct stat st;
+		//if ( lstat( watch->path.native_file_string().c_str(), &st) < 0)
+		//{
+		//	//TODO: error
+		//	std::cout << "STAT ERROR -- 1 -- - Reason: " << std::strerror(errno) << std::endl;
+		//	std::cout << "watch->path.native_file_string(): " << watch->path.native_file_string() << std::endl;
 
-			//ptime now = second_clock::local_time();
-			//std::cout << now << std::endl;
-			ptime now = microsec_clock::local_time();
-			std::cout << to_iso_string(now) << std::endl;
+		//	//ptime now = second_clock::local_time();
+		//	//std::cout << now << std::endl;
+		//	ptime now = microsec_clock::local_time();
+		//	std::cout << to_iso_string(now) << std::endl;
 
-			return;
-		}
+		//	return;
+		//}
+		//watch->inode_info_.set( st );
 
-		watch->inode_info_.set( st );
+
+		watch->inode_info_.set( watch->path );
 
 		if ( boost::filesystem::is_directory( watch->path ) )
 		{
