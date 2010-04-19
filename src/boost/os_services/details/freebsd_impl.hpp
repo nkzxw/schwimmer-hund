@@ -436,16 +436,17 @@ struct user_entry
 				bool found_filename = false;
 				bool found_inode = false;
 
-				struct stat dir_st;
-				if ( lstat( dir_itr->path().native_file_string().c_str(), &dir_st) < 0)
-				{
-					//TODO: manejo de errores
-					std::cout << "STAT ERROR -- 3 -- - Reason: " << std::strerror(errno) << std::endl;
-					std::cout << "dir_itr->path().native_file_string(): " << dir_itr->path().native_file_string() << std::endl;
+				file_inode_info inode_info( dir_itr->path() );
+				//struct stat dir_st;
+				//if ( lstat( dir_itr->path().native_file_string().c_str(), &dir_st) < 0)
+				//{
+				//	//TODO: manejo de errores
+				//	std::cout << "STAT ERROR -- 3 -- - Reason: " << std::strerror(errno) << std::endl;
+				//	std::cout << "dir_itr->path().native_file_string(): " << dir_itr->path().native_file_string() << std::endl;
 
-					ptime now = microsec_clock::local_time();
-					std::cout << to_iso_string(now) << std::endl;
-				}
+				//	ptime now = microsec_clock::local_time();
+				//	std::cout << to_iso_string(now) << std::endl;
+				//}
 
 				//std::cout << "-----------------------------------------------------------------------" << std::endl;
 				//std::cout << "dir_itr->path().native_file_string(): " << dir_itr->path().native_file_string() << std::endl;
@@ -470,7 +471,8 @@ struct user_entry
 					//std::cout << "-----------------------------------------------------------------------" << std::endl;
 
 					//if (  dir_st.st_dev == (*it)->inode_info_.device_id_ && dir_st.st_ino == (*it)->inode_info_.inode_number_ && (*it)->path.native_file_string() == dir_itr->path().native_file_string() )
-					if (  (*it)->inode_info_ == dir_st && (*it)->path.native_file_string() == dir_itr->path().native_file_string() )
+					//if (  (*it)->inode_info_ == dir_st && (*it)->path.native_file_string() == dir_itr->path().native_file_string() )
+					if (  (*it)->inode_info_ == inode_info && (*it)->path.native_file_string() == dir_itr->path().native_file_string() )
 					{
 						//std::cout << "found inode & filename: " << (*it)->path.native_file_string() << std::endl;
 						(*it)->mask = 0; //-999;
@@ -482,7 +484,8 @@ struct user_entry
 					{
 
 						//if (  dir_st.st_dev == (*it)->inode_info_.device_id_ && dir_st.st_ino == (*it)->inode_info_.inode_number_ )
-						if (  (*it)->inode_info_ == dir_st  )
+						//if (  (*it)->inode_info_ == dir_st  )
+						if (  (*it)->inode_info_ == inode_info  )
 						{
 							//std::cout << "found inode: " << (*it)->path.native_file_string() << std::endl;
 							found_inode = true;
@@ -512,14 +515,14 @@ struct user_entry
 
 					this->all_watches_.push_back(item);
 
-
 					create_watch( item );
 					item->mask = PN_CREATE;
 					item->parent_watch_descriptor_ = head_dir->watch_descriptor_;
 					item->parent = head_dir;
 					//item->parent = head_dir;
 
-					item->inode_info_.set(dir_st);
+					//item->inode_info_.set(dir_st);
+					item->inode_info_ = inode_info;
 
 					head_dir->subitems.push_back(item);
 
@@ -905,26 +908,33 @@ public: //private:  //TODO:
 						boost::filesystem::directory_iterator dir_itr( parent_path );
 						for ( ; dir_itr != end_iter; ++dir_itr )
 						{
-							struct stat dir_st;
-							
-							int return_code = lstat( dir_itr->path().native_file_string().c_str(), &dir_st);
-							if ( return_code == -1)
+							file_inode_info inode_info ( dir_itr->path() );
+							if ( watch->inode_info_ == inode_info )
 							{
-								//TODO: manejo de errores
-								std::cout << "STAT ERROR -- 4 -- - Reason: " << std::strerror(errno) << std::endl;
-								std::cout << "dir_itr->path().native_file_string(): " << dir_itr->path().native_file_string() << std::endl;
+								break;
+							}
 
-								ptime now = microsec_clock::local_time();
-								std::cout << to_iso_string(now) << std::endl;
-							}
-							else
-							{
-								//if (  dir_st.st_dev == watch->inode_info_.device_id_ && dir_st.st_ino == watch->inode_info_.inode_number_ )
-								if ( watch->inode_info_ == dir_st )
-								{
-									break;
-								}
-							}
+
+							//struct stat dir_st;
+							//
+							//int return_code = lstat( dir_itr->path().native_file_string().c_str(), &dir_st);
+							//if ( return_code == -1)
+							//{
+							//	//TODO: manejo de errores
+							//	std::cout << "STAT ERROR -- 4 -- - Reason: " << std::strerror(errno) << std::endl;
+							//	std::cout << "dir_itr->path().native_file_string(): " << dir_itr->path().native_file_string() << std::endl;
+
+							//	ptime now = microsec_clock::local_time();
+							//	std::cout << to_iso_string(now) << std::endl;
+							//}
+							//else
+							//{
+							//	//if (  dir_st.st_dev == watch->inode_info_.device_id_ && dir_st.st_ino == watch->inode_info_.inode_number_ )
+							//	if ( watch->inode_info_ == dir_st )
+							//	{
+							//		break;
+							//	}
+							//}
 						}
 
 						if ( dir_itr != end_iter )
@@ -940,7 +950,7 @@ public: //private:  //TODO:
 							std::cout << "File removed: " << std::endl;
 							std::cout << "watch->path: " << watch->path.native_file_string() << std::endl;
  							std::cout << "watch->inode_info_.device_id_: " << watch->inode_info_.device_id_ << std::endl;
-							std::cout << "watch->inode_info_.inode_number_: " << watch->inode_info_.inode_number__ << std::endl;
+							std::cout << "watch->inode_info_.inode_number_: " << watch->inode_info_.inode_number_ << std::endl;
 							std::cout << "-----------------------------------------------------------------------" << std::endl;
 
 							//TODO: llamar a metodo para eliminar
