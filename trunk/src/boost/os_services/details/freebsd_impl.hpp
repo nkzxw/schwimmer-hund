@@ -837,7 +837,7 @@ public: //private:  //TODO:
 
 			//TODO: ver timeout
 			struct timespec *timeout;
-			timeout->tv_sec = 0;
+			timeout->tv_sec = 1; //0;
 			timeout->tv_nsec = 100000; //100 milliseconds //TODO: sacar el hardcode
 
 			ptime now = microsec_clock::local_time();
