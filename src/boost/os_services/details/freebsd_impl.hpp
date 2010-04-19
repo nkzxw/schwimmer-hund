@@ -237,10 +237,16 @@ public:
 		//std::cout << "this->path.native_file_string(): " << this->path.native_file_string() << std::endl;
 	}
 
+	bool operator==(const fs_item& other) const
+	{
+		return  ( this->path_ == other.path_ && this->inode_info_ == other.inode_info_ );
+	}
+
+
 
 	void add_subitem ( const fs_item& subitem )
 	{
-
+		//TODO: completar
 	}
 
 	void set_path ( const boost::filesystem::path& path )
@@ -894,7 +900,9 @@ public: //private:  //TODO:
 					watch_collection_type::iterator it = watch->parent_->subitems_.begin();
 					while ( it != watch->parent_->subitems_.end() )
 					{
-						if ( watch->get_path() == (*it)->get_path() && watch->inode_info_ == (*it)->inode_info_ )
+
+						//if ( watch->get_path() == (*it)->get_path() && watch->inode_info_ == (*it)->inode_info_ )
+						if ( watch == (*it) )
 						{
 							std::cout << "-----------------------------------------------------------------------" << std::endl;
 							std::cout << "File removed: " << std::endl;
