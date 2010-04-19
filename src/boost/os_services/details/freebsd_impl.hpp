@@ -581,6 +581,7 @@ struct user_entry
 					//std::cout << "dir_st.st_dev: " << dir_st.st_dev << std::endl;
 					//std::cout << "dir_st.st_ino: " << dir_st.st_ino << std::endl;
 
+					//TODO: usar algun metodo que lo haga facil.. add_subitem o algo asi, quizas desde una factory
 					watch_type item ( new fs_item( dir_itr->path(), head_dir->root_user_entry_, head_dir) );
 					this->all_watches_.push_back(item);
 
