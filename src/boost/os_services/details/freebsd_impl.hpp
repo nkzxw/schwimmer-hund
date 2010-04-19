@@ -661,10 +661,21 @@ public: //private:  //TODO:
 	//TODO: evaluar si rename_watch y remove_watch tienen que ir acá o en sus respectivas clases
 	void rename_watch ( filesystem_item* watch, const boost::filesystem::path& new_path ) 
 	{
-		watch->set_path( new_path );
-		std::cout << "Nuevo Nombre de Archivo:  " << watch->get_path().native_file_string() << std::endl;
+		//if ( old_name )
+		//{
+		//	notify_rename_event_args(change_types::renamed, directory_name, file_name, *old_name);
+		//	old_name.reset();
+		//}
+		//else
+		//{
+		//	notify_rename_event_args(change_types::renamed, directory_name, file_name, "");
+		//	old_name.reset();
+		//}
 
-		//TODO: llamar a metodo que lanza el evento...
+		notify_rename_event_args(change_types::renamed, new_path, watch->get_path());
+		
+		watch->set_path( new_path );
+		//std::cout << "Nuevo Nombre de Archivo:  " << watch->get_path().native_file_string() << std::endl;
 	}
 
 	void remove_watch ( filesystem_item* watch ) 
@@ -675,6 +686,8 @@ public: //private:  //TODO:
 		std::cout << "watch->inode_info_.device_id_: " << watch->inode_info_.device_id_ << std::endl;
 		std::cout << "watch->inode_info_.inode_number_: " << watch->inode_info_.inode_number_ << std::endl;
 		std::cout << "-----------------------------------------------------------------------" << std::endl;
+
+		notify_file_system_event_args( change_types::deleted, watch->get_path() );
 
 		filesystem_item::collection_type::iterator it = watch->parent_->subitems_.begin();
 		while ( it != watch->parent_->subitems_.end() )
@@ -757,32 +770,6 @@ public: //private:  //TODO:
 
 	}
 
-	//void handle_remove( filesystem_item* watch )
-	//{
-	//	//std::cout << "---------------------------------- NOTE_DELETE ---------------------------------------" << std::endl;
-
-	//	//std::cout << "watch: " << watch << std::endl;
-	//	//std::cout << "watch->fd: " << watch->file_descriptor_ << std::endl;
-	//	//std::cout << "watch->parent: " << watch->parent_ << std::endl;
-	//	//std::cout << "watch->path: " << watch->get_path().native_file_string() << std::endl;
-	//	//std::cout << "watch->is_directory: " << watch->is_directory() << std::endl;
-	//	//std::cout << "watch->mask_: " << watch->mask_ << std::endl;
-	//	//std::cout << "watch->inode_info_.device_id_: " << watch->inode_info_.device_id_ << std::endl;
-	//	//std::cout << "watch->inode_info_.inode_number_: " << watch->inode_info_.inode_number_ << std::endl;
-
-	//	//std::cout << "-----------------------------------------------------------------------" << std::endl;
-	//	//std::cout << "File removed: " << std::endl;
-	//	//std::cout << "watch->get_path().native_file_string(): " << watch->get_path().native_file_string() << std::endl;
-	//	//std::cout << "watch->inode_info_.device_id_: " << watch->inode_info_.device_id_ << std::endl;
-	//	//std::cout << "watch->inode_info_.inode_number_: " << watch->inode_info_.inode_number_ << std::endl;
-	//	//std::cout << "-----------------------------------------------------------------------" << std::endl;
-
-
-	//	remove_watch ( watch );
-
-	//	//std::cout << "--------------------------------------------------------------------------------------" << std::endl;
-	//}
-
 	void handle_write( filesystem_item* watch )
 	{
 		//std::cout << "---------------------------------- NOTE_WRITE ---------------------------------------" << std::endl;
@@ -804,6 +791,7 @@ public: //private:  //TODO:
 		else
 		{
 			//TODO: un archivo fue editado
+			notify_file_system_event_args( change_types::changed, watch->get_path() );
 		}
 
 		//std::cout << "--------------------------------------------------------------------------------------" << std::endl;
@@ -947,6 +935,20 @@ protected:
 			//Debug.Fail("Unknown FileSystemEvent action type!  Value: " + action);
 		}
 	}
+
+	inline void notify_rename_event_args(int action, const boost::filesystem::path& path, const boost::filesystem::path& old_path)
+	{
+		//filter if neither new name or old name are a match a specified pattern
+
+		//TODO:
+		//if (!MatchPattern(name) && !MatchPattern(oldName))
+		//{
+		//	return;
+		//}
+
+		do_callback(renamed_handler_, renamed_event_args(action, path, old_path));
+	}
+
 
 
 
