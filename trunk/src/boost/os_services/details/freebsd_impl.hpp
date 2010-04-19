@@ -267,7 +267,7 @@ public: //private:
 
 	struct kevent event_;		//TODO: creo que no es necesario
 
-	boost::uint32_t mask_;	/**< Mask of monitored events */
+	boost::uint32_t mask_;
 
 	//int parent_watch_descriptor_;
 	//watch_type parent;
@@ -490,7 +490,7 @@ struct user_entry
 		//TODO: watch_collection_type o all_watches_type ?????? GUARDA!!!!
 		for (watch_collection_type::iterator it =  head_dir->subitems_.begin(); it != head_dir->subitems_.end(); ++it )
 		{
-			(*it)->mask = PN_DELETE;  //TODO: recursivo
+			(*it)->mask_ = PN_DELETE;  //TODO: recursivo
 		}
 
 		//		std::cout << "PN_DELETE: " << PN_DELETE << std::endl;
@@ -542,7 +542,7 @@ struct user_entry
 					if (  (*it)->inode_info_ == inode_info && (*it)->path.native_file_string() == dir_itr->path().native_file_string() )
 					{
 						//std::cout << "found inode & filename: " << (*it)->path.native_file_string() << std::endl;
-						(*it)->mask = 0; //-999;
+						(*it)->mask_ = 0; //-999;
 						//std::cout << "(*it)->path.native_file_string(): " << (*it)->path.native_file_string() << std::endl;
 						found_filename = true;
 						found_inode = true;
@@ -618,12 +618,12 @@ struct user_entry
 
 		for (watch_collection_type::iterator it =  head_dir->subitems_.begin(); it != head_dir->subitems_.end(); ++it )
 		{
-			if ( (*it)->mask != 0 ) //-999 )
+			if ( (*it)->mask_ != 0 ) //-999 )
 			{
 				bool found = false;
 				for (watch_collection_type::iterator it2 =  temp_file_list.begin(); it2 != temp_file_list.end(); ++it2 )
 				{
-					if ( (*it2)->mask != 0 ) //-999 )
+					if ( (*it2)->mask_ != 0 ) //-999 )
 					{
 						if (  (*it)->inode_info_ == (*it2)->inode_info_ )
 						{
@@ -633,8 +633,8 @@ struct user_entry
 							//TODO: volver a habilitar hasta el fin de las pruebas
 							//std::cout << "File: " << (*it)->path.native_file_string() << " renamed to: " << (*it2)->path.native_file_string() << std::endl;
 
-							(*it)->mask = PN_RENAME; //  -998;
-							(*it2)->mask = 0; //-999;	//NO PROCESAR
+							(*it)->mask_ = PN_RENAME; //  -998;
+							(*it2)->mask_ = 0; //-999;	//NO PROCESAR
 							break;
 						}
 
@@ -655,7 +655,7 @@ struct user_entry
 
 		//		for (watch_collection_type::iterator it =  temp_file_list.begin(); it != temp_file_list.end(); ++it )
 		//		{
-		//			if ( (*it)->mask != 0 ) //-999 )
+		//			if ( (*it)->mask_ != 0 ) //-999 )
 		//			{
 		////				std::cout << "--- NEW FILE ---" << std::endl;
 		////				std::cout << "(*it)->path.native_file_string(): " << (*it)->path.native_file_string() << std::endl;
@@ -671,7 +671,7 @@ struct user_entry
 		//
 		//				//TODO: ver en el codigo de pnotify: /* Add a watch if it is a regular file */
 		//				create_watch( item );
-		//				item->mask = PN_CREATE;
+		//				item->mask_ = PN_CREATE;
 		//				item->parent_watch_descriptor_ = head_dir->watch_descriptor_;
 		//				item->inode_info_.device_id_ = (*it)->inode_info_.device_id_;
 		//				item->inode_info_.inode_number_ = (*it)->inode_info_.inode_number_;
@@ -861,7 +861,7 @@ public: //private:  //TODO:
 	//			std::cout << "----------------------------------------------------------------------------" << std::endl;
 	//			std::cout << "watch->fd: " << watch->fd << std::endl;
 	//			std::cout << "watch->wd: " << watch->wd << std::endl;
-	//			std::cout << "watch->mask: " << watch->mask << std::endl;
+	//			std::cout << "watch->mask_: " << watch->mask_ << std::endl;
 	//			std::cout << "watch->path.native_file_string(): " << watch->path.native_file_string() << std::endl;
 	//			std::cout << "----------------------------------------------------------------------------" << std::endl;
 
@@ -878,7 +878,7 @@ public: //private:  //TODO:
 					std::cout << "watch->parent: " << watch->parent_ << std::endl;
 					std::cout << "watch->path: " << watch->get_path().native_file_string() << std::endl;
 					std::cout << "watch->is_directory: " << watch->is_directory_ << std::endl;
-					std::cout << "watch->mask: " << watch->mask_ << std::endl;
+					std::cout << "watch->mask_: " << watch->mask_ << std::endl;
 					std::cout << "watch->inode_info_.device_id_: " << watch->inode_info_.device_id_ << std::endl;
 					std::cout << "watch->inode_info_.inode_number_: " << watch->inode_info_.inode_number_ << std::endl;
 
@@ -926,7 +926,7 @@ public: //private:  //TODO:
 					std::cout << "watch->parent: " << watch->parent_ << std::endl;
 					std::cout << "watch->path: " << watch->get_path().native_file_string() << std::endl;
 					std::cout << "watch->is_directory: " << watch->is_directory_ << std::endl;
-					std::cout << "watch->mask: " << watch->mask_ << std::endl;
+					std::cout << "watch->mask_: " << watch->mask_ << std::endl;
 					std::cout << "watch->inode_info_.device_id_: " << watch->inode_info_.device_id_ << std::endl;
 					std::cout << "watch->inode_info_.inode_number_: " << watch->inode_info_.inode_number_ << std::endl;
 
@@ -1032,7 +1032,7 @@ public: //private:  //TODO:
 					std::cout << "watch->parent: " << watch->parent_ << std::endl;
 					std::cout << "watch->path: " << watch->get_path().native_file_string() << std::endl;
 					std::cout << "watch->is_directory: " << watch->is_directory_ << std::endl;
-					std::cout << "watch->mask: " << watch->mask_ << std::endl;
+					std::cout << "watch->mask_: " << watch->mask_ << std::endl;
 					std::cout << "watch->inode_info_.device_id_: " << watch->inode_info_.device_id_ << std::endl;
 					std::cout << "watch->inode_info_.inode_number_: " << watch->inode_info_.inode_number_ << std::endl;
 
@@ -1237,7 +1237,7 @@ public: //private:  //TODO:
 
 //				std::cout << "watch->fd: " << watch->fd << std::endl;
 //				std::cout << "watch->wd: " << watch->wd << std::endl;
-//				std::cout << "watch->mask: " << watch->mask << std::endl;
+//				std::cout << "watch->mask_: " << watch->mask_ << std::endl;
 //				//std::cout << "watch.fd: " << watch.fd << std::endl;
 
 				//TODO: ver este tema, porque se puede estar disparando contra el directorui
@@ -1275,7 +1275,7 @@ public: //private:  //TODO:
 //			//std::cout << "DEBUG 7" << std::endl;
 //			//std::cout << "File removed: " << (*it)->path.native_file_string() << std::endl;
 //
-//			if ((*it)->mask == 0) /* Skip files that have not changed */
+//			if ((*it)->mask_ == 0) /* Skip files that have not changed */
 //			{
 //				++it;
 //				continue;
@@ -1285,7 +1285,7 @@ public: //private:  //TODO:
 //
 //
 //			/* Remove the directory entry for a deleted file */
-//			if ( (*it)->mask & PN_DELETE )
+//			if ( (*it)->mask_ & PN_DELETE )
 //			{
 //				//std::cout << "DEBUG 9" << std::endl;
 //
@@ -1294,7 +1294,7 @@ public: //private:  //TODO:
 //
 ////				std::cout << "ELIMINANDO ITEM DE LA LISTA" << std::endl;
 ////				std::cout << "(*it)->path.native_file_string(): " << (*it)->path.native_file_string() << std::endl;
-////				//std::cout << "(*it)->mask: " << (*it)->mask << std::endl;
+////				//std::cout << "(*it)->mask_: " << (*it)->mask_ << std::endl;
 //
 //
 //				it = head_dir->subitems.erase(it);
