@@ -672,7 +672,7 @@ public: //private:  //TODO:
 		//	old_name.reset();
 		//}
 
-		notify_rename_event_args(change_types::renamed, new_path, watch->get_path());
+		notify_rename_event_args ( change_types::renamed, new_path, watch->get_path() );
 		
 		watch->set_path( new_path );
 		//std::cout << "Nuevo Nombre de Archivo:  " << watch->get_path().native_file_string() << std::endl;
