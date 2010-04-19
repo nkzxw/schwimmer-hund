@@ -765,11 +765,8 @@ public: //private:  //TODO:
 	{
 		while ( ! closing_ )
 		{
-//			struct pnotify_event *evp;
 			struct kevent event;
 			int return_code;
-
-			//std::cout << "waiting for kernel event.." << std::endl;
 
 			//TODO: ver timeout
 			return_code = kevent ( kqueue_file_descriptor_, NULL, 0, &event, 1, NULL );
@@ -1014,10 +1011,7 @@ public: //private:  //TODO:
 		//assert(ctl && watch);
 
 		head_dir->root_user_entry_->scan_directory( head_dir );
-		//scan_directory( head_dir );
 
-//		//std::cout << "DEBUG 6" << std::endl;
-//
 //		filesystem_item::collection_type::iterator it = head_dir->subitems.begin();
 //		while ( it != head_dir->subitems.end() )
 //		{
