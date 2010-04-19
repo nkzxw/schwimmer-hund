@@ -781,12 +781,8 @@ public: //private:  //TODO:
 				return;
 			}
 
-
-
-
 			if ( ! closing_ )
 			{
-
 				//TODO: esto puede ser un tema, porque el shared_ptr (filesystem_item::pointer_type) va a tener el contador en 1 y cuando salga de scope va a hacer delete de la memoria...
 				//filesystem_item::pointer_type watch( (fsitem*) event.udata );
 				filesystem_item* watch = (filesystem_item*) event.udata; //TODO: reinterpret_cast<>
@@ -885,21 +881,6 @@ public: //private:  //TODO:
 
 					boost::filesystem::path parent_path;
 
-				
-					////TODO: find
-					//for (filesystem_item::collection_type::iterator it =  watch->root_user_entry->all_watches_.begin(); it != watch->root_user_entry->all_watches_.end(); ++it )
-					//{
-					//	if ( watch->parent_watch_descriptor_ == (*it)->watch_descriptor_ )
-					//	{
-					//		parent_path = (*it)->path;
-					//	}
-					//}
-
-					//if ( watch->parent != 0 ) //TODO: cambiar cuando parent sea un shared_ptr
-					//{
-					//	parent_path = watch->parent->path;
-					//}
-
 					parent_path = watch->root_user_entry_->path_;
 
 					if ( ! parent_path.empty() )
@@ -910,33 +891,11 @@ public: //private:  //TODO:
 						boost::filesystem::directory_iterator dir_itr( parent_path );
 						for ( ; dir_itr != end_iter; ++dir_itr )
 						{
-							file_inode_info inode_info ( dir_itr->path() );
+							file_inode_info inode_info ( dir_itr->path() ); //TODO: puede arrojar una excepcion
 							if ( watch->inode_info_ == inode_info )
 							{
 								break;
 							}
-
-
-							//struct stat dir_st;
-							//
-							//int return_code = lstat( dir_itr->path().native_file_string().c_str(), &dir_st);
-							//if ( return_code == -1)
-							//{
-							//	//TODO: manejo de errores
-							//	std::cout << "STAT ERROR -- 4 -- - Reason: " << std::strerror(errno) << std::endl;
-							//	std::cout << "dir_itr->path().native_file_string(): " << dir_itr->path().native_file_string() << std::endl;
-
-							//	ptime now = microsec_clock::local_time();
-							//	std::cout << to_iso_string(now) << std::endl;
-							//}
-							//else
-							//{
-							//	//if (  dir_st.st_dev == watch->inode_info_.device_id_ && dir_st.st_ino == watch->inode_info_.inode_number_ )
-							//	if ( watch->inode_info_ == dir_st )
-							//	{
-							//		break;
-							//	}
-							//}
 						}
 
 						if ( dir_itr != end_iter )
@@ -991,10 +950,6 @@ public: //private:  //TODO:
 				}
 
 
-				//if (event.fflags & NOTE_WRITE)
-				//{
-				//	std::cout << "NOTE_WRITE -> PN_MODIFY" << std::endl;
-				//}
 				//if (event.fflags & NOTE_TRUNCATE)
 				//{
 				//	std::cout << "NOTE_TRUNCATE -> PN_MODIFY" << std::endl;
@@ -1007,86 +962,6 @@ public: //private:  //TODO:
 				//{
 				//	std::cout << "NOTE_ATTRIB -> PN_ATTRIB" << std::endl;
 				//}
-
-				if ( event.fflags & NOTE_RENAME )
-				{
-					//std::cout << "NOTE_RENAME -> XXXXXXXXX" << std::endl;
-					//std::cout << "watch->fd: " << watch->fd << std::endl;
-					//std::cout << "OLDNAME: " << watch->path.native_file_string() << std::endl;
-
-
-					//
-//					//TODO: buscar el directorio padre de la forma más eficiente posible a traves del parent_
-//					std::cout << "Parent: " << user_watches_[0]->path.native_file_string() << std::endl;
-//
-//
-//					struct stat old_st;
-//					if (fstat(watch->fd, &old_st) < 0)
-//					{
-//						//warn("fstat(2) failed");
-//						std::cout << "ERROR STAT" << std::endl;
-//						return;
-//					}
-//
-//////					std::cout << "old_st.st_dev: " << old_st.st_dev << std::endl;
-////					std::cout << "old_st.st_ino: " << old_st.st_ino << std::endl;
-////					std::cout << "old_st.st_mode: " << old_st.st_mode << std::endl;
-////					std::cout << "old_st.st_nlink: " << old_st.st_nlink << std::endl;
-////					std::cout << "old_st.st_rdev: " << old_st.st_rdev << std::endl;
-////					std::cout << "old_st.st_atime: " << old_st.st_atime << std::endl;
-////					std::cout << "old_st.st_mtime: " << old_st.st_mtime << std::endl;
-////					std::cout << "old_st.st_ctime: " << old_st.st_ctime << std::endl;
-////					std::cout << "S_ISDIR(old_st.st_mode): " << S_ISDIR(old_st.st_mode) << std::endl;
-////					std::cout << "S_ISREG(old_st.st_mode): " << S_ISREG(old_st.st_mode) << std::endl;
-////					std::cout << "S_ISLNK(old_st.st_mode): " << S_ISLNK(old_st.st_mode) << std::endl;
-//
-//
-//
-//
-//
-//					boost::filesystem::directory_iterator end_iter;
-//					//TODO: hardcode
-//					for ( boost::filesystem::directory_iterator dir_itr( user_watches_[0]->path ); dir_itr != end_iter; ++dir_itr )
-//					{
-//						try
-//						{
-//							struct stat it_st;
-//
-//							//if ( stat( dir_itr->path().native_file_string().c_str(), &it_st) == 0)
-//							if ( lstat( dir_itr->path().native_file_string().c_str(), &it_st) == 0)
-//							{
-////								std::cout << "dir_itr->path().native_file_string(): " << dir_itr->path().native_file_string() << std::endl;
-//////								std::cout << "it_st.st_dev: " << it_st.st_dev << std::endl;
-////								std::cout << "it_st.st_ino: " << it_st.st_ino << std::endl;
-////								std::cout << "it_st.st_mode: " << it_st.st_mode << std::endl;
-////								std::cout << "it_st.st_nlink: " << it_st.st_nlink << std::endl;
-////								std::cout << "it_st.st_rdev: " << it_st.st_rdev << std::endl;
-////								std::cout << "it_st.st_atime: " << it_st.st_atime << std::endl;
-////								std::cout << "it_st.st_mtime: " << it_st.st_mtime << std::endl;
-////								std::cout << "it_st.st_ctime: " << it_st.st_ctime << std::endl;
-////								std::cout << "S_ISDIR(it_st.st_mode): " << S_ISDIR(it_st.st_mode) << std::endl;
-////								std::cout << "S_ISREG(it_st.st_mode): " << S_ISREG(it_st.st_mode) << std::endl;
-////								std::cout << "S_ISLNK(it_st.st_mode): " << S_ISLNK(it_st.st_mode) << std::endl;
-//
-//								if ((it_st.st_dev == old_st.st_dev) &&  (it_st.st_ino == old_st.st_ino))
-//								{
-//									std::cout << "NEW NAME " << dir_itr->path().native_file_string() << std::endl;
-//								}
-//							}
-//							else
-//							{
-//								std::cout << "ERROR EN STAT" << std::endl;
-//								std::cout << "dir_itr->path().native_file_string(): " << dir_itr->path().native_file_string() << std::endl;
-//							}
-//						}
-//						catch ( const std::exception & ex )
-//						{
-//							std::cout << dir_itr->path().native_file_string() << " " << ex.what() << std::endl;
-//						}
-//					}
-				}
-
-
 				//if (event.fflags & NOTE_REVOKE)
 				//{
 				//	std::cout << "NOTE_REVOKE -> XXXXXXXXX" << std::endl;
@@ -1113,83 +988,14 @@ public: //private:  //TODO:
 					}
 					else
 					{
-						//						warn("unknown event recieved");
-						//						return -1;
+						//TODO: excepcion
+						//warn("unknown event recieved");
+						//return -1;
 					}
 				}
 				else
 				{
-//					if (event.fflags & NOTE_WRITE)
-//						evt->mask |= PN_MODIFY;
-//					if (event.fflags & NOTE_TRUNCATE)
-//						evt->mask |= PN_MODIFY;
-//					if (event.fflags & NOTE_EXTEND)
-//						evt->mask |= PN_MODIFY;
-//			#if TODO
-//					// not implemented yet
-//					if (event.fflags & NOTE_ATTRIB)
-//						evt->mask |= PN_ATTRIB;
-//			#endif
-//					if (event.fflags & NOTE_DELETE)
-//						evt->mask |= PN_DELETE;
-
-//					/* Construct a pnotify_event structure */
-//					if ((evp = calloc(1, sizeof(*evp))) == NULL)
-//					{
-//						warn("malloc failed");
-//						return -1;
-//					}
-//
-//					/* If the event happened within a watched directory,
-//					   add the filename and the parent watch descriptor.
-//					*/
-//					if (watch->parent_watch_descriptor_)
-//					{
-//
-//						/* KLUDGE: remove the leading basename */
-//						char *fn = strrchr(watch->path, '/') ;
-//						if (!fn)
-//						{
-//							fn = watch->path;
-//						}
-//						else
-//						{
-//							fn++;
-//						}
-//
-//						evt->wd = watch->parent_watch_descriptor_;
-//						/* FIXME: more error handling */
-//						(void) strncpy(evt->name, fn, strlen(fn));
-//					}
-//
-//					/* Add the event to the list of pending events */
-//					memcpy(evp, evt, sizeof(*evp));
-//					STAILQ_INSERT_TAIL(&ctl->event, evp, entries);
-//
-//					dprint_event(evt);
-
 				}
-
-
-
-
-
-
-
-				//watch = (struct pnotify_watch *) event.udata;
-//				watch = (watch_data*) event.udata;
-
-//				std::cout << "watch->fd: " << watch->fd << std::endl;
-//				std::cout << "watch->watch_descriptor_: " << watch->watch_descriptor_ << std::endl;
-//				std::cout << "watch->mask_: " << watch->mask_ << std::endl;
-//				//std::cout << "watch.fd: " << watch.fd << std::endl;
-
-				//TODO: ver este tema, porque se puede estar disparando contra el directorui
-//				if (watch->parent_watch_descriptor_ && event.fflags & NOTE_DELETE)
-//				{
-//					dprintf("ignoring NOTE_DELETE on a watched file\n");
-//					goto retry;
-//				}
 			}
 		}
 	}
