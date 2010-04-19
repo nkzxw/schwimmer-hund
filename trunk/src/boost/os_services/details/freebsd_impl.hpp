@@ -122,9 +122,10 @@ struct user_entry;	//forward-declaration
 typedef boost::shared_ptr<fs_item> watch_type;			//TODO: renombrar
 typedef std::vector<watch_type> watch_collection_type;	//TODO: renombrar
 
-
+//TODO: pasar a otro archivo...
 struct file_inode_info
 {
+	//TODO: public, protected, private ?????
 	file_inode_info ( )
 		: device_id_(0), inode_number_(0)
 	{}
@@ -211,6 +212,9 @@ struct file_inode_info
 class fs_item
 {
 public:
+	
+	typedef boost::shared_ptr<fs_item> pointer_type; 
+
 	//TODO: agegar metodo add_subitem
 
 	fs_item ( const boost::filesystem::path& path, user_entry* root_user_entry )
