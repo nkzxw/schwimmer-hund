@@ -28,9 +28,17 @@ namespace change_types
 	static const int deleted = IN_DELETE;
 	static const int changed = IN_MODIFY;
 	static const int renamed = IN_MOVE;
-	static const int all = (IN_CREATE | IN_DELETE | IN_MODIFY | IN_MOVE);
+	static const int all = (created | deleted | changed | renamed); //(IN_CREATE | IN_DELETE | IN_MODIFY | IN_MOVE);
 
 #elif defined(__FreeBSD__) // || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__DragonFly__)
+
+	static const int created = 1;
+	static const int deleted = 2;
+	static const int changed = 4;
+	static const int renamed = 8;
+	static const int all = (created | deleted | changed | renamed);
+	//static const int all = 15;
+
 #elif defined(__CYGWIN__)
 #  error Platform not supported
 #elif defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
@@ -39,8 +47,8 @@ namespace change_types
 	static const int deleted = 2;
 	static const int changed = 4;
 	static const int renamed = 8;
-	static const int all = 15;
-
+	static const int all = (created | deleted | changed | renamed);
+	//static const int all = 15;
 
 #elif defined(macintosh) || defined(__APPLE__) || defined(__APPLE_CC__)
 #else
