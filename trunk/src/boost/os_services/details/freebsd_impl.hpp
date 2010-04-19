@@ -830,7 +830,7 @@ public: //private:  //TODO:
 					//	}
 					//}
 
-					if ( watch->parent != 0 )
+					if ( watch->parent != 0 ) //TODO: cambiar cuando parent sea un shared_ptr
 					{
 						parent_path = watch->parent->path;
 					}
