@@ -201,9 +201,16 @@ struct fs_item
 	//TODO: agegar metodo add_subitem
 	//TODO: constructor
 
+	fs_item()
+	{
+		std::cout << "--------------------- fsitem() ------------------------------" << std::endl;
+		//std::cout << "this->path.native_file_string(): " << this->path.native_file_string() << std::endl;
+	}
+
+
 	~fs_item()
 	{
-		//std::cout << "--------------------- ~fsitem() ------------------------------" << std::endl;
+		std::cout << "--------------------- ~fsitem() ------------------------------" << std::endl;
 		//std::cout << "this->path.native_file_string(): " << this->path.native_file_string() << std::endl;
 	}
 
@@ -480,8 +487,6 @@ struct user_entry
 					//std::cout << "(*it)->inode_info_.inode_number_: " << (*it)->inode_info_.inode_number_ << std::endl;
 					//std::cout << "-----------------------------------------------------------------------" << std::endl;
 
-					//if (  dir_st.st_dev == (*it)->inode_info_.device_id_ && dir_st.st_ino == (*it)->inode_info_.inode_number_ && (*it)->path.native_file_string() == dir_itr->path().native_file_string() )
-					//if (  (*it)->inode_info_ == dir_st && (*it)->path.native_file_string() == dir_itr->path().native_file_string() )
 					if (  (*it)->inode_info_ == inode_info && (*it)->path.native_file_string() == dir_itr->path().native_file_string() )
 					{
 						//std::cout << "found inode & filename: " << (*it)->path.native_file_string() << std::endl;
@@ -493,8 +498,6 @@ struct user_entry
 					else
 					{
 
-						//if (  dir_st.st_dev == (*it)->inode_info_.device_id_ && dir_st.st_ino == (*it)->inode_info_.inode_number_ )
-						//if (  (*it)->inode_info_ == dir_st  )
 						if (  (*it)->inode_info_ == inode_info  )
 						{
 							//std::cout << "found inode: " << (*it)->path.native_file_string() << std::endl;
@@ -577,7 +580,6 @@ struct user_entry
 				{
 					if ( (*it2)->mask != 0 ) //-999 )
 					{
-						//if (  (*it)->inode_info_.device_id_ == (*it2)->inode_info_.device_id_ && (*it)->inode_info_.inode_number_ == (*it2)->inode_info_.inode_number_ )
 						if (  (*it)->inode_info_ == (*it2)->inode_info_ )
 						{
 							//std::cout << "found inode: " << (*it)->path.native_file_string() << " - " << (*it2)->path.native_file_string() << std::endl;
@@ -846,7 +848,6 @@ public: //private:  //TODO:
 					watch_collection_type::iterator it = watch->parent->subitems.begin();
 					while ( it != watch->parent->subitems.end() )
 					{
-						//if ( watch->path == (*it)->path && watch->inode_info_.device_id_ == (*it)->inode_info_.device_id_ && watch->inode_info_.inode_number_ == (*it)->inode_info_.inode_number_ )
 						if ( watch->path == (*it)->path && watch->inode_info_ == (*it)->inode_info_ )
 						{
 							std::cout << "-----------------------------------------------------------------------" << std::endl;
