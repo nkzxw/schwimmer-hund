@@ -835,92 +835,104 @@ public: //private:  //TODO:
 		{
 			struct kevent event;
 
-			//TODO: ver timeout
-			struct timespec *timeout;
-			timeout->tv_sec = 1; //0;
-			timeout->tv_nsec = 100000; //100 milliseconds //TODO: sacar el hardcode
+			int return_code = -1;
 
-			ptime now = microsec_clock::local_time();
-			std::cout << to_iso_string(now) << std::endl;
+			if ( queued_write_watch == 0 )
+			{
+				return_code = kevent ( kqueue_file_descriptor_, NULL, 0, &event, 1, NULL ); //TODO: ver que pasa cuando hacemos un close del kqueue_file_descriptor_, deberia salir con error...
+			}
+			else
+			{
+				struct timespec *timeout;
+				timeout->tv_sec = 0;
+				timeout->tv_nsec = 100000; //100 milliseconds //TODO: sacar el hardcode
 
-			//int return_code = kevent ( kqueue_file_descriptor_, NULL, 0, &event, 1, NULL );
-			int return_code = kevent ( kqueue_file_descriptor_, NULL, 0, &event, 1, timeout );
+				//ptime now = microsec_clock::local_time();
+				//std::cout << to_iso_string(now) << std::endl;
+				return_code = kevent ( kqueue_file_descriptor_, NULL, 0, &event, 1, timeout );
+				//now = microsec_clock::local_time();
+				//std::cout << to_iso_string(now) << std::endl;
 
-			now = microsec_clock::local_time();
-			std::cout << to_iso_string(now) << std::endl;
+			}
 
-			std::cout << "return_code: " << return_code << std::endl;
+			//std::cout << "return_code: " << return_code << std::endl;
 
 
 			if ( return_code == -1 || event.flags & EV_ERROR) //< 0
 			{
+				//TODO: si esta closing_ quiere decir que se cerro desde afuera
+				//TODO: if ( ! closing_ )
+
 				//TODO:
 				//warn("kevent(2) failed");
 				std::cout << "ERRRRRRRRRRRRRORRR ON kevent Wait" << std::endl;
 				return;
 			}
 
-			if ( ! closing_ )
+			if ( return_code == 0 ) //timeout
 			{
-				//TODO: esto puede ser un tema, porque el shared_ptr (filesystem_item::pointer_type) va a tener el contador en 1 y cuando salga de scope va a hacer delete de la memoria...
-				//filesystem_item::pointer_type watch( (fsitem*) event.udata );
-				filesystem_item* watch = (filesystem_item*) event.udata; //TODO: reinterpret_cast<>
-
-	//			std::cout << "----------------------------------------------------------------------------" << std::endl;
-	//			std::cout << "watch->fd: " << watch->fd << std::endl;
-	//			std::cout << "watch->watch_descriptor_: " << watch->watch_descriptor_ << std::endl;
-	//			std::cout << "watch->mask_: " << watch->mask_ << std::endl;
-	//			std::cout << "watch->path.native_file_string(): " << watch->path.native_file_string() << std::endl;
-	//			std::cout << "----------------------------------------------------------------------------" << std::endl;
-
-				if ( event.fflags & NOTE_DELETE )
+				//TODO: if ( ! closing_ )
+				if ( queued_write_watch != 0 )
 				{
-					handle_remove( watch );
-				}
-
-				if ( event.fflags & NOTE_RENAME )
-				{
-					handle_rename( watch );
-				}
-
-				//if ( queued_write_watch != 0 )
-				//{
-				//	handle_write( watch );
-				//	queued_write_watch = 0;
-				//}
-
-				if ( event.fflags & NOTE_WRITE )
-				{
-					//Encolamos un solo evento WRITE ya que siempre viene WRITE+RENAME... hacemos que primero se procese el evento rename y luego el write
 					handle_write( watch );
-					//queued_write_watch = watch;
+					queued_write_watch = 0;
 				}
+			}
+			else
+			{
+				if ( ! closing_ )
+				{
+					//TODO: esto puede ser un tema, porque el shared_ptr (filesystem_item::pointer_type) va a tener el contador en 1 y cuando salga de scope va a hacer delete de la memoria...
+					//filesystem_item::pointer_type watch( (fsitem*) event.udata );
+					filesystem_item* watch = (filesystem_item*) event.udata; //TODO: reinterpret_cast<>
+
+					//			std::cout << "----------------------------------------------------------------------------" << std::endl;
+					//			std::cout << "watch->fd: " << watch->fd << std::endl;
+					//			std::cout << "watch->watch_descriptor_: " << watch->watch_descriptor_ << std::endl;
+					//			std::cout << "watch->mask_: " << watch->mask_ << std::endl;
+					//			std::cout << "watch->path.native_file_string(): " << watch->path.native_file_string() << std::endl;
+					//			std::cout << "----------------------------------------------------------------------------" << std::endl;
+
+					if ( event.fflags & NOTE_DELETE )
+					{
+						handle_remove( watch );
+					}
+
+					if ( event.fflags & NOTE_RENAME )
+					{
+						handle_rename( watch );
+					}
+
+					if ( event.fflags & NOTE_WRITE )
+					{
+						//Encolamos un solo evento WRITE ya que siempre viene WRITE+RENAME... hacemos que primero se procese el evento rename y luego el write
+						//handle_write( watch );
+						queued_write_watch = watch;
+					}
 
 
 
-				//if (event.fflags & NOTE_TRUNCATE)
-				//{
-				//	std::cout << "NOTE_TRUNCATE -> PN_MODIFY" << std::endl;
-				//}
-				//if (event.fflags & NOTE_EXTEND)
-				//{
-				//	std::cout << "NOTE_EXTEND -> PN_MODIFY" << std::endl;
-				//}
-				//if (event.fflags & NOTE_ATTRIB)
-				//{
-				//	std::cout << "NOTE_ATTRIB -> PN_ATTRIB" << std::endl;
-				//}
-				//if (event.fflags & NOTE_REVOKE)
-				//{
-				//	std::cout << "NOTE_REVOKE -> XXXXXXXXX" << std::endl;
-				//}
-				//if (event.fflags & NOTE_LINK)
-				//{
-				//	std::cout << "NOTE_LINK -> XXXXXXXXX" << std::endl;
-				//}
-
-
-
+					//if (event.fflags & NOTE_TRUNCATE)
+					//{
+					//	std::cout << "NOTE_TRUNCATE -> PN_MODIFY" << std::endl;
+					//}
+					//if (event.fflags & NOTE_EXTEND)
+					//{
+					//	std::cout << "NOTE_EXTEND -> PN_MODIFY" << std::endl;
+					//}
+					//if (event.fflags & NOTE_ATTRIB)
+					//{
+					//	std::cout << "NOTE_ATTRIB -> PN_ATTRIB" << std::endl;
+					//}
+					//if (event.fflags & NOTE_REVOKE)
+					//{
+					//	std::cout << "NOTE_REVOKE -> XXXXXXXXX" << std::endl;
+					//}
+					//if (event.fflags & NOTE_LINK)
+					//{
+					//	std::cout << "NOTE_LINK -> XXXXXXXXX" << std::endl;
+					//}
+				}
 			}
 		}
 	}
