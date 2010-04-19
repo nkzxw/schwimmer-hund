@@ -213,7 +213,7 @@ class fs_item
 public:
 	//TODO: agegar metodo add_subitem
 
-	fs_item ( const boost::filesystem::path& path, const user_entry* const root_user_entry )
+	fs_item ( const boost::filesystem::path& path, user_entry* root_user_entry )
 		: root_user_entry_(root_user_entry), parent_(0), is_directory_(false), file_descriptor_(0), watch_descriptor_(0)
 	{
 		std::cout << "--------------------- fs_item ( const boost::filesystem::path& path, const user_entry* const root_user_entry ) ------------------------------" << std::endl;
@@ -222,7 +222,7 @@ public:
 		set_path( path );
 	}
 
-	fs_item ( const boost::filesystem::path& path, const user_entry* const root_user_entry, const fs_item* const parent )
+	fs_item ( const boost::filesystem::path& path, user_entry* root_user_entry, fs_item* parent )
 		: root_user_entry_(root_user_entry), parent_(parent), is_directory_(false), file_descriptor_(0), watch_descriptor_(0)
 	{
 		std::cout << "--------------------- fs_item ( const boost::filesystem::path& path, const user_entry* const root_user_entry, const fs_item* const parent ) ------------------------------" << std::endl;
@@ -295,12 +295,11 @@ struct user_entry
 
 	void initialize()
 	{
-		watch_type item ( new fs_item(this) );
-		//item->path_ = path_;
-		item->set_path ( path_ );
+		//TODO: estas dos instrucciones ponerlas en un factory
+		watch_type item ( new fs_item(path_, this) );
+		all_watches_.push_back(item);
 
 		head_ = item;
-		all_watches_.push_back(item);
 
 		create_watch( item );
 
@@ -570,16 +569,11 @@ struct user_entry
 					//std::cout << "dir_st.st_dev: " << dir_st.st_dev << std::endl;
 					//std::cout << "dir_st.st_ino: " << dir_st.st_ino << std::endl;
 
-					watch_type item ( new fs_item(head_dir->root_user_entry_, head_dir) );
-					item->set_path( dir_itr->path() );
-
+					watch_type item ( new fs_item( dir_itr->path(), head_dir->root_user_entry_, head_dir) );
 					this->all_watches_.push_back(item);
 
 					create_watch( item );
 					item->mask_ = PN_CREATE;
-					//item->parent_ = head_dir;
-
-					//item->inode_info_.set(dir_st);
 					item->inode_info_ = inode_info;
 
 					head_dir->subitems_.push_back(item);
