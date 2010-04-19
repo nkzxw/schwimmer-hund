@@ -131,8 +131,8 @@ struct fs_item
 
 	~fs_item()
 	{
-//		std::cout << "--------------------- ~fsitem() ------------------------------" << std::endl;
-//		std::cout << "this->path.native_file_string(): " << this->path.native_file_string() << std::endl;
+		//std::cout << "--------------------- ~fsitem() ------------------------------" << std::endl;
+		//std::cout << "this->path.native_file_string(): " << this->path.native_file_string() << std::endl;
 	}
 
 	boost::filesystem::path path;
@@ -758,12 +758,37 @@ public: //private:  //TODO:
 					std::cout << "watch->st_dev: " << watch->st_dev << std::endl;
 					std::cout << "watch->st_ino: " << watch->st_ino << std::endl;
 
-					std::cout << "event.ident: " << event.ident << std::endl;
-					std::cout << "event.filter: " << event.filter << std::endl;
-					std::cout << "event.flags: " << event.flags << std::endl;
-					std::cout << "event.fflags: " << event.fflags << std::endl;
-					std::cout << "event.data: " << event.data << std::endl;
-					std::cout << "event.udata: " << event.udata << std::endl;
+					//std::cout << "event.ident: " << event.ident << std::endl;
+					//std::cout << "event.filter: " << event.filter << std::endl;
+					//std::cout << "event.flags: " << event.flags << std::endl;
+					//std::cout << "event.fflags: " << event.fflags << std::endl;
+					//std::cout << "event.data: " << event.data << std::endl;
+					//std::cout << "event.udata: " << event.udata << std::endl;
+
+				
+					watch_collection_type::iterator it = watch->parent->subitems.begin();
+					while ( it != watch->parent->subitems.end() )
+					{
+						if ( watch->path == (*it)->path && watch->st_dev == (*it)->st_dev && watch->st_ino == (*it)->st_ino )
+						{
+							std::cout << "-----------------------------------------------------------------------" << std::endl;
+							std::cout << "File removed: " << std::endl;
+							std::cout << "(*it)->path.native_file_string(): " << (*it)->path.native_file_string() << std::endl;
+							std::cout << "(*it)->st_dev: " << (*it)->st_dev << std::endl;
+							std::cout << "(*it)->st_ino: " << (*it)->st_ino << std::endl;
+							std::cout << "-----------------------------------------------------------------------" << std::endl;
+
+
+							//it = head_dir->subitems.erase(it);
+							break;
+						}
+						else
+						{
+							++it;
+						}
+					}
+			
+
 
 					std::cout << "--------------------------------------------------------------------------------------" << std::endl;
 				}
