@@ -368,10 +368,9 @@ struct user_entry
 		//std::cout << "void create_watch( filesystem_item::pointer_type watch )" << std::endl;
 		//std::cout << "watch->path.native_file_string(): " << watch->path.native_file_string() << std::endl;
 
-		//struct kevent *event = &watch->event_;
 		struct kevent event;
 
-		int mask = watch->mask_;
+		//int mask = watch->mask_;
 
 		watch->open(); //TODO: catch errors
 
@@ -390,6 +389,7 @@ struct user_entry
 		}
 
 
+		//TODO: traducir de watch->mask_ a fflags
 		//TODO: ver estos flags, deberia monitoriarse solo lo que el usuairo quiera monitorear...
 		unsigned int fflags = NOTE_DELETE |  NOTE_WRITE | NOTE_EXTEND | NOTE_ATTRIB | NOTE_LINK | NOTE_REVOKE | NOTE_RENAME;
 
@@ -503,21 +503,6 @@ struct user_entry
 						//found_inode = true;
 						found = true;
 					}
-					//else
-					//{
-
-					//	if (  (*it)->inode_info_ == inode_info  )
-					//	{
-					//		//std::cout << "found inode: " << (*it)->path.native_file_string() << std::endl;
-					//		found_inode = true;
-					//	}
-
-					//	if ( (*it)->get_path() == dir_itr->path() )
-					//	{
-					//		//std::cout << "found filename: " << (*it)->path.native_file_string() << std::endl;
-					//		found_filename = true;
-					//	}
-					//}
 				}
 
 				if ( !found )	//Archivo nuevo
@@ -672,6 +657,77 @@ public:
 
 public: //private:  //TODO:
 
+	//TODO: evaluar si rename_watch y remove_watch tienen que ir acá o en sus respectivas clases
+	void rename_watch ( filesystem_item* watch, const boost::filesystem::path& new_path ) 
+	{
+		watch->set_path( new_path );
+		std::cout << "Nuevo Nombre de Archivo:  " << watch->get_path().native_file_string() << std::endl;
+
+		//TODO: llamar a metodo que lanza el evento...
+	}
+
+	void remove_watch ( filesystem_item* watch ) 
+	{
+		std::cout << "-----------------------------------------------------------------------" << std::endl;
+		std::cout << "File removed: " << std::endl;
+		std::cout << "watch->path: " << watch->get_path().native_file_string() << std::endl;
+		std::cout << "watch->inode_info_.device_id_: " << watch->inode_info_.device_id_ << std::endl;
+		std::cout << "watch->inode_info_.inode_number_: " << watch->inode_info_.inode_number_ << std::endl;
+		std::cout << "-----------------------------------------------------------------------" << std::endl;
+
+		//it = head_dir->subitems.erase(it);
+		//TODO: llamar a metodo que lanza el evento...
+	}
+
+	void handle_renaming( filesystem_item* watch )
+	{
+		std::cout << "---------------------------------- NOTE_RENAME ---------------------------------------" << std::endl;
+
+		std::cout << "watch: " << watch << std::endl;
+		std::cout << "watch->fd: " << watch->file_descriptor_ << std::endl;
+		std::cout << "watch->parent: " << watch->parent_ << std::endl;
+		std::cout << "watch->path: " << watch->get_path().native_file_string() << std::endl;
+		std::cout << "watch->is_directory: " << watch->is_directory() << std::endl;
+		std::cout << "watch->mask_: " << watch->mask_ << std::endl;
+		std::cout << "watch->inode_info_.device_id_: " << watch->inode_info_.device_id_ << std::endl;
+		std::cout << "watch->inode_info_.inode_number_: " << watch->inode_info_.inode_number_ << std::endl;
+
+		boost::filesystem::path parent_path;
+
+		parent_path = watch->root_user_entry_->path_;
+
+		if ( ! parent_path.empty() )
+		{
+			boost::filesystem::directory_iterator end_iter;
+
+			//TODO: pasar a metodo estatico
+			//TODO: STL find o similar...
+			boost::filesystem::directory_iterator dir_itr( parent_path );
+			for ( ; dir_itr != end_iter; ++dir_itr )
+			{
+				file_inode_info inode_info ( dir_itr->path() ); //TODO: puede arrojar una excepcion
+				if ( watch->inode_info_ == inode_info )
+				{
+					break;
+				}
+			}
+
+			if ( dir_itr != end_iter )
+			{
+				rename_watch(watch, dir_itr->path());
+			}
+			else	
+			{
+				remove_watch ( watch );
+				//it = head_dir->subitems.erase(it);
+			}
+		}
+
+		std::cout << "--------------------------------------------------------------------------------------" << std::endl;
+
+	}
+
+
 	void handle_directory_changes()
 	{
 		while ( ! closing_ )
@@ -695,28 +751,12 @@ public: //private:  //TODO:
 				//filesystem_item::pointer_type watch( (fsitem*) event.udata );
 				filesystem_item* watch = (filesystem_item*) event.udata; //TODO: reinterpret_cast<>
 
-				/* Workaround:
-
-				   Deleting a file in a watched directory causes two events:
-			     		NOTE_MODIFY on the directory
-						NOTE_DELETE on the file
-				   We ignore the NOTE_DELETE on the file.
-				*/
-				//if ( watch->parent_watch_descriptor_ && event.fflags & NOTE_DELETE )
-				//{
-				//	std::cout << "-*-*-*-*-*--*-*-*-*-** IGNORE NOTE_DELETE" << std::endl;
-				//	//goto retry;
-				//	continue;
-				//}
-
 	//			std::cout << "----------------------------------------------------------------------------" << std::endl;
 	//			std::cout << "watch->fd: " << watch->fd << std::endl;
 	//			std::cout << "watch->watch_descriptor_: " << watch->watch_descriptor_ << std::endl;
 	//			std::cout << "watch->mask_: " << watch->mask_ << std::endl;
 	//			std::cout << "watch->path.native_file_string(): " << watch->path.native_file_string() << std::endl;
 	//			std::cout << "----------------------------------------------------------------------------" << std::endl;
-
-
 
 				if ( event.fflags & NOTE_DELETE )
 				{
@@ -769,69 +809,7 @@ public: //private:  //TODO:
 
 				if ( event.fflags & NOTE_RENAME )
 				{
-					std::cout << "---------------------------------- NOTE_RENAME ---------------------------------------" << std::endl;
-
-					std::cout << "watch: " << watch << std::endl;
-					std::cout << "watch->fd: " << watch->file_descriptor_ << std::endl;
-					std::cout << "watch->parent: " << watch->parent_ << std::endl;
-					std::cout << "watch->path: " << watch->get_path().native_file_string() << std::endl;
-					std::cout << "watch->is_directory: " << watch->is_directory() << std::endl;
-					std::cout << "watch->mask_: " << watch->mask_ << std::endl;
-					std::cout << "watch->inode_info_.device_id_: " << watch->inode_info_.device_id_ << std::endl;
-					std::cout << "watch->inode_info_.inode_number_: " << watch->inode_info_.inode_number_ << std::endl;
-
-					//std::cout << "event.ident: " << event.ident << std::endl;
-					//std::cout << "event.filter: " << event.filter << std::endl;
-					//std::cout << "event.flags: " << event.flags << std::endl;
-					//std::cout << "event.fflags: " << event.fflags << std::endl;
-					//std::cout << "event.data: " << event.data << std::endl;
-					//std::cout << "event.udata: " << event.udata << std::endl;
-
-					boost::filesystem::path parent_path;
-
-					parent_path = watch->root_user_entry_->path_;
-
-					if ( ! parent_path.empty() )
-					{
-						boost::filesystem::directory_iterator end_iter;
-
-						//TODO: pasar a metodo estatico
-						boost::filesystem::directory_iterator dir_itr( parent_path );
-						for ( ; dir_itr != end_iter; ++dir_itr )
-						{
-							file_inode_info inode_info ( dir_itr->path() ); //TODO: puede arrojar una excepcion
-							if ( watch->inode_info_ == inode_info )
-							{
-								break;
-							}
-						}
-
-						if ( dir_itr != end_iter )
-						{
-							std::cout << "Nuevo Nombre de Archivo:  " << dir_itr->path().native_file_string() << std::endl;
-							//watch->path_ = dir_itr->path();
-							watch->set_path( dir_itr->path() );
-
-							//TODO: llamar a metodo para renombrar
-						}
-						else	
-						{
-							std::cout << "-----------------------------------------------------------------------" << std::endl;
-							std::cout << "File removed: " << std::endl;
-							std::cout << "watch->path: " << watch->get_path().native_file_string() << std::endl;
- 							std::cout << "watch->inode_info_.device_id_: " << watch->inode_info_.device_id_ << std::endl;
-							std::cout << "watch->inode_info_.inode_number_: " << watch->inode_info_.inode_number_ << std::endl;
-							std::cout << "-----------------------------------------------------------------------" << std::endl;
-
-							//TODO: llamar a metodo para eliminar
-
-							//it = head_dir->subitems.erase(it);
-							break;						
-						}
-					}
-
-					std::cout << "--------------------------------------------------------------------------------------" << std::endl;
-
+					handle_renaming();
 				}
 
 				if ( event.fflags & NOTE_WRITE )
