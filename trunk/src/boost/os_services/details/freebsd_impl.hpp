@@ -119,8 +119,8 @@ struct fs_item;		//forward-declaration
 struct user_entry;	//forward-declaration
 
 //TODO: ver boost::ptr_vector
-typedef boost::shared_ptr<fs_item> watch_type;	//TODO: renombrar
-typedef std::vector<watch_type> watch_collection_type; //TODO: renombrar
+typedef boost::shared_ptr<fs_item> watch_type;			//TODO: renombrar
+typedef std::vector<watch_type> watch_collection_type;	//TODO: renombrar
 
 
 struct file_inode_info
@@ -237,10 +237,33 @@ public:
 		//std::cout << "this->path.native_file_string(): " << this->path.native_file_string() << std::endl;
 	}
 
-	bool operator==(const fs_item& other) const
+	//bool operator==(const fs_item& other) const
+	//{
+	//	return ( this->path_ == other.path_ && this->inode_info_ == other.inode_info_ );
+	//}
+
+
+	bool is_equal(const fs_item& other) const
 	{
-		return  ( this->path_ == other.path_ && this->inode_info_ == other.inode_info_ );
+		return ( this->path_ == other.path_ && this->inode_info_ == other.inode_info_ );
 	}
+
+	bool is_equal(const watch_type& other) const
+	{
+		return ( this->path_ == other->path_ && this->inode_info_ == other->inode_info_ );
+	}
+
+	bool is_equal(fs_item* other) const
+	{
+		return ( this->path_ == other->path_ && this->inode_info_ == other->inode_info_ );
+	}
+
+	bool is_equal(const file_inode_info& inode_info, const boost::filesystem::path& path) const
+	{
+		return (  this->inode_info_ == inode_info && this->path_ == path );
+	}
+
+	
 
 
 
@@ -520,7 +543,8 @@ struct user_entry
 					//std::cout << "(*it)->inode_info_.inode_number_: " << (*it)->inode_info_.inode_number_ << std::endl;
 					//std::cout << "-----------------------------------------------------------------------" << std::endl;
 
-					if (  (*it)->inode_info_ == inode_info && (*it)->get_path().native_file_string() == dir_itr->path().native_file_string() )
+					//if (  (*it)->inode_info_ == inode_info && (*it)->get_path().native_file_string() == dir_itr->path().native_file_string() )
+					if (  (*it)->is_equal ( inode_info, dir_itr->path() ) )
 					{
 						//std::cout << "found inode & filename: " << (*it)->path.native_file_string() << std::endl;
 						(*it)->mask_ = 0; //-999;
@@ -537,7 +561,8 @@ struct user_entry
 							found_inode = true;
 						}
 
-						if ( (*it)->get_path().native_file_string() == dir_itr->path().native_file_string() )
+						//if ( (*it)->get_path().native_file_string() == dir_itr->path().native_file_string() )
+						if ( (*it)->get_path() == dir_itr->path() )
 						{
 							//std::cout << "found filename: " << (*it)->path.native_file_string() << std::endl;
 							found_filename = true;
@@ -877,7 +902,8 @@ public: //private:  //TODO:
 					{
 
 						//if ( watch->get_path() == (*it)->get_path() && watch->inode_info_ == (*it)->inode_info_ )
-						if ( watch == (*it) )
+						//if ( watch == (*it) )
+						if ( watch->is_equal( *it ) )
 						{
 							std::cout << "-----------------------------------------------------------------------" << std::endl;
 							std::cout << "File removed: " << std::endl;
