@@ -115,7 +115,7 @@ static int next_watch_ = 0;			//TODO: analizar si es necesario
 static int kqueue_file_descriptor_ = 0; //TODO: que onda????? esto esta en freebsd_impl
 
 	
-struct fs_item;				//forward-declaration
+struct fs_item;		//forward-declaration
 struct user_entry;	//forward-declaration
 
 //TODO: ver boost::ptr_vector
@@ -208,8 +208,9 @@ struct file_inode_info
 };
 
 //TODO: renombrar
-struct fs_item
+class fs_item
 {
+public;
 	//TODO: agegar metodo add_subitem
 
 	fs_item()
@@ -219,13 +220,16 @@ struct fs_item
 		//std::cout << "this->path.native_file_string(): " << this->path.native_file_string() << std::endl;
 	}
 
-	fs_item(const boost::filesystem::path& path)
-		: path_(path), file_descriptor_(0), watch_descriptor_(0), parent_(0), root_user_entry_(0)
+	fs_item ( const boost::filesystem::path& path )
+		: path_(path), is_directory_(false), file_descriptor_(0), watch_descriptor_(0), parent_(0), root_user_entry_(0)
 	{
 		std::cout << "--------------------- fs_item(const boost::filesystem::path& path) ------------------------------" << std::endl;
+
+		if ( boost::filesystem::is_directory( this->path_ ) )
+		{
+			this->is_directory_ = true;
+		}
 	}
-
-
 
 	~fs_item()
 	{
@@ -233,6 +237,22 @@ struct fs_item
 		//std::cout << "this->path.native_file_string(): " << this->path.native_file_string() << std::endl;
 	}
 
+	void set_path ( const boost::filesystem::path& path )
+	{
+		this->path_ = path;
+
+		if ( boost::filesystem::is_directory( this->path_ ) )
+		{
+			this->is_directory_ = true;
+		}
+	}
+
+	boost::filesystem::path get_path ( ) const
+	{
+		return this->path_;
+	}
+
+private:
 	boost::filesystem::path path_;
 	bool is_directory_;
 
@@ -276,7 +296,8 @@ struct user_entry
 	void initialize()
 	{
 		watch_type item(new fs_item);
-		item->path_ = path_;
+		//item->path_ = path_;
+		item->set_path ( path_ );
 
 		head_ = item;
 		all_watches_.push_back(item);
@@ -309,12 +330,12 @@ struct user_entry
 		if (watch->watch_descriptor_ < 0)
 		{
 			std::ostringstream oss;
-			oss << "Failed to monitor directory - Directory: " << watch->path_.native_file_string() << " - Reason: " << std::strerror(errno);
+			oss << "Failed to monitor directory - Directory: " << watch->get_path().native_file_string() << " - Reason: " << std::strerror(errno);
 			throw (std::invalid_argument(oss.str()));
 		}
 
 		//if ( (watch->fd = open( watch->path.native_file_string().c_str(), O_RDONLY )) < 0)
-		watch->file_descriptor_ = open( watch->path_.native_file_string().c_str(), O_EVTONLY );
+		watch->file_descriptor_ = open( watch->get_path().native_file_string().c_str(), O_EVTONLY );
 		if ( watch->file_descriptor_ == -1 ) //< 0
 		{
 			//warn("opening path `%s' failed", watch->path);
@@ -345,13 +366,19 @@ struct user_entry
 		//watch->inode_info_.set( st );
 
 
-		watch->inode_info_.set( watch->path_ );
+		watch->inode_info_.set( watch->get_path() );
 
-		if ( boost::filesystem::is_directory( watch->path_ ) )
+		//if ( boost::filesystem::is_directory( watch->path_ ) )
+		//{
+		//	watch->is_directory_ = true;
+		//	scan_directory( watch.get() );
+		//}
+		if ( watch->is_directory_ )
 		{
-			watch->is_directory_ = true;
 			scan_directory( watch.get() );
 		}
+
+
 
 		/* Generate a new watch ID */
 		/* FIXME - this never decreases and might fail */
@@ -372,7 +399,7 @@ struct user_entry
 			std::cout << "-------------------------------------------------------------------------------" << std::endl;
 			std::cout << "watch->fd: " << watch->file_descriptor_ << std::endl;
 			std::cout << "watch->wd: " << watch->watch_descriptor_ << std::endl;
-			std::cout << "watch->path.native_file_string(): " << watch->path_.native_file_string() << std::endl;
+			std::cout << "watch->path.native_file_string(): " << watch->get_path().native_file_string() << std::endl;
 			std::cout << "-------------------------------------------------------------------------------" << std::endl;
 		}
 
@@ -450,7 +477,7 @@ struct user_entry
 	void scan_directory( fs_item* head_dir )
 	{
 		std::cout << "void scan_directory( fsitem* head_dir )" << std::endl;
-		std::cout << "head_dir->path.native_file_string(): " << head_dir->path_.native_file_string() << std::endl;
+		std::cout << "head_dir->path.native_file_string(): " << head_dir->get_path().native_file_string() << std::endl;
 
 		watch_collection_type temp_file_list;
 
@@ -465,7 +492,7 @@ struct user_entry
 		//		std::cout << "PN_CREATE: " << PN_CREATE << std::endl;
 
 		boost::filesystem::directory_iterator end_iter;
-		for ( boost::filesystem::directory_iterator dir_itr( head_dir->path_ ); dir_itr != end_iter; ++dir_itr )
+		for ( boost::filesystem::directory_iterator dir_itr( head_dir->get_path() ); dir_itr != end_iter; ++dir_itr )
 		{
 			try
 			{
@@ -544,7 +571,8 @@ struct user_entry
 					//					std::cout << "dir_st.st_ino: " << dir_st.st_ino << std::endl;
 
 					watch_type item(new fs_item);
-					item->path_ = dir_itr->path();
+					//item->path_ = dir_itr->path();
+					item->set_path( dir_itr->path() );
 
 					this->all_watches_.push_back(item);
 
@@ -742,7 +770,7 @@ public:
 		//TODO: asignar mask
 
 		user_item_pointer item(new user_entry);
-		item->path_ = dir_name;
+		item->path_ = dir_name; //TODO: revisar
 		user_watches_.push_back(item);
 	}
 	//void remove_directory_impl(const std::string& dir_name) // throw (std::invalid_argument);
@@ -851,7 +879,7 @@ public: //private:  //TODO:
 					std::cout << "watch->wd: " << watch->watch_descriptor_ << std::endl;
 					//std::cout << "watch->parent_watch_descriptor_: " << watch->parent_watch_descriptor_ << std::endl;
 					std::cout << "watch->parent: " << watch->parent_ << std::endl;
-					std::cout << "watch->path: " << watch->path_.native_file_string() << std::endl;
+					std::cout << "watch->path: " << watch->get_path().native_file_string() << std::endl;
 					std::cout << "watch->is_directory: " << watch->is_directory_ << std::endl;
 					std::cout << "watch->mask: " << watch->mask_ << std::endl;
 					std::cout << "watch->inode_info_.device_id_: " << watch->inode_info_.device_id_ << std::endl;
@@ -868,7 +896,7 @@ public: //private:  //TODO:
 					watch_collection_type::iterator it = watch->parent_->subitems_.begin();
 					while ( it != watch->parent_->subitems_.end() )
 					{
-						if ( watch->path_ == (*it)->path && watch->inode_info_ == (*it)->inode_info_ )
+						if ( watch->get_path() == (*it)->path && watch->inode_info_ == (*it)->inode_info_ )
 						{
 							std::cout << "-----------------------------------------------------------------------" << std::endl;
 							std::cout << "File removed: " << std::endl;
@@ -899,7 +927,7 @@ public: //private:  //TODO:
 					std::cout << "watch->wd: " << watch->watch_descriptor_ << std::endl;
 					//std::cout << "watch->parent_watch_descriptor_: " << watch->parent_watch_descriptor_ << std::endl;
 					std::cout << "watch->parent: " << watch->parent_ << std::endl;
-					std::cout << "watch->path: " << watch->path_.native_file_string() << std::endl;
+					std::cout << "watch->path: " << watch->get_path().native_file_string() << std::endl;
 					std::cout << "watch->is_directory: " << watch->is_directory_ << std::endl;
 					std::cout << "watch->mask: " << watch->mask_ << std::endl;
 					std::cout << "watch->inode_info_.device_id_: " << watch->inode_info_.device_id_ << std::endl;
@@ -971,7 +999,8 @@ public: //private:  //TODO:
 						if ( dir_itr != end_iter )
 						{
 							std::cout << "Nuevo Nombre de Archivo:  " << dir_itr->path().native_file_string() << std::endl;
-							watch->path_ = dir_itr->path();
+							//watch->path_ = dir_itr->path();
+							watch->set_path( dir_itr->path() );
 
 							//TODO: llamar a metodo para renombrar
 						}
@@ -979,7 +1008,7 @@ public: //private:  //TODO:
 						{
 							std::cout << "-----------------------------------------------------------------------" << std::endl;
 							std::cout << "File removed: " << std::endl;
-							std::cout << "watch->path: " << watch->path_.native_file_string() << std::endl;
+							std::cout << "watch->path: " << watch->get_path().native_file_string() << std::endl;
  							std::cout << "watch->inode_info_.device_id_: " << watch->inode_info_.device_id_ << std::endl;
 							std::cout << "watch->inode_info_.inode_number_: " << watch->inode_info_.inode_number_ << std::endl;
 							std::cout << "-----------------------------------------------------------------------" << std::endl;
@@ -1004,7 +1033,7 @@ public: //private:  //TODO:
 					std::cout << "watch->wd: " << watch->watch_descriptor_ << std::endl;
 					//std::cout << "watch->parent_watch_descriptor_: " << watch->parent_watch_descriptor_ << std::endl;
 					std::cout << "watch->parent: " << watch->parent_ << std::endl;
-					std::cout << "watch->path: " << watch->path_.native_file_string() << std::endl;
+					std::cout << "watch->path: " << watch->get_path().native_file_string() << std::endl;
 					std::cout << "watch->is_directory: " << watch->is_directory_ << std::endl;
 					std::cout << "watch->mask: " << watch->mask_ << std::endl;
 					std::cout << "watch->inode_info_.device_id_: " << watch->inode_info_.device_id_ << std::endl;
