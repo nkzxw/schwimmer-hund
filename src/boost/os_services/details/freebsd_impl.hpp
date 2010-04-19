@@ -539,7 +539,7 @@ struct user_entry
 					//std::cout << "(*it)->inode_info_.inode_number_: " << (*it)->inode_info_.inode_number_ << std::endl;
 					//std::cout << "-----------------------------------------------------------------------" << std::endl;
 
-					if (  (*it)->inode_info_ == inode_info && (*it)->path.native_file_string() == dir_itr->path().native_file_string() )
+					if (  (*it)->inode_info_ == inode_info && (*it)->get_path().native_file_string() == dir_itr->path().native_file_string() )
 					{
 						//std::cout << "found inode & filename: " << (*it)->path.native_file_string() << std::endl;
 						(*it)->mask_ = 0; //-999;
@@ -556,7 +556,7 @@ struct user_entry
 							found_inode = true;
 						}
 
-						if ( (*it)->path.native_file_string() == dir_itr->path().native_file_string() )
+						if ( (*it)->get_path().native_file_string() == dir_itr->path().native_file_string() )
 						{
 							//std::cout << "found filename: " << (*it)->path.native_file_string() << std::endl;
 							found_filename = true;
@@ -638,7 +638,8 @@ struct user_entry
 							break;
 						}
 
-						if ( (*it)->path.native_file_string() == (*it2)->path.native_file_string() )
+						//TODO: esta comparacion por native es necesaria ?????
+						if ( (*it)->get_path().native_file_string() == (*it2)->get_path().native_file_string() )
 						{
 							//TODO: que hacemos acá, ver cuando podría a generarse este caso... Me parece que nunca.
 							//TODO: volver a habilitar hasta el fin de las pruebas
@@ -893,11 +894,11 @@ public: //private:  //TODO:
 					watch_collection_type::iterator it = watch->parent_->subitems_.begin();
 					while ( it != watch->parent_->subitems_.end() )
 					{
-						if ( watch->get_path() == (*it)->path && watch->inode_info_ == (*it)->inode_info_ )
+						if ( watch->get_path() == (*it)->get_path() && watch->inode_info_ == (*it)->inode_info_ )
 						{
 							std::cout << "-----------------------------------------------------------------------" << std::endl;
 							std::cout << "File removed: " << std::endl;
-							std::cout << "(*it)->path.native_file_string(): " << (*it)->path.native_file_string() << std::endl;
+							std::cout << "(*it)->get_path().native_file_string(): " << (*it)->get_path().native_file_string() << std::endl;
 							std::cout << "(*it)->inode_info_.device_id_: " << (*it)->inode_info_.device_id_ << std::endl;
 							std::cout << "(*it)->inode_info_.inode_number_: " << (*it)->inode_info_.inode_number_ << std::endl;
 							std::cout << "-----------------------------------------------------------------------" << std::endl;
