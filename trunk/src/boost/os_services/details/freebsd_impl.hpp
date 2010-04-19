@@ -387,11 +387,11 @@ struct user_entry
 					std::cout << to_iso_string(now) << std::endl;
 				}
 
-				std::cout << "-----------------------------------------------------------------------" << std::endl;
-				std::cout << "dir_itr->path().native_file_string(): " << dir_itr->path().native_file_string() << std::endl;
-				std::cout << "dir_st.st_dev: " << dir_st.st_dev << std::endl;
-				std::cout << "dir_st.st_ino: " << dir_st.st_ino << std::endl;
-				std::cout << "-----------------------------------------------------------------------" << std::endl;
+				//std::cout << "-----------------------------------------------------------------------" << std::endl;
+				//std::cout << "dir_itr->path().native_file_string(): " << dir_itr->path().native_file_string() << std::endl;
+				//std::cout << "dir_st.st_dev: " << dir_st.st_dev << std::endl;
+				//std::cout << "dir_st.st_ino: " << dir_st.st_ino << std::endl;
+				//std::cout << "-----------------------------------------------------------------------" << std::endl;
 
 
 				//TODO: reemplazar por std::find o algo similar...
@@ -403,11 +403,11 @@ struct user_entry
 				for (watch_collection_type::iterator it =  head_dir->subitems.begin(); it != head_dir->subitems.end(); ++it )
 				{
 
-					std::cout << "-----------------------------------------------------------------------" << std::endl;
-					std::cout << "(*it)->path.native_file_string(): " << (*it)->path.native_file_string() << std::endl;
-					std::cout << "(*it)->st_dev: " << (*it)->st_dev << std::endl;
-					std::cout << "(*it)->st_ino: " << (*it)->st_ino << std::endl;
-					std::cout << "-----------------------------------------------------------------------" << std::endl;
+					//std::cout << "-----------------------------------------------------------------------" << std::endl;
+					//std::cout << "(*it)->path.native_file_string(): " << (*it)->path.native_file_string() << std::endl;
+					//std::cout << "(*it)->st_dev: " << (*it)->st_dev << std::endl;
+					//std::cout << "(*it)->st_ino: " << (*it)->st_ino << std::endl;
+					//std::cout << "-----------------------------------------------------------------------" << std::endl;
 
 
 					if (  dir_st.st_dev == (*it)->st_dev && dir_st.st_ino == (*it)->st_ino && (*it)->path.native_file_string() == dir_itr->path().native_file_string() )
@@ -793,14 +793,15 @@ public: //private:  //TODO:
 
 					boost::filesystem::path parent;
 
-					////TODO: find
-					//for (watch_collection_type::iterator it =  all_watches_.begin(); it != all_watches_.end(); ++it )
-					//{
-					//	if ( watch->parent_watch_descriptor_ == (*it)->watch_descriptor_ )
-					//	{
-					//		parent = (*it)->path;
-					//	}
-					//}
+					
+					//TODO: find
+					for (watch_collection_type::iterator it =  watch->parent_user_entry->all_watches_.begin(); it != watch->parent_user_entry->all_watches_.end(); ++it )
+					{
+						if ( watch->parent_watch_descriptor_ == (*it)->watch_descriptor_ )
+						{
+							parent = (*it)->path;
+						}
+					}
 
 					if ( ! parent.empty() )
 					{
@@ -826,6 +827,7 @@ public: //private:  //TODO:
 								if (  dir_st.st_dev == watch->st_dev && dir_st.st_ino == watch->st_ino )
 								{
 									std::cout << "Nuevo Nombre de Archivo:  " << dir_itr->path().native_file_string() << std::endl;
+									watch->path = dir_itr->path();
 								}
 							}
 						}
