@@ -675,7 +675,35 @@ public: //private:  //TODO:
 		std::cout << "watch->inode_info_.inode_number_: " << watch->inode_info_.inode_number_ << std::endl;
 		std::cout << "-----------------------------------------------------------------------" << std::endl;
 
-		//it = head_dir->subitems.erase(it);
+		filesystem_item::collection_type::iterator it = watch->parent_->subitems_.begin();
+		while ( it != watch->parent_->subitems_.end() )
+		{
+			//if ( watch == (*it) )
+			if ( watch->is_equal( *it ) )
+			{
+				it = watch->parent_->subitems_.erase(it);
+				break;
+			}
+			else
+			{
+				++it;
+			}
+		}
+		
+		it = watch->root_user_entry_->all_watches_.begin();
+		while ( it != watch->parent_->subitems_.end() )
+		{
+			if ( watch->is_equal( *it ) )
+			{
+				it = watch->root_user_entry_->all_watches_.erase(it);
+				break;
+			}
+			else
+			{
+				++it;
+			}
+		}
+
 		//TODO: llamar a metodo que lanza el evento...
 	}
 
@@ -683,14 +711,14 @@ public: //private:  //TODO:
 	{
 		std::cout << "---------------------------------- NOTE_RENAME ---------------------------------------" << std::endl;
 
-		std::cout << "watch: " << watch << std::endl;
-		std::cout << "watch->fd: " << watch->file_descriptor_ << std::endl;
-		std::cout << "watch->parent: " << watch->parent_ << std::endl;
-		std::cout << "watch->path: " << watch->get_path().native_file_string() << std::endl;
-		std::cout << "watch->is_directory: " << watch->is_directory() << std::endl;
-		std::cout << "watch->mask_: " << watch->mask_ << std::endl;
-		std::cout << "watch->inode_info_.device_id_: " << watch->inode_info_.device_id_ << std::endl;
-		std::cout << "watch->inode_info_.inode_number_: " << watch->inode_info_.inode_number_ << std::endl;
+		//std::cout << "watch: " << watch << std::endl;
+		//std::cout << "watch->fd: " << watch->file_descriptor_ << std::endl;
+		//std::cout << "watch->parent: " << watch->parent_ << std::endl;
+		//std::cout << "watch->path: " << watch->get_path().native_file_string() << std::endl;
+		//std::cout << "watch->is_directory: " << watch->is_directory() << std::endl;
+		//std::cout << "watch->mask_: " << watch->mask_ << std::endl;
+		//std::cout << "watch->inode_info_.device_id_: " << watch->inode_info_.device_id_ << std::endl;
+		//std::cout << "watch->inode_info_.inode_number_: " << watch->inode_info_.inode_number_ << std::endl;
 
 		boost::filesystem::path parent_path;
 
@@ -698,10 +726,10 @@ public: //private:  //TODO:
 
 		if ( ! parent_path.empty() )
 		{
-			boost::filesystem::directory_iterator end_iter;
 
 			//TODO: pasar a metodo estatico
 			//TODO: STL find o similar...
+			boost::filesystem::directory_iterator end_iter;
 			boost::filesystem::directory_iterator dir_itr( parent_path );
 			for ( ; dir_itr != end_iter; ++dir_itr )
 			{
@@ -710,6 +738,8 @@ public: //private:  //TODO:
 				{
 					break;
 				}
+				//TODO: que pasa si se encuentran más de un archivo con el mismo inodo ?????
+				//      quiere decir que hay un symlink o un hardlink... ver como manejar eso...
 			}
 
 			if ( dir_itr != end_iter )
@@ -727,6 +757,39 @@ public: //private:  //TODO:
 
 	}
 
+	void handle_removing( filesystem_item* watch )
+	{
+		std::cout << "---------------------------------- NOTE_DELETE ---------------------------------------" << std::endl;
+
+		std::cout << "watch: " << watch << std::endl;
+		std::cout << "watch->fd: " << watch->file_descriptor_ << std::endl;
+		std::cout << "watch->parent: " << watch->parent_ << std::endl;
+		std::cout << "watch->path: " << watch->get_path().native_file_string() << std::endl;
+		std::cout << "watch->is_directory: " << watch->is_directory() << std::endl;
+		std::cout << "watch->mask_: " << watch->mask_ << std::endl;
+		std::cout << "watch->inode_info_.device_id_: " << watch->inode_info_.device_id_ << std::endl;
+		std::cout << "watch->inode_info_.inode_number_: " << watch->inode_info_.inode_number_ << std::endl;
+
+		//std::cout << "event.ident: " << event.ident << std::endl;
+		//std::cout << "event.filter: " << event.filter << std::endl;
+		//std::cout << "event.flags: " << event.flags << std::endl;
+		//std::cout << "event.fflags: " << event.fflags << std::endl;
+		//std::cout << "event.data: " << event.data << std::endl;
+		//std::cout << "event.udata: " << event.udata << std::endl;
+
+
+		std::cout << "-----------------------------------------------------------------------" << std::endl;
+		std::cout << "File removed: " << std::endl;
+		std::cout << "watch->get_path().native_file_string(): " << watch->get_path().native_file_string() << std::endl;
+		std::cout << "watch->inode_info_.device_id_: " << watch->inode_info_.device_id_ << std::endl;
+		std::cout << "watch->inode_info_.inode_number_: " << watch->inode_info_.inode_number_ << std::endl;
+		std::cout << "-----------------------------------------------------------------------" << std::endl;
+
+
+		remove_watch ( watch );
+
+		std::cout << "--------------------------------------------------------------------------------------" << std::endl;
+	}
 
 	void handle_directory_changes()
 	{
@@ -760,56 +823,12 @@ public: //private:  //TODO:
 
 				if ( event.fflags & NOTE_DELETE )
 				{
-					std::cout << "---------------------------------- NOTE_DELETE ---------------------------------------" << std::endl;
-
-					std::cout << "watch: " << watch << std::endl;
-					std::cout << "watch->fd: " << watch->file_descriptor_ << std::endl;
-					//std::cout << "watch->watch_descriptor_: " << watch->watch_descriptor_ << std::endl;
-					std::cout << "watch->parent: " << watch->parent_ << std::endl;
-					std::cout << "watch->path: " << watch->get_path().native_file_string() << std::endl;
-					std::cout << "watch->is_directory: " << watch->is_directory() << std::endl;
-					std::cout << "watch->mask_: " << watch->mask_ << std::endl;
-					std::cout << "watch->inode_info_.device_id_: " << watch->inode_info_.device_id_ << std::endl;
-					std::cout << "watch->inode_info_.inode_number_: " << watch->inode_info_.inode_number_ << std::endl;
-
-					//std::cout << "event.ident: " << event.ident << std::endl;
-					//std::cout << "event.filter: " << event.filter << std::endl;
-					//std::cout << "event.flags: " << event.flags << std::endl;
-					//std::cout << "event.fflags: " << event.fflags << std::endl;
-					//std::cout << "event.data: " << event.data << std::endl;
-					//std::cout << "event.udata: " << event.udata << std::endl;
-
-				
-					filesystem_item::collection_type::iterator it = watch->parent_->subitems_.begin();
-					while ( it != watch->parent_->subitems_.end() )
-					{
-
-						//if ( watch == (*it) )
-						if ( watch->is_equal( *it ) )
-						{
-							std::cout << "-----------------------------------------------------------------------" << std::endl;
-							std::cout << "File removed: " << std::endl;
-							std::cout << "(*it)->get_path().native_file_string(): " << (*it)->get_path().native_file_string() << std::endl;
-							std::cout << "(*it)->inode_info_.device_id_: " << (*it)->inode_info_.device_id_ << std::endl;
-							std::cout << "(*it)->inode_info_.inode_number_: " << (*it)->inode_info_.inode_number_ << std::endl;
-							std::cout << "-----------------------------------------------------------------------" << std::endl;
-
-							//it = head_dir->subitems.erase(it);
-							break;
-						}
-						else
-						{
-							++it;
-						}
-					}
-
-					std::cout << "--------------------------------------------------------------------------------------" << std::endl;
+					handle_removing( watch );
 				}
-
 
 				if ( event.fflags & NOTE_RENAME )
 				{
-					handle_renaming();
+					handle_renaming( watch );
 				}
 
 				if ( event.fflags & NOTE_WRITE )
@@ -825,15 +844,29 @@ public: //private:  //TODO:
 					std::cout << "watch->inode_info_.device_id_: " << watch->inode_info_.device_id_ << std::endl;
 					std::cout << "watch->inode_info_.inode_number_: " << watch->inode_info_.inode_number_ << std::endl;
 
-
 					//std::cout << "event.ident: " << event.ident << std::endl;
 					//std::cout << "event.filter: " << event.filter << std::endl;
 					//std::cout << "event.flags: " << event.flags << std::endl;
 					//std::cout << "event.fflags: " << event.fflags << std::endl;
 					//std::cout << "event.data: " << event.data << std::endl;
 					//std::cout << "event.udata: " << event.udata << std::endl;
+
+					if ( watch->is_directory() )
+					{
+						directory_event_handler( watch );
+					}
+					else
+					{
+						//TODO: un archivo fue editado
+					}
+
 					std::cout << "--------------------------------------------------------------------------------------" << std::endl;
 				}
+
+
+
+
+
 
 
 				//if (event.fflags & NOTE_TRUNCATE)
@@ -858,30 +891,7 @@ public: //private:  //TODO:
 				//}
 
 
-				//if ( boost::filesystem::is_directory( watch->path ) )
-				if ( watch->is_directory() )
-				{
-					if (event.fflags & NOTE_WRITE)
-					{
-						directory_event_handler( watch );
-					}
-					else if (event.fflags & NOTE_DELETE)	//TODO: Handle the deletion of a watched directory
-					{
-						//warn("unimplemented - TODO");
-						//return -1;
 
-						//TODO: cerrar el monitoreo del directorio e hijos...y el file_descriptor_
-					}
-					else
-					{
-						//TODO: excepcion
-						//warn("unknown event recieved");
-						//return -1;
-					}
-				}
-				else
-				{
-				}
 			}
 		}
 	}
