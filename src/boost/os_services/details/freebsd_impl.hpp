@@ -205,7 +205,9 @@ public:
 		set_path( path );
 	}
 
-	filesystem_item ( const boost::filesystem::path& path, user_entry* root_user_entry, filesystem_item* parent )
+	
+	//filesystem_item ( const boost::filesystem::path& path, user_entry* root_user_entry, filesystem_item* parent )
+	filesystem_item ( const boost::filesystem::path& path, user_entry* root_user_entry, filesystem_item::pointer_type parent )
 		: root_user_entry_(root_user_entry), parent_(parent), is_directory_(false), file_descriptor_(0), mask_(PN_ALL_EVENTS) //TODO: asignar lo que el usuario quiere monitorear...
 	{
 		//std::cout << "--------------------- fs_item ( const boost::filesystem::path& path, const user_entry* const root_user_entry, const fs_item* const parent ) ------------------------------" << std::endl;
@@ -250,7 +252,8 @@ public:
 		return ( this->path_ == other->path_ && this->inode_info_ == other->inode_info_ );
 	}
 
-	bool is_equal(filesystem_item* other) const
+	//bool is_equal(filesystem_item* other) const
+	bool is_equal(filesystem_item::pointer_type other) const
 	{
 		return ( this->path_ == other->path_ && this->inode_info_ == other->inode_info_ );
 	}
@@ -307,7 +310,11 @@ public: //private:
 	int file_descriptor_;
 	//TODO: ver si es necesario
 	boost::uint32_t mask_;
-	filesystem_item* parent_; //TODO: cambiar a filesystem_item::pointer_type
+
+	//filesystem_item* parent_; //TODO: cambiar a filesystem_item::pointer_type
+	filesystem_item::pointer_type parent_;
+
+
 	file_inode_info inode_info_;
 	//TODO: ver boost::ptr_vector
 	collection_type subitems_;
@@ -427,8 +434,10 @@ struct user_entry
 		}
 	}
 
+	
 	//TODO: contemplar la opcion include_sub_directories_
-	void scan_directory( filesystem_item* head_dir )
+	//void scan_directory( filesystem_item* head_dir )
+	void scan_directory( filesystem_item::pointer_type head_dir )
 	{
 		//std::cout << "void scan_directory( fsitem* head_dir )" << std::endl;
 		//std::cout << "head_dir->path.native_file_string(): " << head_dir->get_path().native_file_string() << std::endl;
@@ -581,12 +590,14 @@ public:
 public: //private:  //TODO:
 
 	//TODO: evaluar si rename_watch y remove_watch tienen que ir acá o en sus respectivas clases
-	void rename_watch ( filesystem_item* watch, const boost::filesystem::path& new_path ) 
+	//void rename_watch ( filesystem_item* watch, const boost::filesystem::path& new_path ) 
+	void rename_watch ( filesystem_item::pointer_type watch, const boost::filesystem::path& new_path ) 
 	{
 		watch->set_path( new_path );
 	}
 
-	void remove_watch ( filesystem_item* watch ) 
+	//void remove_watch ( filesystem_item* watch ) 
+	void remove_watch ( filesystem_item::pointer_type watch ) 
 	{
 		filesystem_item::collection_type::iterator it = watch->parent_->subitems_.begin();
 		while ( it != watch->parent_->subitems_.end() )
@@ -620,7 +631,8 @@ public: //private:  //TODO:
 		//TODO: llamar a metodo que lanza el evento...
 	}
 
-	void handle_rename( filesystem_item* watch )
+	//void handle_rename( filesystem_item* watch )
+	void handle_rename( filesystem_item::pointer_type watch )
 	{
 		boost::filesystem::path parent_path;
 
@@ -657,13 +669,15 @@ public: //private:  //TODO:
 		}
 	}
 
-	void handle_remove( filesystem_item* watch )
+	//void handle_remove( filesystem_item* watch )
+	void handle_remove( filesystem_item::pointer_type watch )
 	{
 		notify_file_system_event_args( change_types::deleted, watch->get_path() );
 		remove_watch ( watch );
 	}
 
-	void handle_write( filesystem_item* watch )
+	//void handle_write( filesystem_item* watch )
+	void handle_write( filesystem_item::pointer_type watch )
 	{
 		if ( watch->is_directory() )
 		{
@@ -678,7 +692,8 @@ public: //private:  //TODO:
 
 	void handle_directory_changes()
 	{
-		filesystem_item* queued_write_watch = 0;
+		//filesystem_item* queued_write_watch = 0;
+		filesystem_item::pointer_type queued_write_watch = 0;
 
 		while ( ! closing_ )
 		{
@@ -737,10 +752,6 @@ public: //private:  //TODO:
 					//TODO: esto puede ser un tema, porque el shared_ptr (filesystem_item::pointer_type) va a tener el contador en 1 y cuando salga de scope va a hacer delete de la memoria...
 					//filesystem_item::pointer_type watch( (fsitem*) event.udata );
 					//filesystem_item* watch = (filesystem_item*) event.udata; //TODO: reinterpret_cast<>
-
-					//filesystem_item::pointer_type* watch_temp = reinterpret_cast<filesystem_item::pointer_type*>( event.udata );
-					//filesystem_item::pointer_type watch_temp_2 = *watch_temp;
-					//filesystem_item* watch = watch_temp_2.get();
 
 					filesystem_item::pointer_type watch = *reinterpret_cast<filesystem_item::pointer_type*>( event.udata );
 
