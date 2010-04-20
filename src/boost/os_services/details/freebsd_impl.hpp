@@ -383,7 +383,8 @@ struct user_entry
 
 		if ( watch->is_directory() )
 		{
-			scan_directory( watch.get() );
+			//scan_directory( watch.get() );
+			scan_directory( watch );
 		}
 
 		//TODO: traducir de watch->mask_ a fflags
