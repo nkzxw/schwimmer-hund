@@ -174,6 +174,10 @@
 				RelativePath="..\..\src\libs\os_services\test\test_kqueue.cpp"
 				>
 			</File>
+			<File
+				RelativePath="..\..\src\libs\os_services\test\test_smart_ptrs.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
