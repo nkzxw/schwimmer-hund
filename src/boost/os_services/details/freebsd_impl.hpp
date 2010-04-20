@@ -500,49 +500,46 @@ public:
 		//kqueue_file_descriptor_ = 0;
 	}
 
-//	~freebsd_impl()
-//	{
-//		//TODO: rehacer completamente el destructor...
-//
-//		closing_ = true;
-//
-//		if ( thread_ )
-//		{
-//			thread_->join();
-//		}
-//
-//		if ( kqueue_file_descriptor_ != 0 )
-//		{
-//			//TODO:
-////			BOOST_FOREACH(pair_type p, watch_descriptors_)
-////			{
-////				if ( p.second != 0 )
-////				{
-////					//int ret_value = ::inotify_rm_watch( kqueue_file_descriptor_, p.second );
-////					int ret_value = 0;
-////
-////					if ( ret_value < 0 )
-////					{
-////						//TODO: analizar si esta es la forma optima de manejar errores.
-////						std::ostringstream oss;
-////						oss << "Failed to remove watch - Reason: "; //TODO: ver que usar en Linux/BSD << GetLastError();
-////						throw (std::runtime_error(oss.str()));
-////					}
-////				}
-////			}
-//
-//			// TODO: parece que close(0) cierra el standard input (CIN)
-//			//int ret_value = ::close( kqueue_file_descriptor_ );
-//			int ret_value = 0;
-//
-//			if ( ret_value < 0 )
-//			{
-//				std::ostringstream oss;
-//				oss << "Failed to close file descriptor - Reason: "; //TODO: ver que usar en Linux/BSD << GetLastError();
-//				throw (std::runtime_error(oss.str()));
-//			}
-//		}
-//	}
+	~freebsd_impl()
+	{
+		closing_ = true;
+
+		if ( kqueue_file_descriptor_ != 0 )
+		{
+			//TODO:
+			//			BOOST_FOREACH(pair_type p, watch_descriptors_)
+			//			{
+			//				if ( p.second != 0 )
+			//				{
+			//					//int ret_value = ::inotify_rm_watch( kqueue_file_descriptor_, p.second );
+			//					int ret_value = 0;
+			//
+			//					if ( ret_value < 0 )
+			//					{
+			//						//TODO: analizar si esta es la forma optima de manejar errores.
+			//						std::ostringstream oss;
+			//						oss << "Failed to remove watch - Reason: "; //TODO: ver que usar en Linux/BSD << GetLastError();
+			//						throw (std::runtime_error(oss.str()));
+			//					}
+			//				}
+			//			}
+
+			int ret_value = ::close( kqueue_file_descriptor_ );
+			if ( ret_value < 0 )
+			{
+				std::ostringstream oss;
+				oss << "Failed to close file descriptor - Reason: "; //TODO: ver que usar en Linux/BSD << GetLastError();
+				throw (std::runtime_error(oss.str()));
+			}
+		}
+
+		if ( thread_ )
+		{
+			thread_->join();
+		}
+
+
+	}
 
 
 	//TODO: agregar
@@ -582,7 +579,7 @@ public:
 		initialize();
 
 		//TODO: BOOST_FOREACH
-		
+		//TODO: STL transform
 		for (user_entry::collection_type::iterator it = user_watches_.begin(); it != user_watches_.end(); ++it )
 		{
 			(*it)->initialize();
@@ -596,34 +593,11 @@ public: //private:  //TODO:
 	//TODO: evaluar si rename_watch y remove_watch tienen que ir acá o en sus respectivas clases
 	void rename_watch ( filesystem_item* watch, const boost::filesystem::path& new_path ) 
 	{
-		//if ( old_name )
-		//{
-		//	notify_rename_event_args(change_types::renamed, directory_name, file_name, *old_name);
-		//	old_name.reset();
-		//}
-		//else
-		//{
-		//	notify_rename_event_args(change_types::renamed, directory_name, file_name, "");
-		//	old_name.reset();
-		//}
-
-		notify_rename_event_args ( change_types::renamed, new_path, watch->get_path() );
-		
 		watch->set_path( new_path );
-		//std::cout << "Nuevo Nombre de Archivo:  " << watch->get_path().native_file_string() << std::endl;
 	}
 
 	void remove_watch ( filesystem_item* watch ) 
 	{
-		std::cout << "-----------------------------------------------------------------------" << std::endl;
-		std::cout << "File removed: " << std::endl;
-		std::cout << "watch->path: " << watch->get_path().native_file_string() << std::endl;
-		std::cout << "watch->inode_info_.device_id_: " << watch->inode_info_.device_id_ << std::endl;
-		std::cout << "watch->inode_info_.inode_number_: " << watch->inode_info_.inode_number_ << std::endl;
-		std::cout << "-----------------------------------------------------------------------" << std::endl;
-
-		notify_file_system_event_args( change_types::deleted, watch->get_path() );
-
 		filesystem_item::collection_type::iterator it = watch->parent_->subitems_.begin();
 		while ( it != watch->parent_->subitems_.end() )
 		{
@@ -658,17 +632,6 @@ public: //private:  //TODO:
 
 	void handle_rename( filesystem_item* watch )
 	{
-		//std::cout << "---------------------------------- NOTE_RENAME ---------------------------------------" << std::endl;
-
-		//std::cout << "watch: " << watch << std::endl;
-		//std::cout << "watch->fd: " << watch->file_descriptor_ << std::endl;
-		//std::cout << "watch->parent: " << watch->parent_ << std::endl;
-		//std::cout << "watch->path: " << watch->get_path().native_file_string() << std::endl;
-		//std::cout << "watch->is_directory: " << watch->is_directory() << std::endl;
-		//std::cout << "watch->mask_: " << watch->mask_ << std::endl;
-		//std::cout << "watch->inode_info_.device_id_: " << watch->inode_info_.device_id_ << std::endl;
-		//std::cout << "watch->inode_info_.inode_number_: " << watch->inode_info_.inode_number_ << std::endl;
-
 		boost::filesystem::path parent_path;
 
 		parent_path = watch->root_user_entry_->path_;
@@ -692,32 +655,26 @@ public: //private:  //TODO:
 
 			if ( dir_itr != end_iter )
 			{
+				notify_rename_event_args ( change_types::renamed, dir_itr->path(), watch->get_path() );
 				rename_watch(watch, dir_itr->path());
 			}
 			else	
 			{
-				remove_watch ( watch );
-				//it = head_dir->subitems.erase(it);
+				//TODO: esto es un remove o un rename ?????
+				//notify_rename_event_args ( change_types::renamed, new_path, watch->get_path() );
+				handle_remove( watch );
 			}
 		}
+	}
 
-		//std::cout << "--------------------------------------------------------------------------------------" << std::endl;
-
+	void handle_remove( filesystem_item* watch )
+	{
+		notify_file_system_event_args( change_types::deleted, watch->get_path() );
+		remove_watch ( watch );
 	}
 
 	void handle_write( filesystem_item* watch )
 	{
-		//std::cout << "---------------------------------- NOTE_WRITE ---------------------------------------" << std::endl;
-
-		//std::cout << "watch: " << watch << std::endl;
-		//std::cout << "watch->fd: " << watch->file_descriptor_ << std::endl;
-		//std::cout << "watch->parent: " << watch->parent_ << std::endl;
-		//std::cout << "watch->path: " << watch->get_path().native_file_string() << std::endl;
-		//std::cout << "watch->is_directory: " << watch->is_directory() << std::endl;
-		//std::cout << "watch->mask_: " << watch->mask_ << std::endl;
-		//std::cout << "watch->inode_info_.device_id_: " << watch->inode_info_.device_id_ << std::endl;
-		//std::cout << "watch->inode_info_.inode_number_: " << watch->inode_info_.inode_number_ << std::endl;
-
 		if ( watch->is_directory() )
 		{
 			//TODO: no está buena esta llamada... no me convence...
@@ -761,12 +718,17 @@ public: //private:  //TODO:
 
 			}
 
+			std::cout << "return_code: " << return_code << std::endl;
+			std::cout << "event.flags: " << event.flags << std::endl;
+			std::cout << "EV_ERROR: " << EV_ERROR << std::endl;
+			std::cout << "closing_: " << closing_ << std::endl;
+
 			if ( return_code == -1 || event.flags & EV_ERROR) //< 0
 			{
 				//TODO: si esta closing_ quiere decir que se cerro desde afuera
 				//TODO: if ( ! closing_ )
 
-				//TODO:
+				//TODO: error
 				//warn("kevent(2) failed");
 				std::cout << "ERRRRRRRRRRRRRORRR ON kevent Wait" << std::endl;
 				return;
@@ -798,8 +760,7 @@ public: //private:  //TODO:
 
 					if ( event.fflags & NOTE_DELETE )
 					{
-						//handle_remove( watch );
-						remove_watch ( watch );
+						handle_remove( watch );
 					}
 
 					if ( event.fflags & NOTE_RENAME )
