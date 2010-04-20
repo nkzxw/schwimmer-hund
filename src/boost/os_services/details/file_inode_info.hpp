@@ -1,9 +1,6 @@
 #ifndef BOOST_OS_SERVICES_DETAIL_FILE_INODE_INFO_HPP
 #define BOOST_OS_SERVICES_DETAIL_FILE_INODE_INFO_HPP
 
-namespace boost {
-namespace os_services {
-namespace detail {
 
 //#include <iostream>
 #include <sstream>
@@ -13,6 +10,14 @@ namespace detail {
 
 #include <boost/filesystem/path.hpp>
 
+
+
+
+namespace boost {
+namespace os_services {
+namespace detail {
+
+	
 struct file_inode_info
 {
 	//TODO: public, protected, private ?????
