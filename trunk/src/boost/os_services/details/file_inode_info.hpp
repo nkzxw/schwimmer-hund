@@ -5,6 +5,14 @@ namespace boost {
 namespace os_services {
 namespace detail {
 
+//#include <iostream>
+#include <sstream>
+#include <string>
+
+#include <sys/stat.h>
+
+#include <boost/filesystem/path.hpp>
+
 struct file_inode_info
 {
 	//TODO: public, protected, private ?????
