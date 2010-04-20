@@ -42,13 +42,13 @@ There are platforms that are not supported due to lack of developer resources. I
 //#include <sys/types.h>
 //#include <unistd.h>
 
-//#include <boost/bind.hpp>
-//#include <boost/enable_shared_from_this.hpp>
-//#include <boost/filesystem/path.hpp>
+#include <boost/bind.hpp>
+#include <boost/enable_shared_from_this.hpp>
+#include <boost/filesystem/path.hpp>
 //#include <boost/foreach.hpp>
 //#include <boost/integer.hpp>
-//#include <boost/smart_ptr.hpp>
-//#include <boost/thread.hpp>
+#include <boost/smart_ptr.hpp>
+#include <boost/thread.hpp>
 
 #include <boost/os_services/change_types.hpp>
 #include <boost/os_services/details/base_impl.hpp>
