@@ -611,13 +611,19 @@ public: //private:  //TODO:
 
 			struct kevent event;
 
-			struct timespec *timeout;
-			timeout->tv_sec = 0;
-			timeout->tv_nsec = 300000; //300 milliseconds //TODO: sacar el hardcode, hacer configurable...
+			//struct timespec *timeout;
+			//timeout->tv_sec = 0;
+			//timeout->tv_nsec = 300000; //300 milliseconds //TODO: sacar el hardcode, hacer configurable...
+
+
+			struct timespec timeout;
+			timeout.tv_sec = 0;
+			timeout.tv_nsec = 300000; //300 milliseconds //TODO: sacar el hardcode, hacer configurable...
 
 			std::cout << "debug 4" << std::endl;
 
-			int return_code = kevent ( kqueue_file_descriptor_, NULL, 0, &event, 1, timeout );
+			//int return_code = kevent ( kqueue_file_descriptor_, NULL, 0, &event, 1, timeout );
+			int return_code = kevent ( kqueue_file_descriptor_, NULL, 0, &event, 1, &timeout );
 
 			std::cout << "debug 5" << std::endl;
 
