@@ -162,7 +162,7 @@ struct file_inode_info
 			std::cout << to_iso_string(now) << std::endl;
 
 			std::ostringstream oss;
-			oss << "lstat error - File: " << path.native_file_string() << " - Reason: " << std::strerror(errno) << std::endl;
+			oss << "lstat error - File: " << path.native_file_string() << " - Reason: " << std::strerror(errno);
 			throw (std::runtime_error(oss.str()));
 		}
 		else
@@ -224,7 +224,7 @@ public:
 			if ( ret_value < 0 )
 			{
 				std::ostringstream oss;
-				oss << "Failed to close file descriptor - Reason: " << std::strerror(errno) << std::endl;
+				oss << "Failed to close file descriptor - Reason: " << std::strerror(errno);
 				throw (std::runtime_error(oss.str()));
 			}
 		}
@@ -262,7 +262,7 @@ public:
 		if ( this->file_descriptor_ == -1 ) //< 0
 		{
 			std::ostringstream oss;
-			oss << "open failed - File: " << path_.native_file_string() << " - Reason: " << std::strerror(errno) << std::endl;
+			oss << "open failed - File: " << path_.native_file_string() << " - Reason: " << std::strerror(errno);
 			throw (std::runtime_error(oss.str()));
 			//throw (std::invalid_argument(oss.str()));
 		}
@@ -425,7 +425,7 @@ struct user_entry
 		if ( return_code == -1 ) //< 0)
 		{
 			std::ostringstream oss;
-			oss << "kevent error: - Reason: " << std::strerror(errno) << std::endl;
+			oss << "kevent error: - Reason: " << std::strerror(errno);
 			throw (std::runtime_error(oss.str()));
 			//throw (std::invalid_argument(oss.str()));
 		}
@@ -506,7 +506,7 @@ public:
 		closing_ = true;
 
 		std::cout << "~freebsd_impl()" << std::endl;
-		std::cout << "kqueue_file_descriptor_" << kqueue_file_descriptor_ << std::endl;
+		std::cout << "kqueue_file_descriptor_: " << kqueue_file_descriptor_ << std::endl;
 
 		if ( kqueue_file_descriptor_ != 0 )
 		{
@@ -532,9 +532,11 @@ public:
 			if ( ret_value < 0 )
 			{
 				std::ostringstream oss;
-				oss << "Failed to close file descriptor - Reason: "; //TODO: ver que usar en Linux/BSD << GetLastError();
+				oss << "Failed to close file descriptor - Reason: " << std::strerror(errno);
 				throw (std::runtime_error(oss.str()));
 			}
+			std::cout << "kqueue_file_descriptor_ closed" << std::endl;
+
 		}
 
 		if ( thread_ )
@@ -570,7 +572,7 @@ public:
 			if ( kqueue_file_descriptor_ == -1 )   //< 0)
 			{
 				std::ostringstream oss;
-				oss << "Failed to initialize monitor - Reason: " << std::strerror(errno);
+				oss << "Failed to initialize kqueue - Reason: " << std::strerror(errno);
 				throw (std::runtime_error(oss.str()));
 			}
 			is_initialized_ = true;
