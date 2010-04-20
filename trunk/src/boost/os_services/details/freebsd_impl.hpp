@@ -738,7 +738,8 @@ public: //private:  //TODO:
 					//filesystem_item::pointer_type watch( (fsitem*) event.udata );
 					//filesystem_item* watch = (filesystem_item*) event.udata; //TODO: reinterpret_cast<>
 
-					filesystem_item::pointer_type watch_temp = (filesystem_item::pointer_type) event.udata;
+					//filesystem_item::pointer_type watch_temp = (filesystem_item::pointer_type) event.udata;
+					filesystem_item::pointer_type watch_temp = reinterpret_cast<filesystem_item::pointer_type>( event.udata );
 					filesystem_item* watch = watch_temp.get();
 
 
