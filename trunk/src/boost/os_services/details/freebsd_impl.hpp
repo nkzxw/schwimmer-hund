@@ -354,10 +354,16 @@ struct user_entry : public enable_shared_from_this<user_entry>
 
 		std::cout << "debug ZZZZZZZ.1" << std::endl;
 
+		std::cout << "head_dir.get(): " << head_dir.get() << std::endl;
+
 		//std::cout << "void scan_directory( fsitem* head_dir )" << std::endl;
 		//std::cout << "head_dir->path.native_file_string(): " << head_dir->get_path().native_file_string() << std::endl;
 
 		boost::filesystem::directory_iterator end_iter;
+
+
+		std::cout << "debug ZZZZZZZ.1.1" << std::endl;
+
 		for ( boost::filesystem::directory_iterator dir_itr( head_dir->get_path() ); dir_itr != end_iter; ++dir_itr )
 		{
 
