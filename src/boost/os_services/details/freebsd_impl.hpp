@@ -30,29 +30,31 @@ There are platforms that are not supported due to lack of developer resources. I
 #include <vector>
 
 // C-Std Headers
-#include <cerrno>
-#include <cstdio>
-#include <cstdlib>
+//#include <cerrno>
+//#include <cstdio>
+//#include <cstdlib>
 #include <cstring>	// for strerror
 
-#include <sys/event.h>
-#include <sys/fcntl.h>	//#include <fcntl.h>
-#include <sys/stat.h>
-#include <sys/time.h>
-#include <sys/types.h>
-#include <unistd.h>
+//#include <sys/event.h>
+//#include <sys/fcntl.h>	//#include <fcntl.h>
+//#include <sys/stat.h>
+//#include <sys/time.h>
+//#include <sys/types.h>
+//#include <unistd.h>
 
-#include <boost/bind.hpp>
-#include <boost/enable_shared_from_this.hpp>
-#include <boost/filesystem/path.hpp>
-#include <boost/foreach.hpp>
-#include <boost/integer.hpp>
-#include <boost/smart_ptr.hpp>
-#include <boost/thread.hpp>
+//#include <boost/bind.hpp>
+//#include <boost/enable_shared_from_this.hpp>
+//#include <boost/filesystem/path.hpp>
+//#include <boost/foreach.hpp>
+//#include <boost/integer.hpp>
+//#include <boost/smart_ptr.hpp>
+//#include <boost/thread.hpp>
 
 #include <boost/os_services/change_types.hpp>
 #include <boost/os_services/details/base_impl.hpp>
+#include <boost/os_services/file_inode_info.hpp>
 #include <boost/os_services/notify_filters.hpp>
+
 
 //TODO: ver como arreglamos esto...
 //#define EVENT_SIZE  ( sizeof (struct inotify_event) )
@@ -115,85 +117,7 @@ struct user_entry;			//forward-declaration
 typedef boost::shared_ptr<user_entry> user_entry_pointer_type;
 
 
-//TODO: pasar a otro archivo...
-struct file_inode_info
-{
-	//TODO: public, protected, private ?????
-	file_inode_info ( )
-		: device_id_(0), inode_number_(0)
-	{}
 
-	file_inode_info ( dev_t device_id, ino_t inode_number )
-		: device_id_(device_id), inode_number_(inode_number)
-	{}
-
-	file_inode_info ( const boost::filesystem::path& path )
-	{
-		set ( path );
-	}
-
-	file_inode_info ( const file_inode_info& other )
-	{
-		this->device_id_ = other.device_id_;
-		this->inode_number_ = other.inode_number_;
-	}
-	
-	file_inode_info& operator=(const file_inode_info& other)
-	{
-		if ( this != &other )
-		{
-			this->device_id_ = other.device_id_;
-			this->inode_number_ = other.inode_number_;
-		}
-		return *this;
-	}
-
-	void set ( dev_t device_id, ino_t inode_number )
-	{
-		this->device_id_ = device_id;
-		this->inode_number_ = inode_number;
-	}
-
-	void set ( const struct stat& st )
-	{
-		this->device_id_ = st.st_dev;
-		this->inode_number_ = st.st_ino;
-	}
-
-	void set ( const boost::filesystem::path& path )
-	{
-		struct stat st;
-
-		int return_code = lstat( path.native_file_string().c_str(), &st);
-		if ( return_code == -1) //TODO: pasar "-1" como una macro SYSTEM_CALL_ERROR o algo así...
-		{
-			//TODO: sacar
-			ptime now = microsec_clock::local_time();
-			std::cout << to_iso_string(now) << std::endl;
-
-			std::ostringstream oss;
-			oss << "lstat error - File: " << path.native_file_string() << " - Reason: " << std::strerror(errno);
-			throw (std::runtime_error(oss.str()));
-		}
-		else
-		{
-			set ( st );
-		}
-	}
-
-	bool operator==(const file_inode_info& other) const
-	{
-		return ( this->device_id_ == other.device_id_ && this->inode_number_ == other.inode_number_ );
-	}
-
-	bool operator==(const struct stat& other) const
-	{
-		return ( this->device_id_ == other.st_dev && this->inode_number_ == other.st_ino );
-	}
-
-	dev_t device_id_;
-	ino_t inode_number_;
-};
 
 //TODO: renombrar
 class filesystem_item
@@ -430,7 +354,6 @@ struct user_entry : public enable_shared_from_this<user_entry>
 
 	
 	//TODO: contemplar la opcion include_sub_directories_
-	//void scan_directory( filesystem_item* head_dir )
 	void scan_directory( filesystem_item::pointer_type head_dir )
 	{
 		//std::cout << "void scan_directory( fsitem* head_dir )" << std::endl;
@@ -623,7 +546,6 @@ public: //private:  //TODO:
 		//TODO: llamar a metodo que lanza el evento...
 	}
 
-	//void handle_rename( filesystem_item* watch )
 	void handle_rename( filesystem_item::pointer_type watch )
 	{
 		boost::filesystem::path parent_path;
@@ -661,14 +583,12 @@ public: //private:  //TODO:
 		}
 	}
 
-	//void handle_remove( filesystem_item* watch )
 	void handle_remove( filesystem_item::pointer_type watch )
 	{
 		notify_file_system_event_args( change_types::deleted, watch->get_path() );
 		remove_watch ( watch );
 	}
 
-	//void handle_write( filesystem_item* watch )
 	void handle_write( filesystem_item::pointer_type watch )
 	{
 		if ( watch->is_directory() )
@@ -684,7 +604,6 @@ public: //private:  //TODO:
 
 	void handle_directory_changes()
 	{
-		//filesystem_item* queued_write_watch = 0;
 		filesystem_item::pointer_type queued_write_watch;
 
 		while ( ! closing_ )
