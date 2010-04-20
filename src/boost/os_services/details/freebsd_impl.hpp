@@ -205,6 +205,8 @@ public:
 	{
 		std::cout << "debug JJJJJJ.1" << std::endl;
 
+		std::cout << "this" << this << std::endl;
+
 		std::cout << "path_.native_file_string(): " << path_.native_file_string() << std::endl;
 
 		return this->path_;
