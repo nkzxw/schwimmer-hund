@@ -315,7 +315,8 @@ struct user_entry : public enable_shared_from_this<user_entry>
 		//std::cout << "0-------------------------------------------------------------" << std::endl;
 
 
-		EV_SET( &event, watch->file_descriptor_, EVFILT_VNODE, EV_ADD | EV_ENABLE | EV_CLEAR, fflags, 0, watch.get() ); // EV_ADD | EV_ENABLE | EV_ONESHOT | EV_CLEAR
+		//EV_SET( &event, watch->file_descriptor_, EVFILT_VNODE, EV_ADD | EV_ENABLE | EV_CLEAR, fflags, 0, watch.get() ); // EV_ADD | EV_ENABLE | EV_ONESHOT | EV_CLEAR
+		EV_SET( &event, watch->file_descriptor_, EVFILT_VNODE, EV_ADD | EV_ENABLE | EV_CLEAR, fflags, 0, watch ); // EV_ADD | EV_ENABLE | EV_ONESHOT | EV_CLEAR
 		//EV_SET( &event, watch->file_descriptor_, EVFILT_VNODE, EV_ADD | EV_ENABLE | EV_CLEAR, fflags, 0, &watch ); // EV_ADD | EV_ENABLE | EV_ONESHOT | EV_CLEAR
 
 		//TODO: ver si Windows y Linux saltan cuando se mofica el nombre del directorio raiz monitoreado.
@@ -397,7 +398,8 @@ struct user_entry : public enable_shared_from_this<user_entry>
 				//TODO: all_watches_ ?????
 				for (filesystem_item::collection_type::iterator it =  head_dir->subitems_.begin(); it != head_dir->subitems_.end(); ++it )
 				{
-					if (  (*it)->is_equal ( inode_info, dir_itr->path() ) )
+					//if (  (*it)->is_equal ( inode_info, dir_itr->path() ) )
+					if (  it->is_equal ( inode_info, dir_itr->path() ) )
 					{
 						found = true;
 						break;
@@ -523,7 +525,8 @@ public:
 		//TODO: STL transform
 		for (user_entry::collection_type::iterator it = user_watches_.begin(); it != user_watches_.end(); ++it )
 		{
-			(*it)->initialize();
+			//(*it)->initialize();
+			it->initialize();
 		}
 
 		thread_.reset( new boost::thread( boost::bind(&freebsd_impl::handle_directory_changes, this) ) );
@@ -662,8 +665,8 @@ public: //private:  //TODO:
 					if ( queued_write_watch  )
 					{
 						handle_write( queued_write_watch );
-						//queued_write_watch = 0;
-						queued_write_watch.reset();
+						queued_write_watch = 0;
+						//queued_write_watch.reset();
 					}
 				}
 				else
