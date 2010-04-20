@@ -203,6 +203,7 @@ public:
 
 	boost::filesystem::path get_path ( ) const
 	{
+		std::cout << "debug JJJJJJ.1" << std::endl;
 		return this->path_;
 	}
 
@@ -363,6 +364,14 @@ struct user_entry : public enable_shared_from_this<user_entry>
 
 
 		std::cout << "debug ZZZZZZZ.1.1" << std::endl;
+
+
+		if (head_dir)
+		{
+			std::cout << "head_dir == true" << std::endl;
+		}
+
+		std::cout << "debug ZZZZZZZ.1.1.1" << std::endl;
 
 		head_dir->get_path();
 
