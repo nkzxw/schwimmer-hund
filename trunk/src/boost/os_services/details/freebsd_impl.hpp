@@ -502,7 +502,11 @@ public:
 
 	~freebsd_impl()
 	{
+
 		closing_ = true;
+
+		std::cout << "~freebsd_impl()" << std::endl;
+		std::cout << "kqueue_file_descriptor_" << kqueue_file_descriptor_ << std::endl;
 
 		if ( kqueue_file_descriptor_ != 0 )
 		{
