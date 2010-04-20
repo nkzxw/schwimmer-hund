@@ -99,7 +99,7 @@ namespace boost {
 namespace os_services {
 namespace detail {
 
-//TODO: pasar a freebsd_impl
+//TODO: pasar a clase freebsd_impl
 static int kqueue_file_descriptor_ = 0;
 	
 struct filesystem_item;		//forward-declaration
@@ -193,8 +193,6 @@ public:
 	typedef boost::shared_ptr<filesystem_item> pointer_type;
 	typedef std::vector<pointer_type> collection_type;
 
-	//TODO: agegar metodo add_subitem
-
 	filesystem_item ( const boost::filesystem::path& path, user_entry* root_user_entry )
 		: root_user_entry_(root_user_entry), parent_(0), is_directory_(false), file_descriptor_(0), mask_(PN_ALL_EVENTS) //TODO: asignar lo que el usuario quiere monitorear...
 	{
@@ -216,7 +214,7 @@ public:
 	{
 		//TODO: Eliminar los subitems 
 
-		std::cout << "--------------------- ~fsitem() ------------------------------" << std::endl;
+		//std::cout << "--------------------- ~fsitem() ------------------------------" << std::endl;
 		//std::cout << "this->path.native_file_string(): " << this->path.native_file_string() << std::endl;
 
 		if ( this->file_descriptor_ != 0 )
@@ -226,7 +224,7 @@ public:
 			if ( ret_value < 0 )
 			{
 				std::ostringstream oss;
-				oss << "Failed to close file descriptor - Reason: "; //TODO: ver que usar en Linux/BSD << GetLastError();
+				oss << "Failed to close file descriptor - Reason: " << std::strerror(errno) << std::endl;
 				throw (std::runtime_error(oss.str()));
 			}
 		}
@@ -258,18 +256,15 @@ public:
 		return (  this->inode_info_ == inode_info && this->path_ == path );
 	}
 
-	void open ()
+	void open()
 	{
 		this->file_descriptor_ = ::open( path_.native_file_string().c_str(), O_EVTONLY );
 		if ( this->file_descriptor_ == -1 ) //< 0
 		{
-			//warn("opening path `%s' failed", watch->path);
-			//return -1;
-
 			std::ostringstream oss;
-			//TODO:
-			oss << "opening path failed: - Reason: " << std::strerror(errno);
-			throw (std::invalid_argument(oss.str()));
+			oss << "open failed - File: " << path_.native_file_string() << " - Reason: " << std::strerror(errno) << std::endl;
+			throw (std::runtime_error(oss.str()));
+			//throw (std::invalid_argument(oss.str()));
 		}
 
 		this->inode_info_.set( this->path_ );
@@ -300,7 +295,7 @@ public:
 		return this->is_directory_;
 	}
 
-private:
+protected:
 	boost::filesystem::path path_;
 	bool is_directory_;
 
@@ -311,14 +306,14 @@ public: //private:
 	//TODO: ver si es necesario
 	boost::uint32_t mask_;
 
-	//watch_type parent;
-	filesystem_item* parent_; //TODO: cambiar a watch_type
+	filesystem_item* parent_; //TODO: cambiar a filesystem_item::pointer_type
 
 	file_inode_info inode_info_;
 
 	//TODO: ver boost::ptr_vector
 	collection_type subitems_;
 
+	//TODO: cambiar a user_entry::pointer_type
 	user_entry* root_user_entry_; //TODO: ver que pasa si agregamos el mismo directorio como dos user_entry distintos... el open da el mismo file descriptor?
 };
 
@@ -356,7 +351,7 @@ struct user_entry
 
 	}
 
-	void create_watch ( filesystem_item::pointer_type watch )
+	void create_watch( filesystem_item::pointer_type watch )
 	{
 		//std::cout << "void create_watch( filesystem_item::pointer_type watch )" << std::endl;
 		//std::cout << "watch->path.native_file_string(): " << watch->path.native_file_string() << std::endl;
@@ -429,13 +424,10 @@ struct user_entry
 		int return_code = kevent(kqueue_file_descriptor_, &event, 1, NULL, 0, NULL);
 		if ( return_code == -1 ) //< 0)
 		{
-			//perror("kevent(2)");
-			//return -1;
-
 			std::ostringstream oss;
-			//TODO:
-			oss << "kevent(2): - Reason: " << std::strerror(errno);
-			throw (std::invalid_argument(oss.str()));
+			oss << "kevent error: - Reason: " << std::strerror(errno) << std::endl;
+			throw (std::runtime_error(oss.str()));
+			//throw (std::invalid_argument(oss.str()));
 		}
 	}
 
@@ -558,12 +550,7 @@ public:
 
 	void add_directory_impl ( const std::string& dir_name )
 	{
-		//TODO: probar agregar el constructor a fsitem
-		//filesystem_item::pointer_type item(new fs_item);
-		//item->path = dir_name;		//boost::filesystem::path full_path( str_path, boost::filesystem::native );
 		//TODO: asignar mask
-
-		
 		user_entry::pointer_type item(new user_entry);
 		item->path_ = dir_name; //TODO: revisar
 		user_watches_.push_back(item);
@@ -596,16 +583,10 @@ public:
 
 		//TODO: BOOST_FOREACH
 		
-		for (user_item_collection::iterator it = user_watches_.begin(); it != user_watches_.end(); ++it )
+		for (user_entry::collection_type::iterator it = user_watches_.begin(); it != user_watches_.end(); ++it )
 		{
 			(*it)->initialize();
 		}
-
-
-		//for (filesystem_item::collection_type::iterator it =  user_watches_.begin(); it != user_watches_.end(); ++it )
-		//{
-		//	create_watch( *it );
-		//}
 
 		thread_.reset( new boost::thread( boost::bind(&freebsd_impl::handle_directory_changes, this) ) );
 	}
@@ -914,7 +895,8 @@ protected:
 	bool is_initialized_;
 	//int kqueue_file_descriptor_; // file descriptor
 	bool closing_;
-	user_item_collection user_watches_;
+	
+	user_entry::collection_type user_watches_;
 	//filesystem_item::collection_type all_watches_; //TODO: quizas haga falta contabilizar todos los watches en un solo lugar... VER
 
 };
