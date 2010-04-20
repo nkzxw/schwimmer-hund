@@ -109,6 +109,13 @@ static int kqueue_file_descriptor_ = 0;
 struct filesystem_item;		//forward-declaration
 struct user_entry;			//forward-declaration
 
+
+
+typedef boost::shared_ptr<user_entry> user_entry_pointer_type;
+//typedef std::vector<pointer_type> collection_type;
+
+
+
 //TODO: pasar a otro archivo...
 struct file_inode_info
 {
@@ -198,7 +205,8 @@ public:
 	typedef std::vector<pointer_type> collection_type;
 
 	//filesystem_item ( const boost::filesystem::path& path, user_entry* root_user_entry )
-	filesystem_item ( const boost::filesystem::path& path, user_entry::pointer_type root_user_entry )
+	//filesystem_item ( const boost::filesystem::path& path, user_entry::pointer_type root_user_entry )
+	filesystem_item ( const boost::filesystem::path& path, user_entry_pointer_type root_user_entry )
 		: root_user_entry_(root_user_entry), parent_(0), is_directory_(false), file_descriptor_(0), mask_(PN_ALL_EVENTS) //TODO: asignar lo que el usuario quiere monitorear...
 	{
 		//std::cout << "--------------------- fs_item ( const boost::filesystem::path& path, const user_entry* const root_user_entry ) ------------------------------" << std::endl;
@@ -321,7 +329,7 @@ public: //private:
 	//TODO: cambiar a user_entry::pointer_type
 
 	//user_entry* root_user_entry_; //TODO: ver que pasa si agregamos el mismo directorio como dos user_entry distintos... el open da el mismo file descriptor?
-	user_entry::pointer_type root_user_entry_;
+	user_entry_pointer_type root_user_entry_;
 };
 
 
