@@ -291,16 +291,16 @@ struct user_entry : public enable_shared_from_this<user_entry>
 		//TODO: ver estos flags, deberia monitoriarse solo lo que el usuairo quiera monitorear...
 		unsigned int fflags = NOTE_DELETE |  NOTE_WRITE | NOTE_EXTEND | NOTE_ATTRIB | NOTE_LINK | NOTE_REVOKE | NOTE_RENAME;
 
-		std::cout << "0-------------------------------------------------------------" << std::endl;
-		std::cout << "&watch: " << &watch << std::endl;
-		std::cout << "watch.get(): " << watch.get() << std::endl;
-		std::cout << "watch->get_path().native_file_string(): " << watch->get_path().native_file_string() << std::endl;
-		std::cout << "watch->get_path().native_file_string(): " << watch->get_path().native_file_string() << std::endl;
-		std::cout << "0-------------------------------------------------------------" << std::endl;
+		//std::cout << "0-------------------------------------------------------------" << std::endl;
+		//std::cout << "&watch: " << &watch << std::endl;
+		//std::cout << "watch.get(): " << watch.get() << std::endl;
+		//std::cout << "watch->get_path().native_file_string(): " << watch->get_path().native_file_string() << std::endl;
+		//std::cout << "watch->get_path().native_file_string(): " << watch->get_path().native_file_string() << std::endl;
+		//std::cout << "0-------------------------------------------------------------" << std::endl;
 
 
-		//EV_SET( &event, watch->file_descriptor_, EVFILT_VNODE, EV_ADD | EV_ENABLE | EV_CLEAR, fflags, 0, watch.get() ); // EV_ADD | EV_ENABLE | EV_ONESHOT | EV_CLEAR
-		EV_SET( &event, watch->file_descriptor_, EVFILT_VNODE, EV_ADD | EV_ENABLE | EV_CLEAR, fflags, 0, &watch ); // EV_ADD | EV_ENABLE | EV_ONESHOT | EV_CLEAR
+		EV_SET( &event, watch->file_descriptor_, EVFILT_VNODE, EV_ADD | EV_ENABLE | EV_CLEAR, fflags, 0, watch.get() ); // EV_ADD | EV_ENABLE | EV_ONESHOT | EV_CLEAR
+		//EV_SET( &event, watch->file_descriptor_, EVFILT_VNODE, EV_ADD | EV_ENABLE | EV_CLEAR, fflags, 0, &watch ); // EV_ADD | EV_ENABLE | EV_ONESHOT | EV_CLEAR
 
 		//TODO: ver si Windows y Linux saltan cuando se mofica el nombre del directorio raiz monitoreado.
 		// sino saltan, evisar que se use NOTE_RENAME con cualquier directorio raiz
@@ -745,28 +745,28 @@ public: //private:  //TODO:
 
 					//TODO: esto puede ser un tema, porque el shared_ptr (filesystem_item::pointer_type) va a tener el contador en 1 y cuando salga de scope va a hacer delete de la memoria...
 					//filesystem_item::pointer_type watch( (fsitem*) event.udata );
-					//filesystem_item* watch = (filesystem_item*) event.udata; //TODO: reinterpret_cast<>
+					
+					filesystem_item* watch = (filesystem_item*) event.udata; //TODO: reinterpret_cast<>
 
 					filesystem_item::pointer_type watch = *(reinterpret_cast<filesystem_item::pointer_type*>( event.udata ));
 
-					filesystem_item::pointer_type* watch_temp_1 = reinterpret_cast<filesystem_item::pointer_type*>( event.udata );
-					void* watch_temp_2 =  event.udata ;
+					//filesystem_item::pointer_type* watch_temp_1 = reinterpret_cast<filesystem_item::pointer_type*>( event.udata );
+					//void* watch_temp_2 =  event.udata ;
+
+					//std::cout << "1-------------------------------------------------------------" << std::endl;
+					//std::cout << "&watch: " << &watch << std::endl;
+					//std::cout << "watch.get(): " << watch.get() << std::endl;
+					//std::cout << "watch_temp_1: " << watch_temp_1 << std::endl;
+					//std::cout << "watch_temp_2: " << watch_temp_2 << std::endl;
+					//std::cout << "event.udata: " << event.udata << std::endl;
+
+					//
+					//std::cout << "(*watch_temp_1)->path_.native_file_string(): " << (*watch_temp_1)->path_.native_file_string() << std::endl;
 
 
-					std::cout << "1-------------------------------------------------------------" << std::endl;
-					std::cout << "&watch: " << &watch << std::endl;
-					std::cout << "watch.get(): " << watch.get() << std::endl;
-					std::cout << "watch_temp_1: " << watch_temp_1 << std::endl;
-					std::cout << "watch_temp_2: " << watch_temp_2 << std::endl;
-					std::cout << "event.udata: " << event.udata << std::endl;
-
-					
-					std::cout << "(*watch_temp_1)->path_.native_file_string(): " << (*watch_temp_1)->path_.native_file_string() << std::endl;
-
-
-					std::cout << "watch->path_.native_file_string(): " << watch->path_.native_file_string() << std::endl;
-					std::cout << "watch->get_path().native_file_string(): " << watch->get_path().native_file_string() << std::endl;
-					std::cout << "1-------------------------------------------------------------" << std::endl;
+					//std::cout << "watch->path_.native_file_string(): " << watch->path_.native_file_string() << std::endl;
+					//std::cout << "watch->get_path().native_file_string(): " << watch->get_path().native_file_string() << std::endl;
+					//std::cout << "1-------------------------------------------------------------" << std::endl;
 
 
 					//std::cout << "debug 10" << std::endl;
