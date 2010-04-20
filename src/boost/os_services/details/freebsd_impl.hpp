@@ -494,31 +494,32 @@ public:
 
 	~freebsd_impl()
 	{
-
 		closing_ = true;
-
-		std::cout << "~freebsd_impl()" << std::endl;
-		std::cout << "kqueue_file_descriptor_: " << kqueue_file_descriptor_ << std::endl;
+		
+		if ( thread_ )
+		{
+			thread_->join();
+		}
 
 		if ( kqueue_file_descriptor_ != 0 )
 		{
 			//TODO:
-			//			BOOST_FOREACH(pair_type p, watch_descriptors_)
-			//			{
-			//				if ( p.second != 0 )
-			//				{
-			//					//int ret_value = ::inotify_rm_watch( kqueue_file_descriptor_, p.second );
-			//					int ret_value = 0;
-			//
-			//					if ( ret_value < 0 )
-			//					{
-			//						//TODO: analizar si esta es la forma optima de manejar errores.
-			//						std::ostringstream oss;
-			//						oss << "Failed to remove watch - Reason: "; //TODO: ver que usar en Linux/BSD << GetLastError();
-			//						throw (std::runtime_error(oss.str()));
-			//					}
-			//				}
-			//			}
+			//BOOST_FOREACH(pair_type p, watch_descriptors_)
+			//{
+			//	if ( p.second != 0 )
+			//	{
+			//		//int ret_value = ::inotify_rm_watch( kqueue_file_descriptor_, p.second );
+			//		int ret_value = 0;
+
+			//		if ( ret_value < 0 )
+			//		{
+			//			//TODO: analizar si esta es la forma optima de manejar errores.
+			//			std::ostringstream oss;
+			//			oss << "Failed to remove watch - Reason: "; //TODO: ver que usar en Linux/BSD << GetLastError();
+			//			throw (std::runtime_error(oss.str()));
+			//		}
+			//	}
+			//}
 
 			int ret_value = ::close( kqueue_file_descriptor_ );
 			if ( ret_value < 0 )
@@ -527,16 +528,7 @@ public:
 				oss << "Failed to close file descriptor - Reason: " << std::strerror(errno);
 				throw (std::runtime_error(oss.str()));
 			}
-			std::cout << "kqueue_file_descriptor_ closed" << std::endl;
-
 		}
-
-		if ( thread_ )
-		{
-			thread_->join();
-		}
-
-
 	}
 
 
