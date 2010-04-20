@@ -71,10 +71,6 @@ struct file_inode_info
 		int return_code = lstat( path.native_file_string().c_str(), &st);
 		if ( return_code == -1) //TODO: pasar "-1" como una macro SYSTEM_CALL_ERROR o algo así...
 		{
-			//TODO: sacar
-			ptime now = microsec_clock::local_time();
-			std::cout << to_iso_string(now) << std::endl;
-
 			std::ostringstream oss;
 			oss << "lstat error - File: " << path.native_file_string() << " - Reason: " << std::strerror(errno);
 			throw (std::runtime_error(oss.str()));
