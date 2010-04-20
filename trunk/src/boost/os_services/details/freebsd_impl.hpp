@@ -648,10 +648,20 @@ public: //private:  //TODO:
 					//if ( queued_write_watch != 0 )
 					if ( queued_write_watch  )
 					{
+						std::cout << "debug 8.1" << std::endl;
+
 						handle_write( queued_write_watch );
+
+						std::cout << "debug 8.2" << std::endl;
+
 						//queued_write_watch = 0;
 						queued_write_watch.reset();
+
+						std::cout << "debug 8.3" << std::endl;
+
 					}
+					std::cout << "debug 8.4" << std::endl;
+
 				}
 				else
 				{
