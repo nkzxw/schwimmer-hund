@@ -220,7 +220,7 @@ public:
 	//	: root_user_entry_(root_user_entry), parent_(parent), is_directory_(false), file_descriptor_(0), mask_(PN_ALL_EVENTS) //TODO: asignar lo que el usuario quiere monitorear...
 	//filesystem_item ( const boost::filesystem::path& path, user_entry* root_user_entry, filesystem_item* parent )
 
-	filesystem_item ( const boost::filesystem::path& path, const user_entry::pointer_type& root_user_entry, filesystem_item::pointer_type parent )
+	filesystem_item ( const boost::filesystem::path& path, const user_entry_pointer_type& root_user_entry, filesystem_item::pointer_type parent )
 		: root_user_entry_(root_user_entry), parent_(parent), is_directory_(false), file_descriptor_(0), mask_(PN_ALL_EVENTS) //TODO: asignar lo que el usuario quiere monitorear...
 	{
 		//std::cout << "--------------------- fs_item ( const boost::filesystem::path& path, const user_entry* const root_user_entry, const fs_item* const parent ) ------------------------------" << std::endl;
@@ -560,7 +560,7 @@ public:
 	void add_directory_impl ( const std::string& dir_name )
 	{
 		//TODO: asignar mask
-		user_entry::pointer_type item(new user_entry);
+		user_entry::pointer_type item( new user_entry );
 		item->path_ = dir_name; //TODO: revisar
 		user_watches_.push_back(item);
 	}
