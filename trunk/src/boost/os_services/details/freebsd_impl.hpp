@@ -200,7 +200,7 @@ public:
 	filesystem_item ( const boost::filesystem::path& path, user_entry* root_user_entry )
 		: root_user_entry_(root_user_entry), parent_(0), is_directory_(false), file_descriptor_(0), mask_(PN_ALL_EVENTS) //TODO: asignar lo que el usuario quiere monitorear...
 	{
-		std::cout << "--------------------- fs_item ( const boost::filesystem::path& path, const user_entry* const root_user_entry ) ------------------------------" << std::endl;
+		//std::cout << "--------------------- fs_item ( const boost::filesystem::path& path, const user_entry* const root_user_entry ) ------------------------------" << std::endl;
 		//std::cout << "this->path.native_file_string(): " << this->path.native_file_string() << std::endl;
 		set_path( path );
 	}
@@ -208,7 +208,7 @@ public:
 	filesystem_item ( const boost::filesystem::path& path, user_entry* root_user_entry, filesystem_item* parent )
 		: root_user_entry_(root_user_entry), parent_(parent), is_directory_(false), file_descriptor_(0), mask_(PN_ALL_EVENTS) //TODO: asignar lo que el usuario quiere monitorear...
 	{
-		std::cout << "--------------------- fs_item ( const boost::filesystem::path& path, const user_entry* const root_user_entry, const fs_item* const parent ) ------------------------------" << std::endl;
+		//std::cout << "--------------------- fs_item ( const boost::filesystem::path& path, const user_entry* const root_user_entry, const fs_item* const parent ) ------------------------------" << std::endl;
 		//std::cout << "this->path.native_file_string(): " << this->path.native_file_string() << std::endl;
 
 		set_path( path );
@@ -720,11 +720,6 @@ public: //private:  //TODO:
 			int return_code = kevent ( kqueue_file_descriptor_, NULL, 0, &event, 1, timeout );
 			//now = microsec_clock::local_time();
 			//std::cout << to_iso_string(now) << std::endl;
-
-			//std::cout << "return_code: " << return_code << std::endl;
-			//std::cout << "event.flags: " << event.flags << std::endl;
-			//std::cout << "EV_ERROR: " << EV_ERROR << std::endl;
-			//std::cout << "closing_: " << closing_ << std::endl;
 
 			if ( return_code == -1 || event.flags & EV_ERROR) //< 0
 			{
