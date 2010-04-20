@@ -294,6 +294,13 @@ struct user_entry : public enable_shared_from_this<user_entry>
 		//TODO: ver estos flags, deberia monitoriarse solo lo que el usuairo quiera monitorear...
 		unsigned int fflags = NOTE_DELETE |  NOTE_WRITE | NOTE_EXTEND | NOTE_ATTRIB | NOTE_LINK | NOTE_REVOKE | NOTE_RENAME;
 
+		std::cout << "0-------------------------------------------------------------" << std::endl;
+		std::cout << "&watch: " << &watch << std::endl;
+		std::cout << "watch->get_path().native_file_string(): " << watch->get_path().native_file_string() << std::endl;
+		std::cout << "watch->get_path().native_file_string(): " << watch->get_path().native_file_string() << std::endl;
+		std::cout << "0-------------------------------------------------------------" << std::endl;
+
+
 		//EV_SET( &event, watch->file_descriptor_, EVFILT_VNODE, EV_ADD | EV_ENABLE | EV_CLEAR, fflags, 0, watch.get() ); // EV_ADD | EV_ENABLE | EV_ONESHOT | EV_CLEAR
 		EV_SET( &event, watch->file_descriptor_, EVFILT_VNODE, EV_ADD | EV_ENABLE | EV_CLEAR, fflags, 0, &watch ); // EV_ADD | EV_ENABLE | EV_ONESHOT | EV_CLEAR
 
@@ -359,7 +366,7 @@ struct user_entry : public enable_shared_from_this<user_entry>
 	void scan_directory( filesystem_item::pointer_type head_dir )
 	{
 
-		std::cout << "debug ZZZZZZZ.1" << std::endl;
+		//std::cout << "debug ZZZZZZZ.1" << std::endl;
 
 		std::cout << "head_dir.get(): " << head_dir.get() << std::endl;
 
@@ -369,7 +376,7 @@ struct user_entry : public enable_shared_from_this<user_entry>
 		boost::filesystem::directory_iterator end_iter;
 
 
-		std::cout << "debug ZZZZZZZ.1.1" << std::endl;
+		//std::cout << "debug ZZZZZZZ.1.1" << std::endl;
 
 
 		if (head_dir)
@@ -377,31 +384,31 @@ struct user_entry : public enable_shared_from_this<user_entry>
 			std::cout << "head_dir == true" << std::endl;
 		}
 
-		std::cout << "debug ZZZZZZZ.1.1.1" << std::endl;
+		//std::cout << "debug ZZZZZZZ.1.1.1" << std::endl;
 
 		head_dir->get_path();
 
-		std::cout << "debug ZZZZZZZ.1.2" << std::endl;
+		//std::cout << "debug ZZZZZZZ.1.2" << std::endl;
 
 		std::cout << "head_dir->path.native_file_string(): " << head_dir->get_path().native_file_string() << std::endl;
 
 
-		std::cout << "debug ZZZZZZZ.1.3" << std::endl;
+		//std::cout << "debug ZZZZZZZ.1.3" << std::endl;
 
 		for ( boost::filesystem::directory_iterator dir_itr( head_dir->get_path() ); dir_itr != end_iter; ++dir_itr )
 		{
 
-			std::cout << "debug ZZZZZZZ.2" << std::endl;
+			//std::cout << "debug ZZZZZZZ.2" << std::endl;
 
 			try
 			{
-				std::cout << "debug ZZZZZZZ.3" << std::endl;
+				//std::cout << "debug ZZZZZZZ.3" << std::endl;
 
 				bool found = false;
 
 				file_inode_info inode_info( dir_itr->path() );
 
-				std::cout << "debug ZZZZZZZ.4" << std::endl;
+				//std::cout << "debug ZZZZZZZ.4" << std::endl;
 
 				//TODO: reemplazar por std::find o algo similar...
 				//Linear-search
@@ -415,40 +422,40 @@ struct user_entry : public enable_shared_from_this<user_entry>
 					}
 				}
 
-				std::cout << "debug ZZZZZZZ.5" << std::endl;
+				//std::cout << "debug ZZZZZZZ.5" << std::endl;
 
 
 				if ( !found )	//Archivo nuevo
 				{
-					std::cout << "debug ZZZZZZZ.6" << std::endl;
+					//std::cout << "debug ZZZZZZZ.6" << std::endl;
 
 					//TODO: usar algun metodo que lo haga facil.. add_subitem o algo asi, quizas desde una factory
 					filesystem_item::pointer_type item ( new filesystem_item( dir_itr->path(), head_dir->root_user_entry_, head_dir) );
 					this->all_watches_.push_back(item);
 
-					std::cout << "debug ZZZZZZZ.7" << std::endl;
+					//std::cout << "debug ZZZZZZZ.7" << std::endl;
 
 					create_watch( item );
 					item->mask_ = PN_CREATE;
 					item->inode_info_ = inode_info;
 					head_dir->subitems_.push_back(item);
 
-					std::cout << "debug ZZZZZZZ.8" << std::endl;
+					//std::cout << "debug ZZZZZZZ.8" << std::endl;
 
 				}
 			}
 			catch ( const std::exception & ex )
 			{
-				std::cout << "debug ZZZZZZZ.9" << std::endl;
+				//std::cout << "debug ZZZZZZZ.9" << std::endl;
 
 				std::cout << dir_itr->path().native_file_string() << " " << ex.what() << std::endl;
 			}
 
-			std::cout << "debug ZZZZZZZ.10" << std::endl;
+			//std::cout << "debug ZZZZZZZ.10" << std::endl;
 
 		}
 
-		std::cout << "debug ZZZZZZZ.11" << std::endl;
+		//std::cout << "debug ZZZZZZZ.11" << std::endl;
 
 	}
 
@@ -742,11 +749,18 @@ public: //private:  //TODO:
 					//filesystem_item::pointer_type watch( (fsitem*) event.udata );
 					//filesystem_item* watch = (filesystem_item*) event.udata; //TODO: reinterpret_cast<>
 
-					filesystem_item::pointer_type watch = *reinterpret_cast<filesystem_item::pointer_type*>( event.udata );
+					filesystem_item::pointer_type watch = *(reinterpret_cast<filesystem_item::pointer_type*>( event.udata ));
 
+					filesystem_item::pointer_type* watch_temp_1 = reinterpret_cast<filesystem_item::pointer_type*>( event.udata );
+					void* watch_temp_2 =  event.udata ;
 
 
 					std::cout << "1-------------------------------------------------------------" << std::endl;
+					std::cout << "&watch: " << &watch << std::endl;
+					std::cout << "watch_temp_1: " << watch_temp_1 << std::endl;
+					std::cout << "watch_temp_2: " << watch_temp_2 << std::endl;
+					std::cout << "event.udata: " << event.udata << std::endl;
+
 					std::cout << "watch->path_.native_file_string(): " << watch->path_.native_file_string() << std::endl;
 					std::cout << "watch->get_path().native_file_string(): " << watch->get_path().native_file_string() << std::endl;
 					std::cout << "1-------------------------------------------------------------" << std::endl;
