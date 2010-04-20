@@ -716,35 +716,11 @@ public: //private:  //TODO:
 		{
 			struct kevent event;
 
-			//int return_code = -1;
-
-			//if ( queued_write_watch == 0 )
-			//{
-			//	return_code = kevent ( kqueue_file_descriptor_, NULL, 0, &event, 1, NULL ); //TODO: ver que pasa cuando hacemos un close del kqueue_file_descriptor_, deberia salir con error...
-			//}
-			//else
-			//{
-			//	struct timespec *timeout;
-			//	timeout->tv_sec = 0;
-			//	timeout->tv_nsec = 100000; //100 milliseconds //TODO: sacar el hardcode
-
-			//	//ptime now = microsec_clock::local_time();
-			//	//std::cout << to_iso_string(now) << std::endl;
-			//	return_code = kevent ( kqueue_file_descriptor_, NULL, 0, &event, 1, timeout );
-			//	//now = microsec_clock::local_time();
-			//	//std::cout << to_iso_string(now) << std::endl;
-
-			//}
-
 			struct timespec *timeout;
 			timeout->tv_sec = 0;
 			timeout->tv_nsec = 300000; //300 milliseconds //TODO: sacar el hardcode, hacer configurable...
 
-			//ptime now = microsec_clock::local_time();
-			//std::cout << to_iso_string(now) << std::endl;
 			int return_code = kevent ( kqueue_file_descriptor_, NULL, 0, &event, 1, timeout );
-			//now = microsec_clock::local_time();
-			//std::cout << to_iso_string(now) << std::endl;
 
 			if ( return_code == -1 || event.flags & EV_ERROR) //< 0
 			{
@@ -758,7 +734,8 @@ public: //private:  //TODO:
 			{
 				if ( return_code == 0 ) //timeout
 				{
-					if ( queued_write_watch != 0 )
+					//if ( queued_write_watch != 0 )
+					if ( queued_write_watch  )
 					{
 						handle_write( queued_write_watch );
 						//queued_write_watch = 0;
