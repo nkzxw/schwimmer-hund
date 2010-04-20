@@ -203,10 +203,7 @@ public:
 
 	boost::filesystem::path get_path ( ) const
 	{
-		std::cout << "debug JJJJJJ.1" << std::endl;
-
-		std::cout << "this" << this << std::endl;
-
+		std::cout << "this: " << this << std::endl;
 		std::cout << "path_.native_file_string(): " << path_.native_file_string() << std::endl;
 
 		return this->path_;
@@ -760,6 +757,10 @@ public: //private:  //TODO:
 					std::cout << "watch_temp_1: " << watch_temp_1 << std::endl;
 					std::cout << "watch_temp_2: " << watch_temp_2 << std::endl;
 					std::cout << "event.udata: " << event.udata << std::endl;
+
+					
+					std::cout << "(*watch_temp_1)->path_.native_file_string(): " << (*watch_temp_1)->path_.native_file_string() << std::endl;
+
 
 					std::cout << "watch->path_.native_file_string(): " << watch->path_.native_file_string() << std::endl;
 					std::cout << "watch->get_path().native_file_string(): " << watch->get_path().native_file_string() << std::endl;
