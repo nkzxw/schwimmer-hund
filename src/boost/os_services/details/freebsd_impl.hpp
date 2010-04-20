@@ -21,6 +21,7 @@ There are platforms that are not supported due to lack of developer resources. I
 */
 
 
+
 #ifndef BOOST_OS_SERVICES_DETAIL_FREEBSD_IMPL_HPP
 #define BOOST_OS_SERVICES_DETAIL_FREEBSD_IMPL_HPP
 
@@ -33,13 +34,12 @@ There are platforms that are not supported due to lack of developer resources. I
 #include <cstdlib>
 #include <cstring>	// for strerror
 
-#include <unistd.h>
-
 #include <sys/event.h>
 #include <sys/fcntl.h>	//#include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <sys/types.h>
+#include <unistd.h>
 
 #include <boost/bind.hpp>
 #include <boost/filesystem/path.hpp>
@@ -60,7 +60,6 @@ There are platforms that are not supported due to lack of developer resources. I
 //TODO: sacar, es solo para debug
 #include <boost/date_time/posix_time/posix_time.hpp>
 using namespace boost::posix_time;
-
 
 
 //TODO: sacar
@@ -100,14 +99,11 @@ namespace boost {
 namespace os_services {
 namespace detail {
 
-//TODO: que onda????? esto esta en freebsd_impl
-static int kqueue_file_descriptor_ = 0; //TODO: que onda????? esto esta en freebsd_impl
-
+//TODO: pasar a freebsd_impl
+static int kqueue_file_descriptor_ = 0;
 	
 struct filesystem_item;		//forward-declaration
-struct user_entry;	//forward-declaration
-
-
+struct user_entry;			//forward-declaration
 
 //TODO: pasar a otro archivo...
 struct file_inode_info
@@ -159,18 +155,15 @@ struct file_inode_info
 		struct stat st;
 
 		int return_code = lstat( path.native_file_string().c_str(), &st);
-		if ( return_code < 0)
+		if ( return_code == -1) //TODO: pasar "-1" como una macro SYSTEM_CALL_ERROR o algo así...
 		{
-			//TODO: error
-			std::cout << "STAT ERROR -- on file_inode_info -- - Reason: " << std::strerror(errno) << std::endl;
-			std::cout << "watch->path.native_file_string(): " << path.native_file_string() << std::endl;
-
-			//ptime now = second_clock::local_time();
-			//std::cout << now << std::endl;
+			//TODO: sacar
 			ptime now = microsec_clock::local_time();
 			std::cout << to_iso_string(now) << std::endl;
 
-			return;
+			std::ostringstream oss;
+			oss << "lstat error - File: " << path.native_file_string() << " - Reason: " << std::strerror(errno) << std::endl;
+			throw (std::runtime_error(oss.str()));
 		}
 		else
 		{
@@ -187,7 +180,6 @@ struct file_inode_info
 	{
 		return ( this->device_id_ == other.st_dev && this->inode_number_ == other.st_ino );
 	}
-
 
 	dev_t device_id_;
 	ino_t inode_number_;
@@ -238,7 +230,6 @@ public:
 				throw (std::runtime_error(oss.str()));
 			}
 		}
-
 	}
 
 	//bool operator==(const fs_item& other) const
@@ -316,10 +307,8 @@ private:
 public: //private:
 
 	int file_descriptor_;
-	//int watch_descriptor_; //TODO: analizar si es necesario
 
-	//struct kevent event_;		//TODO: creo que no es necesario
-
+	//TODO: ver si es necesario
 	boost::uint32_t mask_;
 
 	//watch_type parent;
@@ -336,6 +325,9 @@ public: //private:
 
 struct user_entry
 {
+	typedef boost::shared_ptr<user_entry> pointer_type;
+	typedef std::vector<pointer_type> collection_type;
+
 	//user_entry()
 	//{
 	//}
@@ -379,16 +371,6 @@ struct user_entry
 		{
 			scan_directory( watch.get() );
 		}
-
-		if ( watch->file_descriptor_ == 0 )
-		{
-			std::cout << "-------------------------------------------------------------------------------" << std::endl;
-			std::cout << "watch->fd: " << watch->file_descriptor_ << std::endl;
-			//std::cout << "watch->watch_descriptor_: " << watch->watch_descriptor_ << std::endl;
-			std::cout << "watch->path.native_file_string(): " << watch->get_path().native_file_string() << std::endl;
-			std::cout << "-------------------------------------------------------------------------------" << std::endl;
-		}
-
 
 		//TODO: traducir de watch->mask_ a fflags
 		//TODO: ver estos flags, deberia monitoriarse solo lo que el usuairo quiera monitorear...
@@ -444,7 +426,6 @@ struct user_entry
 
 		//std::cout << "kev->flags: " << kev->flags << std::endl;
 
-		//int return_code = kevent(kqueue_file_descriptor_, event, 1, NULL, 0, NULL);
 		int return_code = kevent(kqueue_file_descriptor_, &event, 1, NULL, 0, NULL);
 		if ( return_code == -1 ) //< 0)
 		{
@@ -461,58 +442,32 @@ struct user_entry
 	//TODO: contemplar la opcion include_sub_directories_
 	void scan_directory( filesystem_item* head_dir )
 	{
-		std::cout << "void scan_directory( fsitem* head_dir )" << std::endl;
-		std::cout << "head_dir->path.native_file_string(): " << head_dir->get_path().native_file_string() << std::endl;
+		//std::cout << "void scan_directory( fsitem* head_dir )" << std::endl;
+		//std::cout << "head_dir->path.native_file_string(): " << head_dir->get_path().native_file_string() << std::endl;
 
 		boost::filesystem::directory_iterator end_iter;
 		for ( boost::filesystem::directory_iterator dir_itr( head_dir->get_path() ); dir_itr != end_iter; ++dir_itr )
 		{
 			try
 			{
-				//std::cout << "--- Finding File Name: " << dir_itr->path().native_file_string() << std::endl;
-				//bool found_filename = false;
-				//bool found_inode = false;
 				bool found = false;
 
 				file_inode_info inode_info( dir_itr->path() );
 
-				//std::cout << "-----------------------------------------------------------------------" << std::endl;
-				//std::cout << "dir_itr->path().native_file_string(): " << dir_itr->path().native_file_string() << std::endl;
-				//std::cout << "dir_st.st_dev: " << dir_st.st_dev << std::endl;
-				//std::cout << "dir_st.st_ino: " << dir_st.st_ino << std::endl;
-				//std::cout << "-----------------------------------------------------------------------" << std::endl;
-
-
 				//TODO: reemplazar por std::find o algo similar...
-
 				//Linear-search
 				//TODO: all_watches_ ?????
 				for (filesystem_item::collection_type::iterator it =  head_dir->subitems_.begin(); it != head_dir->subitems_.end(); ++it )
 				{
-					//std::cout << "-----------------------------------------------------------------------" << std::endl;
-					//std::cout << "(*it)->path.native_file_string(): " << (*it)->path.native_file_string() << std::endl;
-					//std::cout << "(*it)->inode_info_.device_id_: " << (*it)->inode_info_.device_id_ << std::endl;
-					//std::cout << "(*it)->inode_info_.inode_number_: " << (*it)->inode_info_.inode_number_ << std::endl;
-					//std::cout << "-----------------------------------------------------------------------" << std::endl;
-
 					if (  (*it)->is_equal ( inode_info, dir_itr->path() ) )
 					{
-						//std::cout << "found inode & filename: " << (*it)->path.native_file_string() << std::endl;
-						(*it)->mask_ = 0; //-999;
-						//std::cout << "(*it)->path.native_file_string(): " << (*it)->path.native_file_string() << std::endl;
-						//found_filename = true;
-						//found_inode = true;
 						found = true;
+						break;
 					}
 				}
 
 				if ( !found )	//Archivo nuevo
 				{
-					std::cout << "if ( !found )" << std::endl;
-					//std::cout << "dir_itr->path().native_file_string(): " << dir_itr->path().native_file_string() << std::endl;
-					//std::cout << "dir_st.st_dev: " << dir_st.st_dev << std::endl;
-					//std::cout << "dir_st.st_ino: " << dir_st.st_ino << std::endl;
-
 					//TODO: usar algun metodo que lo haga facil.. add_subitem o algo asi, quizas desde una factory
 					filesystem_item::pointer_type item ( new filesystem_item( dir_itr->path(), head_dir->root_user_entry_, head_dir) );
 					this->all_watches_.push_back(item);
@@ -535,8 +490,6 @@ struct user_entry
 	filesystem_item::collection_type all_watches_;
 };
 
-typedef boost::shared_ptr<user_entry> user_item_pointer;
-typedef std::vector<user_item_pointer> user_item_collection;
 
 
 
@@ -603,14 +556,15 @@ public:
 	//TODO: agregar
 	//void add_directory_impl ( const boost::filesystem::path& dir ) //throw (std::invalid_argument, std::runtime_error)
 
-	void add_directory_impl ( const std::string& dir_name ) //throw (std::invalid_argument, std::runtime_error)
+	void add_directory_impl ( const std::string& dir_name )
 	{
 		//TODO: probar agregar el constructor a fsitem
 		//filesystem_item::pointer_type item(new fs_item);
 		//item->path = dir_name;		//boost::filesystem::path full_path( str_path, boost::filesystem::native );
 		//TODO: asignar mask
 
-		user_item_pointer item(new user_entry);
+		
+		user_entry::pointer_type item(new user_entry);
 		item->path_ = dir_name; //TODO: revisar
 		user_watches_.push_back(item);
 	}
