@@ -25,6 +25,7 @@ There are platforms that are not supported due to lack of developer resources. I
 #ifndef BOOST_OS_SERVICES_DETAIL_FREEBSD_IMPL_HPP
 #define BOOST_OS_SERVICES_DETAIL_FREEBSD_IMPL_HPP
 
+//TODO: ver cuales headers son innecesarios
 #include <string>
 #include <vector>
 
@@ -98,6 +99,9 @@ enum {
 namespace boost {
 namespace os_services {
 namespace detail {
+
+//TODO: si es necesario para todas las implementaciones, pasar a base_impl
+typedef boost::shared_ptr<boost::thread> thread_type;
 
 //TODO: pasar a clase freebsd_impl
 static int kqueue_file_descriptor_ = 0;
@@ -266,7 +270,6 @@ public:
 			throw (std::runtime_error(oss.str()));
 			//throw (std::invalid_argument(oss.str()));
 		}
-
 		this->inode_info_.set( this->path_ );
 	}
 
@@ -302,17 +305,12 @@ protected:
 public: //private:
 
 	int file_descriptor_;
-
 	//TODO: ver si es necesario
 	boost::uint32_t mask_;
-
 	filesystem_item* parent_; //TODO: cambiar a filesystem_item::pointer_type
-
 	file_inode_info inode_info_;
-
 	//TODO: ver boost::ptr_vector
 	collection_type subitems_;
-
 	//TODO: cambiar a user_entry::pointer_type
 	user_entry* root_user_entry_; //TODO: ver que pasa si agregamos el mismo directorio como dos user_entry distintos... el open da el mismo file descriptor?
 };
@@ -344,11 +342,9 @@ struct user_entry
 		//TODO: estas dos instrucciones ponerlas en un factory
 		filesystem_item::pointer_type item ( new filesystem_item(path_, this) );
 		all_watches_.push_back(item);
-
 		head_ = item;
 
 		create_watch( item );
-
 	}
 
 	void create_watch( filesystem_item::pointer_type watch )
@@ -427,7 +423,6 @@ struct user_entry
 			std::ostringstream oss;
 			oss << "kevent error: - Reason: " << std::strerror(errno);
 			throw (std::runtime_error(oss.str()));
-			//throw (std::invalid_argument(oss.str()));
 		}
 	}
 
@@ -484,9 +479,6 @@ struct user_entry
 
 
 
-
-//TODO: si es necesario para todas las implementaciones, pasar a base_impl
-typedef boost::shared_ptr<boost::thread> thread_type;
 
 
 
@@ -721,7 +713,7 @@ public: //private:  //TODO:
 
 			struct timespec *timeout;
 			timeout->tv_sec = 0;
-			timeout->tv_nsec = 100000; //100 milliseconds //TODO: sacar el hardcode
+			timeout->tv_nsec = 300000; //300 milliseconds //TODO: sacar el hardcode, hacer configurable...
 
 			//ptime now = microsec_clock::local_time();
 			//std::cout << to_iso_string(now) << std::endl;
@@ -729,10 +721,10 @@ public: //private:  //TODO:
 			//now = microsec_clock::local_time();
 			//std::cout << to_iso_string(now) << std::endl;
 
-			std::cout << "return_code: " << return_code << std::endl;
-			std::cout << "event.flags: " << event.flags << std::endl;
-			std::cout << "EV_ERROR: " << EV_ERROR << std::endl;
-			std::cout << "closing_: " << closing_ << std::endl;
+			//std::cout << "return_code: " << return_code << std::endl;
+			//std::cout << "event.flags: " << event.flags << std::endl;
+			//std::cout << "EV_ERROR: " << EV_ERROR << std::endl;
+			//std::cout << "closing_: " << closing_ << std::endl;
 
 			if ( return_code == -1 || event.flags & EV_ERROR) //< 0
 			{
@@ -856,7 +848,6 @@ protected:
 	bool is_initialized_;
 	//int kqueue_file_descriptor_; // file descriptor
 	bool closing_;
-	
 	user_entry::collection_type user_watches_;
 	//filesystem_item::collection_type all_watches_; //TODO: quizas haga falta contabilizar todos los watches en un solo lugar... VER
 
