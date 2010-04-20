@@ -722,12 +722,17 @@ public: //private:  //TODO:
 					{
 						//std::cout << "debug 8.1" << std::endl;
 
+						std::cout << "-------------------------------------------------------------" << std::endl;
+
 						handle_write( queued_write_watch );
 
 						//std::cout << "debug 8.2" << std::endl;
 
 						//queued_write_watch = 0;
 						queued_write_watch.reset();
+
+						std::cout << "-------------------------------------------------------------" << std::endl;
+
 
 						//std::cout << "debug 8.3" << std::endl;
 
