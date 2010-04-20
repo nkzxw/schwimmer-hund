@@ -27,7 +27,8 @@ There are platforms that are not supported due to lack of developer resources. I
 
 //TODO: ver cuales headers son innecesarios
 #include <string>
-#include <vector>
+//#include <vector>
+#include <boost/ptr_container/ptr_vector.hpp>
 
 // C-Std Headers
 #include <cerrno>	//TODO: probar si es necesario
@@ -121,8 +122,11 @@ class filesystem_item
 {
 public:
 	
-	typedef boost::shared_ptr<filesystem_item> pointer_type;
-	typedef std::vector<pointer_type> collection_type;
+	//typedef boost::shared_ptr<filesystem_item> pointer_type;
+	//typedef std::vector<pointer_type> collection_type;
+
+	typedef filesystem_item* pointer_type;
+	typedef boost::ptr_vector<filesystem_item> collection_type;
 
 	filesystem_item( const boost::filesystem::path& path, const user_entry_pointer_type& root_user_entry )
 		: root_user_entry_(root_user_entry), parent_(0), is_directory_(false), file_descriptor_(0), mask_(PN_ALL_EVENTS) //TODO: asignar lo que el usuario quiere monitorear...
@@ -245,8 +249,12 @@ public: //private:
 
 struct user_entry : public enable_shared_from_this<user_entry>
 {
-	typedef boost::shared_ptr<user_entry> pointer_type;
-	typedef std::vector<pointer_type> collection_type;
+	//typedef boost::shared_ptr<user_entry> pointer_type;
+	//typedef std::vector<pointer_type> collection_type;
+
+	typedef user_entry* pointer_type;
+	typedef boost::ptr_vector<user_entry> collection_type;
+
 
 	//user_entry()
 	//{
@@ -259,8 +267,8 @@ struct user_entry : public enable_shared_from_this<user_entry>
 	//}
 
 	//TODO: ver que sentido tiene este metodo...
-	//void add_watch( filesystem_item::pointer_type item )
-	void add_watch( filesystem_item* item )
+	//void add_watch( filesystem_item* item )
+	void add_watch( filesystem_item::pointer_type item )
 	{
 		all_watches_.push_back(item);
 	}
