@@ -368,7 +368,7 @@ struct user_entry
 		unsigned int fflags = NOTE_DELETE |  NOTE_WRITE | NOTE_EXTEND | NOTE_ATTRIB | NOTE_LINK | NOTE_REVOKE | NOTE_RENAME;
 
 		//EV_SET( &event, watch->file_descriptor_, EVFILT_VNODE, EV_ADD | EV_ENABLE | EV_CLEAR, fflags, 0, watch.get() ); // EV_ADD | EV_ENABLE | EV_ONESHOT | EV_CLEAR
-		EV_SET( &event, watch->file_descriptor_, EVFILT_VNODE, EV_ADD | EV_ENABLE | EV_CLEAR, fflags, 0, watch ); // EV_ADD | EV_ENABLE | EV_ONESHOT | EV_CLEAR
+		EV_SET( &event, watch->file_descriptor_, EVFILT_VNODE, EV_ADD | EV_ENABLE | EV_CLEAR, fflags, 0, &watch ); // EV_ADD | EV_ENABLE | EV_ONESHOT | EV_CLEAR
 
 		//TODO: ver si Windows y Linux saltan cuando se mofica el nombre del directorio raiz monitoreado.
 		// sino saltan, evisar que se use NOTE_RENAME con cualquier directorio raiz
@@ -736,7 +736,11 @@ public: //private:  //TODO:
 				{
 					//TODO: esto puede ser un tema, porque el shared_ptr (filesystem_item::pointer_type) va a tener el contador en 1 y cuando salga de scope va a hacer delete de la memoria...
 					//filesystem_item::pointer_type watch( (fsitem*) event.udata );
-					filesystem_item* watch = (filesystem_item*) event.udata; //TODO: reinterpret_cast<>
+					//filesystem_item* watch = (filesystem_item*) event.udata; //TODO: reinterpret_cast<>
+
+					filesystem_item::pointer_type watch_temp = (filesystem_item::pointer_type) event.udata;
+					filesystem_item* watch = watch_temp.get();
+
 
 					if ( event.fflags & NOTE_DELETE )
 					{
