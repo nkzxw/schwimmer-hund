@@ -561,9 +561,8 @@ public:
 	//void remove_directory_impl(const std::string& dir_name) // throw (std::invalid_argument);
 
 	//TODO: ver si hace falta hacer lo mismo para Windows
-	void initialize() //private
+	void initialize() //TODO: private
 	{
-		//std::cout << "void initialize()" << std::endl;
 		if (!is_initialized_)
 		{
 			kqueue_file_descriptor_ = kqueue(); //::kqueue();
@@ -688,12 +687,8 @@ public: //private:  //TODO:
 		}
 		else
 		{
-			//TODO: un archivo fue editado
 			notify_file_system_event_args( change_types::changed, watch->get_path() );
 		}
-
-		//std::cout << "--------------------------------------------------------------------------------------" << std::endl;
-
 	}
 
 	void handle_directory_changes()
@@ -730,7 +725,7 @@ public: //private:  //TODO:
 
 			//ptime now = microsec_clock::local_time();
 			//std::cout << to_iso_string(now) << std::endl;
-			return_code = kevent ( kqueue_file_descriptor_, NULL, 0, &event, 1, timeout );
+			int return_code = kevent ( kqueue_file_descriptor_, NULL, 0, &event, 1, timeout );
 			//now = microsec_clock::local_time();
 			//std::cout << to_iso_string(now) << std::endl;
 
@@ -762,13 +757,6 @@ public: //private:  //TODO:
 					//TODO: esto puede ser un tema, porque el shared_ptr (filesystem_item::pointer_type) va a tener el contador en 1 y cuando salga de scope va a hacer delete de la memoria...
 					//filesystem_item::pointer_type watch( (fsitem*) event.udata );
 					filesystem_item* watch = (filesystem_item*) event.udata; //TODO: reinterpret_cast<>
-
-					//			std::cout << "----------------------------------------------------------------------------" << std::endl;
-					//			std::cout << "watch->fd: " << watch->fd << std::endl;
-					//			std::cout << "watch->watch_descriptor_: " << watch->watch_descriptor_ << std::endl;
-					//			std::cout << "watch->mask_: " << watch->mask_ << std::endl;
-					//			std::cout << "watch->path.native_file_string(): " << watch->path.native_file_string() << std::endl;
-					//			std::cout << "----------------------------------------------------------------------------" << std::endl;
 
 					if ( event.fflags & NOTE_DELETE )
 					{
