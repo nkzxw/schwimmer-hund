@@ -36,7 +36,7 @@ There are platforms that are not supported due to lack of developer resources. I
 #include <cstring>	// for strerror
 
 #include <sys/event.h>
-//#include <sys/fcntl.h>	//#include <fcntl.h>
+//#include <sys/fcntl.h>
 //#include <sys/stat.h>
 //#include <sys/time.h>
 //#include <sys/types.h>
