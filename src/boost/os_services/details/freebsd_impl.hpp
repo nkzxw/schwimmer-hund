@@ -266,11 +266,11 @@ public:
 		return ( this->path_ == other->path_ && this->inode_info_ == other->inode_info_ );
 	}
 
-	//bool is_equal(filesystem_item* other) const
-	bool is_equal(filesystem_item::pointer_type other) const
-	{
-		return ( this->path_ == other->path_ && this->inode_info_ == other->inode_info_ );
-	}
+	////bool is_equal(filesystem_item* other) const
+	//bool is_equal(filesystem_item::pointer_type other) const
+	//{
+	//	return ( this->path_ == other->path_ && this->inode_info_ == other->inode_info_ );
+	//}
 
 	bool is_equal(const file_inode_info& inode_info, const boost::filesystem::path& path) const
 	{
