@@ -599,15 +599,15 @@ public: //private:  //TODO:
 
 	void handle_directory_changes()
 	{
-		//std::cout << "debug 1" << std::endl;
+		std::cout << "debug 1" << std::endl;
 
 		filesystem_item::pointer_type queued_write_watch;
 
-		//std::cout << "debug 2" << std::endl;
+		std::cout << "debug 2" << std::endl;
 
 		while ( ! closing_ )
 		{
-			//std::cout << "debug 3" << std::endl;
+			std::cout << "debug 3" << std::endl;
 
 			struct kevent event;
 
@@ -619,12 +619,12 @@ public: //private:  //TODO:
 			timeout.tv_sec = 0;
 			timeout.tv_nsec = 300000; //300 milliseconds //TODO: sacar el hardcode, hacer configurable...
 
-			//std::cout << "debug 4" << std::endl;
+			std::cout << "debug 4" << std::endl;
 
 			//int return_code = kevent ( kqueue_file_descriptor_, NULL, 0, &event, 1, timeout );
 			int return_code = kevent ( kqueue_file_descriptor_, NULL, 0, &event, 1, &timeout );
 
-			//std::cout << "debug 5" << std::endl;
+			std::cout << "debug 5" << std::endl;
 
 
 			if ( return_code == -1 || event.flags & EV_ERROR) //< 0
@@ -635,15 +635,15 @@ public: //private:  //TODO:
 				throw (std::runtime_error(oss.str()));
 			}
 
-			//std::cout << "debug 6" << std::endl;
+			std::cout << "debug 6" << std::endl;
 
 			if ( ! closing_ )
 			{
-				//std::cout << "debug 7" << std::endl;
+				std::cout << "debug 7" << std::endl;
 
 				if ( return_code == 0 ) //timeout
 				{
-					//std::cout << "debug 8" << std::endl;
+					std::cout << "debug 8" << std::endl;
 
 					//if ( queued_write_watch != 0 )
 					if ( queued_write_watch  )
@@ -655,7 +655,7 @@ public: //private:  //TODO:
 				}
 				else
 				{
-					//std::cout << "debug 9" << std::endl;
+					std::cout << "debug 9" << std::endl;
 
 					//TODO: esto puede ser un tema, porque el shared_ptr (filesystem_item::pointer_type) va a tener el contador en 1 y cuando salga de scope va a hacer delete de la memoria...
 					//filesystem_item::pointer_type watch( (fsitem*) event.udata );
@@ -663,33 +663,33 @@ public: //private:  //TODO:
 
 					filesystem_item::pointer_type watch = *reinterpret_cast<filesystem_item::pointer_type*>( event.udata );
 
-					//std::cout << "debug 10" << std::endl;
+					std::cout << "debug 10" << std::endl;
 
 
 					if ( event.fflags & NOTE_DELETE )
 					{
-						//std::cout << "debug 11" << std::endl;
+						std::cout << "debug 11" << std::endl;
 
 						handle_remove( watch );
 					}
 
 					if ( event.fflags & NOTE_RENAME )
 					{
-						//std::cout << "debug 12" << std::endl;
+						std::cout << "debug 12" << std::endl;
 
 						handle_rename( watch );
 					}
 
 					if ( event.fflags & NOTE_WRITE )
 					{
-						//std::cout << "debug 13" << std::endl;
+						std::cout << "debug 13" << std::endl;
 
 						//Encolamos un solo evento WRITE ya que siempre viene WRITE+RENAME... hacemos que primero se procese el evento rename y luego el write
 						queued_write_watch = watch;
 					}
 
 
-					//std::cout << "debug 14" << std::endl;
+					std::cout << "debug 14" << std::endl;
 
 					//if (event.fflags & NOTE_TRUNCATE)
 					//{
