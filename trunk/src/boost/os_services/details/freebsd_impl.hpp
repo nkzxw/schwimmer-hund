@@ -218,6 +218,7 @@ public:
 	}
 
 protected:
+public: //TODO: sacar
 	boost::filesystem::path path_;
 	bool is_directory_;
 
@@ -721,20 +722,12 @@ public: //private:  //TODO:
 					if ( queued_write_watch  )
 					{
 						//std::cout << "debug 8.1" << std::endl;
-						std::cout << "2-------------------------------------------------------------" << std::endl;
-
-						std::cout << "queued_write_watch->get_path().native_file_string(): " << queued_write_watch->get_path().native_file_string() << std::endl;
-
 						handle_write( queued_write_watch );
 
 						//std::cout << "debug 8.2" << std::endl;
 
 						//queued_write_watch = 0;
 						queued_write_watch.reset();
-
-						std::cout << "2-------------------------------------------------------------" << std::endl;
-
-
 						//std::cout << "debug 8.3" << std::endl;
 
 					}
@@ -750,6 +743,14 @@ public: //private:  //TODO:
 					//filesystem_item* watch = (filesystem_item*) event.udata; //TODO: reinterpret_cast<>
 
 					filesystem_item::pointer_type watch = *reinterpret_cast<filesystem_item::pointer_type*>( event.udata );
+
+
+
+					std::cout << "1-------------------------------------------------------------" << std::endl;
+					std::cout << "watch->path_.native_file_string(): " << watch->path_.native_file_string() << std::endl;
+					std::cout << "watch->get_path().native_file_string(): " << watch->get_path().native_file_string() << std::endl;
+					std::cout << "1-------------------------------------------------------------" << std::endl;
+
 
 					//std::cout << "debug 10" << std::endl;
 
@@ -773,20 +774,7 @@ public: //private:  //TODO:
 						//std::cout << "debug 13" << std::endl;
 
 						//Encolamos un solo evento WRITE ya que siempre viene WRITE+RENAME... hacemos que primero se procese el evento rename y luego el write
-
-						std::cout << "1-------------------------------------------------------------" << std::endl;
-
-						std::cout << "watch->get_path().native_file_string(): " << watch->get_path().native_file_string() << std::endl;
-
-
 						queued_write_watch = watch;
-
-						std::cout << "watch->get_path().native_file_string(): " << watch->get_path().native_file_string() << std::endl;
-						std::cout << "queued_write_watch->get_path().native_file_string(): " << queued_write_watch->get_path().native_file_string() << std::endl;
-
-
-						std::cout << "1-------------------------------------------------------------" << std::endl;
-
 					}
 
 
