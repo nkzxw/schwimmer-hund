@@ -586,15 +586,30 @@ public: //private:  //TODO:
 
 	void handle_write( filesystem_item::pointer_type watch )
 	{
+		std::cout << "debug XX.1" << std::endl;
+
 		if ( watch->is_directory() )
 		{
+			std::cout << "debug XX.2" << std::endl;
+
 			//TODO: no está buena esta llamada... no me convence...
 			watch->root_user_entry_->scan_directory( watch ); //Detectamos si es un Add o un Rename o Delete que ya fue procesado.
+
+			std::cout << "debug XX.3" << std::endl;
+
 		}
 		else
 		{
+			std::cout << "debug XX.4" << std::endl;
+
 			notify_file_system_event_args( change_types::changed, watch->get_path() );
+
+			std::cout << "debug XX.5" << std::endl;
+
 		}
+
+		std::cout << "debug XX.6" << std::endl;
+
 	}
 
 	void handle_directory_changes()
