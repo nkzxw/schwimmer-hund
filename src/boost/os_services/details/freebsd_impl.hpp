@@ -293,6 +293,7 @@ struct user_entry : public enable_shared_from_this<user_entry>
 
 		std::cout << "0-------------------------------------------------------------" << std::endl;
 		std::cout << "&watch: " << &watch << std::endl;
+		std::cout << "watch.get(): " << watch.get() << std::endl;
 		std::cout << "watch->get_path().native_file_string(): " << watch->get_path().native_file_string() << std::endl;
 		std::cout << "watch->get_path().native_file_string(): " << watch->get_path().native_file_string() << std::endl;
 		std::cout << "0-------------------------------------------------------------" << std::endl;
@@ -754,6 +755,7 @@ public: //private:  //TODO:
 
 					std::cout << "1-------------------------------------------------------------" << std::endl;
 					std::cout << "&watch: " << &watch << std::endl;
+					std::cout << "watch.get(): " << watch.get() << std::endl;
 					std::cout << "watch_temp_1: " << watch_temp_1 << std::endl;
 					std::cout << "watch_temp_2: " << watch_temp_2 << std::endl;
 					std::cout << "event.udata: " << event.udata << std::endl;
