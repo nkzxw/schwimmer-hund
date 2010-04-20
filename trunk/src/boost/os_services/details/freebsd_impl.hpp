@@ -1,6 +1,10 @@
+// TODO: ver: http://www.boost.org/doc/libs/1_42_0/libs/ptr_container/doc/examples.html
+
 //TODO: comentarios
 //TODO: ver si hay "limit of file descriptors per process" Puede llegar a complicar el monitoreo usando kqueue
 //TODO: ver que pasa con NetBSD, OpenBSD, Darwin, MacOSX, etc... aparentemente lo soportan
+//TODO: ver de usar boost::noncopyable cuando sea aplicable
+
 
 
 // http://en.wikipedia.org/wiki/Kqueue
