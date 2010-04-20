@@ -125,12 +125,16 @@ public:
 	typedef std::vector<pointer_type> collection_type;
 
 	filesystem_item( const boost::filesystem::path& path, const user_entry_pointer_type& root_user_entry )
-		: root_user_entry_(root_user_entry), is_directory_(false), file_descriptor_(0), mask_(PN_ALL_EVENTS) //TODO: asignar lo que el usuario quiere monitorear...
+		: root_user_entry_(root_user_entry), parent_(0), is_directory_(false), file_descriptor_(0), mask_(PN_ALL_EVENTS) //TODO: asignar lo que el usuario quiere monitorear...
 	{
 		set_path( path );
 	}
 
-	filesystem_item ( const boost::filesystem::path& path, const user_entry_pointer_type& root_user_entry, filesystem_item::pointer_type parent )
+	//filesystem_item ( const boost::filesystem::path& path, const user_entry_pointer_type& root_user_entry, filesystem_item::pointer_type parent )
+	//	: root_user_entry_(root_user_entry), parent_(parent), is_directory_(false), file_descriptor_(0), mask_(PN_ALL_EVENTS) //TODO: asignar lo que el usuario quiere monitorear...
+
+
+	filesystem_item ( const boost::filesystem::path& path, const user_entry_pointer_type& root_user_entry, filesystem_item* parent )
 		: root_user_entry_(root_user_entry), parent_(parent), is_directory_(false), file_descriptor_(0), mask_(PN_ALL_EVENTS) //TODO: asignar lo que el usuario quiere monitorear...
 	{
 		set_path( path );
@@ -163,7 +167,8 @@ public:
 		return ( this->path_ == other.path_ && this->inode_info_ == other.inode_info_ );
 	}
 
-	bool is_equal(const filesystem_item::pointer_type& other) const
+	//bool is_equal(const filesystem_item::pointer_type& other) const
+	bool is_equal(filesystem_item* other) const
 	{
 		return ( this->path_ == other->path_ && this->inode_info_ == other->inode_info_ );
 	}
@@ -225,7 +230,8 @@ public: //private:
 	//TODO: ver si es necesario
 	boost::uint32_t mask_;
 
-	filesystem_item::pointer_type parent_;
+	filesystem_item* parent_;
+	//filesystem_item::pointer_type parent_;
 
 	file_inode_info inode_info_;
 	//TODO: ver boost::ptr_vector
@@ -253,7 +259,8 @@ struct user_entry : public enable_shared_from_this<user_entry>
 	//}
 
 	//TODO: ver que sentido tiene este metodo...
-	void add_watch( filesystem_item::pointer_type item )
+	//void add_watch( filesystem_item::pointer_type item )
+	void add_watch( filesystem_item* item )
 	{
 		all_watches_.push_back(item);
 	}
@@ -270,7 +277,8 @@ struct user_entry : public enable_shared_from_this<user_entry>
 		create_watch( item );
 	}
 
-	void create_watch( filesystem_item::pointer_type watch )
+	//void create_watch( filesystem_item::pointer_type watch )
+	void create_watch( filesystem_item* watch )
 	{
 		//std::cout << "void create_watch( filesystem_item::pointer_type watch )" << std::endl;
 		//std::cout << "watch->path.native_file_string(): " << watch->path.native_file_string() << std::endl;
@@ -361,52 +369,20 @@ struct user_entry : public enable_shared_from_this<user_entry>
 
 	
 	//TODO: contemplar la opcion include_sub_directories_
-	void scan_directory( filesystem_item::pointer_type head_dir )
+	//void scan_directory( filesystem_item::pointer_type head_dir )
+	void scan_directory( filesystem_item* head_dir )
 	{
-
-		//std::cout << "debug ZZZZZZZ.1" << std::endl;
-
-		std::cout << "head_dir.get(): " << head_dir.get() << std::endl;
-
 		//std::cout << "void scan_directory( fsitem* head_dir )" << std::endl;
 		//std::cout << "head_dir->path.native_file_string(): " << head_dir->get_path().native_file_string() << std::endl;
 
 		boost::filesystem::directory_iterator end_iter;
-
-
-		//std::cout << "debug ZZZZZZZ.1.1" << std::endl;
-
-
-		if (head_dir)
-		{
-			std::cout << "head_dir == true" << std::endl;
-		}
-
-		//std::cout << "debug ZZZZZZZ.1.1.1" << std::endl;
-
-		head_dir->get_path();
-
-		//std::cout << "debug ZZZZZZZ.1.2" << std::endl;
-
-		std::cout << "head_dir->path.native_file_string(): " << head_dir->get_path().native_file_string() << std::endl;
-
-
-		//std::cout << "debug ZZZZZZZ.1.3" << std::endl;
-
 		for ( boost::filesystem::directory_iterator dir_itr( head_dir->get_path() ); dir_itr != end_iter; ++dir_itr )
 		{
-
-			//std::cout << "debug ZZZZZZZ.2" << std::endl;
-
 			try
 			{
-				//std::cout << "debug ZZZZZZZ.3" << std::endl;
-
 				bool found = false;
 
 				file_inode_info inode_info( dir_itr->path() );
-
-				//std::cout << "debug ZZZZZZZ.4" << std::endl;
 
 				//TODO: reemplazar por std::find o algo similar...
 				//Linear-search
@@ -420,41 +396,24 @@ struct user_entry : public enable_shared_from_this<user_entry>
 					}
 				}
 
-				//std::cout << "debug ZZZZZZZ.5" << std::endl;
-
 
 				if ( !found )	//Archivo nuevo
 				{
-					//std::cout << "debug ZZZZZZZ.6" << std::endl;
-
 					//TODO: usar algun metodo que lo haga facil.. add_subitem o algo asi, quizas desde una factory
 					filesystem_item::pointer_type item ( new filesystem_item( dir_itr->path(), head_dir->root_user_entry_, head_dir) );
 					this->all_watches_.push_back(item);
-
-					//std::cout << "debug ZZZZZZZ.7" << std::endl;
 
 					create_watch( item );
 					item->mask_ = PN_CREATE;
 					item->inode_info_ = inode_info;
 					head_dir->subitems_.push_back(item);
-
-					//std::cout << "debug ZZZZZZZ.8" << std::endl;
-
 				}
 			}
 			catch ( const std::exception & ex )
 			{
-				//std::cout << "debug ZZZZZZZ.9" << std::endl;
-
 				std::cout << dir_itr->path().native_file_string() << " " << ex.what() << std::endl;
 			}
-
-			//std::cout << "debug ZZZZZZZ.10" << std::endl;
-
 		}
-
-		//std::cout << "debug ZZZZZZZ.11" << std::endl;
-
 	}
 
 	boost::filesystem::path path_;
@@ -565,12 +524,14 @@ public:
 public: //private:  //TODO:
 
 	//TODO: evaluar si rename_watch y remove_watch tienen que ir acá o en sus respectivas clases
-	void rename_watch ( filesystem_item::pointer_type watch, const boost::filesystem::path& new_path ) 
+	//void rename_watch ( filesystem_item::pointer_type watch, const boost::filesystem::path& new_path ) 
+	void rename_watch ( filesystem_item* watch, const boost::filesystem::path& new_path ) 
 	{
 		watch->set_path( new_path );
 	}
 
-	void remove_watch ( filesystem_item::pointer_type watch ) 
+	//void remove_watch ( filesystem_item::pointer_type watch ) 
+	void remove_watch ( filesystem_item* watch ) 
 	{
 		filesystem_item::collection_type::iterator it = watch->parent_->subitems_.begin();
 		while ( it != watch->parent_->subitems_.end() )
@@ -604,7 +565,8 @@ public: //private:  //TODO:
 		//TODO: llamar a metodo que lanza el evento...
 	}
 
-	void handle_rename( filesystem_item::pointer_type watch )
+	//void handle_rename( filesystem_item::pointer_type watch )
+	void handle_rename( filesystem_item* watch )
 	{
 		boost::filesystem::path parent_path;
 
@@ -641,69 +603,40 @@ public: //private:  //TODO:
 		}
 	}
 
-	void handle_remove( filesystem_item::pointer_type watch )
+	//void handle_remove( filesystem_item::pointer_type watch )
+	void handle_remove( filesystem_item* watch )
 	{
 		notify_file_system_event_args( change_types::deleted, watch->get_path() );
 		remove_watch ( watch );
 	}
 
-	void handle_write( filesystem_item::pointer_type watch )
+	//void handle_write( filesystem_item::pointer_type watch )
+	void handle_write( filesystem_item* watch )
 	{
-		//std::cout << "debug XX.1" << std::endl;
-
 		if ( watch->is_directory() )
 		{
-			//std::cout << "debug XX.2" << std::endl;
-
 			//TODO: no está buena esta llamada... no me convence...
 			watch->root_user_entry_->scan_directory( watch ); //Detectamos si es un Add o un Rename o Delete que ya fue procesado.
-
-			//std::cout << "debug XX.3" << std::endl;
-
 		}
 		else
 		{
-			//std::cout << "debug XX.4" << std::endl;
-
 			notify_file_system_event_args( change_types::changed, watch->get_path() );
-
-			//std::cout << "debug XX.5" << std::endl;
-
 		}
-
-		//std::cout << "debug XX.6" << std::endl;
-
 	}
 
 	void handle_directory_changes()
 	{
-		//std::cout << "debug 1" << std::endl;
-
 		filesystem_item::pointer_type queued_write_watch;
-
-		//std::cout << "debug 2" << std::endl;
 
 		while ( ! closing_ )
 		{
-			//std::cout << "debug 3" << std::endl;
-
 			struct kevent event;
-
-			//struct timespec *timeout;
-			//timeout->tv_sec = 0;
-			//timeout->tv_nsec = 300000; //300 milliseconds //TODO: sacar el hardcode, hacer configurable...
 
 			struct timespec timeout;
 			timeout.tv_sec = 0;
 			timeout.tv_nsec = 300000; //300 milliseconds //TODO: sacar el hardcode, hacer configurable...
 
-			//std::cout << "debug 4" << std::endl;
-
-			//int return_code = kevent ( kqueue_file_descriptor_, NULL, 0, &event, 1, timeout );
 			int return_code = kevent ( kqueue_file_descriptor_, NULL, 0, &event, 1, &timeout );
-
-			//std::cout << "debug 5" << std::endl;
-
 
 			if ( return_code == -1 || event.flags & EV_ERROR) //< 0
 			{
@@ -713,88 +646,44 @@ public: //private:  //TODO:
 				throw (std::runtime_error(oss.str()));
 			}
 
-			//std::cout << "debug 6" << std::endl;
-
 			if ( ! closing_ )
 			{
-				//std::cout << "debug 7" << std::endl;
-
 				if ( return_code == 0 ) //timeout
 				{
-					//std::cout << "debug 8" << std::endl;
-
 					//if ( queued_write_watch != 0 )
 					if ( queued_write_watch  )
 					{
-						//std::cout << "debug 8.1" << std::endl;
 						handle_write( queued_write_watch );
-
-						//std::cout << "debug 8.2" << std::endl;
-
 						//queued_write_watch = 0;
 						queued_write_watch.reset();
-						//std::cout << "debug 8.3" << std::endl;
-
 					}
-					//std::cout << "debug 8.4" << std::endl;
-
 				}
 				else
 				{
-					//std::cout << "debug 9" << std::endl;
-
-					//TODO: esto puede ser un tema, porque el shared_ptr (filesystem_item::pointer_type) va a tener el contador en 1 y cuando salga de scope va a hacer delete de la memoria...
-					//filesystem_item::pointer_type watch( (fsitem*) event.udata );
-					
-					filesystem_item* watch = (filesystem_item*) event.udata; //TODO: reinterpret_cast<>
+					//filesystem_item* watch = (filesystem_item*) event.udata; //TODO: reinterpret_cast<>
+					filesystem_item* watch = reinterpret_cast<filesystem_item*>( event.udata );
 
 					//filesystem_item::pointer_type watch = *(reinterpret_cast<filesystem_item::pointer_type*>( event.udata ));
 					//filesystem_item::pointer_type* watch_temp_1 = reinterpret_cast<filesystem_item::pointer_type*>( event.udata );
 					//void* watch_temp_2 =  event.udata ;
 
-					//std::cout << "1-------------------------------------------------------------" << std::endl;
-					//std::cout << "&watch: " << &watch << std::endl;
-					//std::cout << "watch.get(): " << watch.get() << std::endl;
-					//std::cout << "watch_temp_1: " << watch_temp_1 << std::endl;
-					//std::cout << "watch_temp_2: " << watch_temp_2 << std::endl;
-					//std::cout << "event.udata: " << event.udata << std::endl;
-
-					//
-					//std::cout << "(*watch_temp_1)->path_.native_file_string(): " << (*watch_temp_1)->path_.native_file_string() << std::endl;
-
-
-					//std::cout << "watch->path_.native_file_string(): " << watch->path_.native_file_string() << std::endl;
-					//std::cout << "watch->get_path().native_file_string(): " << watch->get_path().native_file_string() << std::endl;
-					//std::cout << "1-------------------------------------------------------------" << std::endl;
-
-
-					//std::cout << "debug 10" << std::endl;
-
 
 					if ( event.fflags & NOTE_DELETE )
 					{
-						//std::cout << "debug 11" << std::endl;
-
 						handle_remove( watch );
 					}
 
 					if ( event.fflags & NOTE_RENAME )
 					{
-						//std::cout << "debug 12" << std::endl;
-
 						handle_rename( watch );
 					}
 
 					if ( event.fflags & NOTE_WRITE )
 					{
-						//std::cout << "debug 13" << std::endl;
-
 						//Encolamos un solo evento WRITE ya que siempre viene WRITE+RENAME... hacemos que primero se procese el evento rename y luego el write
 						queued_write_watch = watch;
 					}
 
-
-					//std::cout << "debug 14" << std::endl;
 
 					//if (event.fflags & NOTE_TRUNCATE)
 					//{
