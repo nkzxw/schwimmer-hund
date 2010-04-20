@@ -6,6 +6,8 @@
 #include <sstream>
 #include <string>
 
+#include <cstring>	// for strerror
+
 #include <sys/stat.h>
 
 #include <boost/filesystem/path.hpp>
