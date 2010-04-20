@@ -704,25 +704,35 @@ public: //private:  //TODO:
 		{
 			struct kevent event;
 
-			int return_code = -1;
+			//int return_code = -1;
 
-			if ( queued_write_watch == 0 )
-			{
-				return_code = kevent ( kqueue_file_descriptor_, NULL, 0, &event, 1, NULL ); //TODO: ver que pasa cuando hacemos un close del kqueue_file_descriptor_, deberia salir con error...
-			}
-			else
-			{
-				struct timespec *timeout;
-				timeout->tv_sec = 0;
-				timeout->tv_nsec = 100000; //100 milliseconds //TODO: sacar el hardcode
+			//if ( queued_write_watch == 0 )
+			//{
+			//	return_code = kevent ( kqueue_file_descriptor_, NULL, 0, &event, 1, NULL ); //TODO: ver que pasa cuando hacemos un close del kqueue_file_descriptor_, deberia salir con error...
+			//}
+			//else
+			//{
+			//	struct timespec *timeout;
+			//	timeout->tv_sec = 0;
+			//	timeout->tv_nsec = 100000; //100 milliseconds //TODO: sacar el hardcode
 
-				//ptime now = microsec_clock::local_time();
-				//std::cout << to_iso_string(now) << std::endl;
-				return_code = kevent ( kqueue_file_descriptor_, NULL, 0, &event, 1, timeout );
-				//now = microsec_clock::local_time();
-				//std::cout << to_iso_string(now) << std::endl;
+			//	//ptime now = microsec_clock::local_time();
+			//	//std::cout << to_iso_string(now) << std::endl;
+			//	return_code = kevent ( kqueue_file_descriptor_, NULL, 0, &event, 1, timeout );
+			//	//now = microsec_clock::local_time();
+			//	//std::cout << to_iso_string(now) << std::endl;
 
-			}
+			//}
+
+			struct timespec *timeout;
+			timeout->tv_sec = 0;
+			timeout->tv_nsec = 100000; //100 milliseconds //TODO: sacar el hardcode
+
+			//ptime now = microsec_clock::local_time();
+			//std::cout << to_iso_string(now) << std::endl;
+			return_code = kevent ( kqueue_file_descriptor_, NULL, 0, &event, 1, timeout );
+			//now = microsec_clock::local_time();
+			//std::cout << to_iso_string(now) << std::endl;
 
 			std::cout << "return_code: " << return_code << std::endl;
 			std::cout << "event.flags: " << event.flags << std::endl;
@@ -731,27 +741,23 @@ public: //private:  //TODO:
 
 			if ( return_code == -1 || event.flags & EV_ERROR) //< 0
 			{
-				//TODO: si esta closing_ quiere decir que se cerro desde afuera
-				//TODO: if ( ! closing_ )
-
-				//TODO: error
-				//warn("kevent(2) failed");
-				std::cout << "ERRRRRRRRRRRRRORRR ON kevent Wait" << std::endl;
-				return;
+				//TODO: evaluar si este throw está relacionado con el destructor de fsm ya que está ejecutado en otro thread, no deberia... pero...
+				std::ostringstream oss;
+				oss << "kevent error - Reason: " << std::strerror(errno);
+				throw (std::runtime_error(oss.str()));
 			}
 
-			if ( return_code == 0 ) //timeout
+			if ( ! closing_ )
 			{
-				//TODO: if ( ! closing_ )
-				if ( queued_write_watch != 0 )
+				if ( return_code == 0 ) //timeout
 				{
-					handle_write( queued_write_watch );
-					queued_write_watch = 0;
+					if ( queued_write_watch != 0 )
+					{
+						handle_write( queued_write_watch );
+						queued_write_watch = 0;
+					}
 				}
-			}
-			else
-			{
-				if ( ! closing_ )
+				else
 				{
 					//TODO: esto puede ser un tema, porque el shared_ptr (filesystem_item::pointer_type) va a tener el contador en 1 y cuando salga de scope va a hacer delete de la memoria...
 					//filesystem_item::pointer_type watch( (fsitem*) event.udata );
