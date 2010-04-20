@@ -203,37 +203,21 @@ public:
 	typedef boost::shared_ptr<filesystem_item> pointer_type;
 	typedef std::vector<pointer_type> collection_type;
 
-	//filesystem_item ( const boost::filesystem::path& path, user_entry* root_user_entry )
-	//	: root_user_entry_(root_user_entry), is_directory_(false), file_descriptor_(0), mask_(PN_ALL_EVENTS) //TODO: asignar lo que el usuario quiere monitorear...
-
 	filesystem_item( const boost::filesystem::path& path, const user_entry_pointer_type& root_user_entry )
 		: root_user_entry_(root_user_entry), is_directory_(false), file_descriptor_(0), mask_(PN_ALL_EVENTS) //TODO: asignar lo que el usuario quiere monitorear...
 	{
-		//std::cout << "--------------------- fs_item ( const boost::filesystem::path& path, const user_entry* const root_user_entry ) ------------------------------" << std::endl;
-		//std::cout << "this->path.native_file_string(): " << this->path.native_file_string() << std::endl;
 		set_path( path );
 	}
-
-	//filesystem_item( const boost::filesystem::path& path, user_entry* root_user_entry, filesystem_item::pointer_type parent )
-	//	: root_user_entry_(root_user_entry), parent_(parent), is_directory_(false), file_descriptor_(0), mask_(PN_ALL_EVENTS) //TODO: asignar lo que el usuario quiere monitorear...
-	//filesystem_item ( const boost::filesystem::path& path, user_entry* root_user_entry, filesystem_item* parent )
 
 	filesystem_item ( const boost::filesystem::path& path, const user_entry_pointer_type& root_user_entry, filesystem_item::pointer_type parent )
 		: root_user_entry_(root_user_entry), parent_(parent), is_directory_(false), file_descriptor_(0), mask_(PN_ALL_EVENTS) //TODO: asignar lo que el usuario quiere monitorear...
 	{
-		//std::cout << "--------------------- fs_item ( const boost::filesystem::path& path, const user_entry* const root_user_entry, const fs_item* const parent ) ------------------------------" << std::endl;
-		//std::cout << "this->path.native_file_string(): " << this->path.native_file_string() << std::endl;
-
 		set_path( path );
 	}
 
 	~filesystem_item()
 	{
 		//TODO: Eliminar los subitems 
-
-		//std::cout << "--------------------- ~fsitem() ------------------------------" << std::endl;
-		//std::cout << "this->path.native_file_string(): " << this->path.native_file_string() << std::endl;
-
 		if ( this->file_descriptor_ != 0 )
 		{
 			int ret_value = close( this->file_descriptor_ ); //::close
@@ -271,7 +255,7 @@ public:
 	void open()
 	{
 		this->file_descriptor_ = ::open( path_.native_file_string().c_str(), O_EVTONLY );
-		if ( this->file_descriptor_ == -1 ) //< 0
+		if ( this->file_descriptor_ == -1 )
 		{
 			std::ostringstream oss;
 			oss << "open failed - File: " << path_.native_file_string() << " - Reason: " << std::strerror(errno);
@@ -316,17 +300,15 @@ public: //private:
 	//TODO: ver si es necesario
 	boost::uint32_t mask_;
 
-	//filesystem_item* parent_; //TODO: cambiar a filesystem_item::pointer_type
 	filesystem_item::pointer_type parent_;
 
 	file_inode_info inode_info_;
 	//TODO: ver boost::ptr_vector
 	collection_type subitems_;
-	//TODO: cambiar a user_entry::pointer_type
 
-	//user_entry* root_user_entry_; //TODO: ver que pasa si agregamos el mismo directorio como dos user_entry distintos... el open da el mismo file descriptor?
+	//user_entry* root_user_entry_; 
 	//user_entry::pointer_type root_user_entry_;
-	user_entry_pointer_type root_user_entry_;
+	user_entry_pointer_type root_user_entry_; //TODO: ver que pasa si agregamos el mismo directorio como dos user_entry distintos... el open da el mismo file descriptor?
 };
 
 
@@ -356,7 +338,9 @@ struct user_entry : public enable_shared_from_this<user_entry>
 		//TODO: estas dos instrucciones ponerlas en un factory
 
 		//filesystem_item::pointer_type item ( new filesystem_item (path_, this ) );
+		std::cout << "debug 1" << std::endl;
 		filesystem_item::pointer_type item ( new filesystem_item (path_, shared_from_this() ) );
+		std::cout << "debug 2" << std::endl;
 		all_watches_.push_back(item);
 		head_ = item;
 
@@ -600,13 +584,11 @@ public:
 public: //private:  //TODO:
 
 	//TODO: evaluar si rename_watch y remove_watch tienen que ir acá o en sus respectivas clases
-	//void rename_watch ( filesystem_item* watch, const boost::filesystem::path& new_path ) 
 	void rename_watch ( filesystem_item::pointer_type watch, const boost::filesystem::path& new_path ) 
 	{
 		watch->set_path( new_path );
 	}
 
-	//void remove_watch ( filesystem_item* watch ) 
 	void remove_watch ( filesystem_item::pointer_type watch ) 
 	{
 		filesystem_item::collection_type::iterator it = watch->parent_->subitems_.begin();
