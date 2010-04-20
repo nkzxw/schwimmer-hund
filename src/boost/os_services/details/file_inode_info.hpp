@@ -13,8 +13,6 @@
 #include <boost/filesystem/path.hpp>
 
 
-
-
 namespace boost {
 namespace os_services {
 namespace detail {

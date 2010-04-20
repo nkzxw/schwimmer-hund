@@ -40,7 +40,7 @@ There are platforms that are not supported due to lack of developer resources. I
 //#include <sys/stat.h>
 //#include <sys/time.h>
 //#include <sys/types.h>
-//#include <unistd.h>
+#include <unistd.h>
 
 #include <boost/bind.hpp>
 #include <boost/enable_shared_from_this.hpp>
