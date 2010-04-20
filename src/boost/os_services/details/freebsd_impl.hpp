@@ -52,7 +52,7 @@ There are platforms that are not supported due to lack of developer resources. I
 
 #include <boost/os_services/change_types.hpp>
 #include <boost/os_services/details/base_impl.hpp>
-#include <boost/os_services/file_inode_info.hpp>
+#include <boost/os_services/details/file_inode_info.hpp>
 #include <boost/os_services/notify_filters.hpp>
 
 
