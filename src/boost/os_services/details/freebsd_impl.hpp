@@ -710,7 +710,7 @@ public: //private:  //TODO:
 	void handle_directory_changes()
 	{
 		//filesystem_item* queued_write_watch = 0;
-		filesystem_item::pointer_type queued_write_watch = 0;
+		filesystem_item::pointer_type queued_write_watch;
 
 		while ( ! closing_ )
 		{
@@ -761,7 +761,8 @@ public: //private:  //TODO:
 					if ( queued_write_watch != 0 )
 					{
 						handle_write( queued_write_watch );
-						queued_write_watch = 0;
+						//queued_write_watch = 0;
+						queued_write_watch.reset();
 					}
 				}
 				else
