@@ -43,6 +43,7 @@ There are platforms that are not supported due to lack of developer resources. I
 #include <unistd.h>
 
 #include <boost/bind.hpp>
+#include <boost/enable_shared_from_this.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/foreach.hpp>
 #include <boost/integer.hpp>
@@ -205,23 +206,21 @@ public:
 	typedef std::vector<pointer_type> collection_type;
 
 	//filesystem_item ( const boost::filesystem::path& path, user_entry* root_user_entry )
-	//filesystem_item ( const boost::filesystem::path& path, user_entry::pointer_type root_user_entry )
-	//: root_user_entry_(root_user_entry), parent_(0), is_directory_(false), file_descriptor_(0), mask_(PN_ALL_EVENTS) //TODO: asignar lo que el usuario quiere monitorear...
-	//filesystem_item( const boost::filesystem::path& path, const user_entry_pointer_type& root_user_entry )
-	//: root_user_entry_(root_user_entry), is_directory_(false), file_descriptor_(0), mask_(PN_ALL_EVENTS) //TODO: asignar lo que el usuario quiere monitorear...
-	//: root_user_entry_(root_user_entry), parent_(0), is_directory_(false), file_descriptor_(0), mask_(PN_ALL_EVENTS) //TODO: asignar lo que el usuario quiere monitorear...
+	//	: root_user_entry_(root_user_entry), is_directory_(false), file_descriptor_(0), mask_(PN_ALL_EVENTS) //TODO: asignar lo que el usuario quiere monitorear...
 
-	filesystem_item ( const boost::filesystem::path& path, user_entry* root_user_entry )
+	filesystem_item( const boost::filesystem::path& path, const user_entry_pointer_type& root_user_entry )
 		: root_user_entry_(root_user_entry), is_directory_(false), file_descriptor_(0), mask_(PN_ALL_EVENTS) //TODO: asignar lo que el usuario quiere monitorear...
 	{
 		//std::cout << "--------------------- fs_item ( const boost::filesystem::path& path, const user_entry* const root_user_entry ) ------------------------------" << std::endl;
 		//std::cout << "this->path.native_file_string(): " << this->path.native_file_string() << std::endl;
 		set_path( path );
 	}
-	
+
+	//filesystem_item( const boost::filesystem::path& path, user_entry* root_user_entry, filesystem_item::pointer_type parent )
+	//	: root_user_entry_(root_user_entry), parent_(parent), is_directory_(false), file_descriptor_(0), mask_(PN_ALL_EVENTS) //TODO: asignar lo que el usuario quiere monitorear...
 	//filesystem_item ( const boost::filesystem::path& path, user_entry* root_user_entry, filesystem_item* parent )
-	//filesystem_item ( const boost::filesystem::path& path, const user_entry::pointer_type& root_user_entry, filesystem_item::pointer_type parent )
-	filesystem_item( const boost::filesystem::path& path, user_entry* root_user_entry, filesystem_item::pointer_type parent )
+
+	filesystem_item ( const boost::filesystem::path& path, const user_entry::pointer_type& root_user_entry, filesystem_item::pointer_type parent )
 		: root_user_entry_(root_user_entry), parent_(parent), is_directory_(false), file_descriptor_(0), mask_(PN_ALL_EVENTS) //TODO: asignar lo que el usuario quiere monitorear...
 	{
 		//std::cout << "--------------------- fs_item ( const boost::filesystem::path& path, const user_entry* const root_user_entry, const fs_item* const parent ) ------------------------------" << std::endl;
@@ -265,12 +264,6 @@ public:
 	{
 		return ( this->path_ == other->path_ && this->inode_info_ == other->inode_info_ );
 	}
-
-	////bool is_equal(filesystem_item* other) const
-	//bool is_equal(filesystem_item::pointer_type other) const
-	//{
-	//	return ( this->path_ == other->path_ && this->inode_info_ == other->inode_info_ );
-	//}
 
 	bool is_equal(const file_inode_info& inode_info, const boost::filesystem::path& path) const
 	{
@@ -333,13 +326,13 @@ public: //private:
 	collection_type subitems_;
 	//TODO: cambiar a user_entry::pointer_type
 
-	user_entry* root_user_entry_; //TODO: ver que pasa si agregamos el mismo directorio como dos user_entry distintos... el open da el mismo file descriptor?
+	//user_entry* root_user_entry_; //TODO: ver que pasa si agregamos el mismo directorio como dos user_entry distintos... el open da el mismo file descriptor?
 	//user_entry::pointer_type root_user_entry_;
-	//user_entry_pointer_type root_user_entry_;
+	user_entry_pointer_type root_user_entry_;
 };
 
 
-struct user_entry
+struct user_entry : public enable_shared_from_this<user_entry>
 {
 	typedef boost::shared_ptr<user_entry> pointer_type;
 	typedef std::vector<pointer_type> collection_type;
@@ -363,7 +356,9 @@ struct user_entry
 	void initialize()
 	{
 		//TODO: estas dos instrucciones ponerlas en un factory
-		filesystem_item::pointer_type item ( new filesystem_item(path_, this) );
+
+		//filesystem_item::pointer_type item ( new filesystem_item (path_, this ) );
+		filesystem_item::pointer_type item ( new filesystem_item (path_, shared_from_this() ) );
 		all_watches_.push_back(item);
 		head_ = item;
 
