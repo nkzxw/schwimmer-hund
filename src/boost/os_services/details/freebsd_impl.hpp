@@ -218,7 +218,7 @@ public:
 		set_path( path );
 	}
 	
-	filesystem_item ( const boost::filesystem::path& path, user_entry* root_user_entry, filesystem_item* parent )
+	//filesystem_item ( const boost::filesystem::path& path, user_entry* root_user_entry, filesystem_item* parent )
 	//filesystem_item ( const boost::filesystem::path& path, const user_entry::pointer_type& root_user_entry, filesystem_item::pointer_type parent )
 	filesystem_item( const boost::filesystem::path& path, user_entry* root_user_entry, filesystem_item::pointer_type parent )
 		: root_user_entry_(root_user_entry), parent_(parent), is_directory_(false), file_descriptor_(0), mask_(PN_ALL_EVENTS) //TODO: asignar lo que el usuario quiere monitorear...
