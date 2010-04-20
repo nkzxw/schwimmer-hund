@@ -30,9 +30,9 @@ There are platforms that are not supported due to lack of developer resources. I
 #include <vector>
 
 // C-Std Headers
-//#include <cerrno>
-//#include <cstdio>
-//#include <cstdlib>
+#include <cerrno>	//TODO: probar si es necesario
+#include <cstdio>	//TODO: probar si es necesario
+#include <cstdlib>	//TODO: probar si es necesario
 #include <cstring>	// for strerror
 
 #include <sys/event.h>
