@@ -564,8 +564,10 @@ public:
 		std::cout << "debug 30" << std::endl;
 		for (user_entry::collection_type::iterator it = user_watches_.begin(); it != user_watches_.end(); ++it )
 		{
+			std::cout << "debug 30.A" << std::endl;
 			//(*it)->initialize();
 			it->initialize();
+			std::cout << "debug 30.B" << std::endl;
 		}
 		std::cout << "debug 31" << std::endl;
 
