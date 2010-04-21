@@ -205,7 +205,6 @@ public: //private:  //TODO:
 	typedef boost::function<void (filesystem_event_args e)> create_file_event_handler;
 	create_file_event_handler created_handler_;
 
-
 	//filesystem_item::pointer_type create_filesystem_item ( const boost::filesystem::path& path, user_entry::pointer_type entry, filesystem_item::pointer_type parent = 0)
 	filesystem_item::pointer_type create_filesystem_item ( const boost::filesystem::path& path, user_entry& entry, filesystem_item::pointer_type parent = 0)
 	{
@@ -345,7 +344,7 @@ public: //private:  //TODO:
 						notify_file_system_event_args( change_types::created, dir_itr->path() );
 					}
 
-					filesystem_item::pointer_type watch = create_filesystem_item ( dir_itr->path(), root_dir->root_user_entry_, root_dir );
+					filesystem_item::pointer_type watch = create_filesystem_item ( dir_itr->path(), *root_dir->root_user_entry_, root_dir );
 					begin_watch( watch, launch_events );
 				}
 			}
