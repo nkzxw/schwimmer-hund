@@ -65,7 +65,7 @@ public:
 				{
 					int ret_value = ::inotify_rm_watch( file_descriptor_, p.second );
 
-					if ( ret_value < 0 )
+					if ( ret_value == -1 ) //TODO: constante POSIX_ERROR o algo asi... IDEM FreeBSD
 					{
 						//Destructor -> NO_THROW
 						std::cerr << "Failed to remove watch - Reason: " << std::strerror(errno);
