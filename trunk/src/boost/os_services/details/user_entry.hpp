@@ -35,21 +35,31 @@ struct user_entry //: public enable_shared_from_this<user_entry>
 		all_watches_.push_back(item);
 	}
 
-	void initialize()
-	{
-		//TODO: estas dos instrucciones ponerlas en un factory
-		//filesystem_item::pointer_type item ( new filesystem_item (path_, this ) );
-		//filesystem_item::pointer_type item ( new filesystem_item (path_, shared_from_this() ) );
-		//filesystem_item::pointer_type item = new filesystem_item (path_, shared_from_this() );
+	//void initialize()
+	//{
+	//	//TODO: estas dos instrucciones ponerlas en un factory
+	//	//filesystem_item::pointer_type item ( new filesystem_item (path_, this ) );
+	//	//filesystem_item::pointer_type item ( new filesystem_item (path_, shared_from_this() ) );
+	//	//filesystem_item::pointer_type item = new filesystem_item (path_, shared_from_this() );
+	//	//filesystem_item::pointer_type item = new filesystem_item ( path_, this );
+	//	//root_ = item;
 
-		//filesystem_item::pointer_type item = new filesystem_item ( path_, this );
-		//root_ = item;
+	//	root_ = new filesystem_item ( path_, this ); //TODO: no me gusta que este sea el responsable de hacer el new... debe venir como parámetro...
+	//	all_watches_.push_back(root_);
+	//	create_watch( root_, false );
+	//}
 
-		root_ = new filesystem_item ( path_, this );
-		all_watches_.push_back(root_);
-		create_watch( root_, false );
+	const boost::filesystem::path& path() const 
+	{ 
+		return this->path_; 
 	}
 
+	void set_root( filesystem_item::pointer_type root )
+	{
+		this->root_ = root_;
+	}
+
+protected:
 	boost::filesystem::path path_;
 	filesystem_item::pointer_type root_;			//este tiene la estructura de arbol
 	filesystem_item::collection_type all_watches_;

@@ -133,14 +133,14 @@ typedef boost::shared_ptr<boost::thread> thread_type;
 //TODO: pasar a clase freebsd_impl
 static int kqueue_file_descriptor_ = 0;
 	
-struct filesystem_item;		//forward-declaration
-struct user_entry;			//forward-declaration
-
-
-//TODO: no me gusta, ver si se puede agregar al forward declaration
-//typedef boost::shared_ptr<user_entry> user_entry_pointer_type;
-typedef user_entry* user_entry_pointer_type;
-//typedef user_entry* user_entry::pointer_type; //TODO: ver si se puede hacer algo asi...
+//struct filesystem_item;		//forward-declaration
+//struct user_entry;			//forward-declaration
+//
+//
+////TODO: no me gusta, ver si se puede agregar al forward declaration
+////typedef boost::shared_ptr<user_entry> user_entry_pointer_type;
+//typedef user_entry* user_entry_pointer_type;
+////typedef user_entry* user_entry::pointer_type; //TODO: ver si se puede hacer algo asi...
 
 
 class freebsd_impl : public base_impl<freebsd_impl>
@@ -191,7 +191,7 @@ public:
 	//TODO: ver si hace falta hacer lo mismo para Windows
 	void initialize() //TODO: private
 	{
-		if (!is_initialized_)
+		if ( ! is_initialized_ )
 		{
 			kqueue_file_descriptor_ = kqueue(); //::kqueue();
 			//std::cout << "kqueue_file_descriptor_" << kqueue_file_descriptor_ << std::endl;
@@ -215,10 +215,13 @@ public:
 		//TODO: STL transform
 		for (user_entry::collection_type::iterator it = user_watches_.begin(); it != user_watches_.end(); ++it )
 		{
-			it->initialize();
+			//it->initialize();
+			filesystem_item::pointer_type watch = new filesystem_item ( it->path(), *it ); 
+			it->set_root ( watch );
+			it->add_watch ( watch );
 			it->open(); //TODO: catch errors
 			
-			create_watch( item, false );
+			create_watch( fsitem, false );
 		}
 
 		thread_.reset( new boost::thread( boost::bind(&freebsd_impl::handle_directory_changes, this) ) );
@@ -324,7 +327,7 @@ public: //private:  //TODO:
 		//std::cout << "root_dir->path.native_file_string(): " << root_dir->get_path().native_file_string() << std::endl;
 
 		boost::filesystem::directory_iterator end_iter;
-		for ( boost::filesystem::directory_iterator dir_itr( root_dir->get_path() ); dir_itr != end_iter; ++dir_itr )
+		for ( boost::filesystem::directory_iterator dir_itr( root_dir->path() ); dir_itr != end_iter; ++dir_itr )
 		{
 			try
 			{
@@ -443,7 +446,7 @@ public: //private:  //TODO:
 
 			if ( dir_itr != end_iter )
 			{
-				notify_rename_event_args ( change_types::renamed, dir_itr->path(), watch->get_path() );
+				notify_rename_event_args ( change_types::renamed, dir_itr->path(), watch->path() );
 				rename_watch(watch, dir_itr->path());
 			}
 			else	
@@ -458,7 +461,7 @@ public: //private:  //TODO:
 	//void handle_remove( filesystem_item* watch )
 	void handle_remove( filesystem_item::pointer_type watch )
 	{
-		notify_file_system_event_args( change_types::deleted, watch->get_path() );
+		notify_file_system_event_args( change_types::deleted, watch->path() );
 		remove_watch ( watch );
 	}
 
@@ -473,7 +476,7 @@ public: //private:  //TODO:
 		}
 		else
 		{
-			notify_file_system_event_args( change_types::changed, watch->get_path() );
+			notify_file_system_event_args( change_types::changed, watch->path() );
 		}
 	}
 
