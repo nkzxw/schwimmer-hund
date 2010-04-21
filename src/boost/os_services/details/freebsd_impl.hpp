@@ -698,7 +698,11 @@ public: //private:  //TODO:
 
 	void handle_directory_changes()
 	{
+		std::cout << "debug 100" << std::endl;
+
 		filesystem_item::pointer_type queued_write_watch;
+
+		std::cout << "debug 101" << std::endl;
 
 		while ( ! closing_ )
 		{
@@ -708,8 +712,13 @@ public: //private:  //TODO:
 			timeout.tv_sec = 0;
 			timeout.tv_nsec = 300000; //300 milliseconds //TODO: sacar el hardcode, hacer configurable...
 
+			std::cout << "debug 102" << std::endl;
+
 			//TODO: pasar toda esta logica a un metodo o clase...
 			int return_code = kevent ( kqueue_file_descriptor_, NULL, 0, &event, 1, &timeout );
+
+			std::cout << "debug 103" << std::endl;
+
 
 			if ( return_code == -1 || event.flags & EV_ERROR) //< 0
 			{
@@ -719,23 +728,38 @@ public: //private:  //TODO:
 				throw (std::runtime_error(oss.str()));
 			}
 
+			std::cout << "debug 104" << std::endl;
+
 			if ( ! closing_ )
 			{
+				std::cout << "debug 105" << std::endl;
+
 				if ( return_code == 0 ) //timeout
 				{
+					std::cout << "debug 106" << std::endl;
+
 					//if ( queued_write_watch  )
 					if ( queued_write_watch != 0 )
 					{
+						std::cout << "debug 107" << std::endl;
+
 						handle_write( queued_write_watch );
+						std::cout << "debug 108" << std::endl;
+
 						queued_write_watch = 0;
 						//queued_write_watch.reset();
 					}
 				}
 				else
 				{
+					std::cout << "debug 109" << std::endl;
+
 					//filesystem_item* watch = (filesystem_item*) event.udata; //TODO: reinterpret_cast<>
 					//filesystem_item* watch = reinterpret_cast<filesystem_item*>( event.udata );
 					filesystem_item::pointer_type watch = reinterpret_cast<filesystem_item::pointer_type>( event.udata );
+
+					std::cout << "debug 110" << std::endl;
+
 
 					//filesystem_item::pointer_type watch = *(reinterpret_cast<filesystem_item::pointer_type*>( event.udata ));
 					//filesystem_item::pointer_type* watch_temp_1 = reinterpret_cast<filesystem_item::pointer_type*>( event.udata );
@@ -744,20 +768,25 @@ public: //private:  //TODO:
 
 					if ( event.fflags & NOTE_DELETE )
 					{
+						std::cout << "debug 111" << std::endl;
 						handle_remove( watch );
 					}
 
 					if ( event.fflags & NOTE_RENAME )
 					{
+						std::cout << "debug 112" << std::endl;
 						handle_rename( watch );
 					}
 
 					if ( event.fflags & NOTE_WRITE )
 					{
+						std::cout << "debug 113" << std::endl;
 						//if ( queued_write_watch  )
 						if ( queued_write_watch != 0 )
 						{
+							std::cout << "debug 114" << std::endl;
 							handle_write( queued_write_watch );
+							std::cout << "debug 115" << std::endl;
 							queued_write_watch = 0;
 							//queued_write_watch.reset();
 						}
@@ -765,6 +794,10 @@ public: //private:  //TODO:
 						//Encolamos un solo evento WRITE ya que siempre viene WRITE+RENAME... hacemos que primero se procese el evento rename y luego el write
 						queued_write_watch = watch;
 					}
+
+					std::cout << "debug 116" << std::endl;
+
+
 
 
 					//if (event.fflags & NOTE_TRUNCATE)
