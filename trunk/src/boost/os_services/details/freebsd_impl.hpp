@@ -176,8 +176,11 @@ public:
 		{
 			int ret_value = close( this->file_descriptor_ ); //::close
 
-			if ( ret_value < 0 )
+			if ( ret_value == -1 )
 			{
+
+				std::cout << "this->file_descriptor_: " << this->file_descriptor_ << std::endl;
+
 				std::ostringstream oss;
 				oss << "Failed to close file descriptor - Reason: " << std::strerror(errno);
 				throw (std::runtime_error(oss.str()));
@@ -541,13 +544,13 @@ public:
 
 			std::cout << "debug 207" << std::endl;
 
-			if ( ret_value < 0 )
+			if ( ret_value == -1 )
 			{
 				std::cout << "debug 208" << std::endl;
 
 				//TODO: pecado mortal... nunca lanzar excepciones desde destructores...
 				std::ostringstream oss;
-				oss << "Failed to close file descriptor - Reason: " << std::strerror(errno);
+				oss << "Failed to close kqueue file descriptor - Reason: " << std::strerror(errno);
 
 				std::cout << "debug 209" << std::endl;
 
