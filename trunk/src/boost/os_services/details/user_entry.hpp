@@ -50,7 +50,6 @@ struct user_entry //: public enable_shared_from_this<user_entry>
 		create_watch( root_, false );
 	}
 
-
 	boost::filesystem::path path_;
 	filesystem_item::pointer_type root_;			//este tiene la estructura de arbol
 	filesystem_item::collection_type all_watches_;
