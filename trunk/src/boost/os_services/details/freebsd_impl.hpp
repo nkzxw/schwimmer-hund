@@ -311,7 +311,8 @@ struct user_entry : public enable_shared_from_this<user_entry>
 
 		//filesystem_item::pointer_type item ( new filesystem_item (path_, this ) );
 		//filesystem_item::pointer_type item ( new filesystem_item (path_, shared_from_this() ) );
-		filesystem_item::pointer_type item = new filesystem_item (path_, shared_from_this() );
+		//filesystem_item::pointer_type item = new filesystem_item (path_, shared_from_this() );
+		filesystem_item::pointer_type item = new filesystem_item (path_, this );
 
 		std::cout << "initialize() 2" << std::endl;
 
