@@ -1,4 +1,13 @@
-// TODO: ver: http://www.boost.org/doc/libs/1_42_0/libs/ptr_container/doc/examples.html
+//TODO: ver: http://www.boost.org/doc/libs/1_42_0/libs/ptr_container/doc/examples.html
+//TODO: ver Guidelines: http://www.boost.org/doc/libs/1_42_0/libs/ptr_container/doc/guidelines.html
+//TODO: ver, leer: http://www.gotw.ca/publications/mill18.htm
+//TODO: ver: http://www.boost.org/doc/libs/1_42_0/libs/smart_ptr/make_shared.html
+//TODO: weak_ptr
+//TODO: 
+
+//TODO: linked_ptr nuevo nombre para master_ptr y slave_ptr
+//TODO: owner_ptr: nuevo SmartPtr en el cual se registre solo un unico owner_ptr por memoria... O sea, no podria haber dos owner_ptr apuntando a la misma posicion de memoria...
+//TODO: analizar estos dos ultimos a ver si son viables con algun smart pointer actual.
 
 //TODO: comentarios
 //TODO: ver si hay "limit of file descriptors per process" Puede llegar a complicar el monitoreo usando kqueue
@@ -29,10 +38,14 @@ There are platforms that are not supported due to lack of developer resources. I
 #ifndef BOOST_OS_SERVICES_DETAIL_FREEBSD_IMPL_HPP
 #define BOOST_OS_SERVICES_DETAIL_FREEBSD_IMPL_HPP
 
+//TODO: agregar a todos los archivos fuente... quizas este freebsd y etc no, es al pedo
+#if defined(_MSC_VER) && (_MSC_VER >= 1200)
+# pragma once
+#endif
+
 //TODO: ver cuales headers son innecesarios
 #include <string>
 //#include <vector>
-#include <boost/ptr_container/ptr_vector.hpp>
 
 // C-Std Headers
 #include <cerrno>	//TODO: probar si es necesario
@@ -42,7 +55,6 @@ There are platforms that are not supported due to lack of developer resources. I
 
 #include <sys/event.h>
 #include <sys/fcntl.h>
-//#include <sys/stat.h>
 #include <sys/time.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -52,7 +64,8 @@ There are platforms that are not supported due to lack of developer resources. I
 #include <boost/filesystem/path.hpp>
 //#include <boost/foreach.hpp>
 //#include <boost/integer.hpp>
-#include <boost/smart_ptr.hpp>
+//#include <boost/smart_ptr.hpp>
+#include <boost/ptr_container/ptr_vector.hpp>
 #include <boost/thread.hpp>
 
 #include <boost/os_services/change_types.hpp>
@@ -245,9 +258,11 @@ public: //private:
 	//TODO: ver boost::ptr_vector
 	collection_type subitems_;
 
+
+	//TODO: ver que pasa si agregamos el mismo directorio como dos user_entry distintos... el open da el mismo file descriptor?
 	//user_entry* root_user_entry_; 
 	//user_entry::pointer_type root_user_entry_;
-	user_entry_pointer_type root_user_entry_; //TODO: ver que pasa si agregamos el mismo directorio como dos user_entry distintos... el open da el mismo file descriptor?
+	user_entry_pointer_type root_user_entry_; 
 };
 
 
@@ -275,6 +290,7 @@ struct user_entry : public enable_shared_from_this<user_entry>
 	void add_watch( filesystem_item::pointer_type item )
 	{
 		all_watches_.push_back(item);
+		all_watches_.rele
 	}
 
 	void initialize()
@@ -284,7 +300,7 @@ struct user_entry : public enable_shared_from_this<user_entry>
 		//filesystem_item::pointer_type item ( new filesystem_item (path_, this ) );
 		filesystem_item::pointer_type item ( new filesystem_item (path_, shared_from_this() ) );
 		all_watches_.push_back(item);
-		head_ = item;
+		root_ = item;
 
 		create_watch( item );
 	}
@@ -382,14 +398,14 @@ struct user_entry : public enable_shared_from_this<user_entry>
 
 	
 	//TODO: contemplar la opcion include_sub_directories_
-	//void scan_directory( filesystem_item::pointer_type head_dir )
-	void scan_directory( filesystem_item* head_dir )
+	//void scan_directory( filesystem_item::pointer_type root_dir )
+	void scan_directory( filesystem_item* root_dir )
 	{
-		//std::cout << "void scan_directory( fsitem* head_dir )" << std::endl;
-		//std::cout << "head_dir->path.native_file_string(): " << head_dir->get_path().native_file_string() << std::endl;
+		//std::cout << "void scan_directory( fsitem* root_dir )" << std::endl;
+		//std::cout << "root_dir->path.native_file_string(): " << root_dir->get_path().native_file_string() << std::endl;
 
 		boost::filesystem::directory_iterator end_iter;
-		for ( boost::filesystem::directory_iterator dir_itr( head_dir->get_path() ); dir_itr != end_iter; ++dir_itr )
+		for ( boost::filesystem::directory_iterator dir_itr( root_dir->get_path() ); dir_itr != end_iter; ++dir_itr )
 		{
 			try
 			{
@@ -400,7 +416,7 @@ struct user_entry : public enable_shared_from_this<user_entry>
 				//TODO: reemplazar por std::find o algo similar...
 				//Linear-search
 				//TODO: all_watches_ ?????
-				for (filesystem_item::collection_type::iterator it =  head_dir->subitems_.begin(); it != head_dir->subitems_.end(); ++it )
+				for (filesystem_item::collection_type::iterator it =  root_dir->subitems_.begin(); it != root_dir->subitems_.end(); ++it )
 				{
 					//if (  (*it)->is_equal ( inode_info, dir_itr->path() ) )
 					if (  it->is_equal ( inode_info, dir_itr->path() ) )
@@ -414,13 +430,13 @@ struct user_entry : public enable_shared_from_this<user_entry>
 				if ( !found )	//Archivo nuevo
 				{
 					//TODO: usar algun metodo que lo haga facil.. add_subitem o algo asi, quizas desde una factory
-					filesystem_item::pointer_type item ( new filesystem_item( dir_itr->path(), head_dir->root_user_entry_, head_dir) );
+					filesystem_item::pointer_type item ( new filesystem_item( dir_itr->path(), root_dir->root_user_entry_, root_dir) );
 					this->all_watches_.push_back(item);
 
 					create_watch( item );
 					item->mask_ = PN_CREATE;
 					item->inode_info_ = inode_info;
-					head_dir->subitems_.push_back(item);
+					root_dir->subitems_.push_back(item);
 				}
 			}
 			catch ( const std::exception & ex )
@@ -431,7 +447,9 @@ struct user_entry : public enable_shared_from_this<user_entry>
 	}
 
 	boost::filesystem::path path_;
-	filesystem_item::pointer_type head_;						//este tiene la estructura de arbol
+
+	//TODO: estos deberian ser weak_ptr's quizas...
+	filesystem_item::pointer_type root_;			//este tiene la estructura de arbol
 	filesystem_item::collection_type all_watches_;
 };
 
