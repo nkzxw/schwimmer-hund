@@ -497,15 +497,25 @@ public:
 
 	~freebsd_impl()
 	{
+		std::cout << "debug 200" << std::endl;
 		closing_ = true;
+		std::cout << "debug 201" << std::endl;
 		
 		if ( thread_ )
 		{
+			std::cout << "debug 202" << std::endl;
 			thread_->join();
+			std::cout << "debug 203" << std::endl;
 		}
+
+		std::cout << "debug 204" << std::endl;
+
 
 		if ( kqueue_file_descriptor_ != 0 )
 		{
+
+			std::cout << "debug 205" << std::endl;
+
 			//TODO:
 			//BOOST_FOREACH(pair_type p, watch_descriptors_)
 			//{
@@ -524,7 +534,13 @@ public:
 			//	}
 			//}
 
+			std::cout << "debug 206" << std::endl;
+
+
 			int ret_value = ::close( kqueue_file_descriptor_ );
+
+			std::cout << "debug 207" << std::endl;
+
 			if ( ret_value < 0 )
 			{
 				std::ostringstream oss;
@@ -532,6 +548,9 @@ public:
 				throw (std::runtime_error(oss.str()));
 			}
 		}
+
+		std::cout << "debug 208" << std::endl;
+
 	}
 
 
@@ -729,6 +748,8 @@ public: //private:  //TODO:
 			}
 
 			std::cout << "debug 104" << std::endl;
+			std::cout << "closing_: " << closing_ << std::endl;
+			
 
 			if ( ! closing_ )
 			{
@@ -823,6 +844,7 @@ public: //private:  //TODO:
 				}
 			}
 		}
+		std::cout << "debug 117" << std::endl;
 	}
 
 protected:
