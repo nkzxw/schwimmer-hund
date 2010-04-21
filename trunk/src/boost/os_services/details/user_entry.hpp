@@ -34,10 +34,26 @@ struct user_entry //: public enable_shared_from_this<user_entry>
 		all_watches_.push_back(item);
 	}
 
-	filesystem_item::collection_type::iterator remove_watch( filesystem_item::collection_type::iterator it )
+	void remove_watch( filesystem_item::pointer_type watch )
 	{
-		return all_watches_.erase(it);
+		//TODO: usar STL
+		filesystem_item::collection_type::iterator it = all_watches_.begin();
+		while ( it != all_watches_.end() )
+		{
+			if ( watch->is_equal( *it ) )
+			{
+				it = all_watches_.erase(it);
+				break;
+			}
+			else
+			{
+				++it;
+			}
+		}
 	}
+
+	
+
 
 	//void initialize()
 	//{
