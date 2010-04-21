@@ -214,6 +214,10 @@ public:
 	void open()
 	{
 		this->file_descriptor_ = ::open( path_.native_file_string().c_str(), O_EVTONLY );
+
+		std::cout << "this->file_descriptor_: " << this->file_descriptor_ << std::endl;
+		std::cout << "path_.native_file_string(): " << path_.native_file_string() << std::endl;
+
 		if ( this->file_descriptor_ == -1 )
 		{
 			std::ostringstream oss;
@@ -301,9 +305,9 @@ struct user_entry : public enable_shared_from_this<user_entry>
 	//void add_watch( filesystem_item* item )
 	void add_watch( filesystem_item::pointer_type item )
 	{
-		std::cout << "debug 1" << std::endl;
+		//std::cout << "debug 1" << std::endl;
 		all_watches_.push_back(item);
-		std::cout << "debug 2" << std::endl;
+		//std::cout << "debug 2" << std::endl;
 		//all_watches_.rele
 	}
 
@@ -319,10 +323,10 @@ struct user_entry : public enable_shared_from_this<user_entry>
 
 		std::cout << "initialize() 2" << std::endl;
 
-		std::cout << "debug 3" << std::endl;
+		//std::cout << "debug 3" << std::endl;
 		all_watches_.push_back(item);
 		root_ = item;
-		std::cout << "debug 4" << std::endl;
+		//std::cout << "debug 4" << std::endl;
 
 		create_watch( item );
 	}
@@ -439,7 +443,7 @@ struct user_entry : public enable_shared_from_this<user_entry>
 				//TODO: reemplazar por std::find o algo similar...
 				//Linear-search
 				//TODO: all_watches_ ?????
-				std::cout << "debug 11" << std::endl;
+				//std::cout << "debug 11" << std::endl;
 				for (filesystem_item::collection_type::iterator it =  root_dir->subitems_.begin(); it != root_dir->subitems_.end(); ++it )
 				{
 					//if (  (*it)->is_equal ( inode_info, dir_itr->path() ) )
@@ -449,7 +453,7 @@ struct user_entry : public enable_shared_from_this<user_entry>
 						break;
 					}
 				}
-				std::cout << "debug 12" << std::endl;
+				//std::cout << "debug 12" << std::endl;
 
 				if ( !found )	//Archivo nuevo
 				{
@@ -457,16 +461,16 @@ struct user_entry : public enable_shared_from_this<user_entry>
 					//filesystem_item::pointer_type item ( new filesystem_item( dir_itr->path(), root_dir->root_user_entry_, root_dir) );
 					filesystem_item::pointer_type item = new filesystem_item( dir_itr->path(), root_dir->root_user_entry_, root_dir );
 					
-					std::cout << "debug 5" << std::endl;
+					//std::cout << "debug 5" << std::endl;
 					this->all_watches_.push_back(item);
-					std::cout << "debug 6" << std::endl;
+					//std::cout << "debug 6" << std::endl;
 
 					create_watch( item );
 					item->mask_ = PN_CREATE;
 					item->inode_info_ = inode_info;
-					std::cout << "debug 7" << std::endl;
+					//std::cout << "debug 7" << std::endl;
 					root_dir->subitems_.push_back(item);
-					std::cout << "debug 8" << std::endl;
+					//std::cout << "debug 8" << std::endl;
 				}
 			}
 			catch ( const std::exception & ex )
@@ -574,9 +578,9 @@ public:
 		user_entry::pointer_type item = new user_entry;
 
 		item->path_ = dir_name; //TODO: revisar
-		std::cout << "debug 9" << std::endl;
+		//std::cout << "debug 9" << std::endl;
 		user_watches_.push_back(item);
-		std::cout << "debug 10" << std::endl;
+		//std::cout << "debug 10" << std::endl;
 	}
 	//void remove_directory_impl(const std::string& dir_name) // throw (std::invalid_argument);
 
@@ -605,15 +609,15 @@ public:
 
 		//TODO: BOOST_FOREACH
 		//TODO: STL transform
-		std::cout << "debug 30" << std::endl;
+		//std::cout << "debug 30" << std::endl;
 		for (user_entry::collection_type::iterator it = user_watches_.begin(); it != user_watches_.end(); ++it )
 		{
-			std::cout << "debug 30.A" << std::endl;
+			//std::cout << "debug 30.A" << std::endl;
 			//(*it)->initialize();
 			it->initialize();
-			std::cout << "debug 30.B" << std::endl;
+			//std::cout << "debug 30.B" << std::endl;
 		}
-		std::cout << "debug 31" << std::endl;
+		//std::cout << "debug 31" << std::endl;
 
 		thread_.reset( new boost::thread( boost::bind(&freebsd_impl::handle_directory_changes, this) ) );
 	}
@@ -631,7 +635,7 @@ public: //private:  //TODO:
 	//void remove_watch ( filesystem_item* watch ) 
 	void remove_watch ( filesystem_item::pointer_type watch ) 
 	{
-		std::cout << "debug 40" << std::endl;
+		//std::cout << "debug 40" << std::endl;
 		filesystem_item::collection_type::iterator it = watch->parent_->subitems_.begin();
 		while ( it != watch->parent_->subitems_.end() )
 		{
@@ -647,7 +651,7 @@ public: //private:  //TODO:
 			}
 		}
 		
-		std::cout << "debug 20" << std::endl;
+		//std::cout << "debug 20" << std::endl;
 		it = watch->root_user_entry_->all_watches_.begin();
 		while ( it != watch->parent_->subitems_.end() )
 		{
@@ -661,7 +665,7 @@ public: //private:  //TODO:
 				++it;
 			}
 		}
-		std::cout << "debug 21" << std::endl;
+		//std::cout << "debug 21" << std::endl;
 		//TODO: llamar a metodo que lanza el evento...
 	}
 
@@ -727,11 +731,11 @@ public: //private:  //TODO:
 
 	void handle_directory_changes()
 	{
-		std::cout << "debug 100" << std::endl;
+		//std::cout << "debug 100" << std::endl;
 
 		filesystem_item::pointer_type queued_write_watch = 0;
 
-		std::cout << "debug 101" << std::endl;
+		//std::cout << "debug 101" << std::endl;
 
 		while ( ! closing_ )
 		{
@@ -741,12 +745,12 @@ public: //private:  //TODO:
 			timeout.tv_sec = 0;
 			timeout.tv_nsec = 300000; //300 milliseconds //TODO: sacar el hardcode, hacer configurable...
 
-			std::cout << "debug 102" << std::endl;
+			//std::cout << "debug 102" << std::endl;
 
 			//TODO: pasar toda esta logica a un metodo o clase...
 			int return_code = kevent ( kqueue_file_descriptor_, NULL, 0, &event, 1, &timeout );
 
-			std::cout << "debug 103" << std::endl;
+			//std::cout << "debug 103" << std::endl;
 
 
 			if ( return_code == -1 || event.flags & EV_ERROR) //< 0
@@ -757,25 +761,25 @@ public: //private:  //TODO:
 				throw (std::runtime_error(oss.str()));
 			}
 
-			std::cout << "debug 104" << std::endl;
+			//std::cout << "debug 104" << std::endl;
 			std::cout << "closing_: " << closing_ << std::endl;
 			
 
 			if ( ! closing_ )
 			{
-				std::cout << "debug 105" << std::endl;
+				//std::cout << "debug 105" << std::endl;
 
 				if ( return_code == 0 ) //timeout
 				{
-					std::cout << "debug 106" << std::endl;
+					//std::cout << "debug 106" << std::endl;
 
 					//if ( queued_write_watch  )
 					if ( queued_write_watch != 0 )
 					{
-						std::cout << "debug 107" << std::endl;
+						//std::cout << "debug 107" << std::endl;
 
 						handle_write( queued_write_watch );
-						std::cout << "debug 108" << std::endl;
+						//std::cout << "debug 108" << std::endl;
 
 						queued_write_watch = 0;
 						//queued_write_watch.reset();
@@ -783,13 +787,13 @@ public: //private:  //TODO:
 				}
 				else
 				{
-					std::cout << "debug 109" << std::endl;
+					//std::cout << "debug 109" << std::endl;
 
 					//filesystem_item* watch = (filesystem_item*) event.udata; //TODO: reinterpret_cast<>
 					//filesystem_item* watch = reinterpret_cast<filesystem_item*>( event.udata );
 					filesystem_item::pointer_type watch = reinterpret_cast<filesystem_item::pointer_type>( event.udata );
 
-					std::cout << "debug 110" << std::endl;
+					//std::cout << "debug 110" << std::endl;
 
 
 					//filesystem_item::pointer_type watch = *(reinterpret_cast<filesystem_item::pointer_type*>( event.udata ));
@@ -799,25 +803,25 @@ public: //private:  //TODO:
 
 					if ( event.fflags & NOTE_DELETE )
 					{
-						std::cout << "debug 111" << std::endl;
+						//std::cout << "debug 111" << std::endl;
 						handle_remove( watch );
 					}
 
 					if ( event.fflags & NOTE_RENAME )
 					{
-						std::cout << "debug 112" << std::endl;
+						//std::cout << "debug 112" << std::endl;
 						handle_rename( watch );
 					}
 
 					if ( event.fflags & NOTE_WRITE )
 					{
-						std::cout << "debug 113" << std::endl;
+						//std::cout << "debug 113" << std::endl;
 						//if ( queued_write_watch  )
 						if ( queued_write_watch != 0 )
 						{
-							std::cout << "debug 114" << std::endl;
+							//std::cout << "debug 114" << std::endl;
 							handle_write( queued_write_watch );
-							std::cout << "debug 115" << std::endl;
+							//std::cout << "debug 115" << std::endl;
 							queued_write_watch = 0;
 							//queued_write_watch.reset();
 						}
@@ -826,7 +830,7 @@ public: //private:  //TODO:
 						queued_write_watch = watch;
 					}
 
-					std::cout << "debug 116" << std::endl;
+					//std::cout << "debug 116" << std::endl;
 
 
 
@@ -854,7 +858,7 @@ public: //private:  //TODO:
 				}
 			}
 		}
-		std::cout << "debug 117" << std::endl;
+		//std::cout << "debug 117" << std::endl;
 	}
 
 protected:
