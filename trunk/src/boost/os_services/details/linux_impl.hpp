@@ -68,7 +68,7 @@ public:
 					if ( ret_value == -1 ) //TODO: constante POSIX_ERROR o algo asi... IDEM FreeBSD
 					{
 						//Destructor -> NO_THROW
-						std::cerr << "Failed to remove watch - Reason: " << std::strerror(errno);
+						std::cerr << "Failed to remove watch - Reason: " << std::strerror(errno) << std::endl;
 					}
 
 				}
@@ -80,7 +80,7 @@ public:
 			if ( ret_value < 0 )
 			{
 				//Destructor -> NO_THROW
-				std::cerr << "Failed to close inotify file descriptor - Reason: " << std::strerror(errno);
+				std::cerr << "Failed to close inotify file descriptor - Reason: " << std::strerror(errno) << std::endl;
 			}
 		}
 

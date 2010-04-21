@@ -178,10 +178,8 @@ public:
 
 			if ( ret_value == -1 )
 			{
-				std::cout << "this->file_descriptor_: " << this->file_descriptor_ << std::endl;
-
 				//Destructor -> NO_THROW
-				std::cerr << "Failed to close file descriptor - Reason: " << std::strerror(errno);
+				std::cerr << "Failed to close file descriptor - File descriptor: '" << this->file_descriptor_ << "' - File path: '" << this->path_.native_file_string() << "' - Reason: " << std::strerror(errno) << std::endl;
 			}
 		}
 	}
@@ -546,7 +544,7 @@ public:
 			if ( ret_value == -1 )
 			{
 				//Destructor -> NO_THROW
-				std::cerr << "Failed to close kqueue file descriptor - Reason: " << std::strerror(errno);
+				std::cerr << "Failed to close kqueue file descriptor - File Descriptor: '" << kqueue_file_descriptor_ << "' - Reason: " << std::strerror(errno) << std::endl; 
 
 			}
 		}

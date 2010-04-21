@@ -37,7 +37,7 @@ void directory_info_deleter(LPDIRECTORY_INFO ptr)
 			if ( ret_value == 0 )
 			{
 				//Destructor -> NO_THROW
-				std::cerr << "Failed to close directory port handle. Reason: " << GetLastError();
+				std::cerr << "Failed to close directory port handle. Reason: " << GetLastError() << std::endl;
 			}
 		}
 
@@ -63,7 +63,7 @@ public:
 			if ( ret_value == 0 )
 			{
 				//Destructor -> NO_THROW
-				std::cerr << "Failed to post to completion port. Reason: " << GetLastError();
+				std::cerr << "Failed to post to completion port. Reason: " << GetLastError() << std::endl;
 				//TODO: Si el Post falla, el Thread nunca va a morir !!
 			}
 		}
@@ -80,7 +80,7 @@ public:
 			if ( ret_value == 0 )
 			{
 				//Destructor -> NO_THROW
-				std::cerr << "Failed to close completion port handle. Reason: " << GetLastError();
+				std::cerr << "Failed to close completion port handle. Reason: " << GetLastError() << std::endl;
 			}
 		}
 	}
