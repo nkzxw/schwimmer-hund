@@ -491,6 +491,7 @@ struct user_entry : public enable_shared_from_this<user_entry>
 			}
 			catch ( const std::exception & ex )
 			{
+				//TODO: manejar esta excepcion
 				std::cout << dir_itr->path().native_file_string() << " " << ex.what() << std::endl;
 			}
 		}
