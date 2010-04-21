@@ -174,12 +174,17 @@ public:
 		//TODO: Eliminar los subitems 
 		if ( this->file_descriptor_ != 0 )
 		{
-			int ret_value = close( this->file_descriptor_ ); //::close
 
-			if ( ret_value == -1 )
+			if ( this->file_descriptor_ != 5 )
 			{
-				//Destructor -> NO_THROW
-				std::cerr << "Failed to close file descriptor - File descriptor: '" << this->file_descriptor_ << "' - File path: '" << this->path_.native_file_string() << "' - Reason: " << std::strerror(errno) << std::endl;
+
+				int ret_value = ::close( this->file_descriptor_ ); //close
+				if ( ret_value == -1 )
+				{
+					//Destructor -> NO_THROW
+					std::cerr << "Failed to close file descriptor - File descriptor: '" << this->file_descriptor_ << "' - File path: '" << this->path_.native_file_string() << "' - Reason: " << std::strerror(errno) << std::endl;
+				}
+				this->file_descriptor_ = 0;
 			}
 		}
 	}
@@ -306,15 +311,12 @@ struct user_entry : public enable_shared_from_this<user_entry>
 
 	void initialize()
 	{
-		std::cout << "initialize() 1" << std::endl;
 		//TODO: estas dos instrucciones ponerlas en un factory
 
 		//filesystem_item::pointer_type item ( new filesystem_item (path_, this ) );
 		//filesystem_item::pointer_type item ( new filesystem_item (path_, shared_from_this() ) );
 		//filesystem_item::pointer_type item = new filesystem_item (path_, shared_from_this() );
 		filesystem_item::pointer_type item = new filesystem_item (path_, this );
-
-		std::cout << "initialize() 2" << std::endl;
 
 		//std::cout << "debug 3" << std::endl;
 		all_watches_.push_back(item);
@@ -536,17 +538,14 @@ public:
 
 			//std::cout << "debug 206" << std::endl;
 
-
 			int ret_value = ::close( kqueue_file_descriptor_ );
-
 			//std::cout << "debug 207" << std::endl;
-
 			if ( ret_value == -1 )
 			{
 				//Destructor -> NO_THROW
 				std::cerr << "Failed to close kqueue file descriptor - File Descriptor: '" << kqueue_file_descriptor_ << "' - Reason: " << std::strerror(errno) << std::endl; 
-
 			}
+			kqueue_file_descriptor_ = 0;
 		}
 
 		//std::cout << "debug 210" << std::endl;
