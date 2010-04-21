@@ -216,6 +216,9 @@ public:
 
 	void close( bool no_throw = true, bool close_subitems = true )
 	{
+		std::cout << "void close( bool no_throw = true, bool close_subitems = true )" << std::endl;
+		std::cout << "this->file_descriptor_: " << this->file_descriptor_ << std::endl;
+
 		//close sub-items
 		for (filesystem_item::collection_type::iterator it =  this->subitems_.begin(); it != this->subitems_.end(); ++it )
 		{
