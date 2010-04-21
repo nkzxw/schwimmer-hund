@@ -206,11 +206,12 @@ public: //private:  //TODO:
 	create_file_event_handler created_handler_;
 
 
-	filesystem_item::pointer_type create_filesystem_item ( const boost::filesystem::path& path, user_entry::pointer_type entry, filesystem_item::pointer_type parent = 0)
+	//filesystem_item::pointer_type create_filesystem_item ( const boost::filesystem::path& path, user_entry::pointer_type entry, filesystem_item::pointer_type parent = 0)
+	filesystem_item::pointer_type create_filesystem_item ( const boost::filesystem::path& path, user_entry& entry, filesystem_item::pointer_type parent = 0)
 	{
-		filesystem_item::pointer_type watch = new filesystem_item ( path, entry, parent ); 
-		entry->set_root ( watch );
-		entry->add_watch ( watch );
+		filesystem_item::pointer_type watch = new filesystem_item ( path, &entry, parent ); 
+		entry.set_root ( watch );
+		entry.add_watch ( watch );
 		
 		//watch->open(); //TODO: catch errors
 		//begin_watch( watch, false );
@@ -369,12 +370,14 @@ public: //private:  //TODO:
 	//void remove_watch ( filesystem_item* watch ) 
 	void remove_watch ( filesystem_item::pointer_type watch ) 
 	{
+		//TODO: crear un metodo para cada watch !!!!!!
 		filesystem_item::collection_type::iterator it = watch->parent_->subitems_.begin();
 		while ( it != watch->parent_->subitems_.end() )
 		{
 			//if ( watch == (*it) )
 			if ( watch->is_equal( *it ) )
 			{
+				//TODO: crear metodo remove en filesystem_item
 				it = watch->parent_->subitems_.erase(it);
 				break;
 			}
