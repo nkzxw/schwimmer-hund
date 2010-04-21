@@ -296,7 +296,7 @@ public: //private:
 };
 
 
-struct user_entry : public enable_shared_from_this<user_entry>
+struct user_entry //: public enable_shared_from_this<user_entry>
 {
 	//typedef boost::shared_ptr<user_entry> pointer_type;
 	//typedef std::vector<pointer_type> collection_type;
@@ -319,31 +319,123 @@ struct user_entry : public enable_shared_from_this<user_entry>
 	//void add_watch( filesystem_item* item )
 	void add_watch( filesystem_item::pointer_type item )
 	{
-		//std::cout << "debug 1" << std::endl;
 		all_watches_.push_back(item);
-		//std::cout << "debug 2" << std::endl;
-		//all_watches_.rele
 	}
 
 	void initialize()
 	{
 		//TODO: estas dos instrucciones ponerlas en un factory
-
 		//filesystem_item::pointer_type item ( new filesystem_item (path_, this ) );
 		//filesystem_item::pointer_type item ( new filesystem_item (path_, shared_from_this() ) );
 		//filesystem_item::pointer_type item = new filesystem_item (path_, shared_from_this() );
-		filesystem_item::pointer_type item = new filesystem_item (path_, this );
+		filesystem_item::pointer_type item = new filesystem_item ( path_, this );
 
-		//std::cout << "debug 3" << std::endl;
 		all_watches_.push_back(item);
+
 		root_ = item;
-		//std::cout << "debug 4" << std::endl;
 
 		create_watch( item, false );
 	}
 
 	
-	//void create_watch( filesystem_item* watch )
+
+	boost::filesystem::path path_;
+
+	//TODO: estos deberian ser weak_ptr's quizas...
+	filesystem_item::pointer_type root_;			//este tiene la estructura de arbol
+	filesystem_item::collection_type all_watches_;
+};
+
+
+
+
+
+
+class freebsd_impl : public base_impl<freebsd_impl>
+{
+public:
+
+	freebsd_impl()
+		: is_initialized_(false), closing_(false) //, kqueue_file_descriptor_(0)
+	{
+		//kqueue_file_descriptor_ = 0;
+	}
+
+	~freebsd_impl()
+	{
+		closing_ = true;
+		
+		if ( thread_ )
+		{
+			thread_->join();
+		}
+
+		//TODO:  cerrar los archivos /watches 
+
+		if ( kqueue_file_descriptor_ != 0 )
+		{
+			int ret_value = ::close( kqueue_file_descriptor_ );
+			if ( ret_value == -1 )
+			{
+				//Destructor -> no-throw
+				std::cerr << "Failed to close kqueue file descriptor - File Descriptor: '" << kqueue_file_descriptor_ << "' - Reason: " << std::strerror(errno) << std::endl; 
+			}
+			kqueue_file_descriptor_ = 0;
+		}
+	}
+
+
+	//TODO: agregar
+	//void add_directory_impl ( const boost::filesystem::path& dir ) //throw (std::invalid_argument, std::runtime_error)
+
+	void add_directory_impl ( const std::string& dir_name )
+	{
+		//TODO: asignar mask
+		//user_entry::pointer_type item( new user_entry );
+		user_entry::pointer_type item = new user_entry;
+
+		item->path_ = dir_name; //TODO: revisar
+		user_watches_.push_back(item);
+	}
+	//void remove_directory_impl(const std::string& dir_name) // throw (std::invalid_argument);
+
+	//TODO: ver si hace falta hacer lo mismo para Windows
+	void initialize() //TODO: private
+	{
+		if (!is_initialized_)
+		{
+			kqueue_file_descriptor_ = kqueue(); //::kqueue();
+			//std::cout << "kqueue_file_descriptor_" << kqueue_file_descriptor_ << std::endl;
+
+			if ( kqueue_file_descriptor_ == -1 )   //< 0)
+			{
+				std::ostringstream oss;
+				oss << "Failed to initialize kqueue - Reason: " << std::strerror(errno);
+				throw (std::runtime_error(oss.str()));
+			}
+			is_initialized_ = true;
+		}
+	}
+
+	void start()
+	{
+		//std::cout << "void start()" << std::endl;
+		initialize();
+
+		//TODO: BOOST_FOREACH
+		//TODO: STL transform
+		for (user_entry::collection_type::iterator it = user_watches_.begin(); it != user_watches_.end(); ++it )
+		{
+			it->initialize();
+			create_watch( item, false );
+		}
+
+		thread_.reset( new boost::thread( boost::bind(&freebsd_impl::handle_directory_changes, this) ) );
+	}
+
+public: //private:  //TODO:
+
+
 	void create_watch( filesystem_item::pointer_type watch, bool launch_events = false )
 	{
 		//std::cout << "void create_watch( filesystem_item::pointer_type watch )" << std::endl;
@@ -357,7 +449,6 @@ struct user_entry : public enable_shared_from_this<user_entry>
 
 		if ( watch->is_directory() )
 		{
-			//scan_directory( watch.get() );
 			scan_directory( watch, launch_events );
 		}
 
@@ -434,9 +525,8 @@ struct user_entry : public enable_shared_from_this<user_entry>
 		}
 	}
 
-	
+
 	//TODO: contemplar la opcion include_sub_directories_
-	//void scan_directory( filesystem_item* root_dir )
 	void scan_directory( filesystem_item::pointer_type root_dir, bool launch_events = false )
 	{
 		//std::cout << "void scan_directory( fsitem* root_dir )" << std::endl;
@@ -447,24 +537,21 @@ struct user_entry : public enable_shared_from_this<user_entry>
 		{
 			try
 			{
-				bool found = false;
-
 				file_inode_info inode_info( dir_itr->path() );
 
 				//TODO: reemplazar por std::find o algo similar...
 				//Linear-search
 				//TODO: all_watches_ ?????
-				//std::cout << "debug 11" << std::endl;
-				for (filesystem_item::collection_type::iterator it =  root_dir->subitems_.begin(); it != root_dir->subitems_.end(); ++it )
+
+				bool found = false;
+				for (filesystem_item::collection_type::iterator it = root_dir->subitems_.begin(); it != root_dir->subitems_.end(); ++it )
 				{
-					//if (  (*it)->is_equal ( inode_info, dir_itr->path() ) )
 					if (  it->is_equal ( inode_info, dir_itr->path() ) )
 					{
 						found = true;
 						break;
 					}
 				}
-				//std::cout << "debug 12" << std::endl;
 
 				if ( !found )	//Archivo nuevo
 				{
@@ -478,17 +565,13 @@ struct user_entry : public enable_shared_from_this<user_entry>
 					//TODO: usar algun metodo que lo haga facil.. add_subitem o algo asi, quizas desde una factory
 					//filesystem_item::pointer_type item ( new filesystem_item( dir_itr->path(), root_dir->root_user_entry_, root_dir) );
 					filesystem_item::pointer_type item = new filesystem_item( dir_itr->path(), root_dir->root_user_entry_, root_dir );
-					
-					//std::cout << "debug 5" << std::endl;
+
 					this->all_watches_.push_back(item);
-					//std::cout << "debug 6" << std::endl;
 
 					create_watch( item, launch_events );
 					item->mask_ = PN_CREATE;
 					item->inode_info_ = inode_info;
-					//std::cout << "debug 7" << std::endl;
 					root_dir->subitems_.push_back(item);
-					//std::cout << "debug 8" << std::endl;
 				}
 			}
 			catch ( const std::exception & ex )
@@ -499,140 +582,7 @@ struct user_entry : public enable_shared_from_this<user_entry>
 		}
 	}
 
-	boost::filesystem::path path_;
 
-	//TODO: estos deberian ser weak_ptr's quizas...
-	filesystem_item::pointer_type root_;			//este tiene la estructura de arbol
-	filesystem_item::collection_type all_watches_;
-};
-
-
-
-
-
-
-class freebsd_impl : public base_impl<freebsd_impl>
-{
-public:
-
-	freebsd_impl()
-		: is_initialized_(false), closing_(false) //, kqueue_file_descriptor_(0)
-	{
-		//kqueue_file_descriptor_ = 0;
-	}
-
-	~freebsd_impl()
-	{
-		//std::cout << "debug 200" << std::endl;
-		closing_ = true;
-		//std::cout << "debug 201" << std::endl;
-		
-		if ( thread_ )
-		{
-			//std::cout << "debug 202" << std::endl;
-			thread_->join();
-			//std::cout << "debug 203" << std::endl;
-		}
-
-		//std::cout << "debug 204" << std::endl;
-
-
-		if ( kqueue_file_descriptor_ != 0 )
-		{
-
-			//std::cout << "debug 205" << std::endl;
-
-			//TODO:
-			//BOOST_FOREACH(pair_type p, watch_descriptors_)
-			//{
-			//	if ( p.second != 0 )
-			//	{
-			//		//int ret_value = ::inotify_rm_watch( kqueue_file_descriptor_, p.second );
-			//		int ret_value = 0;
-
-			//		if ( ret_value < 0 )
-			//		{
-			//			//TODO: analizar si esta es la forma optima de manejar errores.
-			//			std::ostringstream oss;
-			//			oss << "Failed to remove watch - Reason: "; //TODO: ver que usar en Linux/BSD << GetLastError();
-			//			throw (std::runtime_error(oss.str()));
-			//		}
-			//	}
-			//}
-
-			//std::cout << "debug 206" << std::endl;
-
-			int ret_value = ::close( kqueue_file_descriptor_ );
-			//std::cout << "debug 207" << std::endl;
-			if ( ret_value == -1 )
-			{
-				//Destructor -> no-throw
-				std::cerr << "Failed to close kqueue file descriptor - File Descriptor: '" << kqueue_file_descriptor_ << "' - Reason: " << std::strerror(errno) << std::endl; 
-			}
-			kqueue_file_descriptor_ = 0;
-		}
-
-		//std::cout << "debug 210" << std::endl;
-
-
-	}
-
-
-	//TODO: agregar
-	//void add_directory_impl ( const boost::filesystem::path& dir ) //throw (std::invalid_argument, std::runtime_error)
-
-	void add_directory_impl ( const std::string& dir_name )
-	{
-		//TODO: asignar mask
-		//user_entry::pointer_type item( new user_entry );
-		user_entry::pointer_type item = new user_entry;
-
-		item->path_ = dir_name; //TODO: revisar
-		//std::cout << "debug 9" << std::endl;
-		user_watches_.push_back(item);
-		//std::cout << "debug 10" << std::endl;
-	}
-	//void remove_directory_impl(const std::string& dir_name) // throw (std::invalid_argument);
-
-	//TODO: ver si hace falta hacer lo mismo para Windows
-	void initialize() //TODO: private
-	{
-		if (!is_initialized_)
-		{
-			kqueue_file_descriptor_ = kqueue(); //::kqueue();
-			//std::cout << "kqueue_file_descriptor_" << kqueue_file_descriptor_ << std::endl;
-
-			if ( kqueue_file_descriptor_ == -1 )   //< 0)
-			{
-				std::ostringstream oss;
-				oss << "Failed to initialize kqueue - Reason: " << std::strerror(errno);
-				throw (std::runtime_error(oss.str()));
-			}
-			is_initialized_ = true;
-		}
-	}
-
-	void start()
-	{
-		//std::cout << "void start()" << std::endl;
-		initialize();
-
-		//TODO: BOOST_FOREACH
-		//TODO: STL transform
-		//std::cout << "debug 30" << std::endl;
-		for (user_entry::collection_type::iterator it = user_watches_.begin(); it != user_watches_.end(); ++it )
-		{
-			//std::cout << "debug 30.A" << std::endl;
-			//(*it)->initialize();
-			it->initialize();
-			//std::cout << "debug 30.B" << std::endl;
-		}
-		//std::cout << "debug 31" << std::endl;
-
-		thread_.reset( new boost::thread( boost::bind(&freebsd_impl::handle_directory_changes, this) ) );
-	}
-
-public: //private:  //TODO:
 
 	//TODO: evaluar si rename_watch y remove_watch tienen que ir acá o en sus respectivas clases
 	//void rename_watch ( filesystem_item* watch, const boost::filesystem::path& new_path ) 
@@ -645,7 +595,6 @@ public: //private:  //TODO:
 	//void remove_watch ( filesystem_item* watch ) 
 	void remove_watch ( filesystem_item::pointer_type watch ) 
 	{
-		//std::cout << "debug 40" << std::endl;
 		filesystem_item::collection_type::iterator it = watch->parent_->subitems_.begin();
 		while ( it != watch->parent_->subitems_.end() )
 		{
@@ -661,7 +610,6 @@ public: //private:  //TODO:
 			}
 		}
 		
-		//std::cout << "debug 20" << std::endl;
 		it = watch->root_user_entry_->all_watches_.begin();
 		while ( it != watch->parent_->subitems_.end() )
 		{
@@ -675,7 +623,6 @@ public: //private:  //TODO:
 				++it;
 			}
 		}
-		//std::cout << "debug 21" << std::endl;
 		//TODO: llamar a metodo que lanza el evento...
 	}
 
@@ -741,11 +688,7 @@ public: //private:  //TODO:
 
 	void handle_directory_changes()
 	{
-		//std::cout << "debug 100" << std::endl;
-
 		filesystem_item::pointer_type queued_write_watch = 0;
-
-		//std::cout << "debug 101" << std::endl;
 
 		while ( ! closing_ )
 		{
@@ -755,13 +698,8 @@ public: //private:  //TODO:
 			timeout.tv_sec = 0;
 			timeout.tv_nsec = 300000; //300 milliseconds //TODO: sacar el hardcode, hacer configurable...
 
-			//std::cout << "debug 102" << std::endl;
-
 			//TODO: pasar toda esta logica a un metodo o clase...
 			int return_code = kevent ( kqueue_file_descriptor_, NULL, 0, &event, 1, &timeout );
-
-			//std::cout << "debug 103" << std::endl;
-
 
 			if ( return_code == -1 || event.flags & EV_ERROR) //< 0
 			{
@@ -771,40 +709,21 @@ public: //private:  //TODO:
 				throw (std::runtime_error(oss.str()));
 			}
 
-			//std::cout << "debug 104" << std::endl;
-			//std::cout << "closing_: " << closing_ << std::endl;
-			
-
 			if ( ! closing_ )
 			{
-				//std::cout << "debug 105" << std::endl;
-
 				if ( return_code == 0 ) //timeout
 				{
-					//std::cout << "debug 106" << std::endl;
-
-					//if ( queued_write_watch  )
 					if ( queued_write_watch != 0 )
 					{
-						//std::cout << "debug 107" << std::endl;
-
 						handle_write( queued_write_watch );
-						//std::cout << "debug 108" << std::endl;
-
 						queued_write_watch = 0;
-						//queued_write_watch.reset();
 					}
 				}
 				else
 				{
-					//std::cout << "debug 109" << std::endl;
-
 					//filesystem_item* watch = (filesystem_item*) event.udata; //TODO: reinterpret_cast<>
 					//filesystem_item* watch = reinterpret_cast<filesystem_item*>( event.udata );
 					filesystem_item::pointer_type watch = reinterpret_cast<filesystem_item::pointer_type>( event.udata );
-
-					//std::cout << "debug 110" << std::endl;
-
 
 					//filesystem_item::pointer_type watch = *(reinterpret_cast<filesystem_item::pointer_type*>( event.udata ));
 					//filesystem_item::pointer_type* watch_temp_1 = reinterpret_cast<filesystem_item::pointer_type*>( event.udata );
@@ -813,37 +732,25 @@ public: //private:  //TODO:
 
 					if ( event.fflags & NOTE_DELETE )
 					{
-						//std::cout << "debug 111" << std::endl;
 						handle_remove( watch );
 					}
 
 					if ( event.fflags & NOTE_RENAME )
 					{
-						//std::cout << "debug 112" << std::endl;
 						handle_rename( watch );
 					}
 
 					if ( event.fflags & NOTE_WRITE )
 					{
-						//std::cout << "debug 113" << std::endl;
-						//if ( queued_write_watch  )
 						if ( queued_write_watch != 0 )
 						{
-							//std::cout << "debug 114" << std::endl;
 							handle_write( queued_write_watch );
-							//std::cout << "debug 115" << std::endl;
 							queued_write_watch = 0;
-							//queued_write_watch.reset();
 						}
 
 						//Encolamos un solo evento WRITE ya que siempre viene WRITE+RENAME... hacemos que primero se procese el evento rename y luego el write
 						queued_write_watch = watch;
 					}
-
-					//std::cout << "debug 116" << std::endl;
-
-
-
 
 					//if (event.fflags & NOTE_TRUNCATE)
 					//{
@@ -868,7 +775,6 @@ public: //private:  //TODO:
 				}
 			}
 		}
-		//std::cout << "debug 117" << std::endl;
 	}
 
 protected:
