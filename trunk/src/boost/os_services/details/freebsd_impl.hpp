@@ -344,7 +344,7 @@ struct user_entry : public enable_shared_from_this<user_entry>
 
 	
 	//void create_watch( filesystem_item* watch )
-	void create_watch( filesystem_item::pointer_type watch, bool launch_events = failed )
+	void create_watch( filesystem_item::pointer_type watch, bool launch_events = false )
 	{
 		//std::cout << "void create_watch( filesystem_item::pointer_type watch )" << std::endl;
 		//std::cout << "watch->path.native_file_string(): " << watch->path.native_file_string() << std::endl;
@@ -437,7 +437,7 @@ struct user_entry : public enable_shared_from_this<user_entry>
 	
 	//TODO: contemplar la opcion include_sub_directories_
 	//void scan_directory( filesystem_item* root_dir )
-	void scan_directory( filesystem_item::pointer_type root_dir, bool launch_events = failed )
+	void scan_directory( filesystem_item::pointer_type root_dir, bool launch_events = false )
 	{
 		//std::cout << "void scan_directory( fsitem* root_dir )" << std::endl;
 		//std::cout << "root_dir->path.native_file_string(): " << root_dir->get_path().native_file_string() << std::endl;
