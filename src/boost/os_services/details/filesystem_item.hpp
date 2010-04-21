@@ -130,7 +130,7 @@ public:
 		}
 	}
 
-	boost::filesystem::path get_path ( ) const
+	const boost::filesystem::path& path() const
 	{
 		return this->path_;
 	}
