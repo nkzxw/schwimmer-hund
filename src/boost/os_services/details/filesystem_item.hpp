@@ -2,7 +2,7 @@
 #define BOOST_OS_SERVICES_DETAIL_FILESYSTEM_ITEM_HPP
 
 //#include <iostream>
-
+#include <boost/filesystem/path.hpp>
 
 namespace boost {
 namespace os_services {
