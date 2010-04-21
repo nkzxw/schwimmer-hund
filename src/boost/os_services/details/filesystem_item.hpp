@@ -148,6 +148,24 @@ public:
 		//TODO: completar
 	}
 
+	void remove_subitem( filesystem_item::pointer_type watch )
+	{
+		filesystem_item::collection_type::iterator it = subitems_.begin();
+		while ( it != subitems_.end() )
+		{
+			if ( watch->is_equal( *it ) )
+			{
+				it = subitems_.erase(it);
+				break;
+			}
+			else
+			{
+				++it;
+			}
+		}
+
+	}
+
 	void set_path ( const boost::filesystem::path& path )
 	{
 		this->path_ = path;

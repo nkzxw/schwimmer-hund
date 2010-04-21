@@ -366,40 +366,10 @@ public: //private:  //TODO:
 	}
 
 	
-	//void remove_watch ( filesystem_item* watch ) 
 	void remove_watch ( filesystem_item::pointer_type watch ) 
 	{
-		//TODO: crear un metodo para cada watch !!!!!!
-		filesystem_item::collection_type::iterator it = watch->parent_->subitems_.begin();
-		while ( it != watch->parent_->subitems_.end() )
-		{
-			//if ( watch == (*it) )
-			if ( watch->is_equal( *it ) )
-			{
-				//TODO: crear metodo remove en filesystem_item
-				it = watch->parent_->subitems_.erase(it);
-				break;
-			}
-			else
-			{
-				++it;
-			}
-		}
-		
-		it = watch->root_user_entry_->all_watches_.begin();
-		while ( it != watch->parent_->subitems_.end() )
-		{
-			if ( watch->is_equal( *it ) )
-			{
-				//it = watch->root_user_entry_->all_watches_.erase(it);
-				it = watch->root_user_entry_->remove_watch(it);
-				break;
-			}
-			else
-			{
-				++it;
-			}
-		}
+		watch->parent_->remove_subitem( watch );
+		watch->root_user_entry_->remove_watch( watch );
 		//TODO: llamar a metodo que lanza el evento...
 	}
 
@@ -408,7 +378,7 @@ public: //private:  //TODO:
 	{
 		boost::filesystem::path parent_path;
 
-		parent_path = watch->root_user_entry_->path_;
+		parent_path = watch->root_user_entry_->path();
 
 		if ( ! parent_path.empty() )
 		{
@@ -455,7 +425,8 @@ public: //private:  //TODO:
 		if ( watch->is_directory() )
 		{
 			//TODO: no está buena esta llamada... no me convence...
-			watch->root_user_entry_->scan_directory( watch, true ); //Detectamos si es un Add o un Rename o Delete que ya fue procesado.
+			//watch->root_user_entry_->scan_directory( watch, true ); //Detectamos si es un Add o un Rename o Delete que ya fue procesado.
+			scan_directory( watch, true ); //Detectamos si es un Add o un Rename o Delete que ya fue procesado.
 		}
 		else
 		{
