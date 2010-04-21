@@ -245,9 +245,6 @@ public:
 
 	boost::filesystem::path get_path ( ) const
 	{
-		std::cout << "this: " << this << std::endl;
-		std::cout << "path_.native_file_string(): " << path_.native_file_string() << std::endl;
-
 		return this->path_;
 	}
 
@@ -762,7 +759,7 @@ public: //private:  //TODO:
 			}
 
 			//std::cout << "debug 104" << std::endl;
-			std::cout << "closing_: " << closing_ << std::endl;
+			//std::cout << "closing_: " << closing_ << std::endl;
 			
 
 			if ( ! closing_ )
