@@ -3,7 +3,11 @@
 //TODO: ver, leer: http://www.gotw.ca/publications/mill18.htm
 //TODO: ver: http://www.boost.org/doc/libs/1_42_0/libs/smart_ptr/make_shared.html
 //TODO: weak_ptr
-//TODO: 
+//TODO: class invariants:  http://www.informit.com/articles/article.aspx?p=21084&seqNum=4
+//                         http://en.wikipedia.org/wiki/Class_invariant
+
+//TODO: ver shared_ptr: http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2007/n2351.htm
+
 
 //TODO: linked_ptr nuevo nombre para master_ptr y slave_ptr
 //TODO: owner_ptr: nuevo SmartPtr en el cual se registre solo un unico owner_ptr por memoria... O sea, no podria haber dos owner_ptr apuntando a la misma posicion de memoria...
