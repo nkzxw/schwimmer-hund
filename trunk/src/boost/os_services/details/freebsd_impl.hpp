@@ -99,10 +99,6 @@ using namespace boost::posix_time;
 #endif
 
 
-//O_EVTONLY solo existe en MacOSX, no en FreeBSD
-#ifndef O_EVTONLY
-#define O_EVTONLY O_RDONLY
-#endif
 
 
 namespace boost {
@@ -393,7 +389,8 @@ public: //private:  //TODO:
 		{
 			if ( watch->is_equal( *it ) )
 			{
-				it = watch->root_user_entry_->all_watches_.erase(it);
+				//it = watch->root_user_entry_->all_watches_.erase(it);
+				it = watch->root_user_entry_->remove_watch(it);
 				break;
 			}
 			else

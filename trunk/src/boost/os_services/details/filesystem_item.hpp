@@ -25,6 +25,11 @@ enum {
 
 #define PN_ALL_EVENTS	(PN_ACCESS | PN_CREATE | PN_DELETE | PN_MODIFY | PN_RENAME)
 
+//O_EVTONLY solo existe en MacOSX, no en FreeBSD
+#ifndef O_EVTONLY
+#define O_EVTONLY O_RDONLY
+#endif
+
 
 
 namespace boost {
