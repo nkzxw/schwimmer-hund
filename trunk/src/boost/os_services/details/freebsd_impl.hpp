@@ -8,7 +8,6 @@
 
 //TODO: ver shared_ptr: http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2007/n2351.htm
 
-
 //TODO: linked_ptr nuevo nombre para master_ptr y slave_ptr
 //TODO: owner_ptr: nuevo SmartPtr en el cual se registre solo un unico owner_ptr por memoria... O sea, no podria haber dos owner_ptr apuntando a la misma posicion de memoria...
 //TODO: analizar estos dos ultimos a ver si son viables con algun smart pointer actual.
@@ -217,6 +216,8 @@ public:
 		for (user_entry::collection_type::iterator it = user_watches_.begin(); it != user_watches_.end(); ++it )
 		{
 			it->initialize();
+			it->open(); //TODO: catch errors
+			
 			create_watch( item, false );
 		}
 
@@ -236,8 +237,6 @@ public: //private:  //TODO:
 		struct kevent event;
 
 		//int mask = watch->mask_;
-
-		watch->open(); //TODO: catch errors
 
 		if ( watch->is_directory() )
 		{
