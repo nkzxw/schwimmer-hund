@@ -189,7 +189,7 @@ public:
 	//void remove_directory_impl(const std::string& dir_name) // throw (std::invalid_argument);
 
 	//TODO: ver si hace falta hacer lo mismo para Windows
-	void initialize() //TODO: private
+	void initialize() //TODO: protected
 	{
 		if ( ! is_initialized_ )
 		{
@@ -208,20 +208,15 @@ public:
 
 	void start()
 	{
-		//std::cout << "void start()" << std::endl;
-		initialize();
+		this->initialize();
 
 		//TODO: BOOST_FOREACH
 		//TODO: STL transform
 		for (user_entry::collection_type::iterator it = user_watches_.begin(); it != user_watches_.end(); ++it )
 		{
-			//it->initialize();
-			filesystem_item::pointer_type watch = new filesystem_item ( it->path(), *it ); 
-			it->set_root ( watch );
-			it->add_watch ( watch );
-			it->open(); //TODO: catch errors
 			
-			create_watch( fsitem, false );
+			//it->initialize();
+			create_filesystem_item ( it->path(), *it );
 		}
 
 		thread_.reset( new boost::thread( boost::bind(&freebsd_impl::handle_directory_changes, this) ) );
@@ -231,6 +226,29 @@ public: //private:  //TODO:
 
 	typedef boost::function<void (filesystem_event_args e)> create_file_event_handler;
 	create_file_event_handler created_handler_;
+
+
+	filesystem_item::pointer_type create_filesystem_item ( const boost::filesystem::path& path, user_entry::pointer_type entry, filesystem_item::pointer_type parent = 0)
+	{
+		filesystem_item::pointer_type watch = new filesystem_item ( path, entry, parent ); 
+		entry->set_root ( watch );
+		entry->add_watch ( watch );
+		entry->open(); //TODO: catch errors
+		//create_watch( watch, false );
+		//create_watch( watch, launch_events );
+		//item->inode_info_ = inode_info;
+		//item->mask_ = PN_CREATE;
+
+		if ( parent != 0 )
+		{
+			//TODO: agregar metodo add_subitem a filesystem_item
+			parent->subitems_.push_back(watch);
+		}
+
+		return watch;
+	}
+
+
 
 	void create_watch( filesystem_item::pointer_type watch, bool launch_events = false )
 	{
@@ -310,7 +328,7 @@ public: //private:  //TODO:
 
 		//std::cout << "kev->flags: " << kev->flags << std::endl;
 
-		int return_code = kevent(kqueue_file_descriptor_, &event, 1, NULL, 0, NULL);
+		int return_code = kevent( kqueue_file_descriptor_, &event, 1, NULL, 0, NULL );
 		if ( return_code == -1 ) //< 0)
 		{
 			std::ostringstream oss;
@@ -356,16 +374,7 @@ public: //private:  //TODO:
 						notify_file_system_event_args( change_types::created, dir_itr->path() );
 					}
 
-					//TODO: usar algun metodo que lo haga facil.. add_subitem o algo asi, quizas desde una factory
-					//filesystem_item::pointer_type item ( new filesystem_item( dir_itr->path(), root_dir->root_user_entry_, root_dir) );
-					filesystem_item::pointer_type item = new filesystem_item( dir_itr->path(), root_dir->root_user_entry_, root_dir );
-
-					this->all_watches_.push_back(item);
-
-					create_watch( item, launch_events );
-					item->mask_ = PN_CREATE;
-					item->inode_info_ = inode_info;
-					root_dir->subitems_.push_back(item);
+					create_filesystem_item ( dir_itr->path(), root_dir->root_user_entry_, root_dir );
 				}
 			}
 			catch ( const std::exception & ex )
