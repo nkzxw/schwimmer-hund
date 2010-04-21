@@ -15,7 +15,7 @@ namespace detail {
 
 
 template <typename Type>
-class base_impl // : private boost::noncopyable -> No tiene sentido ya que es "detail" 
+class base_impl // : private boost::noncopyable -> No tiene sentido ya que es "detail" //TODO: evaluar si sirve para que las clases de implementacion no sean copiadas... o minimo la FSM
 {
 public:
 
@@ -51,7 +51,7 @@ public:
 	
 
 public: // private: //TODO:
-	int notify_filters_;			//TODO: deber�a ser un enum
+	int notify_filters_;			//TODO: deberia ser un enum
 	std::string filter_;
 	bool include_subdirectories_;
 

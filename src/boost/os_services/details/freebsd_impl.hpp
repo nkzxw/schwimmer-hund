@@ -67,6 +67,7 @@ There are platforms that are not supported due to lack of developer resources. I
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/filesystem/path.hpp>
 //#include <boost/foreach.hpp>
+#include <boost/function.hpp>
 //#include <boost/integer.hpp>
 //#include <boost/smart_ptr.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
@@ -75,6 +76,8 @@ There are platforms that are not supported due to lack of developer resources. I
 #include <boost/os_services/change_types.hpp>
 #include <boost/os_services/details/base_impl.hpp>
 #include <boost/os_services/details/file_inode_info.hpp>
+#include <boost/os_services/details/filesystem_item.hpp>
+#include <boost/os_services/details/user_entry.hpp>
 #include <boost/os_services/notify_filters.hpp>
 
 
@@ -140,216 +143,6 @@ struct user_entry;			//forward-declaration
 typedef user_entry* user_entry_pointer_type;
 //typedef user_entry* user_entry::pointer_type; //TODO: ver si se puede hacer algo asi...
 
-//TODO: renombrar
-class filesystem_item
-{
-public:
-	
-	//typedef boost::shared_ptr<filesystem_item> pointer_type;
-	//typedef std::vector<pointer_type> collection_type;
-
-	typedef filesystem_item* pointer_type;
-	typedef boost::ptr_vector<filesystem_item> collection_type;
-
-	//filesystem_item( const boost::filesystem::path& path, const user_entry_pointer_type& root_user_entry )
-	filesystem_item( const boost::filesystem::path& path, user_entry_pointer_type root_user_entry )
-		: root_user_entry_(root_user_entry), parent_(0), is_directory_(false), file_descriptor_(0), mask_(PN_ALL_EVENTS) //TODO: asignar lo que el usuario quiere monitorear...
-	{
-		set_path( path );
-	}
-
-	//filesystem_item ( const boost::filesystem::path& path, const user_entry_pointer_type& root_user_entry, filesystem_item::pointer_type parent )
-	//	: root_user_entry_(root_user_entry), parent_(parent), is_directory_(false), file_descriptor_(0), mask_(PN_ALL_EVENTS) //TODO: asignar lo que el usuario quiere monitorear...
-	//filesystem_item ( const boost::filesystem::path& path, const user_entry_pointer_type& root_user_entry, filesystem_item* parent )
-
-
-	filesystem_item ( const boost::filesystem::path& path, user_entry_pointer_type root_user_entry, filesystem_item::pointer_type parent )
-		: root_user_entry_(root_user_entry), parent_(parent), is_directory_(false), file_descriptor_(0), mask_(PN_ALL_EVENTS) //TODO: asignar lo que el usuario quiere monitorear...
-	{
-		set_path( path );
-	}
-
-	~filesystem_item()
-	{
-		this->close( true, true ); //no-throw
-	}
-
-	//bool operator==(const fs_item& other) const
-	//{
-	//	return ( this->path_ == other.path_ && this->inode_info_ == other.inode_info_ );
-	//}
-
-
-	bool is_equal(const filesystem_item& other) const
-	{
-		return ( this->path_ == other.path_ && this->inode_info_ == other.inode_info_ );
-	}
-
-	//bool is_equal(const filesystem_item::pointer_type& other) const
-	//bool is_equal(filesystem_item* other) const
-	bool is_equal(filesystem_item::pointer_type other) const
-	{
-		return ( this->path_ == other->path_ && this->inode_info_ == other->inode_info_ );
-	}
-
-	bool is_equal(const file_inode_info& inode_info, const boost::filesystem::path& path) const
-	{
-		return (  this->inode_info_ == inode_info && this->path_ == path );
-	}
-
-	void open()
-	{
-		this->file_descriptor_ = ::open( path_.native_file_string().c_str(), O_EVTONLY );
-
-		//std::cout << "this->file_descriptor_: " << this->file_descriptor_ << std::endl;
-		//std::cout << "path_.native_file_string(): " << path_.native_file_string() << std::endl;
-
-		if ( this->file_descriptor_ == -1 )
-		{
-			std::ostringstream oss;
-			oss << "open failed - File: " << path_.native_file_string() << " - Reason: " << std::strerror(errno);
-			throw (std::runtime_error(oss.str()));
-			//throw (std::invalid_argument(oss.str()));
-		}
-		this->inode_info_.set( this->path_ );
-	}
-
-	void close( bool no_throw = true, bool close_subitems = true )
-	{
-		if ( this->file_descriptor_ != 0 )
-		{
-			if ( close_subitems )
-			{
-				for (filesystem_item::collection_type::iterator it =  this->subitems_.begin(); it != this->subitems_.end(); ++it )
-				{
-					it->close( no_throw, close_subitems );
-				}
-			}
-
-			int ret_value = ::close( this->file_descriptor_ ); //close
-			if ( ret_value == -1 )
-			{
-				if ( no_throw )
-				{
-					//Destructor -> no-throw
-					std::cerr << "Failed to close file descriptor - File descriptor: '" << this->file_descriptor_ << "' - File path: '" << this->path_.native_file_string() << "' - Reason: " << std::strerror(errno) << std::endl;
-				}
-				else
-				{
-					std::ostringstream oss;
-					oss << "Failed to close file descriptor - File descriptor: '" << this->file_descriptor_ << "' - File path: '" << this->path_.native_file_string() << "' - Reason: " << std::strerror(errno);
-					throw (std::runtime_error(oss.str()));					
-				}
-			}
-			this->file_descriptor_ = 0;
-		}
-	}
-
-	void add_subitem ( const filesystem_item& subitem )
-	{
-		//TODO: completar
-	}
-
-	void set_path ( const boost::filesystem::path& path )
-	{
-		this->path_ = path;
-
-		if ( boost::filesystem::is_directory( this->path_ ) )
-		{
-			this->is_directory_ = true;
-		}
-	}
-
-	boost::filesystem::path get_path ( ) const
-	{
-		return this->path_;
-	}
-
-	bool is_directory() const
-	{
-		return this->is_directory_;
-	}
-
-protected:
-public: //TODO: sacar
-	boost::filesystem::path path_;
-	bool is_directory_;
-
-public: //private:
-
-	int file_descriptor_;
-	//TODO: ver si es necesario
-	boost::uint32_t mask_;
-
-	//filesystem_item* parent_;
-	filesystem_item::pointer_type parent_;
-
-	file_inode_info inode_info_;
-	//TODO: ver boost::ptr_vector
-	collection_type subitems_;
-
-
-	//TODO: ver que pasa si agregamos el mismo directorio como dos user_entry distintos... el open da el mismo file descriptor?
-	//user_entry* root_user_entry_; 
-	//user_entry::pointer_type root_user_entry_;
-	user_entry_pointer_type root_user_entry_; 
-};
-
-
-struct user_entry //: public enable_shared_from_this<user_entry>
-{
-	//typedef boost::shared_ptr<user_entry> pointer_type;
-	//typedef std::vector<pointer_type> collection_type;
-
-	typedef user_entry* pointer_type;
-	typedef boost::ptr_vector<user_entry> collection_type;
-
-
-	//user_entry()
-	//{
-	//}
-
-	//~user_entry()
-	//{
-	//	//std::cout << "--------------------- ~fsitem() ------------------------------" << std::endl;
-	//	//std::cout << "this->path.native_file_string(): " << this->path.native_file_string() << std::endl;
-	//}
-
-	//TODO: ver que sentido tiene este metodo...
-	//void add_watch( filesystem_item* item )
-	void add_watch( filesystem_item::pointer_type item )
-	{
-		all_watches_.push_back(item);
-	}
-
-	void initialize()
-	{
-		//TODO: estas dos instrucciones ponerlas en un factory
-		//filesystem_item::pointer_type item ( new filesystem_item (path_, this ) );
-		//filesystem_item::pointer_type item ( new filesystem_item (path_, shared_from_this() ) );
-		//filesystem_item::pointer_type item = new filesystem_item (path_, shared_from_this() );
-		filesystem_item::pointer_type item = new filesystem_item ( path_, this );
-
-		all_watches_.push_back(item);
-
-		root_ = item;
-
-		create_watch( item, false );
-	}
-
-	
-
-	boost::filesystem::path path_;
-
-	//TODO: estos deberian ser weak_ptr's quizas...
-	filesystem_item::pointer_type root_;			//este tiene la estructura de arbol
-	filesystem_item::collection_type all_watches_;
-};
-
-
-
-
-
 
 class freebsd_impl : public base_impl<freebsd_impl>
 {
@@ -370,7 +163,7 @@ public:
 			thread_->join();
 		}
 
-		//TODO:  cerrar los archivos /watches 
+		//TODO: cerrar los archivos /watches
 
 		if ( kqueue_file_descriptor_ != 0 )
 		{
@@ -391,10 +184,7 @@ public:
 	void add_directory_impl ( const std::string& dir_name )
 	{
 		//TODO: asignar mask
-		//user_entry::pointer_type item( new user_entry );
-		user_entry::pointer_type item = new user_entry;
-
-		item->path_ = dir_name; //TODO: revisar
+		user_entry::pointer_type item = new user_entry( dir_name );
 		user_watches_.push_back(item);
 	}
 	//void remove_directory_impl(const std::string& dir_name) // throw (std::invalid_argument);
@@ -435,6 +225,8 @@ public:
 
 public: //private:  //TODO:
 
+	typedef boost::function<void (filesystem_event_args e)> create_file_event_handler;
+	create_file_event_handler created_handler_;
 
 	void create_watch( filesystem_item::pointer_type watch, bool launch_events = false )
 	{
@@ -553,7 +345,7 @@ public: //private:  //TODO:
 					}
 				}
 
-				if ( !found )	//Archivo nuevo
+				if ( !found ) //new file
 				{
 					std::cout << "launch_events: " << launch_events << std::endl;
 
