@@ -301,10 +301,14 @@ struct user_entry : public enable_shared_from_this<user_entry>
 
 	void initialize()
 	{
+		std::cout << "initialize() 1" << std::endl;
 		//TODO: estas dos instrucciones ponerlas en un factory
 
 		//filesystem_item::pointer_type item ( new filesystem_item (path_, this ) );
 		filesystem_item::pointer_type item ( new filesystem_item (path_, shared_from_this() ) );
+
+		std::cout << "initialize() 2" << std::endl;
+
 		std::cout << "debug 3" << std::endl;
 		all_watches_.push_back(item);
 		root_ = item;
