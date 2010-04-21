@@ -339,12 +339,12 @@ struct user_entry : public enable_shared_from_this<user_entry>
 		root_ = item;
 		//std::cout << "debug 4" << std::endl;
 
-		create_watch( item );
+		create_watch( item, false );
 	}
 
 	
 	//void create_watch( filesystem_item* watch )
-	void create_watch( filesystem_item::pointer_type watch )
+	void create_watch( filesystem_item::pointer_type watch, bool launch_events = failed )
 	{
 		//std::cout << "void create_watch( filesystem_item::pointer_type watch )" << std::endl;
 		//std::cout << "watch->path.native_file_string(): " << watch->path.native_file_string() << std::endl;
@@ -358,7 +358,7 @@ struct user_entry : public enable_shared_from_this<user_entry>
 		if ( watch->is_directory() )
 		{
 			//scan_directory( watch.get() );
-			scan_directory( watch );
+			scan_directory( watch, launch_events );
 		}
 
 		//TODO: traducir de watch->mask_ a fflags
@@ -437,7 +437,7 @@ struct user_entry : public enable_shared_from_this<user_entry>
 	
 	//TODO: contemplar la opcion include_sub_directories_
 	//void scan_directory( filesystem_item* root_dir )
-	void scan_directory( filesystem_item::pointer_type root_dir )
+	void scan_directory( filesystem_item::pointer_type root_dir, bool launch_events = failed )
 	{
 		//std::cout << "void scan_directory( fsitem* root_dir )" << std::endl;
 		//std::cout << "root_dir->path.native_file_string(): " << root_dir->get_path().native_file_string() << std::endl;
@@ -468,6 +468,11 @@ struct user_entry : public enable_shared_from_this<user_entry>
 
 				if ( !found )	//Archivo nuevo
 				{
+					if ( launch_events )
+					{
+						notify_file_system_event_args( change_types::created, dir_itr->path() );
+					}
+
 					//TODO: usar algun metodo que lo haga facil.. add_subitem o algo asi, quizas desde una factory
 					//filesystem_item::pointer_type item ( new filesystem_item( dir_itr->path(), root_dir->root_user_entry_, root_dir) );
 					filesystem_item::pointer_type item = new filesystem_item( dir_itr->path(), root_dir->root_user_entry_, root_dir );
@@ -476,7 +481,7 @@ struct user_entry : public enable_shared_from_this<user_entry>
 					this->all_watches_.push_back(item);
 					//std::cout << "debug 6" << std::endl;
 
-					create_watch( item );
+					create_watch( item, launch_events );
 					item->mask_ = PN_CREATE;
 					item->inode_info_ = inode_info;
 					//std::cout << "debug 7" << std::endl;
@@ -723,7 +728,7 @@ public: //private:  //TODO:
 		if ( watch->is_directory() )
 		{
 			//TODO: no está buena esta llamada... no me convence...
-			watch->root_user_entry_->scan_directory( watch ); //Detectamos si es un Add o un Rename o Delete que ya fue procesado.
+			watch->root_user_entry_->scan_directory( watch, true ); //Detectamos si es un Add o un Rename o Delete que ya fue procesado.
 		}
 		else
 		{
