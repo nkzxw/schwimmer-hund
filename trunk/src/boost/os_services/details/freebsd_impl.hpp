@@ -700,7 +700,7 @@ public: //private:  //TODO:
 	{
 		std::cout << "debug 100" << std::endl;
 
-		filesystem_item::pointer_type queued_write_watch;
+		filesystem_item::pointer_type queued_write_watch = 0;
 
 		std::cout << "debug 101" << std::endl;
 
