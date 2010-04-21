@@ -470,7 +470,6 @@ struct user_entry : public enable_shared_from_this<user_entry>
 				{
 					std::cout << "launch_events: " << launch_events << std::endl;
 
-
 					if ( launch_events )
 					{
 						notify_file_system_event_args( change_types::created, dir_itr->path() );
