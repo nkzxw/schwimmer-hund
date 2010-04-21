@@ -18,6 +18,7 @@ namespace os_services {
 namespace detail {
 
 	
+//TODO: class
 struct file_inode_info
 {
 	//TODO: public, protected, private ?????
