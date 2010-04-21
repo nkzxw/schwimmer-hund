@@ -29,10 +29,14 @@ struct user_entry //: public enable_shared_from_this<user_entry>
 	//	//std::cout << "this->path.native_file_string(): " << this->path.native_file_string() << std::endl;
 	//}
 
-	//TODO: ver que sentido tiene este metodo...
 	void add_watch( filesystem_item::pointer_type item )
 	{
 		all_watches_.push_back(item);
+	}
+
+	filesystem_item::collection_type::iterator remove_watch( filesystem_item::collection_type::iterator it )
+	{
+		return all_watches_.erase(it);
 	}
 
 	//void initialize()
