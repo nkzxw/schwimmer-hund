@@ -138,7 +138,7 @@ struct user_entry;			//forward-declaration
 //TODO: no me gusta, ver si se puede agregar al forward declaration
 //typedef boost::shared_ptr<user_entry> user_entry_pointer_type;
 typedef user_entry* user_entry_pointer_type;
-typedef user_entry* user_entry::pointer_type;
+//typedef user_entry* user_entry::pointer_type; //TODO: ver si se puede hacer algo asi...
 
 //TODO: renombrar
 class filesystem_item
