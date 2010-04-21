@@ -5,6 +5,8 @@
 //#include <iostream>
 #include <boost/filesystem/path.hpp>
 
+#include <boost/os_services/details/filesystem_item.hpp>
+
 namespace boost {
 namespace os_services {
 namespace detail {
