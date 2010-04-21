@@ -201,8 +201,8 @@ public:
 	{
 		this->file_descriptor_ = ::open( path_.native_file_string().c_str(), O_EVTONLY );
 
-		std::cout << "this->file_descriptor_: " << this->file_descriptor_ << std::endl;
-		std::cout << "path_.native_file_string(): " << path_.native_file_string() << std::endl;
+		//std::cout << "this->file_descriptor_: " << this->file_descriptor_ << std::endl;
+		//std::cout << "path_.native_file_string(): " << path_.native_file_string() << std::endl;
 
 		if ( this->file_descriptor_ == -1 )
 		{
@@ -216,17 +216,19 @@ public:
 
 	void close( bool no_throw = true, bool close_subitems = true )
 	{
-		std::cout << "void close( bool no_throw = true, bool close_subitems = true )" << std::endl;
-		std::cout << "this->file_descriptor_: " << this->file_descriptor_ << std::endl;
-
-		//close sub-items
-		for (filesystem_item::collection_type::iterator it =  this->subitems_.begin(); it != this->subitems_.end(); ++it )
-		{
-			it->close( no_throw, close_subitems );
-		}
-
 		if ( this->file_descriptor_ != 0 )
 		{
+			std::cout << "void close( bool no_throw = true, bool close_subitems = true )" << std::endl;
+			std::cout << "this->file_descriptor_: " << this->file_descriptor_ << std::endl;
+
+			if ( close_subitems )
+			{
+				for (filesystem_item::collection_type::iterator it =  this->subitems_.begin(); it != this->subitems_.end(); ++it )
+				{
+					it->close( no_throw, close_subitems );
+				}
+			}
+
 			int ret_value = ::close( this->file_descriptor_ ); //close
 			if ( ret_value == -1 )
 			{
