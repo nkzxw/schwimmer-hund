@@ -543,13 +543,20 @@ public:
 
 			if ( ret_value < 0 )
 			{
+				std::cout << "debug 208" << std::endl;
+
+				//TODO: pecado mortal... nunca lanzar excepciones desde destructores...
 				std::ostringstream oss;
 				oss << "Failed to close file descriptor - Reason: " << std::strerror(errno);
+
+				std::cout << "debug 209" << std::endl;
+
 				throw (std::runtime_error(oss.str()));
 			}
 		}
 
-		std::cout << "debug 208" << std::endl;
+		std::cout << "debug 210" << std::endl;
+
 
 	}
 
