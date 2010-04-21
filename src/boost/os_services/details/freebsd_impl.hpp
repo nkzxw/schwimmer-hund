@@ -293,8 +293,10 @@ struct user_entry : public enable_shared_from_this<user_entry>
 	//void add_watch( filesystem_item* item )
 	void add_watch( filesystem_item::pointer_type item )
 	{
+		std::cout << "debug 1" << std::endl;
 		all_watches_.push_back(item);
-		all_watches_.rele
+		std::cout << "debug 2" << std::endl;
+		//all_watches_.rele
 	}
 
 	void initialize()
@@ -303,8 +305,10 @@ struct user_entry : public enable_shared_from_this<user_entry>
 
 		//filesystem_item::pointer_type item ( new filesystem_item (path_, this ) );
 		filesystem_item::pointer_type item ( new filesystem_item (path_, shared_from_this() ) );
+		std::cout << "debug 3" << std::endl;
 		all_watches_.push_back(item);
 		root_ = item;
+		std::cout << "debug 4" << std::endl;
 
 		create_watch( item );
 	}
@@ -420,6 +424,7 @@ struct user_entry : public enable_shared_from_this<user_entry>
 				//TODO: reemplazar por std::find o algo similar...
 				//Linear-search
 				//TODO: all_watches_ ?????
+				std::cout << "debug 11" << std::endl;
 				for (filesystem_item::collection_type::iterator it =  root_dir->subitems_.begin(); it != root_dir->subitems_.end(); ++it )
 				{
 					//if (  (*it)->is_equal ( inode_info, dir_itr->path() ) )
@@ -429,18 +434,23 @@ struct user_entry : public enable_shared_from_this<user_entry>
 						break;
 					}
 				}
-
+				std::cout << "debug 12" << std::endl;
 
 				if ( !found )	//Archivo nuevo
 				{
 					//TODO: usar algun metodo que lo haga facil.. add_subitem o algo asi, quizas desde una factory
 					filesystem_item::pointer_type item ( new filesystem_item( dir_itr->path(), root_dir->root_user_entry_, root_dir) );
+					
+					std::cout << "debug 5" << std::endl;
 					this->all_watches_.push_back(item);
+					std::cout << "debug 6" << std::endl;
 
 					create_watch( item );
 					item->mask_ = PN_CREATE;
 					item->inode_info_ = inode_info;
+					std::cout << "debug 7" << std::endl;
 					root_dir->subitems_.push_back(item);
+					std::cout << "debug 8" << std::endl;
 				}
 			}
 			catch ( const std::exception & ex )
@@ -520,7 +530,9 @@ public:
 		//TODO: asignar mask
 		user_entry::pointer_type item( new user_entry );
 		item->path_ = dir_name; //TODO: revisar
+		std::cout << "debug 9" << std::endl;
 		user_watches_.push_back(item);
+		std::cout << "debug 10" << std::endl;
 	}
 	//void remove_directory_impl(const std::string& dir_name) // throw (std::invalid_argument);
 
@@ -549,11 +561,13 @@ public:
 
 		//TODO: BOOST_FOREACH
 		//TODO: STL transform
+		std::cout << "debug 30" << std::endl;
 		for (user_entry::collection_type::iterator it = user_watches_.begin(); it != user_watches_.end(); ++it )
 		{
 			//(*it)->initialize();
 			it->initialize();
 		}
+		std::cout << "debug 31" << std::endl;
 
 		thread_.reset( new boost::thread( boost::bind(&freebsd_impl::handle_directory_changes, this) ) );
 	}
@@ -570,6 +584,7 @@ public: //private:  //TODO:
 	//void remove_watch ( filesystem_item::pointer_type watch ) 
 	void remove_watch ( filesystem_item* watch ) 
 	{
+		std::cout << "debug 40" << std::endl;
 		filesystem_item::collection_type::iterator it = watch->parent_->subitems_.begin();
 		while ( it != watch->parent_->subitems_.end() )
 		{
@@ -585,6 +600,7 @@ public: //private:  //TODO:
 			}
 		}
 		
+		std::cout << "debug 20" << std::endl;
 		it = watch->root_user_entry_->all_watches_.begin();
 		while ( it != watch->parent_->subitems_.end() )
 		{
@@ -598,7 +614,7 @@ public: //private:  //TODO:
 				++it;
 			}
 		}
-
+		std::cout << "debug 21" << std::endl;
 		//TODO: llamar a metodo que lanza el evento...
 	}
 
@@ -673,6 +689,7 @@ public: //private:  //TODO:
 			timeout.tv_sec = 0;
 			timeout.tv_nsec = 300000; //300 milliseconds //TODO: sacar el hardcode, hacer configurable...
 
+			//TODO: pasar toda esta logica a un metodo o clase...
 			int return_code = kevent ( kqueue_file_descriptor_, NULL, 0, &event, 1, &timeout );
 
 			if ( return_code == -1 || event.flags & EV_ERROR) //< 0
@@ -687,8 +704,8 @@ public: //private:  //TODO:
 			{
 				if ( return_code == 0 ) //timeout
 				{
-					//if ( queued_write_watch != 0 )
-					if ( queued_write_watch  )
+					//if ( queued_write_watch  )
+					if ( queued_write_watch != 0 )
 					{
 						handle_write( queued_write_watch );
 						queued_write_watch = 0;
@@ -717,6 +734,14 @@ public: //private:  //TODO:
 
 					if ( event.fflags & NOTE_WRITE )
 					{
+						//if ( queued_write_watch  )
+						if ( queued_write_watch != 0 )
+						{
+							handle_write( queued_write_watch );
+							queued_write_watch = 0;
+							//queued_write_watch.reset();
+						}
+
 						//Encolamos un solo evento WRITE ya que siempre viene WRITE+RENAME... hacemos que primero se procese el evento rename y luego el write
 						queued_write_watch = watch;
 					}
