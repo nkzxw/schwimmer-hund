@@ -214,9 +214,9 @@ public:
 		//TODO: STL transform
 		for (user_entry::collection_type::iterator it = user_watches_.begin(); it != user_watches_.end(); ++it )
 		{
-			
 			//it->initialize();
-			create_filesystem_item ( it->path(), *it );
+			filesystem_item::pointer_type watch = create_filesystem_item ( it->path(), *it );
+			begin_watch( watch, false );
 		}
 
 		thread_.reset( new boost::thread( boost::bind(&freebsd_impl::handle_directory_changes, this) ) );
@@ -233,9 +233,10 @@ public: //private:  //TODO:
 		filesystem_item::pointer_type watch = new filesystem_item ( path, entry, parent ); 
 		entry->set_root ( watch );
 		entry->add_watch ( watch );
-		entry->open(); //TODO: catch errors
-		//create_watch( watch, false );
-		//create_watch( watch, launch_events );
+		
+		//watch->open(); //TODO: catch errors
+		//begin_watch( watch, false );
+		//begin_watch( watch, launch_events );
 		//item->inode_info_ = inode_info;
 		//item->mask_ = PN_CREATE;
 
@@ -250,14 +251,15 @@ public: //private:  //TODO:
 
 
 
-	void create_watch( filesystem_item::pointer_type watch, bool launch_events = false )
+	void begin_watch( filesystem_item::pointer_type watch, bool launch_events = false )
 	{
-		//std::cout << "void create_watch( filesystem_item::pointer_type watch )" << std::endl;
+		//std::cout << "void begin_watch( filesystem_item::pointer_type watch )" << std::endl;
 		//std::cout << "watch->path.native_file_string(): " << watch->path.native_file_string() << std::endl;
 
 		struct kevent event;
 
 		//int mask = watch->mask_;
+		watch->open(); //TODO: catch errors
 
 		if ( watch->is_directory() )
 		{
@@ -268,17 +270,7 @@ public: //private:  //TODO:
 		//TODO: ver estos flags, deberia monitoriarse solo lo que el usuairo quiera monitorear...
 		unsigned int fflags = NOTE_DELETE |  NOTE_WRITE | NOTE_EXTEND | NOTE_ATTRIB | NOTE_LINK | NOTE_REVOKE | NOTE_RENAME;
 
-		//std::cout << "0-------------------------------------------------------------" << std::endl;
-		//std::cout << "&watch: " << &watch << std::endl;
-		//std::cout << "watch.get(): " << watch.get() << std::endl;
-		//std::cout << "watch->get_path().native_file_string(): " << watch->get_path().native_file_string() << std::endl;
-		//std::cout << "watch->get_path().native_file_string(): " << watch->get_path().native_file_string() << std::endl;
-		//std::cout << "0-------------------------------------------------------------" << std::endl;
-
-
-		//EV_SET( &event, watch->file_descriptor_, EVFILT_VNODE, EV_ADD | EV_ENABLE | EV_CLEAR, fflags, 0, watch.get() ); // EV_ADD | EV_ENABLE | EV_ONESHOT | EV_CLEAR
 		EV_SET( &event, watch->file_descriptor_, EVFILT_VNODE, EV_ADD | EV_ENABLE | EV_CLEAR, fflags, 0, watch ); // EV_ADD | EV_ENABLE | EV_ONESHOT | EV_CLEAR
-		//EV_SET( &event, watch->file_descriptor_, EVFILT_VNODE, EV_ADD | EV_ENABLE | EV_CLEAR, fflags, 0, &watch ); // EV_ADD | EV_ENABLE | EV_ONESHOT | EV_CLEAR
 
 		//TODO: ver si Windows y Linux saltan cuando se mofica el nombre del directorio raiz monitoreado.
 		// sino saltan, evisar que se use NOTE_RENAME con cualquier directorio raiz
@@ -374,7 +366,8 @@ public: //private:  //TODO:
 						notify_file_system_event_args( change_types::created, dir_itr->path() );
 					}
 
-					create_filesystem_item ( dir_itr->path(), root_dir->root_user_entry_, root_dir );
+					filesystem_item::pointer_type watch = create_filesystem_item ( dir_itr->path(), root_dir->root_user_entry_, root_dir );
+					begin_watch( watch, launch_events );
 				}
 			}
 			catch ( const std::exception & ex )
