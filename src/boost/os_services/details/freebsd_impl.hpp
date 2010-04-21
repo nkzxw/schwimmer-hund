@@ -171,22 +171,7 @@ public:
 
 	~filesystem_item()
 	{
-		//TODO: Eliminar los subitems 
-		if ( this->file_descriptor_ != 0 )
-		{
-
-			if ( this->file_descriptor_ != 5 )
-			{
-
-				int ret_value = ::close( this->file_descriptor_ ); //close
-				if ( ret_value == -1 )
-				{
-					//Destructor -> NO_THROW
-					std::cerr << "Failed to close file descriptor - File descriptor: '" << this->file_descriptor_ << "' - File path: '" << this->path_.native_file_string() << "' - Reason: " << std::strerror(errno) << std::endl;
-				}
-				this->file_descriptor_ = 0;
-			}
-		}
+		this->close( true, true ); //no-throw
 	}
 
 	//bool operator==(const fs_item& other) const
@@ -227,6 +212,35 @@ public:
 			//throw (std::invalid_argument(oss.str()));
 		}
 		this->inode_info_.set( this->path_ );
+	}
+
+	void close( bool no_throw = true, bool close_subitems = true )
+	{
+		//close sub-items
+		for (filesystem_item::collection_type::iterator it =  this->subitems_.begin(); it != this->subitems_.end(); ++it )
+		{
+			it->close( no_throw, close_subitems );
+		}
+
+		if ( this->file_descriptor_ != 0 )
+		{
+			int ret_value = ::close( this->file_descriptor_ ); //close
+			if ( ret_value == -1 )
+			{
+				if ( no_throw )
+				{
+					//Destructor -> no-throw
+					std::cerr << "Failed to close file descriptor - File descriptor: '" << this->file_descriptor_ << "' - File path: '" << this->path_.native_file_string() << "' - Reason: " << std::strerror(errno) << std::endl;
+				}
+				else
+				{
+					std::ostringstream oss;
+					oss << "Failed to close file descriptor - File descriptor: '" << this->file_descriptor_ << "' - File path: '" << this->path_.native_file_string() << "' - Reason: " << std::strerror(errno);
+					throw (std::runtime_error(oss.str()));					
+				}
+			}
+			this->file_descriptor_ = 0;
+		}
 	}
 
 	void add_subitem ( const filesystem_item& subitem )
@@ -542,7 +556,7 @@ public:
 			//std::cout << "debug 207" << std::endl;
 			if ( ret_value == -1 )
 			{
-				//Destructor -> NO_THROW
+				//Destructor -> no-throw
 				std::cerr << "Failed to close kqueue file descriptor - File Descriptor: '" << kqueue_file_descriptor_ << "' - Reason: " << std::strerror(errno) << std::endl; 
 			}
 			kqueue_file_descriptor_ = 0;
