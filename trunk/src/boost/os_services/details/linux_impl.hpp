@@ -67,10 +67,8 @@ public:
 
 					if ( ret_value < 0 )
 					{
-						//TODO: analizar si esta es la forma optima de manejar errores.
-						std::ostringstream oss;
-						oss << "Failed to remove watch - Reason: "; //TODO: ver que usar en Linux/BSD << GetLastError();
-						throw (std::runtime_error(oss.str()));
+						//Destructor -> NO_THROW
+						std::cerr << "Failed to remove watch - Reason: " << std::strerror(errno);
 					}
 
 				}
@@ -81,9 +79,8 @@ public:
 
 			if ( ret_value < 0 )
 			{
-				std::ostringstream oss;
-				oss << "Failed to close file descriptor - Reason: "; //TODO: ver que usar en Linux/BSD << GetLastError();
-				throw (std::runtime_error(oss.str()));
+				//Destructor -> NO_THROW
+				std::cerr << "Failed to close inotify file descriptor - Reason: " << std::strerror(errno);
 			}
 		}
 
@@ -114,7 +111,7 @@ public:
 			if (file_descriptor_ < 0)
 			{
 				std::ostringstream oss;
-				oss << "Failed to initialize monitor - Reason: " << std::strerror(errno);
+				oss << "Failed to initialize monitor (inotify_init) - Reason: " << std::strerror(errno);
 				throw (std::runtime_error(oss.str()));
 			}
 			is_initialized_ = true;

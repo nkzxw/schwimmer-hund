@@ -178,12 +178,10 @@ public:
 
 			if ( ret_value == -1 )
 			{
-
 				std::cout << "this->file_descriptor_: " << this->file_descriptor_ << std::endl;
 
-				std::ostringstream oss;
-				oss << "Failed to close file descriptor - Reason: " << std::strerror(errno);
-				throw (std::runtime_error(oss.str()));
+				//Destructor -> NO_THROW
+				std::cerr << "Failed to close file descriptor - Reason: " << std::strerror(errno);
 			}
 		}
 	}
@@ -501,24 +499,24 @@ public:
 
 	~freebsd_impl()
 	{
-		std::cout << "debug 200" << std::endl;
+		//std::cout << "debug 200" << std::endl;
 		closing_ = true;
-		std::cout << "debug 201" << std::endl;
+		//std::cout << "debug 201" << std::endl;
 		
 		if ( thread_ )
 		{
-			std::cout << "debug 202" << std::endl;
+			//std::cout << "debug 202" << std::endl;
 			thread_->join();
-			std::cout << "debug 203" << std::endl;
+			//std::cout << "debug 203" << std::endl;
 		}
 
-		std::cout << "debug 204" << std::endl;
+		//std::cout << "debug 204" << std::endl;
 
 
 		if ( kqueue_file_descriptor_ != 0 )
 		{
 
-			std::cout << "debug 205" << std::endl;
+			//std::cout << "debug 205" << std::endl;
 
 			//TODO:
 			//BOOST_FOREACH(pair_type p, watch_descriptors_)
@@ -538,28 +536,22 @@ public:
 			//	}
 			//}
 
-			std::cout << "debug 206" << std::endl;
+			//std::cout << "debug 206" << std::endl;
 
 
 			int ret_value = ::close( kqueue_file_descriptor_ );
 
-			std::cout << "debug 207" << std::endl;
+			//std::cout << "debug 207" << std::endl;
 
 			if ( ret_value == -1 )
 			{
-				std::cout << "debug 208" << std::endl;
+				//Destructor -> NO_THROW
+				std::cerr << "Failed to close kqueue file descriptor - Reason: " << std::strerror(errno);
 
-				//TODO: pecado mortal... nunca lanzar excepciones desde destructores...
-				std::ostringstream oss;
-				oss << "Failed to close kqueue file descriptor - Reason: " << std::strerror(errno);
-
-				std::cout << "debug 209" << std::endl;
-
-				throw (std::runtime_error(oss.str()));
 			}
 		}
 
-		std::cout << "debug 210" << std::endl;
+		//std::cout << "debug 210" << std::endl;
 
 
 	}
