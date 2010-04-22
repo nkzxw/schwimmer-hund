@@ -18,6 +18,25 @@
 //TODO: ver de usar boost::noncopyable cuando sea aplicable
 
 
+//TODO: problema en runtime:
+/*
+2010-Apr-22 12:26:53.746635 - Action: CREATED - File: './test_dir/temp1/temp11'
+2010-Apr-22 12:26:53.756466 - Action: CREATED - File: './test_dir/temp1/temp12'
+2010-Apr-22 12:26:53.892796 - Action: RENAMED - Source File: './test_dir/temp1/temp11' - Target File: './test_dir/temp1/temp11B'
+2010-Apr-22 12:26:53.912939 - Action: CREATED - File: './test_dir/temp1/temp12B'
+2010-Apr-22 12:26:53.917267 - Action: RENAMED - Source File: './test_dir/temp1/temp12' - Target File: './test_dir/temp1/temp12B'
+2010-Apr-22 12:26:53.943845 - Action: REMOVED - File: './test_dir/temp1/temp11B'
+2010-Apr-22 12:26:53.970923 - Action: REMOVED - File: './test_dir/temp1/temp12B'
+*/
+// Debe ser porque el "queue_write" está fallando en algo por ese lado... El evento Action: CREATED - File: './test_dir/temp1/temp12B' deberia ser ignorado.
+
+
+
+//TODO: problema en runtime: Parece que si los eventos ocurren muy rapido no son capturados, se pierden eventos. No se como funciona el cache del kevent... investigar eso...
+//      sino implementar una cola de mensajes sincronizada...
+
+
+
 
 // http://en.wikipedia.org/wiki/Kqueue
 // http://mark.heily.com/pnotify/
@@ -129,18 +148,12 @@ public:
 		: is_initialized_(false), closing_(false) //, kqueue_file_descriptor_(0)
 	{
 		//kqueue_file_descriptor_ = 0;
-		std::cout << "debug freebsd_impl - this: " << this << std::endl;
-		std::cin.clear();
-		std::cin.sync();
-		std::cin.get();
 	}
 
 	~freebsd_impl()
 	{
 		std::cout << "debug ~freebsd_impl() - 1" << std::endl;
 		closing_ = true;
-
-		std::cout << "debug freebsd_impl - this: " << this << std::endl;
 
 		//TODO: cerrar los archivos /watches
 
@@ -470,7 +483,8 @@ public: //private:  //TODO:
 			int return_code = kevent ( kqueue_file_descriptor_, NULL, 0, &event, 1, &timeout );
 
 
-			std::cout << "debug handle_directory_changes() - 4" << std::endl;
+			if ( closing_)
+				std::cout << "debug handle_directory_changes() - 4" << std::endl;
 
 			if ( return_code == -1 || event.flags & EV_ERROR) //< 0
 			{
@@ -481,7 +495,9 @@ public: //private:  //TODO:
 				throw (std::runtime_error(oss.str()));
 			}
 
-			std::cout << "debug handle_directory_changes() - 6" << std::endl;
+
+			if ( closing_)
+				std::cout << "debug handle_directory_changes() - 6" << std::endl;
 
 			if ( ! closing_ )
 			{
@@ -513,6 +529,7 @@ public: //private:  //TODO:
 
 					if ( event.fflags & NOTE_DELETE )
 					{
+						std::cout << "NOTE_DELETE: " << watch.path().native_file_string() << std::endl;
 						//std::cout << "debug handle_directory_changes() - 13" << std::endl;
 						handle_remove( watch );
 						//std::cout << "debug handle_directory_changes() - 14" << std::endl;
@@ -520,6 +537,7 @@ public: //private:  //TODO:
 
 					if ( event.fflags & NOTE_RENAME )
 					{
+						std::cout << "NOTE_RENAME: " << watch.path().native_file_string() << std::endl;
 						//std::cout << "debug handle_directory_changes() - 15" << std::endl;
 						handle_rename( watch );
 						//std::cout << "debug handle_directory_changes() - 16" << std::endl;
@@ -527,9 +545,12 @@ public: //private:  //TODO:
 
 					if ( event.fflags & NOTE_WRITE )
 					{
+						std::cout << "NOTE_WRITE: " << watch.path().native_file_string() << std::endl;
 						//std::cout << "debug handle_directory_changes() - 17" << std::endl;
 						if ( queued_write_watch != 0 )
 						{
+							std::cout << "queued_write_watch != 0" << std::endl;
+
 							//std::cout << "debug handle_directory_changes() - 18" << std::endl;
 							handle_write( queued_write_watch );
 							queued_write_watch = 0;
@@ -569,9 +590,11 @@ public: //private:  //TODO:
 			{
 				std::cout << "debug handle_directory_changes() - XX - 1" << std::endl;
 			}
-			std::cout << "debug handle_directory_changes() - 22" << std::endl;
+			if ( closing_)
+				std::cout << "debug handle_directory_changes() - 22" << std::endl;
 		}
-		std::cout << "debug handle_directory_changes() - 23" << std::endl;
+		if ( closing_)
+			std::cout << "debug handle_directory_changes() - 23" << std::endl;
 	}
 
 protected:
