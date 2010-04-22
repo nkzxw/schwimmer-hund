@@ -48,12 +48,11 @@ class filesystem_item
 {
 public:
 
-	//typedef boost::shared_ptr<filesystem_item> pointer_type;
-	//typedef std::vector<pointer_type> collection_type;
+	typedef boost::shared_ptr<filesystem_item> pointer_type;
+	typedef std::vector<pointer_type> collection_type;
 
-	typedef filesystem_item* pointer_type;
+	//typedef filesystem_item* pointer_type;
 	//typedef boost::ptr_vector<filesystem_item> collection_type;
-	typedef std::vector< boost::shared_ptr<filesystem_item> > collection_type;
 	
 
 	//TODO: asignar lo que el usuario quiere monitorear...
