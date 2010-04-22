@@ -139,7 +139,9 @@ public:
 		std::cout << "debug ~freebsd_impl() - 2" << std::endl;
 		if ( thread_ )
 		{
+			std::cout << "debug ~freebsd_impl() - 2-A" << std::endl;
 			thread_->join();
+			std::cout << "debug ~freebsd_impl() - 2-B" << std::endl;
 		}
 
 		std::cout << "debug ~freebsd_impl() - 3" << std::endl;
