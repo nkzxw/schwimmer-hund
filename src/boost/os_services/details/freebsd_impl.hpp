@@ -226,7 +226,7 @@ public: //private:  //TODO:
 	//filesystem_item::pointer_type create_filesystem_item ( const boost::filesystem::path& path, user_entry& entry )
 	filesystem_item::pointer_type create_filesystem_item ( const boost::filesystem::path& path, user_entry::pointer_type& entry )
 	{
-		filesystem_item::pointer_type watch = new filesystem_item ( path, &entry ); 
+		filesystem_item::pointer_type watch = new filesystem_item ( path, entry ); 
 		entry->set_root ( watch );
 		entry->add_watch ( watch );
 
@@ -355,7 +355,7 @@ public: //private:  //TODO:
 				bool found = false;
 				for (filesystem_item::collection_type::iterator it = root_dir->subitems_.begin(); it != root_dir->subitems_.end(); ++it )
 				{
-					if (  it->is_equal ( inode_info, dir_itr->path() ) )
+					if (  (*it)->is_equal ( inode_info, dir_itr->path() ) )
 					{
 						found = true;
 						break;
@@ -371,7 +371,7 @@ public: //private:  //TODO:
 						notify_file_system_event_args( change_types::created, dir_itr->path() );
 					}
 
-					filesystem_item::pointer_type watch = create_filesystem_item ( dir_itr->path(), *root_dir->root_user_entry_, root_dir );
+					filesystem_item::pointer_type watch = create_filesystem_item ( dir_itr->path(), root_dir->root_user_entry_, root_dir );
 					begin_watch( watch, launch_events );
 				}
 			}
@@ -464,8 +464,8 @@ public: //private:  //TODO:
 	void handle_directory_changes()
 	{
 
-		//std::cout << "debug handle_directory_changes() - 1" << std::endl;
-		filesystem_item::pointer_type queued_write_watch = 0;
+		//filesystem_item::pointer_type queued_write_watch = 0;
+		filesystem_item::pointer_type queued_write_watch;
 
 		//std::cout << "debug handle_directory_changes() - 2" << std::endl;
 		while ( ! closing_ )
@@ -503,10 +503,10 @@ public: //private:  //TODO:
 				if ( return_code == 0 ) //timeout
 				{
 					//std::cout << "debug handle_directory_changes() - 8" << std::endl;
-					if ( queued_write_watch != 0 )
+					if ( queued_write_watch ) // != 0
 					{
 						handle_write( queued_write_watch );
-						queued_write_watch = 0;
+						queued_write_watch.reset(); // = 0;
 					}
 				}
 				else
@@ -539,10 +539,10 @@ public: //private:  //TODO:
 					{
 						
 						//std::cout << "debug handle_directory_changes() - 17" << std::endl;
-						if ( queued_write_watch != 0 )
+						if ( queued_write_watch ) //!= 0
 						{
 							handle_write( queued_write_watch );
-							queued_write_watch = 0;
+							queued_write_watch.reset(); // = 0;
 						}
 
 						//Encolamos un solo evento WRITE ya que siempre viene WRITE+RENAME... hacemos que primero se procese el evento rename y luego el write
