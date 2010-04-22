@@ -70,7 +70,8 @@ public:
 
 	~filesystem_item()
 	{
-		std::cout << "~filesystem_item() " << path_.native_file_string() << std::endl;
+		std::cout << "~filesystem_item()" << std::endl;
+		std::cout << "~filesystem_item() - " << path_.native_file_string() << std::endl;
 		this->close( true, true ); //no-throw
 	}
 
