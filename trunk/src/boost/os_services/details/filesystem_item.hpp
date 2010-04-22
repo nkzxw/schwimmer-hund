@@ -70,6 +70,7 @@ public:
 
 	~filesystem_item()
 	{
+		std::cout << "~filesystem_item()" << std::endl;
 		this->close( true, true ); //no-throw
 	}
 
