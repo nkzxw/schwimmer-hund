@@ -507,6 +507,10 @@ public: //private:  //TODO:
 					//std::cout << "debug handle_directory_changes() - 8" << std::endl;
 					if ( queued_write_watch != 0 )
 					{
+						std::cout << "evento WRITE desencolado - queued_write_watch != 0 -------- XXXXXXX --------" << std::endl;
+						std::cout << "NOTE_WRITE: " << queued_write_watch->path().native_file_string() << std::endl;
+
+
 						//std::cout << "debug handle_directory_changes() - 9" << std::endl;
 						handle_write( queued_write_watch );
 						queued_write_watch = 0;
@@ -545,11 +549,12 @@ public: //private:  //TODO:
 
 					if ( event.fflags & NOTE_WRITE )
 					{
-						std::cout << "NOTE_WRITE: " << watch->path().native_file_string() << std::endl;
+						
 						//std::cout << "debug handle_directory_changes() - 17" << std::endl;
 						if ( queued_write_watch != 0 )
 						{
-							std::cout << "queued_write_watch != 0" << std::endl;
+							std::cout << "evento WRITE desencolado - queued_write_watch != 0" << std::endl;
+							std::cout << "NOTE_WRITE: " << queued_write_watch->path().native_file_string() << std::endl;
 
 							//std::cout << "debug handle_directory_changes() - 18" << std::endl;
 							handle_write( queued_write_watch );
@@ -557,8 +562,10 @@ public: //private:  //TODO:
 							//std::cout << "debug handle_directory_changes() - 19" << std::endl;
 						}
 
+						std::cout << "NOTE_WRITE: " << watch->path().native_file_string() << std::endl;
 						//Encolamos un solo evento WRITE ya que siempre viene WRITE+RENAME... hacemos que primero se procese el evento rename y luego el write
 						queued_write_watch = watch;
+						std::cout << "encolando evento WRITE" << std::endl;
 
 						//std::cout << "debug handle_directory_changes() - 20" << std::endl;
 					}
