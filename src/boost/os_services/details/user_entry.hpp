@@ -11,14 +11,42 @@ namespace boost {
 namespace os_services {
 namespace detail {
 
+//TODO: ver si es necesario aplicar traits...
+//template <typename T> 
+//struct traits
+//{
+//	typedef T & reference;
+//};
+//
+//template<> struct shared_ptr_traits<void>
+//{
+//	typedef void reference;
+//};
+//
+//#if !defined(BOOST_NO_CV_VOID_SPECIALIZATIONS)
+//
+//template<> 
+//struct type_traits<void const>
+//{
+//	typedef void reference;
+//};
+
+
 //TODO: class
 struct user_entry //: public enable_shared_from_this<user_entry>
 {
-	//typedef boost::shared_ptr<user_entry> pointer_type;
-	//typedef std::vector<pointer_type> collection_type;
-	typedef user_entry* pointer_type;
+	typedef boost::shared_ptr<user_entry> pointer_type;
+	typedef std::vector<pointer_type> collection_type;
+
+
+	//typedef T element_type;
+	//typedef T value_type;
+	//typedef T * pointer;
+	//typedef typename boost::detail::shared_ptr_traits<T>::reference reference;
+
+
+	//typedef user_entry* pointer_type;
 	//typedef boost::ptr_vector<user_entry> collection_type;
-	typedef std::vector< boost::shared_ptr< user_entry > > collection_type;
 
 	explicit user_entry( const boost::filesystem::path& path)
 		: path_(path)
@@ -26,19 +54,11 @@ struct user_entry //: public enable_shared_from_this<user_entry>
 
 	//~user_entry()
 	//{
-	//	//std::cout << "--------------------- ~fsitem() ------------------------------" << std::endl;
-	//	//std::cout << "this->path.native_file_string(): " << this->path.native_file_string() << std::endl;
+	//	std::cout << "~user_entry()" << std::endl;
 	//}
 
-	~user_entry()
-	{
-		std::cout << "~user_entry()" << std::endl;
-	}
-
-	
-	
-	//void add_watch( filesystem_item::pointer_type item )
-	void add_watch( boost::shared_ptr< filesystem_item > item )
+	//void add_watch( boost::shared_ptr< filesystem_item > item )
+	void add_watch( filesystem_item::pointer_type item )
 	{
 		all_watches_.push_back(item);
 	}
