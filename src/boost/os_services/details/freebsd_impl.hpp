@@ -142,33 +142,32 @@ public:
 
 		std::cout << "debug freebsd_impl - this: " << this << std::endl;
 
-
-		std::cout << "debug ~freebsd_impl() - 2" << std::endl;
-		if ( thread_ )
-		{
-			std::cout << "debug ~freebsd_impl() - 2-A" << std::endl;
-			thread_->join();
-			std::cout << "debug ~freebsd_impl() - 2-B" << std::endl;
-		}
-
-		std::cout << "debug ~freebsd_impl() - 3" << std::endl;
-
 		//TODO: cerrar los archivos /watches
 
 		if ( kqueue_file_descriptor_ != 0 )
 		{
-			std::cout << "debug ~freebsd_impl() - 4" << std::endl;
+			std::cout << "debug ~freebsd_impl() - 2" << std::endl;
 			int ret_value = ::close( kqueue_file_descriptor_ );
 			if ( ret_value == -1 )
 			{
 				//Destructor -> no-throw
 				std::cerr << "Failed to close kqueue file descriptor - File Descriptor: '" << kqueue_file_descriptor_ << "' - Reason: " << std::strerror(errno) << std::endl; 
 			}
-			std::cout << "debug ~freebsd_impl() - 5" << std::endl;
+			std::cout << "debug ~freebsd_impl() - 3" << std::endl;
 			kqueue_file_descriptor_ = 0;
 		}
 
-		std::cout << "debug ~freebsd_impl() - 6" << std::endl;
+
+		std::cout << "debug ~freebsd_impl() - 4" << std::endl;
+		if ( thread_ )
+		{
+			std::cout << "debug ~freebsd_impl() - 5" << std::endl;
+			thread_->join();
+			std::cout << "debug ~freebsd_impl() - 6" << std::endl;
+		}
+		std::cout << "debug ~freebsd_impl() - 7" << std::endl;
+
+		std::cout << "debug ~freebsd_impl() - 8" << std::endl;
 	}
 
 
