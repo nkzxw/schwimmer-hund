@@ -559,6 +559,10 @@ public: //private:  //TODO:
 				}
 				std::cout << "debug handle_directory_changes() - 21" << std::endl;
 			}
+			else
+			{
+				std::cout << "debug handle_directory_changes() - XX - 1" << std::endl;
+			}
 			std::cout << "debug handle_directory_changes() - 22" << std::endl;
 		}
 		std::cout << "debug handle_directory_changes() - 23" << std::endl;
