@@ -221,13 +221,13 @@ public: //private:  //TODO:
 	typedef boost::function<void (filesystem_event_args e)> create_file_event_handler;
 	create_file_event_handler created_handler_;
 
-	//filesystem_item::pointer_type create_filesystem_item ( const boost::filesystem::path& path, user_entry::pointer_type entry, filesystem_item::pointer_type parent = 0)
-	filesystem_item::pointer_type create_filesystem_item ( const boost::filesystem::path& path, user_entry& entry, filesystem_item::pointer_type parent = 0)
+	filesystem_item::pointer_type create_filesystem_item ( const boost::filesystem::path& path, user_entry& entry )
 	{
 		filesystem_item::pointer_type watch = new filesystem_item ( path, &entry, parent ); 
 		entry.set_root ( watch );
 		entry.add_watch ( watch );
-		
+
+		//TODO: ver de esto que va...
 		//watch->open(); //TODO: catch errors
 		//begin_watch( watch, false );
 		//begin_watch( watch, launch_events );
@@ -235,6 +235,19 @@ public: //private:  //TODO:
 		//item->mask_ = PN_CREATE;
 
 		if ( parent != 0 )
+		{
+			//TODO: agregar metodo add_subitem a filesystem_item
+			parent->subitems_.push_back(watch);
+		}
+
+		return watch;
+	}
+
+	filesystem_item::pointer_type create_filesystem_item ( const boost::filesystem::path& path, user_entry& entry, filesystem_item::pointer_type parent )
+	{
+		filesystem_item::pointer_type watch = create_filesystem_item( path, entry );
+
+		if ( parent )
 		{
 			//TODO: agregar metodo add_subitem a filesystem_item
 			parent->subitems_.push_back(watch);
