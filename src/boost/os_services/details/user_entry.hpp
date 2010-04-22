@@ -29,6 +29,12 @@ struct user_entry //: public enable_shared_from_this<user_entry>
 	//	//std::cout << "this->path.native_file_string(): " << this->path.native_file_string() << std::endl;
 	//}
 
+	~user_entry()
+	{
+		std::cout << "~user_entry()" << std::endl;
+	}
+
+
 	void add_watch( filesystem_item::pointer_type item )
 	{
 		all_watches_.push_back(item);
