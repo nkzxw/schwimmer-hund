@@ -52,7 +52,9 @@ public:
 	//typedef std::vector<pointer_type> collection_type;
 
 	typedef filesystem_item* pointer_type;
-	typedef boost::ptr_vector<filesystem_item> collection_type;
+	//typedef boost::ptr_vector<filesystem_item> collection_type;
+	typedef std::vector< boost::shared_ptr<filesystem_item> > collection_type;
+	
 
 	//TODO: asignar lo que el usuario quiere monitorear...
 	explicit filesystem_item( const boost::filesystem::path& path, user_entry_pointer_type root_user_entry )

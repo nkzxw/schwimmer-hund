@@ -17,7 +17,8 @@ struct user_entry //: public enable_shared_from_this<user_entry>
 	//typedef boost::shared_ptr<user_entry> pointer_type;
 	//typedef std::vector<pointer_type> collection_type;
 	typedef user_entry* pointer_type;
-	typedef boost::ptr_vector<user_entry> collection_type;
+	//typedef boost::ptr_vector<user_entry> collection_type;
+	typedef std::vector< boost::shared_ptr< user_entry > > collection_type;
 
 	explicit user_entry( const boost::filesystem::path& path)
 		: path_(path)
@@ -34,8 +35,10 @@ struct user_entry //: public enable_shared_from_this<user_entry>
 		std::cout << "~user_entry()" << std::endl;
 	}
 
-
-	void add_watch( filesystem_item::pointer_type item )
+	
+	
+	//void add_watch( filesystem_item::pointer_type item )
+	void add_watch( boost::shared_ptr< filesystem_item > item )
 	{
 		all_watches_.push_back(item);
 	}
@@ -46,7 +49,8 @@ struct user_entry //: public enable_shared_from_this<user_entry>
 		filesystem_item::collection_type::iterator it = all_watches_.begin();
 		while ( it != all_watches_.end() )
 		{
-			if ( watch->is_equal( *it ) )
+			//if ( watch->is_equal( **it ) )
+			if ( (*it)->is_equal( *watch ) )
 			{
 				it = all_watches_.erase(it);
 				break;
@@ -57,23 +61,6 @@ struct user_entry //: public enable_shared_from_this<user_entry>
 			}
 		}
 	}
-
-	
-
-
-	//void initialize()
-	//{
-	//	//TODO: estas dos instrucciones ponerlas en un factory
-	//	//filesystem_item::pointer_type item ( new filesystem_item (path_, this ) );
-	//	//filesystem_item::pointer_type item ( new filesystem_item (path_, shared_from_this() ) );
-	//	//filesystem_item::pointer_type item = new filesystem_item (path_, shared_from_this() );
-	//	//filesystem_item::pointer_type item = new filesystem_item ( path_, this );
-	//	//root_ = item;
-
-	//	root_ = new filesystem_item ( path_, this ); //TODO: no me gusta que este sea el responsable de hacer el new... debe venir como parámetro...
-	//	all_watches_.push_back(root_);
-	//	create_watch( root_, false );
-	//}
 
 	const boost::filesystem::path& path() const 
 	{ 

@@ -17,24 +17,11 @@
 //TODO: ver que pasa con NetBSD, OpenBSD, Darwin, MacOSX, etc... aparentemente lo soportan
 //TODO: ver de usar boost::noncopyable cuando sea aplicable
 
-
-//TODO: problema en runtime:
-/*
-2010-Apr-22 12:26:53.746635 - Action: CREATED - File: './test_dir/temp1/temp11'
-2010-Apr-22 12:26:53.756466 - Action: CREATED - File: './test_dir/temp1/temp12'
-2010-Apr-22 12:26:53.892796 - Action: RENAMED - Source File: './test_dir/temp1/temp11' - Target File: './test_dir/temp1/temp11B'
-2010-Apr-22 12:26:53.912939 - Action: CREATED - File: './test_dir/temp1/temp12B'
-2010-Apr-22 12:26:53.917267 - Action: RENAMED - Source File: './test_dir/temp1/temp12' - Target File: './test_dir/temp1/temp12B'
-2010-Apr-22 12:26:53.943845 - Action: REMOVED - File: './test_dir/temp1/temp11B'
-2010-Apr-22 12:26:53.970923 - Action: REMOVED - File: './test_dir/temp1/temp12B'
-*/
-// Debe ser porque el "queue_write" está fallando en algo por ese lado... El evento Action: CREATED - File: './test_dir/temp1/temp12B' deberia ser ignorado.
-
-
+//TODO: ver que pasa cuando se crea, renombra o elimina un hardlink o softlink
+//TODO: ver que pasa cuando se crea, renombra o elimina un archivo existiendo hardlink (o softlink) a este archivo. El sistema puede confundirse.
 
 //TODO: problema en runtime: Parece que si los eventos ocurren muy rapido no son capturados, se pierden eventos. No se como funciona el cache del kevent... investigar eso...
 //      sino implementar una cola de mensajes sincronizada...
-
 
 
 
@@ -67,7 +54,7 @@ There are platforms that are not supported due to lack of developer resources. I
 
 //TODO: ver cuales headers son innecesarios
 #include <string>
-//#include <vector>
+#include <vector>
 
 // C-Std Headers
 #include <cerrno>	//TODO: probar si es necesario
@@ -88,7 +75,7 @@ There are platforms that are not supported due to lack of developer resources. I
 #include <boost/function.hpp>
 //#include <boost/integer.hpp>
 //#include <boost/smart_ptr.hpp>
-#include <boost/ptr_container/ptr_vector.hpp>
+//#include <boost/ptr_container/ptr_vector.hpp>
 #include <boost/thread.hpp>
 
 #include <boost/os_services/change_types.hpp>
@@ -507,14 +494,8 @@ public: //private:  //TODO:
 					//std::cout << "debug handle_directory_changes() - 8" << std::endl;
 					if ( queued_write_watch != 0 )
 					{
-						std::cout << "evento WRITE desencolado - queued_write_watch != 0 -------- XXXXXXX --------" << std::endl;
-						std::cout << "NOTE_WRITE: " << queued_write_watch->path().native_file_string() << std::endl;
-
-
-						//std::cout << "debug handle_directory_changes() - 9" << std::endl;
 						handle_write( queued_write_watch );
 						queued_write_watch = 0;
-						//std::cout << "debug handle_directory_changes() - 10" << std::endl;
 					}
 				}
 				else
@@ -533,20 +514,14 @@ public: //private:  //TODO:
 
 					if ( event.fflags & NOTE_DELETE )
 					{
-						std::cout << "NOTE_DELETE: " << watch->path().native_file_string() << std::endl;
-						//std::cout << "debug handle_directory_changes() - 13" << std::endl;
 						handle_remove( watch );
 						queued_write_watch = 0;
-						//std::cout << "debug handle_directory_changes() - 14" << std::endl;
 					}
 
 					if ( event.fflags & NOTE_RENAME )
 					{
-						std::cout << "NOTE_RENAME: " << watch->path().native_file_string() << std::endl;
-						//std::cout << "debug handle_directory_changes() - 15" << std::endl;
 						handle_rename( watch );
 						queued_write_watch = 0;
-						//std::cout << "debug handle_directory_changes() - 16" << std::endl;
 					}
 
 					if ( event.fflags & NOTE_WRITE )
@@ -555,21 +530,12 @@ public: //private:  //TODO:
 						//std::cout << "debug handle_directory_changes() - 17" << std::endl;
 						if ( queued_write_watch != 0 )
 						{
-							std::cout << "evento WRITE desencolado - queued_write_watch != 0" << std::endl;
-							std::cout << "NOTE_WRITE: " << queued_write_watch->path().native_file_string() << std::endl;
-
-							//std::cout << "debug handle_directory_changes() - 18" << std::endl;
 							handle_write( queued_write_watch );
 							queued_write_watch = 0;
-							//std::cout << "debug handle_directory_changes() - 19" << std::endl;
 						}
 
-						std::cout << "NOTE_WRITE: " << watch->path().native_file_string() << std::endl;
 						//Encolamos un solo evento WRITE ya que siempre viene WRITE+RENAME... hacemos que primero se procese el evento rename y luego el write
 						queued_write_watch = watch;
-						std::cout << "encolando evento WRITE" << std::endl;
-
-						//std::cout << "debug handle_directory_changes() - 20" << std::endl;
 					}
 
 					//if (event.fflags & NOTE_TRUNCATE)
