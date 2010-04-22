@@ -234,12 +234,6 @@ public: //private:  //TODO:
 		//item->inode_info_ = inode_info;
 		//item->mask_ = PN_CREATE;
 
-		if ( parent != 0 )
-		{
-			//TODO: agregar metodo add_subitem a filesystem_item
-			parent->subitems_.push_back(watch);
-		}
-
 		return watch;
 	}
 
