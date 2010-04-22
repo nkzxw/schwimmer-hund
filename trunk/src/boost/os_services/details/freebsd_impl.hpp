@@ -130,6 +130,9 @@ public:
 	{
 		//kqueue_file_descriptor_ = 0;
 		std::cout << "debug freebsd_impl - this: " << this << std::endl;
+		std::cin.clear();
+		std::cin.sync();
+		std::cin.get();
 	}
 
 	~freebsd_impl()
