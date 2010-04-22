@@ -120,10 +120,10 @@ Command(TEST_DIR + "/" + string.replace(str( stress_test_watcher_dynamic_dbg[0] 
 #
 #obj = debug_static_env.Object('stress_test_file_generator_static_dbg', [ SRC_DIR + '/libs/os_services/test/stress_test_file_generator.cpp'])
 #stress_test_file_generator_static_dbg = debug_static_env.Program('stress_test_file_generator_' + PLATFORM_STR + '_static_debug', obj)
-
-
-Command(TEST_DIR + "/" + string.replace(str( stress_test_file_generator_dynamic_rel[0] ), "_" + PLATFORM_STR + "_dynamic_release", ""), BUILD_DIR + "/" + str ( stress_test_file_generator_dynamic_rel[0] ), Copy("$TARGET", "$SOURCE"))
-Command(TEST_DIR + "/" + string.replace(str( stress_test_file_generator_dynamic_dbg[0] ), "_" + PLATFORM_STR + "_dynamic_debug", ""), BUILD_DIR + "/" + str ( stress_test_file_generator_dynamic_dbg[0] ), Copy("$TARGET", "$SOURCE"))
+#
+#
+##Command(TEST_DIR + "/" + string.replace(str( stress_test_file_generator_dynamic_rel[0] ), "_" + PLATFORM_STR + "_dynamic_release", ""), BUILD_DIR + "/" + str ( stress_test_file_generator_dynamic_rel[0] ), Copy("$TARGET", "$SOURCE"))
+#Command(TEST_DIR + "/" + string.replace(str( stress_test_file_generator_dynamic_dbg[0] ), "_" + PLATFORM_STR + "_dynamic_debug", ""), BUILD_DIR + "/" + str ( stress_test_file_generator_dynamic_dbg[0] ), Copy("$TARGET", "$SOURCE"))
 
 
 
@@ -148,10 +148,10 @@ Command(TEST_DIR + "/" + string.replace(str( stress_test_file_generator_dynamic_
 #
 #obj = debug_static_env.Object('stress_test_file_generator_and_watcher_static_dbg', [ SRC_DIR + '/libs/os_services/test/stress_test_file_generator_and_watcher.cpp'])
 #stress_test_file_generator_and_watcher_static_dbg = debug_static_env.Program('stress_test_file_generator_and_watcher_' + PLATFORM_STR + '_static_debug', obj)
-
-
-Command(TEST_DIR + "/" + string.replace(str( stress_test_file_generator_and_watcher_dynamic_rel[0] ), "_" + PLATFORM_STR + "_dynamic_release", ""), BUILD_DIR + "/" + str ( stress_test_file_generator_and_watcher_dynamic_rel[0] ), Copy("$TARGET", "$SOURCE"))
-Command(TEST_DIR + "/" + string.replace(str( stress_test_file_generator_and_watcher_dynamic_dbg[0] ), "_" + PLATFORM_STR + "_dynamic_debug", ""), BUILD_DIR + "/" + str ( stress_test_file_generator_and_watcher_dynamic_dbg[0] ), Copy("$TARGET", "$SOURCE"))
+#
+#
+##Command(TEST_DIR + "/" + string.replace(str( stress_test_file_generator_and_watcher_dynamic_rel[0] ), "_" + PLATFORM_STR + "_dynamic_release", ""), BUILD_DIR + "/" + str ( stress_test_file_generator_and_watcher_dynamic_rel[0] ), Copy("$TARGET", "$SOURCE"))
+#Command(TEST_DIR + "/" + string.replace(str( stress_test_file_generator_and_watcher_dynamic_dbg[0] ), "_" + PLATFORM_STR + "_dynamic_debug", ""), BUILD_DIR + "/" + str ( stress_test_file_generator_and_watcher_dynamic_dbg[0] ), Copy("$TARGET", "$SOURCE"))
 
 
 
@@ -213,6 +213,33 @@ Command(TEST_DIR + "/" + string.replace(str( stress_test_file_generator_and_watc
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# -------------- -------------- -------------- -------------- -------------- --------------
+# OLD
 # -------------- -------------- -------------- -------------- -------------- --------------
 
 
