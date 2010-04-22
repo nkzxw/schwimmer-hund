@@ -211,7 +211,7 @@ public:
 		for (user_entry::collection_type::iterator it = user_watches_.begin(); it != user_watches_.end(); ++it )
 		{
 			//it->initialize();
-			filesystem_item::pointer_type watch = create_filesystem_item ( it->path(), *it );
+			filesystem_item::pointer_type watch = create_filesystem_item ( (*it)->path(), *it );
 			begin_watch( watch, false );
 		}
 
