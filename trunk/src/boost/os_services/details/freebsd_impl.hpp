@@ -129,13 +129,17 @@ public:
 		: is_initialized_(false), closing_(false) //, kqueue_file_descriptor_(0)
 	{
 		//kqueue_file_descriptor_ = 0;
+		std::cout << "debug freebsd_impl - this: " << this << std::endl;
 	}
 
 	~freebsd_impl()
 	{
 		std::cout << "debug ~freebsd_impl() - 1" << std::endl;
 		closing_ = true;
-		
+
+		std::cout << "debug freebsd_impl - this: " << this << std::endl;
+
+
 		std::cout << "debug ~freebsd_impl() - 2" << std::endl;
 		if ( thread_ )
 		{
