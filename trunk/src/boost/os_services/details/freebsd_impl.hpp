@@ -529,7 +529,7 @@ public: //private:  //TODO:
 
 					if ( event.fflags & NOTE_DELETE )
 					{
-						std::cout << "NOTE_DELETE: " << watch.path().native_file_string() << std::endl;
+						std::cout << "NOTE_DELETE: " << watch->path().native_file_string() << std::endl;
 						//std::cout << "debug handle_directory_changes() - 13" << std::endl;
 						handle_remove( watch );
 						//std::cout << "debug handle_directory_changes() - 14" << std::endl;
@@ -537,7 +537,7 @@ public: //private:  //TODO:
 
 					if ( event.fflags & NOTE_RENAME )
 					{
-						std::cout << "NOTE_RENAME: " << watch.path().native_file_string() << std::endl;
+						std::cout << "NOTE_RENAME: " << watch->path().native_file_string() << std::endl;
 						//std::cout << "debug handle_directory_changes() - 15" << std::endl;
 						handle_rename( watch );
 						//std::cout << "debug handle_directory_changes() - 16" << std::endl;
@@ -545,7 +545,7 @@ public: //private:  //TODO:
 
 					if ( event.fflags & NOTE_WRITE )
 					{
-						std::cout << "NOTE_WRITE: " << watch.path().native_file_string() << std::endl;
+						std::cout << "NOTE_WRITE: " << watch->path().native_file_string() << std::endl;
 						//std::cout << "debug handle_directory_changes() - 17" << std::endl;
 						if ( queued_write_watch != 0 )
 						{
