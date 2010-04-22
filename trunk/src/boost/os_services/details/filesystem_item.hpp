@@ -57,7 +57,7 @@ public:
 
 	//TODO: asignar lo que el usuario quiere monitorear...
 	explicit filesystem_item( const boost::filesystem::path& path, user_entry_pointer_type root_user_entry )
-		: root_user_entry_(root_user_entry), parent_(0), is_directory_(false), file_descriptor_(0), mask_(PN_ALL_EVENTS)
+		: root_user_entry_(root_user_entry), is_directory_(false), file_descriptor_(0), mask_(PN_ALL_EVENTS) //parent_(0),
 	{
 		set_path( path );
 	}
@@ -123,7 +123,7 @@ public:
 			{
 				for (filesystem_item::collection_type::iterator it =  this->subitems_.begin(); it != this->subitems_.end(); ++it )
 				{
-					it->close( no_throw, close_subitems );
+					(*it)->close( no_throw, close_subitems );
 				}
 			}
 

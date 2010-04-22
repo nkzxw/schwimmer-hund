@@ -177,7 +177,9 @@ public:
 	void add_directory_impl ( const std::string& dir_name )
 	{
 		//TODO: asignar mask
-		user_entry::pointer_type item = new user_entry( dir_name );
+		//TODO: crear un factory o un allocator para poder crear un objeto del tipo user_entry usando shared_ptr o un raw-C-pointer y crearlo de cualquier forma.
+		//user_entry::pointer_type item = new user_entry( dir_name );
+		user_entry::pointer_type item ( new user_entry( dir_name ) );
 		user_watches_.push_back(item);
 	}
 	//void remove_directory_impl(const std::string& dir_name) // throw (std::invalid_argument);
