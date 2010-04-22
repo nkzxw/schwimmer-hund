@@ -536,6 +536,7 @@ public: //private:  //TODO:
 						std::cout << "NOTE_DELETE: " << watch->path().native_file_string() << std::endl;
 						//std::cout << "debug handle_directory_changes() - 13" << std::endl;
 						handle_remove( watch );
+						queued_write_watch = 0;
 						//std::cout << "debug handle_directory_changes() - 14" << std::endl;
 					}
 
@@ -544,6 +545,7 @@ public: //private:  //TODO:
 						std::cout << "NOTE_RENAME: " << watch->path().native_file_string() << std::endl;
 						//std::cout << "debug handle_directory_changes() - 15" << std::endl;
 						handle_rename( watch );
+						queued_write_watch = 0;
 						//std::cout << "debug handle_directory_changes() - 16" << std::endl;
 					}
 
