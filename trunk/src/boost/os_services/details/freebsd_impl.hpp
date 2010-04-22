@@ -133,25 +133,33 @@ public:
 
 	~freebsd_impl()
 	{
+		std::cout << "debug ~freebsd_impl() - 1" << std::endl;
 		closing_ = true;
 		
+		std::cout << "debug ~freebsd_impl() - 2" << std::endl;
 		if ( thread_ )
 		{
 			thread_->join();
 		}
 
+		std::cout << "debug ~freebsd_impl() - 3" << std::endl;
+
 		//TODO: cerrar los archivos /watches
 
 		if ( kqueue_file_descriptor_ != 0 )
 		{
+			std::cout << "debug ~freebsd_impl() - 4" << std::endl;
 			int ret_value = ::close( kqueue_file_descriptor_ );
 			if ( ret_value == -1 )
 			{
 				//Destructor -> no-throw
 				std::cerr << "Failed to close kqueue file descriptor - File Descriptor: '" << kqueue_file_descriptor_ << "' - Reason: " << std::strerror(errno) << std::endl; 
 			}
+			std::cout << "debug ~freebsd_impl() - 5" << std::endl;
 			kqueue_file_descriptor_ = 0;
 		}
+
+		std::cout << "debug ~freebsd_impl() - 6" << std::endl;
 	}
 
 
@@ -337,7 +345,7 @@ public: //private:  //TODO:
 
 				if ( !found ) //new file
 				{
-					std::cout << "launch_events: " << launch_events << std::endl;
+					//std::cout << "launch_events: " << launch_events << std::endl;
 
 					if ( launch_events )
 					{
@@ -436,10 +444,14 @@ public: //private:  //TODO:
 
 	void handle_directory_changes()
 	{
+
+		std::cout << "debug handle_directory_changes() - 1" << std::endl;
 		filesystem_item::pointer_type queued_write_watch = 0;
 
+		std::cout << "debug handle_directory_changes() - 2" << std::endl;
 		while ( ! closing_ )
 		{
+			std::cout << "debug handle_directory_changes() - 3" << std::endl;
 			struct kevent event;
 
 			struct timespec timeout;
@@ -449,55 +461,77 @@ public: //private:  //TODO:
 			//TODO: pasar toda esta logica a un metodo o clase...
 			int return_code = kevent ( kqueue_file_descriptor_, NULL, 0, &event, 1, &timeout );
 
+
+			std::cout << "debug handle_directory_changes() - 4" << std::endl;
+
 			if ( return_code == -1 || event.flags & EV_ERROR) //< 0
 			{
+				std::cout << "debug handle_directory_changes() - 5" << std::endl;
 				//TODO: evaluar si este throw está relacionado con el destructor de fsm ya que está ejecutado en otro thread, no deberia... pero...
 				std::ostringstream oss;
 				oss << "kevent error - Reason: " << std::strerror(errno);
 				throw (std::runtime_error(oss.str()));
 			}
 
+			std::cout << "debug handle_directory_changes() - 6" << std::endl;
+
 			if ( ! closing_ )
 			{
+				std::cout << "debug handle_directory_changes() - 7" << std::endl;
 				if ( return_code == 0 ) //timeout
 				{
+					std::cout << "debug handle_directory_changes() - 8" << std::endl;
 					if ( queued_write_watch != 0 )
 					{
+						std::cout << "debug handle_directory_changes() - 9" << std::endl;
 						handle_write( queued_write_watch );
 						queued_write_watch = 0;
+						std::cout << "debug handle_directory_changes() - 10" << std::endl;
 					}
 				}
 				else
 				{
+					std::cout << "debug handle_directory_changes() - 11" << std::endl;
 					//filesystem_item* watch = (filesystem_item*) event.udata; //TODO: reinterpret_cast<>
 					//filesystem_item* watch = reinterpret_cast<filesystem_item*>( event.udata );
-					filesystem_item::pointer_type watch = reinterpret_cast<filesystem_item::pointer_type>( event.udata );
-
 					//filesystem_item::pointer_type watch = *(reinterpret_cast<filesystem_item::pointer_type*>( event.udata ));
 					//filesystem_item::pointer_type* watch_temp_1 = reinterpret_cast<filesystem_item::pointer_type*>( event.udata );
 					//void* watch_temp_2 =  event.udata ;
 
+					filesystem_item::pointer_type watch = reinterpret_cast<filesystem_item::pointer_type>( event.udata );
+
+					std::cout << "debug handle_directory_changes() - 12" << std::endl;
+
 
 					if ( event.fflags & NOTE_DELETE )
 					{
+						std::cout << "debug handle_directory_changes() - 13" << std::endl;
 						handle_remove( watch );
+						std::cout << "debug handle_directory_changes() - 14" << std::endl;
 					}
 
 					if ( event.fflags & NOTE_RENAME )
 					{
+						std::cout << "debug handle_directory_changes() - 15" << std::endl;
 						handle_rename( watch );
+						std::cout << "debug handle_directory_changes() - 16" << std::endl;
 					}
 
 					if ( event.fflags & NOTE_WRITE )
 					{
+						std::cout << "debug handle_directory_changes() - 17" << std::endl;
 						if ( queued_write_watch != 0 )
 						{
+							std::cout << "debug handle_directory_changes() - 18" << std::endl;
 							handle_write( queued_write_watch );
 							queued_write_watch = 0;
+							std::cout << "debug handle_directory_changes() - 19" << std::endl;
 						}
 
 						//Encolamos un solo evento WRITE ya que siempre viene WRITE+RENAME... hacemos que primero se procese el evento rename y luego el write
 						queued_write_watch = watch;
+
+						std::cout << "debug handle_directory_changes() - 20" << std::endl;
 					}
 
 					//if (event.fflags & NOTE_TRUNCATE)
@@ -521,8 +555,11 @@ public: //private:  //TODO:
 					//	std::cout << "NOTE_LINK -> XXXXXXXXX" << std::endl;
 					//}
 				}
+				std::cout << "debug handle_directory_changes() - 21" << std::endl;
 			}
+			std::cout << "debug handle_directory_changes() - 22" << std::endl;
 		}
+		std::cout << "debug handle_directory_changes() - 23" << std::endl;
 	}
 
 protected:
