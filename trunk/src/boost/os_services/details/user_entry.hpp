@@ -48,9 +48,11 @@ struct user_entry //: public enable_shared_from_this<user_entry>
 	//typedef user_entry* pointer_type;
 	//typedef boost::ptr_vector<user_entry> collection_type;
 
-	explicit user_entry( const boost::filesystem::path& path )
-		: path_(path)
-	{}
+	static user_entry::pointer_type create( const boost::filesystem::path& path )
+	{
+		user_entry::pointer_type entry ( new user_entry ( path ) );
+		return entry;
+	}
 
 	//TODO: crear un metodo CREATE y ocultar los constructores...
 	//user_entry::pointer_type item ( new user_entry( dir_name ) );
@@ -106,7 +108,14 @@ struct user_entry //: public enable_shared_from_this<user_entry>
 		this->root_ = root_;
 	}
 
+private:
+
+	explicit user_entry( const boost::filesystem::path& path )
+		: path_(path)
+	{}
+
 protected:
+
 	boost::filesystem::path path_;
 	filesystem_item::pointer_type root_;			//este tiene la estructura de arbol
 	filesystem_item::collection_type all_watches_;
