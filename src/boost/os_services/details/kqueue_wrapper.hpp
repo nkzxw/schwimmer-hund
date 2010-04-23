@@ -48,9 +48,10 @@ namespace detail {
 
 namespace kqueue_event_types
 {
-	static const int write = 0;
-	static const int remove = 1;
-	static const int rename = 2;
+	static const int none = 0;
+	static const int write = 1;
+	static const int remove = 2;
+	static const int rename = 3;
 }
 
 class kevent_error : public std::runtime_error 
@@ -214,6 +215,7 @@ public:
 	template <typename T>
 	boost::shared_ptr<T> get( int& event_type )
 	{
+		event_type = kqueue_event_types::none;
 		struct kevent event;
 
 		struct timespec timeout;
@@ -242,15 +244,15 @@ public:
 
 			if ( event.fflags & NOTE_DELETE )
 			{
-				event_type == kqueue_event_types::remove;
+				event_type = kqueue_event_types::remove;
 			}
 			else if ( event.fflags & NOTE_RENAME )
 			{
-				event_type == kqueue_event_types::rename;
+				event_type = kqueue_event_types::rename;
 			}
 			else if ( event.fflags & NOTE_WRITE )
 			{
-				event_type == kqueue_event_types::write;
+				event_type = kqueue_event_types::write;
 			}
 
 			//if (event.fflags & NOTE_TRUNCATE)
