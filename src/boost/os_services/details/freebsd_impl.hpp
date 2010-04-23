@@ -193,7 +193,7 @@ public: //private:  //TODO:
 			watch->set_parent( parent );
 			//TODO: agregar metodo add_subitem a filesystem_item
 			//parent->subitems_.push_back( watch );
-			parent->add_subitem( watch )
+			parent->add_subitem( watch );
 		}
 
 		return watch;
