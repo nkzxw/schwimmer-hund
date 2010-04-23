@@ -86,10 +86,13 @@ public:
 
 	kqueue_wrapper()
 		: is_initialized_( false ), file_descriptor_( 0 )
-	{}
+	{
+		std::cout << "kqueue_wrapper()" << std::endl;
+	}
 
 	~kqueue_wrapper()
 	{
+		std::cout << "~kqueue_wrapper()" << std::endl;
 		close( true );
 	}
 
