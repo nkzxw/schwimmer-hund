@@ -120,11 +120,11 @@ int main(int argc, char* argv[] )
 
 
 		}
-		catch (std::runtime_error& e)
+		catch ( const std::runtime_error& e )
 		{
 			std::cout << "EXCEPTION: " << e.what() << std::endl;
 		}
-		catch (std::invalid_argument& e)
+		catch ( const std::invalid_argument& e )
 		{
 			std::cout << "EXCEPTION: " << e.what() << std::endl;
 		}
