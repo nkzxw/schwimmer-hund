@@ -70,13 +70,12 @@ public:
 
 
 
-//TODO: comentado solamente para probar porque es que no se está llamando al destructor
-//struct null_deleter
-//{
-//	void operator()(void const *) const
-//	{
-//	}
-//};
+struct null_deleter
+{
+	void operator()(void const *) const
+	{
+	}
+};
 
 
 //TODO: debe ser singleton, ver como implementarlo...
@@ -286,8 +285,7 @@ protected:
 	template <typename T>
 	boost::shared_ptr<T> create_watch_item ( void* raw_pointer )
 	{
-		//boost::shared_ptr<T> px( reinterpret_cast<T*>( raw_pointer ), null_deleter() );
-		boost::shared_ptr<T> px( reinterpret_cast<T*>( raw_pointer ) ); //TODO: comentado solamente para probar porque es que no se está llamando al destructor
+		boost::shared_ptr<T> px( reinterpret_cast<T*>( raw_pointer ), null_deleter() );
 		return px;
 	}
 
