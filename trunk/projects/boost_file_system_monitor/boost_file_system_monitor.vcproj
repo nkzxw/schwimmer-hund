@@ -216,6 +216,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\boost\os_services\details\kqueue_wrapper.hpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\boost\os_services\details\linux_impl.hpp"
 				>
 			</File>
