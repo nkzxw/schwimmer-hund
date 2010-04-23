@@ -43,6 +43,8 @@ struct user_entry;			//forward-declaration
 typedef user_entry* user_entry_pointer_type;
 //typedef user_entry* user_entry::pointer_type; //TODO: ver si se puede hacer algo asi...
 
+
+
 //TODO: renombrar
 class filesystem_item
 {
@@ -115,7 +117,7 @@ public:
 		this->inode_info_.set( this->path_ );
 	}
 
-	void close( bool no_throw = true, bool close_subitems = true )
+	void close( bool no_throw = false, bool close_subitems = true )
 	{
 		if ( this->file_descriptor_ != 0 )
 		{
