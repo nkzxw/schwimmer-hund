@@ -71,8 +71,8 @@ public:
 
 	static filesystem_item::pointer_type create( const boost::filesystem::path& path, user_entry_pointer_type root_user_entry )
 	{
-		//filesystem_item::pointer_type watch = new filesystem_item ( path, entry ); 
-		filesystem_item::pointer_type watch ( new filesystem_item ( path, entry ) );
+		//filesystem_item::pointer_type watch = new filesystem_item ( path, root_user_entry ); 
+		filesystem_item::pointer_type watch ( new filesystem_item ( path, root_user_entry ) );
 		return watch;
 	}
 
