@@ -453,13 +453,14 @@ public: //private:  //TODO:
 								//Encolamos un solo evento WRITE ya que siempre viene WRITE+RENAME... hacemos que primero se procese el evento rename y luego el write
 								queued_write_watch = watch;
 								std::cout << "debug handle_directory_changes XXX-13" << std::endl;
-
 							}
-
 							break;
 						}
 					}
+					std::cout << "debug handle_directory_changes XXX-14" << std::endl;
 				}
+				std::cout << "debug handle_directory_changes XXX-15" << std::endl;
+
 			}
 			catch( const kevent_timeout& e )
 			{
@@ -481,7 +482,12 @@ public: //private:  //TODO:
 				//TODO: para que capturo la excepcion si la voy a relanzar ????
 				throw; //re-throw
 			}
+			std::cout << "debug handle_directory_changes XXX-16" << std::endl;
+
 		}
+
+		std::cout << "debug handle_directory_changes XXX-17" << std::endl;
+
 	}
 
 protected:
