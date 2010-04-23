@@ -5,12 +5,13 @@
 
 //TODO: revisar los headers
 
-// C-Std Headers
+// C-Std headers
 #include <cerrno>	//TODO: probar si es necesario
 #include <cstdio>	//TODO: probar si es necesario
 #include <cstdlib>	//TODO: probar si es necesario
 #include <cstring>	// for strerror
 
+// POSIX headers
 #include <sys/event.h>
 #include <sys/fcntl.h>
 #include <sys/time.h>

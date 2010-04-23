@@ -101,7 +101,7 @@ namespace detail {
 //TODO: si es necesario para todas las implementaciones, pasar a base_impl
 typedef boost::shared_ptr<boost::thread> thread_type;
 
-
+//TODO: hacer un test en que se acceda directamente y se copie freebsd_impl
 class freebsd_impl : public base_impl<freebsd_impl>
 {
 public:
