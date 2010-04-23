@@ -316,6 +316,9 @@ public: //private:  //TODO:
 	{
 		std::cout << "debug remove_watch-1" << std::endl;
 
+		std::cout << "watch->path().native_file_string(): " << watch->path().native_file_string() << std::endl;
+		std::cout << "watch->parent_->path().native_file_string(): " << watch->parent_->path().native_file_string() << std::endl;
+
 		watch->parent_->remove_subitem( watch );
 
 		std::cout << "debug remove_watch-2" << std::endl;
