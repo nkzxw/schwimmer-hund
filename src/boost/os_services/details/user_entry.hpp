@@ -52,10 +52,12 @@ struct user_entry //: public enable_shared_from_this<user_entry>
 		: path_(path)
 	{}
 
-	//~user_entry()
-	//{
-	//	std::cout << "~user_entry()" << std::endl;
-	//}
+	//user_entry::pointer_type item ( new user_entry( dir_name ) );
+
+	~user_entry()
+	{
+		std::cout << "~user_entry()" << std::endl;
+	}
 
 	//void add_watch( boost::shared_ptr< filesystem_item > item )
 	void add_watch( filesystem_item::pointer_type item )
