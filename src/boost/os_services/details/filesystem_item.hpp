@@ -74,6 +74,12 @@ public:
 		return watch;
 	}
 
+	static filesystem_item::pointer_type create( const boost::filesystem::path& path, user_entry_pointer_type root_user_entry, filesystem_item::pointer_type parent )
+	{
+		filesystem_item::pointer_type watch ( new filesystem_item ( path, root_user_entry, parent ) );
+		return watch;
+	}
+
 	~filesystem_item()
 	{
 		std::cout << "~filesystem_item()" << std::endl;
@@ -194,6 +200,16 @@ public:
 		}
 	}
 
+	void set_parent ( filesystem_item::pointer_type new_parent )
+	{
+		this->parent_ = new_parent;
+	}
+
+	filesystem_item::pointer_type parent() const
+	{
+		return this->parent_;
+	}
+
 	const boost::filesystem::path& path() const
 	{
 		return this->path_;
@@ -203,7 +219,6 @@ public:
 	{
 		return this->is_directory_;
 	}
-
 
 	boost::uint32_t mask() const
 	{
