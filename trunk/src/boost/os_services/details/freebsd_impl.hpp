@@ -311,15 +311,11 @@ public: //private:  //TODO:
 	
 	void remove_watch ( filesystem_item::pointer_type watch ) 
 	{
-		std::cout << "debug remove_watch-1" << std::endl;
-
-		std::cout << "watch->path().native_file_string(): " << watch->path().native_file_string() << std::endl;
-		std::cout << "watch->parent_->path().native_file_string(): " << watch->parent_->path().native_file_string() << std::endl;
+		//std::cout << "watch->path().native_file_string(): " << watch->path().native_file_string() << std::endl;
+		//std::cout << "watch->parent_->path().native_file_string(): " << watch->parent_->path().native_file_string() << std::endl;
 
 		//TODO: que pasa si no tiene parent... Hacer Unit Test que elimine el directorio que estamos haciendo WATCH
 		watch->parent_->remove_subitem( watch );
-
-		std::cout << "debug remove_watch-2" << std::endl;
 
 		//watch->root_user_entry_->remove_watch( watch );
 		//TODO: llamar a metodo que lanza el evento...
@@ -327,13 +323,7 @@ public: //private:  //TODO:
 		//TODO: ver si tengo que usar el metodo lock de weak_ptr
 		user_entry::pointer_type root ( watch->root_user_entry_ );
 
-		std::cout << "debug remove_watch-3" << std::endl;
-
 		root->remove_watch( watch );
-
-		std::cout << "debug remove_watch-4" << std::endl;
-
-
 	}
 
 	//void handle_rename( filesystem_item* watch )
@@ -379,11 +369,8 @@ public: //private:  //TODO:
 	//void handle_remove( filesystem_item* watch )
 	void handle_remove( filesystem_item::pointer_type watch )
 	{
-		std::cout << "debug handle_remove-1" << std::endl;
 		notify_file_system_event_args( change_types::deleted, watch->path() );
-		std::cout << "debug handle_remove-2" << std::endl;
 		remove_watch ( watch );
-		std::cout << "debug handle_remove-3" << std::endl;
 	}
 
 	
@@ -426,53 +413,33 @@ public: //private:  //TODO:
 					{
 						case kqueue_event_types::remove:
 						{
-							std::cout << "debug handle_directory_changes XXX-1" << std::endl;
 							handle_remove( watch );
-							std::cout << "debug handle_directory_changes XXX-2" << std::endl;
-							//queued_write_watch = 0;
 							queued_write_watch.reset();
-							std::cout << "debug handle_directory_changes XXX-3" << std::endl;
 							break;
 						}
 						case kqueue_event_types::rename:
 						{
-							std::cout << "debug handle_directory_changes XXX-4" << std::endl;
 							handle_rename( watch );
-							std::cout << "debug handle_directory_changes XXX-5" << std::endl;
-							//queued_write_watch = 0;
 							queued_write_watch.reset();
-							std::cout << "debug handle_directory_changes XXX-6" << std::endl;
 							break;
 						}
 						case kqueue_event_types::write:
 						{
-							std::cout << "debug handle_directory_changes XXX-7" << std::endl;
 							if ( queued_write_watch ) //!= 0
 							{
-								std::cout << "debug handle_directory_changes XXX-8" << std::endl;
 								handle_write( queued_write_watch );
-								std::cout << "debug handle_directory_changes XXX-9" << std::endl;
 								queued_write_watch.reset(); // = 0;
-								std::cout << "debug handle_directory_changes XXX-10" << std::endl;
-
-
 								handle_write( watch );
-
-								std::cout << "debug handle_directory_changes XXX-11" << std::endl;
 							}
 							else
 							{
-								std::cout << "debug handle_directory_changes XXX-12" << std::endl;
 								//Encolamos un solo evento WRITE ya que siempre viene WRITE+RENAME... hacemos que primero se procese el evento rename y luego el write
 								queued_write_watch = watch;
-								std::cout << "debug handle_directory_changes XXX-13" << std::endl;
 							}
 							break;
 						}
 					}
-					std::cout << "debug handle_directory_changes XXX-14" << std::endl;
 				}
-				std::cout << "debug handle_directory_changes XXX-15" << std::endl;
 			}
 			catch( const kevent_timeout& e )
 			{
@@ -494,12 +461,7 @@ public: //private:  //TODO:
 				//TODO: para que capturo la excepcion si la voy a relanzar ????
 				throw; //re-throw
 			}
-			std::cout << "debug handle_directory_changes XXX-16" << std::endl;
-
 		}
-
-		std::cout << "debug handle_directory_changes XXX-17" << std::endl;
-
 	}
 
 protected:
