@@ -111,6 +111,8 @@ public:
 
 	void close( bool no_throw = false )
 	{
+		std::cout << "void kqueue_wrapper::close( bool no_throw = false )" << std::endl;
+
 		if ( file_descriptor_ != 0 )
 		{
 			int ret_value = ::close( file_descriptor_ );
