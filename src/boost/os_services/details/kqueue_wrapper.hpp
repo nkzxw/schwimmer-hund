@@ -252,6 +252,7 @@ public:
 
 			std::cout << "event.udata: " << event.udata << std::endl;
 			std::cout << "watch->path().native_file_string(): " << watch->path().native_file_string() << std::endl;
+			std::cout << "watch.use_count() ----- 2: " << watch.use_count() << std::endl;
 
 			if ( event.fflags & NOTE_DELETE )
 			{
@@ -293,6 +294,7 @@ protected:
 	boost::shared_ptr<T> create_watch_item ( void* raw_pointer )
 	{
 		boost::shared_ptr<T> px( reinterpret_cast<T*>( raw_pointer ), null_deleter() );
+		std::cout << "px.use_count() ----- 1: " << px.use_count() << std::endl;
 		return px;
 	}
 
