@@ -74,6 +74,7 @@ struct null_deleter
 {
 	void operator()(void const *) const
 	{
+		std::cout << "void null_deleter::operator()(void const *) const" << std::endl;
 	}
 };
 
