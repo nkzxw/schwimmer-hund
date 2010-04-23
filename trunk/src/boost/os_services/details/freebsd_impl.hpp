@@ -152,7 +152,7 @@ public:
 		//	std::cout << "debug ~freebsd_impl() - 3" << std::endl;
 		//	kqueue_file_descriptor_ = 0;
 		//}
-		kq_wrapper.close();
+		kq_wrapper.close( true ); //no-throw
 
 
 		std::cout << "debug ~freebsd_impl() - 4" << std::endl;
