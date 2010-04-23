@@ -84,7 +84,6 @@ There are platforms that are not supported due to lack of developer resources. I
 #include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
 
-
 #include <boost/os_services/change_types.hpp>
 #include <boost/os_services/details/base_impl.hpp>
 #include <boost/os_services/details/file_inode_info.hpp>
@@ -93,14 +92,6 @@ There are platforms that are not supported due to lack of developer resources. I
 #include <boost/os_services/details/user_entry.hpp>
 #include <boost/os_services/notify_filters.hpp>
 
-//TODO: ver como arreglamos esto...
-//#define EVENT_SIZE  ( sizeof (struct inotify_event) )
-//#define BUF_LEN     ( 1024 * ( EVENT_SIZE + 16 ) )
-
-
-//TODO: sacar, es solo para debug
-//#include <boost/date_time/posix_time/posix_time.hpp>
-//using namespace boost::posix_time;
 
 
 namespace boost {
@@ -126,19 +117,8 @@ public:
 
 		//TODO: cerrar los archivos /watches
 
-
-		//if ( kqueue_file_descriptor_ != 0 )
-		//{
-		//	std::cout << "debug ~freebsd_impl() - 2" << std::endl;
-		//	int ret_value = ::close( kqueue_file_descriptor_ );
-		//	if ( ret_value == -1 )
-		//	{
-		//		//Destructor -> no-throw
-		//		std::cerr << "Failed to close kqueue file descriptor - File Descriptor: '" << kqueue_file_descriptor_ << "' - Reason: " << std::strerror(errno) << std::endl; 
-		//	}
-		//	std::cout << "debug ~freebsd_impl() - 3" << std::endl;
-		//	kqueue_file_descriptor_ = 0;
-		//}
+		//TODO: esto se hace automaticamente en el destructor de kqueue_wrapper, ver que pasa si lo saco. Probar cuando funcione todo bien.
+		//      aparentemente si hacemos el join antes del close del file descriptor algo falla...
 		kq_wrapper.close( true ); //no-throw
 
 
@@ -149,6 +129,7 @@ public:
 			thread_->join();
 			std::cout << "debug ~freebsd_impl() - 6" << std::endl;
 		}
+
 		std::cout << "debug ~freebsd_impl() - 7" << std::endl;
 
 		std::cout << "debug ~freebsd_impl() - 8" << std::endl;
