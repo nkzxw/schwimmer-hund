@@ -8,35 +8,26 @@
 //TODO: revisar los headers
 
 // C-Std Headers
-#include <cerrno>	//TODO: probar si es necesario
-#include <cstdio>	//TODO: probar si es necesario
-#include <cstdlib>	//TODO: probar si es necesario
-#include <cstring>	// for strerror
+//#include <cerrno>	//TODO: probar si es necesario
+//#include <cstdio>	//TODO: probar si es necesario
+//#include <cstdlib>	//TODO: probar si es necesario
+//#include <cstring>	// for strerror
+//
+//#include <sys/event.h>
+//#include <sys/fcntl.h>
+//#include <sys/time.h>
+//#include <sys/types.h>
+//#include <unistd.h>
 
-#include <sys/event.h>
-#include <sys/fcntl.h>
-#include <sys/time.h>
-#include <sys/types.h>
-#include <unistd.h>
-
-#include <boost/bind.hpp>
-#include <boost/enable_shared_from_this.hpp>
-#include <boost/filesystem/path.hpp>
-//#include <boost/foreach.hpp>
-#include <boost/function.hpp>
-//#include <boost/integer.hpp>
-//#include <boost/ptr_container/ptr_vector.hpp>
-//#include <boost/smart_ptr.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/thread.hpp>
-
+//#include <boost/bind.hpp>
+//#include <boost/enable_shared_from_this.hpp>
+//#include <boost/filesystem/path.hpp>
+//#include <boost/function.hpp>
+//#include <boost/shared_ptr.hpp>
+//#include <boost/thread.hpp>
 
 #include <boost/os_services/change_types.hpp>
-#include <boost/os_services/details/base_impl.hpp>
-#include <boost/os_services/details/file_inode_info.hpp>
-#include <boost/os_services/details/filesystem_item.hpp>
-#include <boost/os_services/details/user_entry.hpp>
-#include <boost/os_services/notify_filters.hpp>
+#include <boost/os_services/details/kqueue_watch_item.hpp>
 
 
 
@@ -53,20 +44,27 @@ namespace os_services {
 namespace detail {
 
 
-
-
+//TODO: debe ser singleton, ver como implementarlo...
 class kqueue_wrapper //TODO: heredar de una clase abstracta
 {
 public:
 
+	kqueue_wrapper()
+		: is_initialized_( false ), file_descriptor_( 0 )
+	{}
+
+	~kqueue_wrapper()
+	{
+		close( true );
+	}
 
 	void initialize()
 	{
 		if ( ! is_initialized_ )
 		{
-			kqueue_file_descriptor_ = kqueue(); //::kqueue();
+			file_descriptor_ = kqueue(); //::kqueue();
 
-			if ( kqueue_file_descriptor_ == -1 )   //< 0)
+			if ( file_descriptor_ == -1 )   //< 0)
 			{
 				std::ostringstream oss;
 				oss << "Failed to initialize kqueue - Reason: " << std::strerror(errno);
@@ -76,33 +74,44 @@ public:
 		}
 	}
 
-	void close ()
+	void close( bool no_throw = false )
 	{
-		if ( kqueue_file_descriptor_ != 0 )
+		if ( file_descriptor_ != 0 )
 		{
-			int ret_value = ::close( kqueue_file_descriptor_ );
+			int ret_value = ::close( file_descriptor_ );
 			if ( ret_value == -1 )
 			{
-				//Destructor -> no-throw
-				std::cerr << "Failed to close kqueue file descriptor - File Descriptor: '" << kqueue_file_descriptor_ << "' - Reason: " << std::strerror(errno) << std::endl; 
+				if ( no_throw )
+				{
+					//Destructor -> no-throw
+					std::cerr << "Failed to close kqueue file descriptor - File Descriptor: '" << file_descriptor_ << "' - Reason: " << std::strerror(errno) << std::endl; 
+				}
+				else
+				{
+					std::ostringstream oss;
+					oss << "Failed to close kqueue file descriptor - File Descriptor: '" << file_descriptor_ << "' - Reason: " << std::strerror(errno);
+					throw (std::runtime_error(oss.str()));					
+				}
 			}
-			kqueue_file_descriptor_ = 0;
+			file_descriptor_ = 0;
 		}
+		is_initialized_ = false;
 	}
 
 
 
 	void add_watch( filesystem_item::pointer_type watch, bool launch_events = false )
 	{
+
+		//Necesito:
+		//			mask
+		//			un file_descriptor del archivo a monitorear -> el archivo debe estar abierto
+		//			puntero a la data que quiero recuperar
+		//
+
 		struct kevent event;
 
 		//int mask = watch->mask_;
-		watch->open(); //TODO: catch errors
-
-		if ( watch->is_directory() )
-		{
-			scan_directory( watch, launch_events );
-		}
 
 		//TODO: traducir de watch->mask_ a fflags
 		//TODO: ver estos flags, deberia monitoriarse solo lo que el usuairo quiera monitorear...
@@ -159,7 +168,7 @@ public:
 
 		//std::cout << "kev->flags: " << kev->flags << std::endl;
 
-		int return_code = kevent( kqueue_file_descriptor_, &event, 1, NULL, 0, NULL );
+		int return_code = kevent( file_descriptor_, &event, 1, NULL, 0, NULL );
 		if ( return_code == -1 ) //< 0)
 		{
 			std::ostringstream oss;
@@ -177,7 +186,7 @@ public:
 		timeout.tv_nsec = 300000; //300 milliseconds //TODO: sacar el hardcode, hacer configurable...
 
 		//TODO: pasar toda esta logica a un metodo o clase...
-		int return_code = kevent ( kqueue_file_descriptor_, NULL, 0, &event, 1, &timeout );
+		int return_code = kevent ( file_descriptor_, NULL, 0, &event, 1, &timeout );
 
 		if ( return_code == -1 || event.flags & EV_ERROR) //< 0
 		{
@@ -190,36 +199,19 @@ public:
 
 		if ( return_code == 0 ) //timeout
 		{
-			if ( queued_write_watch ) // != 0
-			{
-				handle_write( queued_write_watch );
-				queued_write_watch.reset(); // = 0;
-			}
 		}
 
 
 		if ( event.fflags & NOTE_DELETE )
 		{
-			handle_remove( watch );
-			queued_write_watch = 0;
 		}
 
 		if ( event.fflags & NOTE_RENAME )
 		{
-			handle_rename( watch );
-			queued_write_watch = 0;
 		}
 
 		if ( event.fflags & NOTE_WRITE )
 		{
-			if ( queued_write_watch ) //!= 0
-			{
-				handle_write( queued_write_watch );
-				queued_write_watch.reset(); // = 0;
-			}
-
-			//Encolamos un solo evento WRITE ya que siempre viene WRITE+RENAME... hacemos que primero se procese el evento rename y luego el write
-			queued_write_watch = watch;
 		}
 
 
@@ -245,8 +237,9 @@ public:
 		//}
 	}
 
+protected:
 	bool is_initialized_;
-	int kqueue_file_descriptor_; // file descriptor
+	int file_descriptor_;
 
 };
 
