@@ -132,9 +132,10 @@ public:
 	//TODO: ver si me conviene templetizar este metodo y hacer desaparecer el kqueue_watch_item
 	//void add_watch( filesystem_item::pointer_type watch, bool launch_events = false )
 	//void add_watch( kqueue_watch_item* watch ) //TODO: puntero, referencia, shared_ptr ????
+	//void add_watch( typename T::pointer_type watch ) //TODO: puntero, referencia, shared_ptr ????
 
 	template <typename T>
-	void add_watch( typename T::pointer_type watch ) //TODO: puntero, referencia, shared_ptr ????
+	void add_watch( const boost::shared_ptr<T>& watch ) //TODO: puntero, referencia, shared_ptr ????
 	{
 		//Necesito:
 		//			mask
@@ -198,8 +199,8 @@ public:
 		//}
 
 
-		EV_SET( &event, watch->file_descriptor_, EVFILT_VNODE, EV_ADD | EV_ENABLE | EV_CLEAR, fflags, 0, watch ); // EV_ADD | EV_ENABLE | EV_ONESHOT | EV_CLEAR
-		//EV_SET( &event, watch->file_descriptor_, EVFILT_VNODE, EV_ADD | EV_ENABLE | EV_CLEAR, fflags, 0, watch.get() ); // EV_ADD | EV_ENABLE | EV_ONESHOT | EV_CLEAR
+		//EV_SET( &event, watch->file_descriptor_, EVFILT_VNODE, EV_ADD | EV_ENABLE | EV_CLEAR, fflags, 0, watch ); // EV_ADD | EV_ENABLE | EV_ONESHOT | EV_CLEAR
+		EV_SET( &event, watch->file_descriptor_, EVFILT_VNODE, EV_ADD | EV_ENABLE | EV_CLEAR, fflags, 0, watch.get() ); // EV_ADD | EV_ENABLE | EV_ONESHOT | EV_CLEAR
 
 		int return_code = kevent( file_descriptor_, &event, 1, NULL, 0, NULL );
 		if ( return_code == -1 ) //< 0)

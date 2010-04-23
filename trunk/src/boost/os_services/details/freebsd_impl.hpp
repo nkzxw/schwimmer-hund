@@ -271,6 +271,7 @@ public: //private:  //TODO:
 			scan_directory( watch, launch_events );
 		}
 
+		//TODO: que va primero, el add_watch o el scan????
 		kq_wrapper.add_watch<filesystem_item>( watch );
 	}
 
