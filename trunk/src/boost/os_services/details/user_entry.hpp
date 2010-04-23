@@ -52,6 +52,7 @@ struct user_entry //: public enable_shared_from_this<user_entry>
 		: path_(path)
 	{}
 
+	//TODO: crear un metodo CREATE y ocultar los constructores...
 	//user_entry::pointer_type item ( new user_entry( dir_name ) );
 
 	~user_entry()

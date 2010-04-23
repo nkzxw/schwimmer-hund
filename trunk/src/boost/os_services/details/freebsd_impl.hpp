@@ -110,19 +110,6 @@ namespace detail {
 //TODO: si es necesario para todas las implementaciones, pasar a base_impl
 typedef boost::shared_ptr<boost::thread> thread_type;
 
-	
-//struct filesystem_item;		//forward-declaration
-//struct user_entry;			//forward-declaration
-//
-//
-////TODO: no me gusta, ver si se puede agregar al forward declaration
-////typedef boost::shared_ptr<user_entry> user_entry_pointer_type;
-//typedef user_entry* user_entry_pointer_type;
-////typedef user_entry* user_entry::pointer_type; //TODO: ver si se puede hacer algo asi...
-
-
-
-
 
 class freebsd_impl : public base_impl<freebsd_impl>
 {
@@ -531,7 +518,6 @@ protected:
 	bool closing_;
 	user_entry::collection_type user_watches_;
 	//filesystem_item::collection_type all_watches_; //TODO: quizas haga falta contabilizar todos los watches en un solo lugar... VER
-
 };
 
 
