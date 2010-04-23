@@ -124,6 +124,8 @@ public:
 
 	void close( bool no_throw = false, bool close_subitems = true )
 	{
+		std::cout << "void close( bool no_throw = false, bool close_subitems = true )" << std::endl;
+
 		if ( this->file_descriptor_ != 0 )
 		{
 			if ( close_subitems )
