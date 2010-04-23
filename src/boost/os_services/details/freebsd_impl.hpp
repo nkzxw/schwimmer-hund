@@ -225,7 +225,7 @@ public: //private:  //TODO:
 
 
 	//filesystem_item::pointer_type create_filesystem_item ( const boost::filesystem::path& path, user_entry& entry )
-	filesystem_item::pointer_type create_filesystem_item ( const boost::filesystem::path& path, user_entry::pointer_type& entry )
+	filesystem_item::pointer_type create_filesystem_item ( const boost::filesystem::path& path, user_entry::pointer_type entry )
 	{
 		filesystem_item::pointer_type watch = new filesystem_item ( path, entry ); 
 		entry->set_root ( watch );
