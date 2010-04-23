@@ -237,7 +237,7 @@ public:
 		}
 		else
 		{
-			boost::shared_ptr<T> watch = create_watch_item( event.udata );
+			boost::shared_ptr<T> watch = create_watch_item<T>( event.udata );
 
 			if ( event.fflags & NOTE_DELETE )
 			{
