@@ -441,12 +441,21 @@ public: //private:  //TODO:
 								std::cout << "debug handle_directory_changes XXX-9" << std::endl;
 								queued_write_watch.reset(); // = 0;
 								std::cout << "debug handle_directory_changes XXX-10" << std::endl;
+
+
+								handle_write( watch );
+
+								std::cout << "debug handle_directory_changes XXX-11" << std::endl;
+							}
+							else
+							{
+								std::cout << "debug handle_directory_changes XXX-12" << std::endl;
+								//Encolamos un solo evento WRITE ya que siempre viene WRITE+RENAME... hacemos que primero se procese el evento rename y luego el write
+								queued_write_watch = watch;
+								std::cout << "debug handle_directory_changes XXX-13" << std::endl;
+
 							}
 
-							std::cout << "debug handle_directory_changes XXX-11" << std::endl;
-							//Encolamos un solo evento WRITE ya que siempre viene WRITE+RENAME... hacemos que primero se procese el evento rename y luego el write
-							queued_write_watch = watch;
-							std::cout << "debug handle_directory_changes XXX-12" << std::endl;
 							break;
 						}
 					}
