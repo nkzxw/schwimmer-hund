@@ -10,6 +10,8 @@
 
 //TODO: http://www.boost.org/doc/libs/1_40_0/libs/smart_ptr/sp_techniques.html
 
+//TODO: ver si hay forma de tratar a los raw pointers como shared_ptr's en general.
+
 //TODO: linked_ptr nuevo nombre para master_ptr y slave_ptr
 //TODO: owner_ptr: nuevo SmartPtr en el cual se registre solo un unico owner_ptr por memoria... O sea, no podria haber dos owner_ptr apuntando a la misma posicion de memoria...
 //TODO: analizar estos dos ultimos a ver si son viables con algun smart pointer actual.
@@ -25,6 +27,7 @@
 //TODO: problema en runtime: Parece que si los eventos ocurren muy rapido no son capturados, se pierden eventos. No se como funciona el cache del kevent... investigar eso...
 //      sino implementar una cola de mensajes sincronizada...
 
+//TODO: crear objetos dummy para poder testear la funcionalidad desde Windows u otra plataforma...
 
 
 // http://en.wikipedia.org/wiki/Kqueue
