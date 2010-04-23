@@ -161,7 +161,7 @@ public:
 		}
 	}
 
-	void add_subitem ( const filesystem_item& subitem )
+	void add_subitem ( const filesystem_item::pointer_type& subitem )
 	{
 		//TODO: ver si se necesita completar algo...
 		subitems_.push_back( subitem );
