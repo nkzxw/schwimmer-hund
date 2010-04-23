@@ -414,7 +414,7 @@ public: //private:  //TODO:
 				{
 					switch ( event_type )
 					{
-						case kqueue_event_types::delete:
+						case kqueue_event_types::remove:
 						{
 							handle_remove( watch );
 							queued_write_watch = 0;

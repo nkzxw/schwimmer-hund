@@ -49,7 +49,7 @@ namespace detail {
 namespace kqueue_event_types
 {
 	static const int write = 0;
-	static const int delete = 1;
+	static const int remove = 1;
 	static const int rename = 2;
 }
 
@@ -150,7 +150,10 @@ public:
 
 		//TODO: traducir de watch->mask_ a fflags
 		//TODO: ver estos flags, deberia monitoriarse solo lo que el usuairo quiera monitorear...
-		int mask = watch->mask_;
+		
+		//int mask = watch->mask_;
+		int mask = watch->mask();
+
 		unsigned int fflags = NOTE_DELETE |  NOTE_WRITE | NOTE_EXTEND | NOTE_ATTRIB | NOTE_LINK | NOTE_REVOKE | NOTE_RENAME;
 
 		//		kev->fflags |= NOTE_RENAME; //Eliminado porque no sirve monitorear el dir raiz.
@@ -235,7 +238,7 @@ public:
 
 			if ( event.fflags & NOTE_DELETE )
 			{
-				event_type == kqueue_event_types::delete;
+				event_type == kqueue_event_types::remove;
 			}
 			else if ( event.fflags & NOTE_RENAME )
 			{
