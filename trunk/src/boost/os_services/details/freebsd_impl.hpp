@@ -210,12 +210,8 @@ public:
 
 public: //private:  //TODO:
 
-	//filesystem_item::pointer_type create_filesystem_item ( const boost::filesystem::path& path, boost::weak_ptr<user_entry> entry )
 	filesystem_item::pointer_type create_filesystem_item ( const boost::filesystem::path& path, user_entry::pointer_type entry )
 	{
-		//filesystem_item::pointer_type watch = new filesystem_item ( path, entry ); 
-		//filesystem_item::pointer_type watch ( new filesystem_item ( path, entry ) );
-
 		filesystem_item::pointer_type watch = filesystem_item::create( path, entry );
 		entry->set_root ( watch );
 		entry->add_watch ( watch );
@@ -233,6 +229,7 @@ public: //private:  //TODO:
 	filesystem_item::pointer_type create_filesystem_item ( const boost::filesystem::path& path, user_entry::pointer_type entry, filesystem_item::pointer_type parent )
 	{
 		filesystem_item::pointer_type watch = create_filesystem_item( path, entry );
+		watch->parent_ = parent; //TODO: crear set_parent en filesystem_item
 
 		if ( parent )
 		{
@@ -319,6 +316,7 @@ public: //private:  //TODO:
 		std::cout << "watch->path().native_file_string(): " << watch->path().native_file_string() << std::endl;
 		std::cout << "watch->parent_->path().native_file_string(): " << watch->parent_->path().native_file_string() << std::endl;
 
+		//TODO: que pasa si no tiene parent... Hacer Unit Test que elimine el directorio que estamos haciendo WATCH
 		watch->parent_->remove_subitem( watch );
 
 		std::cout << "debug remove_watch-2" << std::endl;
@@ -341,18 +339,18 @@ public: //private:  //TODO:
 	//void handle_rename( filesystem_item* watch )
 	void handle_rename( filesystem_item::pointer_type watch )
 	{
-		boost::filesystem::path parent_path;
+		boost::filesystem::path root_path;
 
-		// parent_path = watch->root_user_entry_->path();
+		// root_path = watch->root_user_entry_->path();
 		user_entry::pointer_type root ( watch->root_user_entry_ );
-		parent_path = root->path();
+		root_path = root->path();
 
-		if ( ! parent_path.empty() )
+		if ( ! root_path.empty() )
 		{
 			//TODO: pasar a metodo estatico
 			//TODO: STL find o similar...
 			boost::filesystem::directory_iterator end_iter;
-			boost::filesystem::directory_iterator dir_itr( parent_path );
+			boost::filesystem::directory_iterator dir_itr( root_path );
 			for ( ; dir_itr != end_iter; ++dir_itr )
 			{
 				file_inode_info inode_info ( dir_itr->path() ); //TODO: puede arrojar una excepcion
