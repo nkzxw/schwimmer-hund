@@ -315,8 +315,15 @@ public: //private:  //TODO:
 	void remove_watch ( filesystem_item::pointer_type watch ) 
 	{
 		watch->parent_->remove_subitem( watch );
-		watch->root_user_entry_->remove_watch( watch );
+
+
+		//watch->root_user_entry_->remove_watch( watch );
 		//TODO: llamar a metodo que lanza el evento...
+
+		//TODO: ver si tengo que usar el metodo lock de weak_ptr
+		user_entry::pointer_type root ( watch->root_user_entry_ );
+		root->remove_watch( watch );
+
 	}
 
 	//void handle_rename( filesystem_item* watch )
@@ -324,7 +331,9 @@ public: //private:  //TODO:
 	{
 		boost::filesystem::path parent_path;
 
-		parent_path = watch->root_user_entry_->path();
+		// parent_path = watch->root_user_entry_->path();
+		user_entry::pointer_type root ( watch->root_user_entry_ );
+		parent_path = root->path();
 
 		if ( ! parent_path.empty() )
 		{
