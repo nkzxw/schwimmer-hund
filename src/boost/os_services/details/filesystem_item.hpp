@@ -202,7 +202,8 @@ public:
 		return this->parent_.lock();
 	}
 
-	user_entry::pointer_type root_user_entry() const
+	//user_entry::pointer_type root_user_entry() const
+	user_entry_pointer_type root_user_entry() const
 	{
 		return this->root_user_entry_.lock();
 	}
