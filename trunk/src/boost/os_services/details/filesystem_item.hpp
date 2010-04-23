@@ -68,23 +68,15 @@ public:
 	typedef boost::shared_ptr<filesystem_item> pointer_type;
 	typedef std::vector<pointer_type> collection_type;
 
-	//typedef filesystem_item* pointer_type;
-	//typedef boost::ptr_vector<filesystem_item> collection_type;
-	
 
-	//TODO: asignar lo que el usuario quiere monitorear...
-	filesystem_item( const boost::filesystem::path& path, user_entry_pointer_type root_user_entry )
-		: root_user_entry_(root_user_entry), is_directory_(false), file_descriptor_(0), mask_(PN_ALL_EVENTS) //parent_(0),
+	static filesystem_item::pointer_type create( const boost::filesystem::path& path, user_entry_pointer_type root_user_entry )
 	{
-		set_path( path );
+		//filesystem_item::pointer_type watch = new filesystem_item ( path, entry ); 
+		filesystem_item::pointer_type watch ( new filesystem_item ( path, entry ) );
+		return watch;
 	}
 
-	//TODO: asignar lo que el usuario quiere monitorear...
-	filesystem_item ( const boost::filesystem::path& path, user_entry_pointer_type root_user_entry, filesystem_item::pointer_type parent )
-		: root_user_entry_(root_user_entry), parent_(parent), is_directory_(false), file_descriptor_(0), mask_(PN_ALL_EVENTS)
-	{
-		set_path( path );
-	}
+
 
 	~filesystem_item()
 	{
@@ -204,6 +196,23 @@ public:
 	bool is_directory() const
 	{
 		return this->is_directory_;
+	}
+
+
+protected:
+
+	//TODO: asignar lo que el usuario quiere monitorear...
+	filesystem_item( const boost::filesystem::path& path, user_entry_pointer_type root_user_entry )
+		: root_user_entry_(root_user_entry), is_directory_(false), file_descriptor_(0), mask_(PN_ALL_EVENTS) //parent_(0),
+	{
+		set_path( path );
+	}
+
+	//TODO: asignar lo que el usuario quiere monitorear...
+	filesystem_item ( const boost::filesystem::path& path, user_entry_pointer_type root_user_entry, filesystem_item::pointer_type parent )
+		: root_user_entry_(root_user_entry), parent_(parent), is_directory_(false), file_descriptor_(0), mask_(PN_ALL_EVENTS)
+	{
+		set_path( path );
 	}
 
 protected:
