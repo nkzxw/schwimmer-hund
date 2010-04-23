@@ -407,9 +407,13 @@ public: //private:  //TODO:
 
 			try
 			{
-				std::cout << "filesystem_item::pointer_type watch = kq_wrapper.get<filesystem_item>( event_type );" << std::endl;
+				//std::cout << "filesystem_item::pointer_type watch = kq_wrapper.get<filesystem_item>( event_type );" << std::endl;
 				filesystem_item::pointer_type watch = kq_wrapper.get<filesystem_item>( event_type );
 				std::cout << "END filesystem_item::pointer_type watch = kq_wrapper.get<filesystem_item>( event_type );" << std::endl;
+
+
+				std::cout << "closing_: " << closing_ << std::endl;
+				std::cout << "event_type: " << event_type << std::endl;
 
 				if ( ! closing_ )
 				{
@@ -446,7 +450,7 @@ public: //private:  //TODO:
 			}
 			catch( const kevent_timeout& e )
 			{
-				std::cout << "END kevent_timeout filesystem_item::pointer_type watch = kq_wrapper.get<filesystem_item>( event_type );" << std::endl;
+				//std::cout << "END kevent_timeout filesystem_item::pointer_type watch = kq_wrapper.get<filesystem_item>( event_type );" << std::endl;
 
 				if ( ! closing_ )
 				{
