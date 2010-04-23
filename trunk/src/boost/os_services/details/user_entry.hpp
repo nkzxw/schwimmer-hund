@@ -48,13 +48,14 @@ struct user_entry //: public enable_shared_from_this<user_entry>
 	//typedef user_entry* pointer_type;
 	//typedef boost::ptr_vector<user_entry> collection_type;
 
-	explicit user_entry( const boost::filesystem::path& path)
+	explicit user_entry( const boost::filesystem::path& path )
 		: path_(path)
 	{}
 
 	//TODO: crear un metodo CREATE y ocultar los constructores...
 	//user_entry::pointer_type item ( new user_entry( dir_name ) );
 
+	//TODO: eliminar este destructor. Verificar que destructores hay y cuales deberian ser virtuales...
 	~user_entry()
 	{
 		std::cout << "~user_entry()" << std::endl;

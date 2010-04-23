@@ -15,24 +15,15 @@
 #include <cstdlib>	//TODO: probar si es necesario
 #include <cstring>	// for strerror
 
+// POSIX headers
 #include <sys/event.h>
 #include <sys/fcntl.h>
 #include <sys/time.h>
 #include <sys/types.h>
 #include <unistd.h>
 
-//#include <boost/bind.hpp>
-//#include <boost/enable_shared_from_this.hpp>
-//#include <boost/filesystem/path.hpp>
-//#include <boost/function.hpp>
-//#include <boost/shared_ptr.hpp>
-//#include <boost/thread.hpp>
-
-//#include <boost/os_services/change_types.hpp>
 
 #include <boost/os_services/details/kqueue_watch_item.hpp>
-
-
 
 //TODO: sacar
 /* kqueue(4) in MacOS/X does not support NOTE_TRUNCATE */
@@ -80,7 +71,9 @@ struct null_deleter
 
 
 //TODO: debe ser singleton, ver como implementarlo...
-class kqueue_wrapper //TODO: heredar de una clase abstracta
+//TODO: heredar de una clase abstracta
+//TODO: non-copiable...
+class kqueue_wrapper 
 {
 public:
 
@@ -138,20 +131,9 @@ public:
 		is_initialized_ = false;
 	}
 
-	//TODO: ver si me conviene templetizar este metodo y hacer desaparecer el kqueue_watch_item
-	//void add_watch( filesystem_item::pointer_type watch, bool launch_events = false )
-	//void add_watch( kqueue_watch_item* watch ) //TODO: puntero, referencia, shared_ptr ????
-	//void add_watch( typename T::pointer_type watch ) //TODO: puntero, referencia, shared_ptr ????
-
 	template <typename T>
-	void add_watch( const boost::shared_ptr<T>& watch ) //TODO: puntero, referencia, shared_ptr ????
+	void add_watch( const boost::shared_ptr<T>& watch )
 	{
-		//Necesito:
-		//			mask
-		//			un file_descriptor del archivo a monitorear -> el archivo debe estar abierto
-		//			puntero a la data que quiero recuperar
-		//
-
 		//TODO: ver si Windows y Linux saltan cuando se mofica el nombre del directorio raiz monitoreado.
 		// sino saltan, evisar que se use NOTE_RENAME con cualquier directorio raiz
 
@@ -271,21 +253,11 @@ public:
 				event_type = kqueue_event_types::write;
 			}
 
-			//if (event.fflags & NOTE_TRUNCATE)
-			//{
-			//}
-			//if (event.fflags & NOTE_EXTEND)
-			//{
-			//}
-			//if (event.fflags & NOTE_ATTRIB)
-			//{
-			//}
-			//if (event.fflags & NOTE_REVOKE)
-			//{
-			//}
-			//if (event.fflags & NOTE_LINK)
-			//{
-			//}
+			//NOTE_TRUNCATE
+			//NOTE_EXTEND
+			//NOTE_ATTRIB
+			//NOTE_REVOKE
+			//NOTE_LINK
 
 		}
 
@@ -295,7 +267,7 @@ public:
 protected:
 
 	template <typename T>
-	boost::shared_ptr<T> create_watch_item ( void* raw_pointer )
+	static boost::shared_ptr<T> create_watch_item ( void* raw_pointer )
 	{
 		boost::shared_ptr<T> px( reinterpret_cast<T*>( raw_pointer ), null_deleter() );
 		std::cout << "px.use_count() ----- 1: " << px.use_count() << std::endl;
