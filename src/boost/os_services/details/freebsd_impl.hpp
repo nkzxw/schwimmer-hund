@@ -262,9 +262,6 @@ public: //private:  //TODO:
 	//TODO: contemplar la opcion include_sub_directories_
 	void scan_directory( filesystem_item::pointer_type root_dir, bool launch_events = false )
 	{
-		//std::cout << "void scan_directory( fsitem* root_dir )" << std::endl;
-		//std::cout << "root_dir->path.native_file_string(): " << root_dir->get_path().native_file_string() << std::endl;
-
 		boost::filesystem::directory_iterator end_iter;
 		for ( boost::filesystem::directory_iterator dir_itr( root_dir->path() ); dir_itr != end_iter; ++dir_itr )
 		{
@@ -293,7 +290,7 @@ public: //private:  //TODO:
 						notify_file_system_event_args( change_types::created, dir_itr->path() );
 					}
 
-					filesystem_item::pointer_type watch = create_filesystem_item ( dir_itr->path(), root_dir->root_user_entry_, root_dir );
+					filesystem_item::pointer_type watch = create_filesystem_item( dir_itr->path(), root_dir->root_user_entry_, root_dir );
 					begin_watch( watch, launch_events );
 				}
 			}
