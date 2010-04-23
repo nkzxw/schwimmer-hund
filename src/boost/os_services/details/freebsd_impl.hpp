@@ -403,7 +403,6 @@ public: //private:  //TODO:
 				filesystem_item::pointer_type watch = kq_wrapper.get<filesystem_item>( event_type );
 				std::cout << "END filesystem_item::pointer_type watch = kq_wrapper.get<filesystem_item>( event_type );" << std::endl;
 
-
 				std::cout << "closing_: " << closing_ << std::endl;
 				std::cout << "event_type: " << event_type << std::endl;
 
@@ -460,7 +459,6 @@ public: //private:  //TODO:
 					std::cout << "debug handle_directory_changes XXX-14" << std::endl;
 				}
 				std::cout << "debug handle_directory_changes XXX-15" << std::endl;
-
 			}
 			catch( const kevent_timeout& e )
 			{
