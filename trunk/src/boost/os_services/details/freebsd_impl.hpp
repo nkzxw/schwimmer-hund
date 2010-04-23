@@ -417,13 +417,15 @@ public: //private:  //TODO:
 						case kqueue_event_types::remove:
 						{
 							handle_remove( watch );
-							queued_write_watch = 0;
+							//queued_write_watch = 0;
+							queued_write_watch.reset();
 							break;
 						}
 						case kqueue_event_types::rename:
 						{
 							handle_rename( watch );
-							queued_write_watch = 0;
+							//queued_write_watch = 0;
+							queued_write_watch.reset();
 							break;
 						}
 						case kqueue_event_types::write:
