@@ -199,6 +199,12 @@ public:
 	}
 
 
+	boost::uint32_t mask() const
+	{
+		return this->mask_;
+	}
+
+
 protected:
 
 	//TODO: asignar lo que el usuario quiere monitorear...
