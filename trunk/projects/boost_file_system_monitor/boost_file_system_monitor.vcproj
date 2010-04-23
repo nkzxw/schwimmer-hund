@@ -208,6 +208,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\boost\os_services\details\filesystem_item.hpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\boost\os_services\details\freebsd_impl.hpp"
 				>
 			</File>
@@ -233,6 +237,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\boost\os_services\details\unsupported_impl.hpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\boost\os_services\details\user_entry.hpp"
 				>
 			</File>
 			<File

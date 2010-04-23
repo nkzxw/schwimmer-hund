@@ -22,15 +22,14 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-
 #include <boost/os_services/details/kqueue_watch_item.hpp>
+
 
 //TODO: sacar
 /* kqueue(4) in MacOS/X does not support NOTE_TRUNCATE */
 #ifndef NOTE_TRUNCATE
 # define NOTE_TRUNCATE 0
 #endif
-
 
 
 namespace boost {
@@ -52,13 +51,13 @@ public:
 	{}
 };
 
+
 class kevent_timeout : public std::runtime_error 
 {
 public:
 	kevent_timeout ( const std::string& err ) : std::runtime_error ( err ) 
 	{}
 };
-
 
 
 struct null_deleter
