@@ -249,15 +249,13 @@ public: //private:
 	int file_descriptor_;
 	//TODO: ver si es necesario
 	boost::uint32_t mask_;
-
-	filesystem_item::pointer_type parent_;
-
 	file_inode_info inode_info_;
-	collection_type subitems_;
 
+	//filesystem_item::pointer_type parent_;
+	boost::weak_ptr<filesystem_item> parent_; //avoid circular references
 	//TODO: ver que pasa si agregamos el mismo directorio como dos user_entry distintos... el open da el mismo file descriptor?
 	boost::weak_ptr<user_entry> root_user_entry_; //avoid circular references
-
+	collection_type subitems_;
 };
 
 
