@@ -29,6 +29,7 @@
 
 //TODO: crear objetos dummy para poder testear la funcionalidad desde Windows u otra plataforma...
 
+//TODO: revisar todas las clases donde se encuentre shared_ptr para crear los create function factory...
 
 // http://en.wikipedia.org/wiki/Kqueue
 // http://mark.heily.com/pnotify/
@@ -61,26 +62,11 @@ There are platforms that are not supported due to lack of developer resources. I
 #include <string>
 #include <vector>
 
-// C-Std Headers
-//#include <cerrno>	//TODO: probar si es necesario
-//#include <cstdio>	//TODO: probar si es necesario
-//#include <cstdlib>	//TODO: probar si es necesario
-//#include <cstring>	// for strerror
-//
-//#include <sys/event.h>
-//#include <sys/fcntl.h>
-//#include <sys/time.h>
-//#include <sys/types.h>
-//#include <unistd.h>
-
 #include <boost/bind.hpp>
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/filesystem/path.hpp>
 //#include <boost/foreach.hpp>
 #include <boost/function.hpp>
-//#include <boost/integer.hpp>
-//#include <boost/ptr_container/ptr_vector.hpp>
-//#include <boost/smart_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
 
@@ -177,6 +163,7 @@ public:
 
 public: //private:  //TODO:
 
+	//TODO: static?????
 	filesystem_item::pointer_type create_filesystem_item ( const boost::filesystem::path& path, user_entry::pointer_type entry )
 	{
 		filesystem_item::pointer_type watch = filesystem_item::create( path, entry );
@@ -193,6 +180,7 @@ public: //private:  //TODO:
 		return watch;
 	}
 
+	//TODO: static?????
 	filesystem_item::pointer_type create_filesystem_item ( const boost::filesystem::path& path, user_entry::pointer_type entry, filesystem_item::pointer_type parent )
 	{
 		filesystem_item::pointer_type watch = create_filesystem_item( path, entry );
@@ -211,6 +199,7 @@ public: //private:  //TODO:
 
 
 
+	//TODO: no me gusta el nombre...
 	void begin_watch( filesystem_item::pointer_type watch, bool launch_events = false )
 	{
 		watch->open(); //TODO: catch errors
@@ -268,15 +257,10 @@ public: //private:  //TODO:
 		}
 	}
 
-
-
-	//TODO: evaluar si rename_watch y remove_watch tienen que ir acá o en sus respectivas clases
-	//void rename_watch ( filesystem_item* watch, const boost::filesystem::path& new_path ) 
 	void rename_watch ( filesystem_item::pointer_type watch, const boost::filesystem::path& new_path ) 
 	{
 		watch->set_path( new_path );
 	}
-
 	
 	void remove_watch ( filesystem_item::pointer_type watch ) 
 	{
@@ -297,7 +281,6 @@ public: //private:  //TODO:
 
 	}
 
-	//void handle_rename( filesystem_item* watch )
 	void handle_rename( filesystem_item::pointer_type watch )
 	{
 		boost::filesystem::path root_path;
@@ -337,15 +320,12 @@ public: //private:  //TODO:
 		}
 	}
 
-	//void handle_remove( filesystem_item* watch )
 	void handle_remove( filesystem_item::pointer_type watch )
 	{
 		notify_file_system_event_args( change_types::deleted, watch->path() );
 		remove_watch ( watch );
 	}
 
-	
-	//void handle_write( filesystem_item* watch )
 	void handle_write( filesystem_item::pointer_type watch )
 	{
 		if ( watch->is_directory() )
@@ -437,8 +417,8 @@ public: //private:  //TODO:
 
 protected:
 
+	//TODO: las tres funciones siguientes estan duplicadas en windows_impl y freebsd_impl -> RESOLVER
 	//inline void notify_file_system_event_args( int action, const std::string& directory, const std::string& name )
-
 	inline void notify_file_system_event_args( int action, const boost::filesystem::path& path )
 	{
 		//TODO: ver en .Net
@@ -483,8 +463,6 @@ protected:
 
 
 protected:
-
-	//TODO: las tres funciones siguientes estan duplicadas en windows_impl y freebsd_impl -> RESOLVER
 
 	thread_type thread_;
 	bool is_initialized_;
