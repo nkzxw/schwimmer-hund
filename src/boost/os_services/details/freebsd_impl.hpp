@@ -271,7 +271,7 @@ public: //private:  //TODO:
 			scan_directory( watch, launch_events );
 		}
 
-		kq_wrapper.add_watch( watch );
+		kq_wrapper.add_watch<filesystem_item>( watch );
 	}
 
 
