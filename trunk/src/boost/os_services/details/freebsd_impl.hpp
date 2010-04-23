@@ -296,15 +296,17 @@ public: //private:  //TODO:
 		//std::cout << "watch->parent_->path().native_file_string(): " << watch->parent_->path().native_file_string() << std::endl;
 
 		//TODO: que pasa si no tiene parent... Hacer Unit Test que elimine el directorio que estamos haciendo WATCH
-		watch->parent_->remove_subitem( watch );
-
-		//watch->root_user_entry_->remove_watch( watch );
-		//TODO: llamar a metodo que lanza el evento...
+		//watch->parent_->remove_subitem( watch );
+		watch->parent()->remove_subitem( watch );
 
 		//TODO: ver si tengo que usar el metodo lock de weak_ptr
-		user_entry::pointer_type root ( watch->root_user_entry_ );
+		//user_entry::pointer_type root ( watch->root_user_entry_ );
+		//root->remove_watch( watch );
+		watch->root_user_entry()->remove_watch( watch );
 
-		root->remove_watch( watch );
+
+		//TODO: llamar a metodo que lanza el evento...
+
 	}
 
 	//void handle_rename( filesystem_item* watch )
