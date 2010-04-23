@@ -9,6 +9,8 @@
 
 #include <stdexcept>
 
+#include <boost/os_services/details/kqueue_watch_item.hpp>
+
 // C-Std Headers
 //#include <cerrno>	//TODO: probar si es necesario
 //#include <cstdio>	//TODO: probar si es necesario
@@ -28,8 +30,8 @@
 //#include <boost/shared_ptr.hpp>
 //#include <boost/thread.hpp>
 
-#include <boost/os_services/change_types.hpp>
-#include <boost/os_services/details/kqueue_watch_item.hpp>
+//#include <boost/os_services/change_types.hpp>
+
 
 
 
@@ -45,24 +47,6 @@ namespace boost {
 namespace os_services {
 namespace detail {
 
-
-
-class kevent_error : public std::runtime_error 
-{
-public:
-	kevent_error ( const string &err ) : std::runtime_error (err ) 
-	{}
-};
-
-
-class kevent_timeout : public std::runtime_error 
-{
-public:
-	kevent_timeout ( const string &err ) : std::runtime_error (err ) 
-	{}
-};
-
-
 namespace kqueue_event_types
 {
 	static const int write = 0;
@@ -70,7 +54,19 @@ namespace kqueue_event_types
 	static const int rename = 2;
 }
 
+class kevent_error : public std::runtime_error 
+{
+public:
+	kevent_error ( const std::string& err ) : std::runtime_error ( err ) 
+	{}
+};
 
+class kevent_timeout : public std::runtime_error 
+{
+public:
+	kevent_timeout ( const std::string& err ) : std::runtime_error ( err ) 
+	{}
+};
 
 struct null_deleter
 {
@@ -224,46 +220,49 @@ public:
 		{
 			std::ostringstream oss;
 			oss << "kevent error - Reason: " << std::strerror(errno);
-			throw (std::runtime_error(oss.str()));
+			//throw (std::runtime_error(oss.str()));
+			throw ( kevent_error( oss.str() ) );
 		}
-
-		if ( return_code == 0 ) //timeout
+		else if ( return_code == 0 ) //timeout
 		{
+			std::ostringstream oss;
+			oss << "kevent timeout - Reason: " << std::strerror(errno);
+			//throw (std::runtime_error(oss.str()));
+			throw ( kevent_timeout( oss.str() ) );
 		}
-
-		if ( event.fflags & NOTE_DELETE )
+		else
 		{
-			event_type == kqueue_event_types::delete;
+			boost::shared_ptr<T> watch = create_watch_item( event.udata );
+
+			if ( event.fflags & NOTE_DELETE )
+			{
+				event_type == kqueue_event_types::delete;
+			}
+			else if ( event.fflags & NOTE_RENAME )
+			{
+				event_type == kqueue_event_types::rename;
+			}
+			else if ( event.fflags & NOTE_WRITE )
+			{
+				event_type == kqueue_event_types::write;
+			}
+
+			//if (event.fflags & NOTE_TRUNCATE)
+			//{
+			//}
+			//if (event.fflags & NOTE_EXTEND)
+			//{
+			//}
+			//if (event.fflags & NOTE_ATTRIB)
+			//{
+			//}
+			//if (event.fflags & NOTE_REVOKE)
+			//{
+			//}
+			//if (event.fflags & NOTE_LINK)
+			//{
+			//}
 		}
-
-		if ( event.fflags & NOTE_RENAME )
-		{
-			event_type == kqueue_event_types::rename;
-		}
-
-		if ( event.fflags & NOTE_WRITE )
-		{
-			event_type == kqueue_event_types::write;
-		}
-
-		//if (event.fflags & NOTE_TRUNCATE)
-		//{
-		//}
-		//if (event.fflags & NOTE_EXTEND)
-		//{
-		//}
-		//if (event.fflags & NOTE_ATTRIB)
-		//{
-		//}
-		//if (event.fflags & NOTE_REVOKE)
-		//{
-		//}
-		//if (event.fflags & NOTE_LINK)
-		//{
-		//}
-
-		boost::shared_ptr<T> watch = create_watch_item( event.udata );
-
 	}
 
 protected:
