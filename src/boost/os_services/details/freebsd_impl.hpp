@@ -290,7 +290,7 @@ public: //private:  //TODO:
 						notify_file_system_event_args( change_types::created, dir_itr->path() );
 					}
 
-					filesystem_item::pointer_type watch = create_filesystem_item( dir_itr->path(), root_dir->root_user_entry_, root_dir );
+					filesystem_item::pointer_type watch = create_filesystem_item( dir_itr->path(), root_dir->root_user_entry_.lock(), root_dir );
 					begin_watch( watch, launch_events );
 				}
 			}
