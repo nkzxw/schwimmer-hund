@@ -127,6 +127,7 @@ public:
 		this->inode_info_.set( this->path_ );
 	}
 
+	//TODO: protected o no.... ????? ver!
 	void close( bool no_throw = false, bool close_subitems = true )
 	{
 		std::cout << "void close( bool no_throw = false, bool close_subitems = true )" << std::endl;
@@ -162,7 +163,8 @@ public:
 
 	void add_subitem ( const filesystem_item& subitem )
 	{
-		//TODO: completar
+		//TODO: ver si se necesita completar algo...
+		subitems_.push_back( subitem );
 	}
 
 	void remove_subitem( filesystem_item::pointer_type watch )
@@ -202,8 +204,7 @@ public:
 		return this->parent_.lock();
 	}
 
-	//user_entry::pointer_type root_user_entry() const
-	user_entry_pointer_type root_user_entry() const
+	user_entry_pointer_type root_user_entry() const		//user_entry::pointer_type
 	{
 		return this->root_user_entry_.lock();
 	}

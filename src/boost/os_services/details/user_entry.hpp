@@ -73,7 +73,8 @@ struct user_entry //: public enable_shared_from_this<user_entry>
 		std::cout << "~user_entry() - END" << std::endl;
 	}
 
-	//void add_watch( boost::shared_ptr< filesystem_item > item )
+
+	//TODO: buscar todos los metodos que reciban un pointer type y reemplazarlos por un const reference a ese pointer type.
 	void add_watch( filesystem_item::pointer_type item )
 	{
 		all_watches_.push_back(item);
@@ -85,7 +86,6 @@ struct user_entry //: public enable_shared_from_this<user_entry>
 		filesystem_item::collection_type::iterator it = all_watches_.begin();
 		while ( it != all_watches_.end() )
 		{
-			//if ( watch->is_equal( **it ) )
 			if ( (*it)->is_equal( *watch ) )
 			{
 				it = all_watches_.erase(it);
