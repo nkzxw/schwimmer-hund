@@ -131,7 +131,10 @@ public:
 
 	//TODO: ver si me conviene templetizar este metodo y hacer desaparecer el kqueue_watch_item
 	//void add_watch( filesystem_item::pointer_type watch, bool launch_events = false )
-	void add_watch( kqueue_watch_item* watch ) //TODO: puntero, referencia, shared_ptr ????
+	//void add_watch( kqueue_watch_item* watch ) //TODO: puntero, referencia, shared_ptr ????
+
+	template <typename T>
+	void add_watch( T::pointer_type watch ) //TODO: puntero, referencia, shared_ptr ????
 	{
 		//Necesito:
 		//			mask
