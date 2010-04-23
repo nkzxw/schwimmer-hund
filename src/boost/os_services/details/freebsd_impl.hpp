@@ -408,7 +408,7 @@ public: //private:  //TODO:
 
 			try
 			{
-				filesystem_item::pointer_type watch = kq_wrapper.get( event_type );
+				filesystem_item::pointer_type watch = kq_wrapper.get<filesystem_item>( event_type );
 
 				if ( ! closing_ )
 				{
