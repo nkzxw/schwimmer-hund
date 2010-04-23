@@ -401,10 +401,11 @@ public: //private:  //TODO:
 			{
 				//std::cout << "filesystem_item::pointer_type watch = kq_wrapper.get<filesystem_item>( event_type );" << std::endl;
 				filesystem_item::pointer_type watch = kq_wrapper.get<filesystem_item>( event_type );
-				std::cout << "END filesystem_item::pointer_type watch = kq_wrapper.get<filesystem_item>( event_type );" << std::endl;
 
+				std::cout << "END filesystem_item::pointer_type watch = kq_wrapper.get<filesystem_item>( event_type );" << std::endl;
 				std::cout << "closing_: " << closing_ << std::endl;
 				std::cout << "event_type: " << event_type << std::endl;
+				std::cout << "watch.use_count(): " << watch.use_count() << std::endl;
 
 				if ( ! closing_ )
 				{
