@@ -223,6 +223,7 @@ public:
 	template <typename T>
 	boost::shared_ptr<T> get( int& event_type )
 	{
+		boost::shared_ptr<T> watch;
 		event_type = kqueue_event_types::none;
 		struct kevent event;
 
@@ -248,7 +249,7 @@ public:
 		}
 		else
 		{
-			boost::shared_ptr<T> watch = create_watch_item<T>( event.udata ); //null deleter shared_ptr
+			watch = create_watch_item<T>( event.udata ); //null deleter shared_ptr
 
 			std::cout << "event.udata: " << event.udata << std::endl;
 			std::cout << "watch->path().native_file_string(): " << watch->path().native_file_string() << std::endl;
@@ -286,8 +287,9 @@ public:
 			//{
 			//}
 
-			return watch;
 		}
+
+		return watch;
 	}
 
 protected:
