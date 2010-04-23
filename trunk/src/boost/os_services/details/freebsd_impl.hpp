@@ -261,9 +261,6 @@ public: //private:  //TODO:
 
 	void begin_watch( filesystem_item::pointer_type watch, bool launch_events = false )
 	{
-		//std::cout << "void begin_watch( filesystem_item::pointer_type watch )" << std::endl;
-		//std::cout << "watch->path.native_file_string(): " << watch->path.native_file_string() << std::endl;
-
 		watch->open(); //TODO: catch errors
 
 		if ( watch->is_directory() )
@@ -305,8 +302,6 @@ public: //private:  //TODO:
 
 				if ( !found ) //new file
 				{
-					//std::cout << "launch_events: " << launch_events << std::endl;
-
 					if ( launch_events )
 					{
 						notify_file_system_event_args( change_types::created, dir_itr->path() );
@@ -412,7 +407,9 @@ public: //private:  //TODO:
 
 			try
 			{
+				std::cout << "filesystem_item::pointer_type watch = kq_wrapper.get<filesystem_item>( event_type );" << std::endl;
 				filesystem_item::pointer_type watch = kq_wrapper.get<filesystem_item>( event_type );
+				std::cout << "END filesystem_item::pointer_type watch = kq_wrapper.get<filesystem_item>( event_type );" << std::endl;
 
 				if ( ! closing_ )
 				{
@@ -449,6 +446,8 @@ public: //private:  //TODO:
 			}
 			catch( const kevent_timeout& e )
 			{
+				std::cout << "END kevent_timeout filesystem_item::pointer_type watch = kq_wrapper.get<filesystem_item>( event_type );" << std::endl;
+
 				if ( ! closing_ )
 				{
 					if ( queued_write_watch )
@@ -460,6 +459,8 @@ public: //private:  //TODO:
 			}
 			catch( const kevent_error& e )
 			{
+				std::cout << "END kevent_error filesystem_item::pointer_type watch = kq_wrapper.get<filesystem_item>( event_type );" << std::endl;
+
 				//TODO: para que capturo la excepcion si la voy a relanzar ????
 				throw; //re-throw
 			}
