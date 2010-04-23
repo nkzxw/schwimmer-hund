@@ -251,14 +251,17 @@ public:
 
 			if ( event.fflags & NOTE_DELETE )
 			{
+				std::cout << "NOTE_DELETE" << std::endl;
 				event_type = kqueue_event_types::remove;
 			}
 			else if ( event.fflags & NOTE_RENAME )
 			{
+				std::cout << "NOTE_RENAME" << std::endl;
 				event_type = kqueue_event_types::rename;
 			}
 			else if ( event.fflags & NOTE_WRITE )
 			{
+				std::cout << "NOTE_WRITE" << std::endl;
 				event_type = kqueue_event_types::write;
 			}
 
