@@ -12,6 +12,8 @@
 
 //TODO: ver si hay forma de tratar a los raw pointers como shared_ptr's en general.
 
+//TODO: ver que diferencia hay entre "const T&" y "T const &"
+
 //TODO: linked_ptr nuevo nombre para master_ptr y slave_ptr
 //TODO: owner_ptr: nuevo SmartPtr en el cual se registre solo un unico owner_ptr por memoria... O sea, no podria haber dos owner_ptr apuntando a la misma posicion de memoria...
 //TODO: analizar estos dos ultimos a ver si son viables con algun smart pointer actual.
