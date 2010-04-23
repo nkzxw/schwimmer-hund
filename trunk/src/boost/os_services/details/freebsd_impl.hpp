@@ -413,28 +413,40 @@ public: //private:  //TODO:
 					{
 						case kqueue_event_types::remove:
 						{
+							std::cout << "debug handle_directory_changes XXX-1" << std::endl;
 							handle_remove( watch );
+							std::cout << "debug handle_directory_changes XXX-2" << std::endl;
 							//queued_write_watch = 0;
 							queued_write_watch.reset();
+							std::cout << "debug handle_directory_changes XXX-3" << std::endl;
 							break;
 						}
 						case kqueue_event_types::rename:
 						{
+							std::cout << "debug handle_directory_changes XXX-4" << std::endl;
 							handle_rename( watch );
+							std::cout << "debug handle_directory_changes XXX-5" << std::endl;
 							//queued_write_watch = 0;
 							queued_write_watch.reset();
+							std::cout << "debug handle_directory_changes XXX-6" << std::endl;
 							break;
 						}
 						case kqueue_event_types::write:
 						{
+							std::cout << "debug handle_directory_changes XXX-7" << std::endl;
 							if ( queued_write_watch ) //!= 0
 							{
+								std::cout << "debug handle_directory_changes XXX-8" << std::endl;
 								handle_write( queued_write_watch );
+								std::cout << "debug handle_directory_changes XXX-9" << std::endl;
 								queued_write_watch.reset(); // = 0;
+								std::cout << "debug handle_directory_changes XXX-10" << std::endl;
 							}
 
+							std::cout << "debug handle_directory_changes XXX-11" << std::endl;
 							//Encolamos un solo evento WRITE ya que siempre viene WRITE+RENAME... hacemos que primero se procese el evento rename y luego el write
 							queued_write_watch = watch;
+							std::cout << "debug handle_directory_changes XXX-12" << std::endl;
 							break;
 						}
 					}
