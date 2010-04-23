@@ -134,7 +134,7 @@ public:
 	//void add_watch( kqueue_watch_item* watch ) //TODO: puntero, referencia, shared_ptr ????
 
 	template <typename T>
-	void add_watch( T::pointer_type watch ) //TODO: puntero, referencia, shared_ptr ????
+	void add_watch( typename T::pointer_type watch ) //TODO: puntero, referencia, shared_ptr ????
 	{
 		//Necesito:
 		//			mask
