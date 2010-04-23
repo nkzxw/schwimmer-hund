@@ -107,7 +107,7 @@ class freebsd_impl : public base_impl<freebsd_impl>
 public:
 
 	freebsd_impl()
-		: is_initialized_(false), closing_(false)//, kqueue_file_descriptor_(0)
+		: is_initialized_(false), closing_(false)
 	{}
 
 	~freebsd_impl()
@@ -152,25 +152,11 @@ public:
 	//TODO: ver si hace falta hacer lo mismo para Windows
 	void initialize() //TODO: protected
 	{
-		//if ( ! is_initialized_ )
-		//{
-		//	kqueue_file_descriptor_ = kqueue(); //::kqueue();
-
-		//	if ( kqueue_file_descriptor_ == -1 )   //< 0)
-		//	{
-		//		std::ostringstream oss;
-		//		oss << "Failed to initialize kqueue - Reason: " << std::strerror(errno);
-		//		throw (std::runtime_error(oss.str()));
-		//	}
-		//	is_initialized_ = true;
-		//}
-
 		if ( ! is_initialized_ )
 		{
 			kq_wrapper.initialize();
 			is_initialized_ = true;
 		}
-		
 	}
 
 	void start()
@@ -210,12 +196,14 @@ public: //private:  //TODO:
 	filesystem_item::pointer_type create_filesystem_item ( const boost::filesystem::path& path, user_entry::pointer_type entry, filesystem_item::pointer_type parent )
 	{
 		filesystem_item::pointer_type watch = create_filesystem_item( path, entry );
-		watch->parent_ = parent; //TODO: crear set_parent en filesystem_item
 
 		if ( parent )
 		{
+			//watch->parent_ = parent; //TODO: crear set_parent en filesystem_item
+			watch->set_parent( parent );
 			//TODO: agregar metodo add_subitem a filesystem_item
-			parent->subitems_.push_back(watch);
+			//parent->subitems_.push_back( watch );
+			parent->add_subitem( watch )
 		}
 
 		return watch;
@@ -500,8 +488,6 @@ protected:
 
 	thread_type thread_;
 	bool is_initialized_;
-
-	//int kqueue_file_descriptor_; // file descriptor
 	kqueue_wrapper kq_wrapper;
 
 	bool closing_;
