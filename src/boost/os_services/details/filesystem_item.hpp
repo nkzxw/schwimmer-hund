@@ -2,6 +2,21 @@
 #define BOOST_OS_SERVICES_DETAIL_FILESYSTEM_ITEM_HPP
 
 //#include <iostream>
+
+//TODO: revisar los headers
+
+// C-Std Headers
+#include <cerrno>	//TODO: probar si es necesario
+#include <cstdio>	//TODO: probar si es necesario
+#include <cstdlib>	//TODO: probar si es necesario
+#include <cstring>	// for strerror
+
+#include <sys/event.h>
+#include <sys/fcntl.h>
+#include <sys/time.h>
+#include <sys/types.h>
+#include <unistd.h>
+
 #include <boost/filesystem/path.hpp>
 
 
