@@ -68,6 +68,8 @@ struct user_entry //: public enable_shared_from_this<user_entry>
 
 	void remove_watch( filesystem_item::pointer_type watch )
 	{
+		std::cout << "debug user_entry::remove_watch-1" << std::endl;
+
 		//TODO: usar STL
 		filesystem_item::collection_type::iterator it = all_watches_.begin();
 		while ( it != all_watches_.end() )
@@ -75,7 +77,9 @@ struct user_entry //: public enable_shared_from_this<user_entry>
 			//if ( watch->is_equal( **it ) )
 			if ( (*it)->is_equal( *watch ) )
 			{
+				std::cout << "debug user_entry::remove_watch-2" << std::endl;
 				it = all_watches_.erase(it);
+				std::cout << "debug user_entry::remove_watch-3" << std::endl;
 				break;
 			}
 			else
@@ -83,6 +87,9 @@ struct user_entry //: public enable_shared_from_this<user_entry>
 				++it;
 			}
 		}
+
+		std::cout << "debug user_entry::remove_watch-4" << std::endl;
+
 	}
 
 	const boost::filesystem::path& path() const 

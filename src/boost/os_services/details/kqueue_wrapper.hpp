@@ -225,8 +225,8 @@ public:
 	{
 		boost::shared_ptr<T> watch;
 		event_type = kqueue_event_types::none;
-		struct kevent event;
 
+		struct kevent event;
 		struct timespec timeout;
 		timeout.tv_sec = 0;
 		timeout.tv_nsec = 300000; //300 milliseconds //TODO: sacar el hardcode, hacer configurable...
