@@ -8,6 +8,8 @@
 
 //TODO: ver shared_ptr: http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2007/n2351.htm
 
+//TODO: http://www.boost.org/doc/libs/1_40_0/libs/smart_ptr/sp_techniques.html
+
 //TODO: linked_ptr nuevo nombre para master_ptr y slave_ptr
 //TODO: owner_ptr: nuevo SmartPtr en el cual se registre solo un unico owner_ptr por memoria... O sea, no podria haber dos owner_ptr apuntando a la misma posicion de memoria...
 //TODO: analizar estos dos ultimos a ver si son viables con algun smart pointer actual.
@@ -74,9 +76,11 @@ There are platforms that are not supported due to lack of developer resources. I
 //#include <boost/foreach.hpp>
 #include <boost/function.hpp>
 //#include <boost/integer.hpp>
-//#include <boost/smart_ptr.hpp>
 //#include <boost/ptr_container/ptr_vector.hpp>
+//#include <boost/smart_ptr.hpp>
+#include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
+
 
 #include <boost/os_services/change_types.hpp>
 #include <boost/os_services/details/base_impl.hpp>
@@ -92,8 +96,8 @@ There are platforms that are not supported due to lack of developer resources. I
 
 
 //TODO: sacar, es solo para debug
-#include <boost/date_time/posix_time/posix_time.hpp>
-using namespace boost::posix_time;
+//#include <boost/date_time/posix_time/posix_time.hpp>
+//using namespace boost::posix_time;
 
 
 
@@ -114,8 +118,6 @@ namespace detail {
 //TODO: si es necesario para todas las implementaciones, pasar a base_impl
 typedef boost::shared_ptr<boost::thread> thread_type;
 
-//TODO: pasar a clase freebsd_impl
-static int kqueue_file_descriptor_ = 0;
 	
 //struct filesystem_item;		//forward-declaration
 //struct user_entry;			//forward-declaration
@@ -127,15 +129,22 @@ static int kqueue_file_descriptor_ = 0;
 ////typedef user_entry* user_entry::pointer_type; //TODO: ver si se puede hacer algo asi...
 
 
+
+struct null_deleter
+{
+	void operator()(void const *) const
+	{
+	}
+};
+
+
 class freebsd_impl : public base_impl<freebsd_impl>
 {
 public:
 
 	freebsd_impl()
-		: is_initialized_(false), closing_(false) //, kqueue_file_descriptor_(0)
-	{
-		//kqueue_file_descriptor_ = 0;
-	}
+		: is_initialized_(false), closing_(false), kqueue_file_descriptor_(0)
+	{}
 
 	~freebsd_impl()
 	{
@@ -190,7 +199,6 @@ public:
 		if ( ! is_initialized_ )
 		{
 			kqueue_file_descriptor_ = kqueue(); //::kqueue();
-			//std::cout << "kqueue_file_descriptor_" << kqueue_file_descriptor_ << std::endl;
 
 			if ( kqueue_file_descriptor_ == -1 )   //< 0)
 			{
@@ -220,8 +228,6 @@ public:
 
 public: //private:  //TODO:
 
-	typedef boost::function<void (filesystem_event_args e)> create_file_event_handler;
-	create_file_event_handler created_handler_;
 
 	//filesystem_item::pointer_type create_filesystem_item ( const boost::filesystem::path& path, user_entry& entry )
 	filesystem_item::pointer_type create_filesystem_item ( const boost::filesystem::path& path, user_entry::pointer_type& entry )
@@ -251,6 +257,13 @@ public: //private:  //TODO:
 		}
 
 		return watch;
+	}
+
+
+	filesystem_item::pointer_type create_filesystem_item ( void* raw_pointer )
+	{
+		filesystem_item::pointer_type px( reinterpret_cast<filesystem_item*>( raw_pointer ), null_deleter() );
+		return px;
 	}
 
 
@@ -467,10 +480,8 @@ public: //private:  //TODO:
 		//filesystem_item::pointer_type queued_write_watch = 0;
 		filesystem_item::pointer_type queued_write_watch;
 
-		//std::cout << "debug handle_directory_changes() - 2" << std::endl;
 		while ( ! closing_ )
 		{
-			//std::cout << "debug handle_directory_changes() - 3" << std::endl;
 			struct kevent event;
 
 			struct timespec timeout;
@@ -481,12 +492,9 @@ public: //private:  //TODO:
 			int return_code = kevent ( kqueue_file_descriptor_, NULL, 0, &event, 1, &timeout );
 
 
-			if ( closing_)
-				std::cout << "debug handle_directory_changes() - 4" << std::endl;
 
 			if ( return_code == -1 || event.flags & EV_ERROR) //< 0
 			{
-				std::cout << "debug handle_directory_changes() - 5" << std::endl;
 				//TODO: evaluar si este throw está relacionado con el destructor de fsm ya que está ejecutado en otro thread, no deberia... pero...
 				std::ostringstream oss;
 				oss << "kevent error - Reason: " << std::strerror(errno);
@@ -494,15 +502,10 @@ public: //private:  //TODO:
 			}
 
 
-			if ( closing_)
-				std::cout << "debug handle_directory_changes() - 6" << std::endl;
-
 			if ( ! closing_ )
 			{
-				//std::cout << "debug handle_directory_changes() - 7" << std::endl;
 				if ( return_code == 0 ) //timeout
 				{
-					//std::cout << "debug handle_directory_changes() - 8" << std::endl;
 					if ( queued_write_watch ) // != 0
 					{
 						handle_write( queued_write_watch );
@@ -511,16 +514,9 @@ public: //private:  //TODO:
 				}
 				else
 				{
-					//std::cout << "debug handle_directory_changes() - 11" << std::endl;
-					//filesystem_item* watch = (filesystem_item*) event.udata; //TODO: reinterpret_cast<>
-					//filesystem_item* watch = reinterpret_cast<filesystem_item*>( event.udata );
-					//filesystem_item::pointer_type watch = *(reinterpret_cast<filesystem_item::pointer_type*>( event.udata ));
-					//filesystem_item::pointer_type* watch_temp_1 = reinterpret_cast<filesystem_item::pointer_type*>( event.udata );
-					//void* watch_temp_2 =  event.udata ;
-
-					filesystem_item::pointer_type watch = reinterpret_cast<filesystem_item::pointer_type>( event.udata );
-
-					//std::cout << "debug handle_directory_changes() - 12" << std::endl;
+					//filesystem_item::pointer_type watch = reinterpret_cast<filesystem_item::pointer_type>( event.udata );
+					filesystem_item::pointer_type watch = create_filesystem_item( event.udata );
+					//TODO: watch se puede convertir en un shared_ptr usando un null_deleter: http://www.boost.org/doc/libs/1_40_0/libs/smart_ptr/sp_techniques.html#static
 
 
 					if ( event.fflags & NOTE_DELETE )
@@ -537,8 +533,6 @@ public: //private:  //TODO:
 
 					if ( event.fflags & NOTE_WRITE )
 					{
-						
-						//std::cout << "debug handle_directory_changes() - 17" << std::endl;
 						if ( queued_write_watch ) //!= 0
 						{
 							handle_write( queued_write_watch );
@@ -570,17 +564,8 @@ public: //private:  //TODO:
 					//	std::cout << "NOTE_LINK -> XXXXXXXXX" << std::endl;
 					//}
 				}
-				//std::cout << "debug handle_directory_changes() - 21" << std::endl;
 			}
-			else
-			{
-				std::cout << "debug handle_directory_changes() - XX - 1" << std::endl;
-			}
-			if ( closing_)
-				std::cout << "debug handle_directory_changes() - 22" << std::endl;
 		}
-		if ( closing_)
-			std::cout << "debug handle_directory_changes() - 23" << std::endl;
 	}
 
 protected:
@@ -636,7 +621,7 @@ protected:
 
 	thread_type thread_;
 	bool is_initialized_;
-	//int kqueue_file_descriptor_; // file descriptor
+	int kqueue_file_descriptor_; // file descriptor
 	bool closing_;
 	user_entry::collection_type user_watches_;
 	//filesystem_item::collection_type all_watches_; //TODO: quizas haga falta contabilizar todos los watches en un solo lugar... VER
