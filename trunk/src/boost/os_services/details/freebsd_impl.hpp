@@ -314,15 +314,24 @@ public: //private:  //TODO:
 	
 	void remove_watch ( filesystem_item::pointer_type watch ) 
 	{
+		std::cout << "debug remove_watch-1" << std::endl;
+
 		watch->parent_->remove_subitem( watch );
 
+		std::cout << "debug remove_watch-2" << std::endl;
 
 		//watch->root_user_entry_->remove_watch( watch );
 		//TODO: llamar a metodo que lanza el evento...
 
 		//TODO: ver si tengo que usar el metodo lock de weak_ptr
 		user_entry::pointer_type root ( watch->root_user_entry_ );
+
+		std::cout << "debug remove_watch-3" << std::endl;
+
 		root->remove_watch( watch );
+
+		std::cout << "debug remove_watch-4" << std::endl;
+
 
 	}
 
@@ -369,8 +378,11 @@ public: //private:  //TODO:
 	//void handle_remove( filesystem_item* watch )
 	void handle_remove( filesystem_item::pointer_type watch )
 	{
+		std::cout << "debug handle_remove-1" << std::endl;
 		notify_file_system_event_args( change_types::deleted, watch->path() );
+		std::cout << "debug handle_remove-2" << std::endl;
 		remove_watch ( watch );
+		std::cout << "debug handle_remove-3" << std::endl;
 	}
 
 	

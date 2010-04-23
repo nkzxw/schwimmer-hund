@@ -160,12 +160,17 @@ public:
 
 	void remove_subitem( filesystem_item::pointer_type watch )
 	{
+		std::cout << "debug remove_subitem-1" << std::endl;
+
 		filesystem_item::collection_type::iterator it = subitems_.begin();
 		while ( it != subitems_.end() )
 		{
 			if ( watch->is_equal( *it ) )
 			{
+				std::cout << "debug remove_subitem-2" << std::endl;
 				it = subitems_.erase(it);
+				std::cout << "debug remove_subitem-3" << std::endl;
+
 				break;
 			}
 			else
@@ -173,6 +178,9 @@ public:
 				++it;
 			}
 		}
+
+		std::cout << "debug remove_subitem-4" << std::endl;
+
 
 	}
 
