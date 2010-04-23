@@ -198,7 +198,12 @@ public:
 
 	filesystem_item::pointer_type parent() const
 	{
-		return this->parent_;
+		return this->parent_.lock();
+	}
+
+	user_entry::pointer_type root_user_entry() const
+	{
+		return this->root_user_entry_.lock();
 	}
 
 	const boost::filesystem::path& path() const
