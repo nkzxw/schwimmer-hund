@@ -242,8 +242,7 @@ public: //private:
 	collection_type subitems_;
 
 	//TODO: ver que pasa si agregamos el mismo directorio como dos user_entry distintos... el open da el mismo file descriptor?
-	//user_entry_pointer_type root_user_entry_;
-	boost::weak_ptr<user_entry> root_user_entry_;
+	boost::weak_ptr<user_entry> root_user_entry_; //avoid circular references
 
 };
 
