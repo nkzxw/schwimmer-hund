@@ -133,12 +133,6 @@ typedef boost::shared_ptr<boost::thread> thread_type;
 
 
 
-struct null_deleter
-{
-	void operator()(void const *) const
-	{
-	}
-};
 
 
 class freebsd_impl : public base_impl<freebsd_impl>
@@ -260,13 +254,6 @@ public: //private:  //TODO:
 		}
 
 		return watch;
-	}
-
-
-	filesystem_item::pointer_type create_filesystem_item ( void* raw_pointer )
-	{
-		filesystem_item::pointer_type px( reinterpret_cast<filesystem_item*>( raw_pointer ), null_deleter() );
-		return px;
 	}
 
 

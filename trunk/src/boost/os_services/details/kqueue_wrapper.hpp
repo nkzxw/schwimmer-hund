@@ -7,6 +7,8 @@
 
 //TODO: revisar los headers
 
+#include <stdexcept>
+
 // C-Std Headers
 //#include <cerrno>	//TODO: probar si es necesario
 //#include <cstdio>	//TODO: probar si es necesario
@@ -42,6 +44,40 @@
 namespace boost {
 namespace os_services {
 namespace detail {
+
+
+
+class kevent_error : public std::runtime_error 
+{
+public:
+	kevent_error ( const string &err ) : std::runtime_error (err ) 
+	{}
+};
+
+
+class kevent_timeout : public std::runtime_error 
+{
+public:
+	kevent_timeout ( const string &err ) : std::runtime_error (err ) 
+	{}
+};
+
+
+namespace kqueue_event_types
+{
+	static const int write = 0;
+	static const int delete = 1;
+	static const int rename = 2;
+}
+
+
+
+struct null_deleter
+{
+	void operator()(void const *) const
+	{
+	}
+};
 
 
 //TODO: debe ser singleton, ver como implementarlo...
@@ -98,27 +134,15 @@ public:
 		is_initialized_ = false;
 	}
 
-
-
-	void add_watch( filesystem_item::pointer_type watch, bool launch_events = false )
+	//TODO: ver si me conviene templetizar este metodo y hacer desaparecer el kqueue_watch_item
+	//void add_watch( filesystem_item::pointer_type watch, bool launch_events = false )
+	void add_watch( kqueue_watch_item* watch ) //TODO: puntero, referencia, shared_ptr ????
 	{
-
 		//Necesito:
 		//			mask
 		//			un file_descriptor del archivo a monitorear -> el archivo debe estar abierto
 		//			puntero a la data que quiero recuperar
 		//
-
-		struct kevent event;
-
-		//int mask = watch->mask_;
-
-		//TODO: traducir de watch->mask_ a fflags
-		//TODO: ver estos flags, deberia monitoriarse solo lo que el usuairo quiera monitorear...
-		unsigned int fflags = NOTE_DELETE |  NOTE_WRITE | NOTE_EXTEND | NOTE_ATTRIB | NOTE_LINK | NOTE_REVOKE | NOTE_RENAME;
-
-		//EV_SET( &event, watch->file_descriptor_, EVFILT_VNODE, EV_ADD | EV_ENABLE | EV_CLEAR, fflags, 0, watch ); // EV_ADD | EV_ENABLE | EV_ONESHOT | EV_CLEAR
-		EV_SET( &event, watch->file_descriptor_, EVFILT_VNODE, EV_ADD | EV_ENABLE | EV_CLEAR, fflags, 0, watch.get() ); // EV_ADD | EV_ENABLE | EV_ONESHOT | EV_CLEAR
 
 		//TODO: ver si Windows y Linux saltan cuando se mofica el nombre del directorio raiz monitoreado.
 		// sino saltan, evisar que se use NOTE_RENAME con cualquier directorio raiz
@@ -126,6 +150,13 @@ public:
 		// -> Windows no salta...
 		// -> Linux tampoco...
 		// -> FreeBSD: ????????????
+
+		struct kevent event;
+
+		//TODO: traducir de watch->mask_ a fflags
+		//TODO: ver estos flags, deberia monitoriarse solo lo que el usuairo quiera monitorear...
+		int mask = watch->mask_;
+		unsigned int fflags = NOTE_DELETE |  NOTE_WRITE | NOTE_EXTEND | NOTE_ATTRIB | NOTE_LINK | NOTE_REVOKE | NOTE_RENAME;
 
 		//		kev->fflags |= NOTE_RENAME; //Eliminado porque no sirve monitorear el dir raiz.
 		//		kev->fflags |= NOTE_TRUNCATE; //TODO: ver
@@ -136,7 +167,6 @@ public:
 		//		kev->fflags |= NOTE_RENAME; //TODO: ver
 		//		kev->fflags |= NOTE_REVOKE; //TODO: ver
 		//		kev->fflags |= NOTE_LINK; //TODO: ver
-
 		//TODO: no está incluido en PN_ALL_EVENTS por eso lo agrego de una
 		//TODO: ver como mapear las constantes de BSD con las de la interfaz que vamos a exponer al usuario...
 		//TODO: vamos a tener que hacer algo similar a lo que estamos haciendo a continuacion...
@@ -166,7 +196,9 @@ public:
 		//	event->flags |= EV_ONESHOT;
 		//}
 
-		//std::cout << "kev->flags: " << kev->flags << std::endl;
+
+		EV_SET( &event, watch->file_descriptor_, EVFILT_VNODE, EV_ADD | EV_ENABLE | EV_CLEAR, fflags, 0, watch ); // EV_ADD | EV_ENABLE | EV_ONESHOT | EV_CLEAR
+		//EV_SET( &event, watch->file_descriptor_, EVFILT_VNODE, EV_ADD | EV_ENABLE | EV_CLEAR, fflags, 0, watch.get() ); // EV_ADD | EV_ENABLE | EV_ONESHOT | EV_CLEAR
 
 		int return_code = kevent( file_descriptor_, &event, 1, NULL, 0, NULL );
 		if ( return_code == -1 ) //< 0)
@@ -177,7 +209,8 @@ public:
 		}
 	}
 
-	void handle_directory_changes()
+	template <typename T>
+	boost::shared_ptr<T> get( int& event_type )
 	{
 		struct kevent event;
 
@@ -185,59 +218,63 @@ public:
 		timeout.tv_sec = 0;
 		timeout.tv_nsec = 300000; //300 milliseconds //TODO: sacar el hardcode, hacer configurable...
 
-		//TODO: pasar toda esta logica a un metodo o clase...
 		int return_code = kevent ( file_descriptor_, NULL, 0, &event, 1, &timeout );
 
 		if ( return_code == -1 || event.flags & EV_ERROR) //< 0
 		{
-			//TODO: evaluar si este throw está relacionado con el destructor de fsm ya que está ejecutado en otro thread, no deberia... pero...
 			std::ostringstream oss;
 			oss << "kevent error - Reason: " << std::strerror(errno);
 			throw (std::runtime_error(oss.str()));
 		}
 
-
 		if ( return_code == 0 ) //timeout
 		{
 		}
 
-
 		if ( event.fflags & NOTE_DELETE )
 		{
+			event_type == kqueue_event_types::delete;
 		}
 
 		if ( event.fflags & NOTE_RENAME )
 		{
+			event_type == kqueue_event_types::rename;
 		}
 
 		if ( event.fflags & NOTE_WRITE )
 		{
+			event_type == kqueue_event_types::write;
 		}
-
 
 		//if (event.fflags & NOTE_TRUNCATE)
 		//{
-		//	std::cout << "NOTE_TRUNCATE -> PN_MODIFY" << std::endl;
 		//}
 		//if (event.fflags & NOTE_EXTEND)
 		//{
-		//	std::cout << "NOTE_EXTEND -> PN_MODIFY" << std::endl;
 		//}
 		//if (event.fflags & NOTE_ATTRIB)
 		//{
-		//	std::cout << "NOTE_ATTRIB -> PN_ATTRIB" << std::endl;
 		//}
 		//if (event.fflags & NOTE_REVOKE)
 		//{
-		//	std::cout << "NOTE_REVOKE -> XXXXXXXXX" << std::endl;
 		//}
 		//if (event.fflags & NOTE_LINK)
 		//{
-		//	std::cout << "NOTE_LINK -> XXXXXXXXX" << std::endl;
 		//}
+
+		boost::shared_ptr<T> watch = create_watch_item( event.udata );
+
 	}
 
 protected:
+
+	template <typename T>
+	boost::shared_ptr<T> create_watch_item ( void* raw_pointer )
+	{
+		boost::shared_ptr<T> px( reinterpret_cast<T*>( raw_pointer ), null_deleter() );
+		return px;
+	}
+
 	bool is_initialized_;
 	int file_descriptor_;
 
