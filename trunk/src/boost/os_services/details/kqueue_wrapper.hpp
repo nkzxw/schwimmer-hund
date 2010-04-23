@@ -285,6 +285,8 @@ public:
 			//if (event.fflags & NOTE_LINK)
 			//{
 			//}
+
+			return watch;
 		}
 	}
 
