@@ -76,8 +76,6 @@ public:
 		return watch;
 	}
 
-
-
 	~filesystem_item()
 	{
 		std::cout << "~filesystem_item()" << std::endl;
@@ -212,6 +210,9 @@ protected:
 		: root_user_entry_(root_user_entry), is_directory_(false), file_descriptor_(0), mask_(PN_ALL_EVENTS) //parent_(0),
 	{
 		set_path( path );
+
+		std::cout << "filesystem_item(...)" << std::endl;
+		std::cout << "filesystem_item(...) - " << path_.native_file_string() << std::endl;
 	}
 
 	//TODO: asignar lo que el usuario quiere monitorear...
@@ -219,6 +220,9 @@ protected:
 		: root_user_entry_(root_user_entry), parent_(parent), is_directory_(false), file_descriptor_(0), mask_(PN_ALL_EVENTS)
 	{
 		set_path( path );
+
+		std::cout << "filesystem_item(...)" << std::endl;
+		std::cout << "filesystem_item(...) - " << path_.native_file_string() << std::endl;
 	}
 
 protected:
