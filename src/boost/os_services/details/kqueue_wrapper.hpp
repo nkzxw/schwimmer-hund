@@ -247,7 +247,10 @@ public:
 		}
 		else
 		{
-			boost::shared_ptr<T> watch = create_watch_item<T>( event.udata );
+			boost::shared_ptr<T> watch = create_watch_item<T>( event.udata ); //null deleter shared_ptr
+
+			std::cout << "event.udata: " << event.udata << std::endl;
+			std::cout << "watch->path().native_file_string(): " << watch->path().native_file_string() << std::endl;
 
 			if ( event.fflags & NOTE_DELETE )
 			{
