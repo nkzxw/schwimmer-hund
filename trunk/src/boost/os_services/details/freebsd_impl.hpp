@@ -123,9 +123,9 @@ public:
 
 
 	//TODO: agregar
-	//void add_directory_impl ( const boost::filesystem::path& dir ) //throw (std::invalid_argument, std::runtime_error)
+	//void add_directory_impl( const boost::filesystem::path& dir ) //throw (std::invalid_argument, std::runtime_error)
 
-	void add_directory_impl ( const std::string& dir_name )
+	void add_directory_impl( const std::string& dir_name )
 	{
 		//TODO: asignar mask
 		user_entry::pointer_type item = user_entry::create( dir_name );
@@ -144,7 +144,7 @@ public:
 		//TODO: STL transform
 		for (user_entry::collection_type::iterator it = user_watches_.begin(); it != user_watches_.end(); ++it )
 		{
-			filesystem_item::pointer_type watch = create_filesystem_item ( (*it)->path(), *it );
+			filesystem_item::pointer_type watch = create_filesystem_item( (*it)->path(), *it );
 			begin_watch( watch, false );
 		}
 
@@ -163,11 +163,11 @@ private:
 		}
 	}
 
-	static filesystem_item::pointer_type create_filesystem_item ( const boost::filesystem::path& path, user_entry::pointer_type& entry )
+	static filesystem_item::pointer_type create_filesystem_item( const boost::filesystem::path& path, user_entry::pointer_type& entry )
 	{
 		filesystem_item::pointer_type watch = filesystem_item::create( path, entry );
-		entry->set_root ( watch );
-		entry->add_watch ( watch );
+		entry->set_root( watch );
+		entry->add_watch( watch );
 
 		//TODO: ver de esto que va...
 		//watch->open(); //TODO: catch errors
@@ -181,8 +181,8 @@ private:
 
 
 
-	//static filesystem_item::pointer_type create_filesystem_item ( const boost::filesystem::path& path, user_entry::pointer_type& entry, filesystem_item::pointer_type& parent )
-	static filesystem_item::pointer_type create_filesystem_item ( const boost::filesystem::path& path, user_entry_pointer_type& entry, filesystem_item::pointer_type& parent )
+	//static filesystem_item::pointer_type create_filesystem_item( const boost::filesystem::path& path, user_entry::pointer_type& entry, filesystem_item::pointer_type& parent )
+	static filesystem_item::pointer_type create_filesystem_item( const boost::filesystem::path& path, user_entry_pointer_type& entry, filesystem_item::pointer_type& parent )
 	{
 		filesystem_item::pointer_type watch = create_filesystem_item( path, entry );
 
@@ -226,7 +226,7 @@ private:
 				bool found = false;
 				for (filesystem_item::collection_type::iterator it = root_dir->subitems_.begin(); it != root_dir->subitems_.end(); ++it )
 				{
-					if (  (*it)->is_equal ( inode_info, dir_itr->path() ) )
+					if (  (*it)->is_equal( inode_info, dir_itr->path() ) )
 					{
 						found = true;
 						break;
@@ -241,10 +241,12 @@ private:
 					}
 
 
-					//filesystem_item::pointer_type watch = create_filesystem_item( dir_itr->path(), root_dir->root_user_entry(), root_dir );
+					filesystem_item::pointer_type watch = create_filesystem_item( dir_itr->path(), root_dir->root_user_entry(), root_dir );
 
-					user_entry::pointer_type temp = root_dir->root_user_entry();
-					filesystem_item::pointer_type watch = create_filesystem_item( dir_itr->path(), temp, root_dir );
+					//user_entry::pointer_type temp = root_dir->root_user_entry();
+					//filesystem_item::pointer_type watch = create_filesystem_item( dir_itr->path(), temp, root_dir );
+
+
 					begin_watch( watch, launch_events );
 				}
 			}
@@ -256,12 +258,12 @@ private:
 		}
 	}
 
-	void rename_watch ( filesystem_item::pointer_type& watch, const boost::filesystem::path& new_path ) 
+	void rename_watch( filesystem_item::pointer_type& watch, const boost::filesystem::path& new_path ) 
 	{
 		watch->set_path( new_path );
 	}
 	
-	void remove_watch ( filesystem_item::pointer_type& watch ) 
+	void remove_watch( filesystem_item::pointer_type& watch ) 
 	{
 		//std::cout << "watch->path().native_file_string(): " << watch->path().native_file_string() << std::endl;
 		//std::cout << "watch->parent_->path().native_file_string(): " << watch->parent_->path().native_file_string() << std::endl;
@@ -303,13 +305,13 @@ private:
 
 			if ( dir_itr != end_iter )
 			{
-				notify_rename_event_args ( change_types::renamed, dir_itr->path(), watch->path() );
+				notify_rename_event_args( change_types::renamed, dir_itr->path(), watch->path() );
 				rename_watch(watch, dir_itr->path());
 			}
 			else	
 			{
 				//TODO: esto es un remove o un rename ?????
-				//notify_rename_event_args ( change_types::renamed, new_path, watch->get_path() );
+				//notify_rename_event_args( change_types::renamed, new_path, watch->get_path() );
 				handle_remove( watch );
 			}
 		}
@@ -318,7 +320,7 @@ private:
 	void handle_remove( filesystem_item::pointer_type& watch )
 	{
 		notify_file_system_event_args( change_types::deleted, watch->path() );
-		remove_watch ( watch );
+		remove_watch( watch );
 	}
 
 	void handle_write( filesystem_item::pointer_type& watch )
