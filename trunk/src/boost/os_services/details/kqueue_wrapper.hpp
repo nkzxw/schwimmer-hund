@@ -46,12 +46,12 @@ namespace kqueue_event_types
 	static const int rename = 3;
 }
 
-class kevent_error : public std::runtime_error 
-{
-public:
-	kevent_error ( const std::string& err ) : std::runtime_error ( err ) 
-	{}
-};
+//class kevent_error : public std::runtime_error 
+//{
+//public:
+//	kevent_error ( const std::string& err ) : std::runtime_error ( err ) 
+//	{}
+//};
 
 
 class kevent_timeout : public std::runtime_error 
@@ -219,8 +219,8 @@ public:
 		{
 			std::ostringstream oss;
 			oss << "kevent error - Reason: " << std::strerror(errno);
-			//throw (std::runtime_error(oss.str()));
-			throw ( kevent_error( oss.str() ) );
+			//throw ( kevent_error( oss.str() ) );
+			throw (std::runtime_error(oss.str()));
 		}
 		else if ( return_code == 0 ) //timeout
 		{
