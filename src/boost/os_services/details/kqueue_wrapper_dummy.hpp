@@ -5,15 +5,7 @@
 # pragma once
 #endif
 
-//TODO: revisar los headers
-
 #include <stdexcept>
-
-// C-Std Headers
-#include <cerrno>	//TODO: probar si es necesario
-#include <cstdio>	//TODO: probar si es necesario
-#include <cstdlib>	//TODO: probar si es necesario
-#include <cstring>	// for strerror
 
 #include <boost/noncopyable.hpp>
 
