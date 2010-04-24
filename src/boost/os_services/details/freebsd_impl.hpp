@@ -240,7 +240,11 @@ private:
 						notify_file_system_event_args( change_types::created, dir_itr->path() );
 					}
 
-					filesystem_item::pointer_type watch = create_filesystem_item( dir_itr->path(), root_dir->root_user_entry(), root_dir );
+
+					//filesystem_item::pointer_type watch = create_filesystem_item( dir_itr->path(), root_dir->root_user_entry(), root_dir );
+
+					user_entry::pointer_type temp = root_dir->root_user_entry();
+					filesystem_item::pointer_type watch = create_filesystem_item( dir_itr->path(), temp, root_dir );
 					begin_watch( watch, launch_events );
 				}
 			}
