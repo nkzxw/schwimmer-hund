@@ -107,7 +107,7 @@ public:
 
 		//TODO: esto se hace automaticamente en el destructor de kqueue_wrapper, ver que pasa si lo saco. Probar cuando funcione todo bien.
 		//      aparentemente si hacemos el join antes del close del file descriptor algo falla...
-		kq_wrapper.close( true ); //no-throw
+		kq_wrapper.close( true ); //destructor -> no-throw
 
 
 		std::cout << "debug ~freebsd_impl() - 4" << std::endl;
@@ -460,9 +460,6 @@ protected:
 
 		do_callback(renamed_handler_, renamed_event_args(action, path, old_path));
 	}
-
-
-
 
 protected:
 
