@@ -77,15 +77,9 @@ There are platforms that are not supported due to lack of developer resources. I
 
 #include <boost/os_services/change_types.hpp>
 #include <boost/os_services/details/base_impl.hpp>
-
-//#include <boost/os_services/details/file_inode_info.hpp> //TODO: cambiado temporalmente al dummy
-#include <boost/os_services/details/file_inode_info_dummy.hpp>
-
+#include <boost/os_services/details/file_inode_info.hpp>
 #include <boost/os_services/details/filesystem_item.hpp>
-
-//#include <boost/os_services/details/kqueue_wrapper.hpp> //TODO: cambiado temporalmente al dummy
-#include <boost/os_services/details/kqueue_wrapper_dummy.hpp>
-
+#include <boost/os_services/details/kqueue_wrapper.hpp>
 #include <boost/os_services/details/user_entry.hpp>
 #include <boost/os_services/notify_filters.hpp>
 
@@ -225,8 +219,7 @@ private:
 		{
 			try
 			{
-				//file_inode_info inode_info( dir_itr->path() );	//TODO: temporalmente
-				file_inode_info_dummy inode_info( dir_itr->path() );
+				file_inode_info inode_info( dir_itr->path() );
 
 				//TODO: reemplazar por std::find o algo similar...
 				//Linear-search
@@ -298,8 +291,7 @@ private:
 			boost::filesystem::directory_iterator dir_itr( root_path );
 			for ( ; dir_itr != end_iter; ++dir_itr )
 			{
-				//file_inode_info inode_info ( dir_itr->path() ); //TODO: puede arrojar una excepcion //TODO: temporalmente
-				file_inode_info_dummy inode_info ( dir_itr->path() ); //TODO: puede arrojar una excepcion
+				file_inode_info inode_info ( dir_itr->path() ); //TODO: puede arrojar una excepcion
 
 				
 				if ( watch->inode_info_ == inode_info )
@@ -465,9 +457,7 @@ private:
 
 	thread_type thread_;
 	bool is_initialized_;
-	//kqueue_wrapper kq_wrapper;  //TODO: cambiado temporalmente al dummy
-	kqueue_wrapper_dummy kq_wrapper;
-
+	kqueue_wrapper kq_wrapper;
 	bool closing_;
 	user_entry::collection_type user_watches_;
 	//filesystem_item::collection_type all_watches_; //TODO: quizas haga falta contabilizar todos los watches en un solo lugar... VER
