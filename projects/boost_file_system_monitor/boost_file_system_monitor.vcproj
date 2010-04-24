@@ -204,6 +204,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\boost\os_services\details\file_inode_info.hpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\boost\os_services\details\file_inode_info_dummy.hpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\boost\os_services\file_system_monitor.hpp"
 				>
 			</File>
@@ -224,6 +232,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\boost\os_services\details\kqueue_wrapper_dummy.hpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\boost\os_services\details\linux_impl.hpp"
 				>
 			</File>
@@ -233,6 +245,14 @@
 			</File>
 			<File
 				RelativePath="..\..\src\boost\os_services\notify_filters.hpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\boost\os_services\posix_syscall_wrapper.hpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\boost\os_services\posix_syscall_wrapper_dummy.hpp"
 				>
 			</File>
 			<File

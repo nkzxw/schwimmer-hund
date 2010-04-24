@@ -1,24 +1,36 @@
 #ifndef BOOST_OS_SERVICES_DETAIL_FILESYSTEM_ITEM_HPP
 #define BOOST_OS_SERVICES_DETAIL_FILESYSTEM_ITEM_HPP
 
+#if defined(_MSC_VER) && (_MSC_VER >= 1200)
+# pragma once
+#endif
+
 //#include <iostream>
 
 //TODO: revisar los headers
 
-// C-Std headers
-#include <cerrno>	//TODO: probar si es necesario
-#include <cstdio>	//TODO: probar si es necesario
-#include <cstdlib>	//TODO: probar si es necesario
-#include <cstring>	// for strerror
+//// C-Std headers
+//#include <cerrno>	//TODO: probar si es necesario
+//#include <cstdio>	//TODO: probar si es necesario
+//#include <cstdlib>	//TODO: probar si es necesario
+//#include <cstring>	// for strerror
 
 // POSIX headers
-#include <sys/event.h>
-#include <sys/fcntl.h>
-#include <sys/time.h>
-#include <sys/types.h>
-#include <unistd.h>
+//#include <sys/event.h>
+//#include <sys/fcntl.h>
+//#include <sys/time.h>
+//#include <sys/types.h>
+//#include <unistd.h>
 
 #include <boost/filesystem/path.hpp>
+
+//#include <boost/os_services/details/file_inode_info.hpp>  //TODO: cambiado temporalmente al dummy
+#include <boost/os_services/details/file_inode_info_dummy.hpp>
+
+//#include <boost/os_services/posix_syscall_wrapper.hpp>  //TODO: cambiado temporalmente al dummy
+#include <boost/os_services/posix_syscall_wrapper_dummy.hpp>
+
+
 
 
 //TODO: sacar
@@ -41,10 +53,6 @@ enum {
 
 #define PN_ALL_EVENTS	(PN_ACCESS | PN_CREATE | PN_DELETE | PN_MODIFY | PN_RENAME)
 
-//O_EVTONLY solo existe en MacOSX, no en FreeBSD
-#ifndef O_EVTONLY
-#define O_EVTONLY O_RDONLY
-#endif
 
 
 
@@ -101,25 +109,28 @@ public:
 		return ( this->path_ == other->path_ && this->inode_info_ == other->inode_info_ );
 	}
 
-	bool is_equal(const file_inode_info& inode_info, const boost::filesystem::path& path) const
+	bool is_equal(const file_inode_info_dummy& inode_info, const boost::filesystem::path& path) const //TODO: temporalmente
 	{
 		return (  this->inode_info_ == inode_info && this->path_ == path );
 	}
 
 	void open()
 	{
-		this->file_descriptor_ = ::open( path_.native_file_string().c_str(), O_EVTONLY );
+		//this->file_descriptor_ = ::open( path_.native_file_string().c_str(), O_EVTONLY );
 
-		//std::cout << "this->file_descriptor_: " << this->file_descriptor_ << std::endl;
-		//std::cout << "path_.native_file_string(): " << path_.native_file_string() << std::endl;
+		////std::cout << "this->file_descriptor_: " << this->file_descriptor_ << std::endl;
+		////std::cout << "path_.native_file_string(): " << path_.native_file_string() << std::endl;
 
-		if ( this->file_descriptor_ == -1 )
-		{
-			std::ostringstream oss;
-			oss << "open failed - File: " << path_.native_file_string() << " - Reason: " << std::strerror(errno);
-			throw (std::runtime_error(oss.str()));
-			//throw (std::invalid_argument(oss.str()));
-		}
+		//if ( this->file_descriptor_ == -1 )
+		//{
+		//	std::ostringstream oss;
+		//	oss << "open failed - File: " << path_.native_file_string() << " - Reason: " << std::strerror(errno);
+		//	throw (std::runtime_error(oss.str()));
+		//	//throw (std::invalid_argument(oss.str()));
+		//}
+
+		//this->file_descriptor_ = boost::os_services::posix_syscall_wrapper::open_file( path_ ); //TODO: temporalmente
+		this->file_descriptor_ = boost::os_services::posix_syscall_wrapper_dummy::open_file( path_ );
 		this->inode_info_.set( this->path_ );
 	}
 
@@ -256,7 +267,8 @@ public: //private:
 	int file_descriptor_;
 	//TODO: ver si es necesario
 	boost::uint32_t mask_;
-	file_inode_info inode_info_;
+	
+	file_inode_info_dummy inode_info_; //TODO: temporalmente
 
 	boost::weak_ptr<filesystem_item> parent_; //avoid circular references
 	//TODO: ver que pasa si agregamos el mismo directorio como dos user_entry distintos... el open da el mismo file descriptor?
