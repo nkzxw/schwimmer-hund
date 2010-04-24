@@ -40,7 +40,8 @@ public:
 
 	}
 
-	//virtual ~FileSystemMonitor()
+	//TODO: ver que todos los destructores sean virtuales...
+	//virtual ~file_system_monitor()
 	//{
 	//}
 
@@ -124,6 +125,7 @@ private:
 	//std::string filter_;
 	//bool include_subdirectories_;
 
+	//TODO: typedef
 	boost::shared_ptr<detail::fsm_implementation_type> implementation_;
 };
 
