@@ -179,7 +179,10 @@ private:
 		return watch;
 	}
 
-	static filesystem_item::pointer_type create_filesystem_item ( const boost::filesystem::path& path, user_entry::pointer_type& entry, filesystem_item::pointer_type& parent )
+
+
+	//static filesystem_item::pointer_type create_filesystem_item ( const boost::filesystem::path& path, user_entry::pointer_type& entry, filesystem_item::pointer_type& parent )
+	static filesystem_item::pointer_type create_filesystem_item ( const boost::filesystem::path& path, user_entry_pointer_type& entry, filesystem_item::pointer_type& parent )
 	{
 		filesystem_item::pointer_type watch = create_filesystem_item( path, entry );
 
@@ -393,13 +396,13 @@ private:
 					}
 				}
 			}
-			catch( const kevent_error& e )
-			{
-				std::cout << "END kevent_error filesystem_item::pointer_type watch = kq_wrapper.get<filesystem_item>( event_type );" << std::endl;
+			//catch( const kevent_error& e )
+			//{
+			//	std::cout << "END kevent_error filesystem_item::pointer_type watch = kq_wrapper.get<filesystem_item>( event_type );" << std::endl;
 
-				//TODO: para que capturo la excepcion si la voy a relanzar ????
-				throw; //re-throw
-			}
+			//	//TODO: para que capturo la excepcion si la voy a relanzar ????
+			//	throw; //re-throw
+			//}
 		}
 	}
 
