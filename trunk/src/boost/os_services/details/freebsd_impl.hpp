@@ -128,12 +128,30 @@ public:
 	void add_directory_impl ( const std::string& dir_name )
 	{
 		//TODO: asignar mask
-		//user_entry::pointer_type item ( new user_entry( dir_name ) );
 		user_entry::pointer_type item = user_entry::create( dir_name );
 		user_watches_.push_back(item);
 	}
 
 	//void remove_directory_impl(const std::string& dir_name) // throw (std::invalid_argument);
+
+
+
+	void start()
+	{
+		this->initialize();
+
+		//TODO: BOOST_FOREACH
+		//TODO: STL transform
+		for (user_entry::collection_type::iterator it = user_watches_.begin(); it != user_watches_.end(); ++it )
+		{
+			filesystem_item::pointer_type watch = create_filesystem_item ( (*it)->path(), *it );
+			begin_watch( watch, false );
+		}
+
+		thread_.reset( new boost::thread( boost::bind(&freebsd_impl::handle_directory_changes, this) ) );
+	}
+
+private:
 
 	//TODO: ver si hace falta hacer lo mismo para Windows
 	void initialize() //TODO: protected
@@ -145,26 +163,7 @@ public:
 		}
 	}
 
-	void start()
-	{
-		this->initialize();
-
-		//TODO: BOOST_FOREACH
-		//TODO: STL transform
-		for (user_entry::collection_type::iterator it = user_watches_.begin(); it != user_watches_.end(); ++it )
-		{
-			//it->initialize();
-			filesystem_item::pointer_type watch = create_filesystem_item ( (*it)->path(), *it );
-			begin_watch( watch, false );
-		}
-
-		thread_.reset( new boost::thread( boost::bind(&freebsd_impl::handle_directory_changes, this) ) );
-	}
-
-public: //private:  //TODO:
-
-	//TODO: static?????
-	filesystem_item::pointer_type create_filesystem_item ( const boost::filesystem::path& path, user_entry::pointer_type entry )
+	static filesystem_item::pointer_type create_filesystem_item ( const boost::filesystem::path& path, user_entry::pointer_type& entry )
 	{
 		filesystem_item::pointer_type watch = filesystem_item::create( path, entry );
 		entry->set_root ( watch );
@@ -180,26 +179,20 @@ public: //private:  //TODO:
 		return watch;
 	}
 
-	//TODO: static?????
-	filesystem_item::pointer_type create_filesystem_item ( const boost::filesystem::path& path, user_entry::pointer_type entry, filesystem_item::pointer_type parent )
+	static filesystem_item::pointer_type create_filesystem_item ( const boost::filesystem::path& path, user_entry::pointer_type& entry, filesystem_item::pointer_type& parent )
 	{
 		filesystem_item::pointer_type watch = create_filesystem_item( path, entry );
 
 		if ( parent )
 		{
-			//watch->parent_ = parent; //TODO: crear set_parent en filesystem_item
 			watch->set_parent( parent );
-			//TODO: agregar metodo add_subitem a filesystem_item
-			//parent->subitems_.push_back( watch );
 			parent->add_subitem( watch );
 		}
 		return watch;
 	}
 
-
-
 	//TODO: no me gusta el nombre...
-	void begin_watch( filesystem_item::pointer_type watch, bool launch_events = false )
+	void begin_watch( filesystem_item::pointer_type& watch, bool launch_events = false )
 	{
 		watch->open(); //TODO: catch errors
 
@@ -214,7 +207,7 @@ public: //private:  //TODO:
 
 
 	//TODO: contemplar la opcion include_sub_directories_
-	void scan_directory( filesystem_item::pointer_type root_dir, bool launch_events = false )
+	void scan_directory( filesystem_item::pointer_type& root_dir, bool launch_events = false )
 	{
 		boost::filesystem::directory_iterator end_iter;
 		for ( boost::filesystem::directory_iterator dir_itr( root_dir->path() ); dir_itr != end_iter; ++dir_itr )
@@ -244,7 +237,7 @@ public: //private:  //TODO:
 						notify_file_system_event_args( change_types::created, dir_itr->path() );
 					}
 
-					filesystem_item::pointer_type watch = create_filesystem_item( dir_itr->path(), root_dir->root_user_entry_.lock(), root_dir );
+					filesystem_item::pointer_type watch = create_filesystem_item( dir_itr->path(), root_dir->root_user_entry(), root_dir );
 					begin_watch( watch, launch_events );
 				}
 			}
@@ -256,38 +249,31 @@ public: //private:  //TODO:
 		}
 	}
 
-	void rename_watch ( filesystem_item::pointer_type watch, const boost::filesystem::path& new_path ) 
+	void rename_watch ( filesystem_item::pointer_type& watch, const boost::filesystem::path& new_path ) 
 	{
 		watch->set_path( new_path );
 	}
 	
-	void remove_watch ( filesystem_item::pointer_type watch ) 
+	void remove_watch ( filesystem_item::pointer_type& watch ) 
 	{
 		//std::cout << "watch->path().native_file_string(): " << watch->path().native_file_string() << std::endl;
 		//std::cout << "watch->parent_->path().native_file_string(): " << watch->parent_->path().native_file_string() << std::endl;
 
 		//TODO: que pasa si no tiene parent... Hacer Unit Test que elimine el directorio que estamos haciendo WATCH
-		//watch->parent_->remove_subitem( watch );
-		watch->parent()->remove_subitem( watch );
+		if ( watch->parent() )
+		{
+			watch->parent()->remove_subitem( watch );
+		}
 
-		//TODO: ver si tengo que usar el metodo lock de weak_ptr
-		//user_entry::pointer_type root ( watch->root_user_entry_ );
-		//root->remove_watch( watch );
 		watch->root_user_entry()->remove_watch( watch );
-
 
 		//TODO: llamar a metodo que lanza el evento...
 
 	}
 
-	void handle_rename( filesystem_item::pointer_type watch )
+	void handle_rename( filesystem_item::pointer_type& watch )
 	{
 		boost::filesystem::path root_path;
-
-		// root_path = watch->root_user_entry_->path();
-
-		//user_entry::pointer_type root ( watch->root_user_entry_ );
-		//root_path = root->path();
 
 		root_path = watch->root_user_entry()->path();
 
@@ -322,13 +308,13 @@ public: //private:  //TODO:
 		}
 	}
 
-	void handle_remove( filesystem_item::pointer_type watch )
+	void handle_remove( filesystem_item::pointer_type& watch )
 	{
 		notify_file_system_event_args( change_types::deleted, watch->path() );
 		remove_watch ( watch );
 	}
 
-	void handle_write( filesystem_item::pointer_type watch )
+	void handle_write( filesystem_item::pointer_type& watch )
 	{
 		if ( watch->is_directory() )
 		{
@@ -417,7 +403,7 @@ public: //private:  //TODO:
 		}
 	}
 
-protected:
+//protected:
 
 	//TODO: las tres funciones siguientes estan duplicadas en windows_impl y freebsd_impl -> RESOLVER
 	//inline void notify_file_system_event_args( int action, const std::string& directory, const std::string& name )
@@ -461,7 +447,7 @@ protected:
 		do_callback(renamed_handler_, renamed_event_args(action, path, old_path));
 	}
 
-protected:
+//protected:
 
 	thread_type thread_;
 	bool is_initialized_;
