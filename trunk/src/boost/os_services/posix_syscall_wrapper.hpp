@@ -52,6 +52,32 @@ int open_file( const boost::filesystem::path& path )
 
 }
 
+
+void close_file( int file_descriptor, bool no_throw = false )
+{
+	std::cout << "void close( bool no_throw = false, bool close_subitems = true )" << std::endl;
+
+	if ( file_descriptor != 0 )
+	{
+		int ret_value = ::close( file_descriptor ); //close
+		if ( ret_value == -1 )
+		{
+			if ( no_throw )
+			{
+				//Destructor -> no-throw
+				std::cerr << "Failed to close file descriptor - File descriptor: '" << file_descriptor << "' - File path: '" << this->path_.native_file_string() << "' - Reason: " << std::strerror(errno) << std::endl;
+			}
+			else
+			{
+				std::ostringstream oss;
+				oss << "Failed to close file descriptor - File descriptor: '" << file_descriptor << "' - File path: '" << this->path_.native_file_string() << "' - Reason: " << std::strerror(errno);
+				throw (std::runtime_error(oss.str()));					
+			}
+		}
+		file_descriptor = 0;
+	}
+}
+
 } // namespace posix_syscall_wrapper
 } // namespace os_services
 } // namespace boost
