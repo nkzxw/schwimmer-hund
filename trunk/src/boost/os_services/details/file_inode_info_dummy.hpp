@@ -75,10 +75,10 @@ struct file_inode_info_dummy
 		return ( this->device_id_ == other.device_id_ && this->inode_number_ == other.inode_number_ );
 	}
 
-	bool operator==(const struct stat& other) const
-	{
-		return ( this->device_id_ == other.st_dev && this->inode_number_ == other.st_ino );
-	}
+	//bool operator==(const struct stat& other) const
+	//{
+	//	return ( this->device_id_ == other.st_dev && this->inode_number_ == other.st_ino );
+	//}
 
 	int device_id_;
 	int inode_number_;
