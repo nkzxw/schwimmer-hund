@@ -2,7 +2,6 @@
 //TODO: ver Guidelines: http://www.boost.org/doc/libs/1_42_0/libs/ptr_container/doc/guidelines.html
 //TODO: ver, leer: http://www.gotw.ca/publications/mill18.htm
 //TODO: ver: http://www.boost.org/doc/libs/1_42_0/libs/smart_ptr/make_shared.html
-//TODO: weak_ptr
 //TODO: class invariants:  http://www.informit.com/articles/article.aspx?p=21084&seqNum=4
 //                         http://en.wikipedia.org/wiki/Class_invariant
 
@@ -56,6 +55,7 @@ There are platforms that are not supported due to lack of developer resources. I
 #define BOOST_OS_SERVICES_DETAIL_FREEBSD_IMPL_HPP
 
 //TODO: agregar a todos los archivos fuente... quizas este freebsd y etc no, es al pedo
+//TODO: chequear que librerias BOOST lo usan...
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
 #endif
