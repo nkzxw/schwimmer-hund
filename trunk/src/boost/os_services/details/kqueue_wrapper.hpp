@@ -22,6 +22,8 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#include <boost/noncopyable.hpp>
+
 #include <boost/os_services/details/kqueue_watch_item.hpp>
 
 
@@ -70,9 +72,8 @@ struct null_deleter
 
 
 //TODO: debe ser singleton, ver como implementarlo...
-//TODO: heredar de una clase abstracta
-//TODO: non-copiable...
-class kqueue_wrapper 
+//TODO: heredar de una clase abstracta, para poder hacer un dummy object con las mismas funcionalidades, salvo que se templarice
+class kqueue_wrapper : private boost::noncopyable
 {
 public:
 
