@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Intel C++ Project"
+	Version="11.1"
+	Name="stress_test_file_generator_and_watcher"
+	ProjectGUID="{BF72ADC2-3015-4B4E-ADFE-F2A54AB123B1}"
+	VCNestedProjectGUID="{63DD2824-6B4E-49E5-89C8-BF00EED71A7F}"
+	VCNestedProjectFileName="stress_test_file_generator_and_watcher.vcproj">
+	<Configurations/>
+	<Files/>
+</VisualStudioProject>
