@@ -6,11 +6,11 @@
 
 #include <boost/filesystem/path.hpp>
 
-//from sys/stat.h
-struct stat {
-	int st_dev;               /* inode's device */
-	int st_ino;               /* inode's number */
-};
+////from sys/stat.h	//redefinition on winodows...
+//struct stat {
+//	int st_dev;               /* inode's device */
+//	int st_ino;               /* inode's number */
+//};
 
 
 
@@ -52,19 +52,19 @@ struct file_inode_info_dummy
 		return *this;
 	}
 
-	void set ( int device_id, int inode_number )
+	void set( int device_id, int inode_number )
 	{
 		this->device_id_ = device_id;
 		this->inode_number_ = inode_number;
 	}
 
-	void set ( const struct stat& st )
-	{
-		this->device_id_ = st.st_dev;
-		this->inode_number_ = st.st_ino;
-	}
+	//void set( const struct stat& st )
+	//{
+	//	this->device_id_ = st.st_dev;
+	//	this->inode_number_ = st.st_ino;
+	//}
 
-	void set ( const boost::filesystem::path& path )
+	void set( const boost::filesystem::path& path )
 	{
 		this->device_id_ = 1;
 		this->inode_number_ = 1;
