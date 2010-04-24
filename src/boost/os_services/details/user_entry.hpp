@@ -1,11 +1,10 @@
 #ifndef BOOST_OS_SERVICES_DETAIL_USER_ENTRY_HPP
 #define BOOST_OS_SERVICES_DETAIL_USER_ENTRY_HPP
 
-
-//#include <iostream>
 #include <boost/filesystem/path.hpp>
 
 #include <boost/os_services/details/filesystem_item.hpp>
+
 
 namespace boost {
 namespace os_services {
@@ -54,9 +53,6 @@ struct user_entry //: public enable_shared_from_this<user_entry>
 		return entry;
 	}
 
-	//TODO: crear un metodo CREATE y ocultar los constructores...
-	//user_entry::pointer_type item ( new user_entry( dir_name ) );
-
 	//TODO: eliminar este destructor. Verificar que destructores hay y cuales deberian ser virtuales...
 	~user_entry()
 	{
@@ -73,14 +69,12 @@ struct user_entry //: public enable_shared_from_this<user_entry>
 		std::cout << "~user_entry() - END" << std::endl;
 	}
 
-
-	//TODO: buscar todos los metodos que reciban un pointer type y reemplazarlos por un const reference a ese pointer type.
-	void add_watch( filesystem_item::pointer_type item )
+	void add_watch( const filesystem_item::pointer_type& item )
 	{
 		all_watches_.push_back(item);
 	}
 
-	void remove_watch( filesystem_item::pointer_type watch )
+	void remove_watch( const filesystem_item::pointer_type& watch )
 	{
 		//TODO: usar STL
 		filesystem_item::collection_type::iterator it = all_watches_.begin();
@@ -103,7 +97,7 @@ struct user_entry //: public enable_shared_from_this<user_entry>
 		return this->path_; 
 	}
 
-	void set_root( filesystem_item::pointer_type root )
+	void set_root( const filesystem_item::pointer_type& root )
 	{
 		this->root_ = root_;
 	}
