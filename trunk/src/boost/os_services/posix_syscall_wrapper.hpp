@@ -34,7 +34,7 @@ namespace posix_syscall_wrapper
 
 int open_file( const boost::filesystem::path& path )
 {
-	int file_descriptor = ::open( path_.native_file_string().c_str(), O_EVTONLY );
+	int file_descriptor = ::open( path.native_file_string().c_str(), O_EVTONLY );
 
 	//std::cout << "file_descriptor: " << file_descriptor << std::endl;
 	//std::cout << "path.native_file_string(): " << path.native_file_string() << std::endl;
@@ -65,12 +65,13 @@ void close_file( int file_descriptor, bool no_throw = false )
 			if ( no_throw )
 			{
 				//Destructor -> no-throw
-				std::cerr << "Failed to close file descriptor - File descriptor: '" << file_descriptor << "' - File path: '" << this->path_.native_file_string() << "' - Reason: " << std::strerror(errno) << std::endl;
+				//std::cerr << "Failed to close file descriptor - File descriptor: '" << file_descriptor << "' - File path: '" << this->path.native_file_string() << "' - Reason: " << std::strerror(errno) << std::endl;
+				std::cerr << "Failed to close file descriptor - File descriptor: '" << file_descriptor << "' - Reason: " << std::strerror(errno) << std::endl;
 			}
 			else
 			{
 				std::ostringstream oss;
-				oss << "Failed to close file descriptor - File descriptor: '" << file_descriptor << "' - File path: '" << this->path_.native_file_string() << "' - Reason: " << std::strerror(errno);
+				oss << "Failed to close file descriptor - File descriptor: '" << file_descriptor << "' - Reason: " << std::strerror(errno);
 				throw (std::runtime_error(oss.str()));					
 			}
 		}
