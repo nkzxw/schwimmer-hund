@@ -185,29 +185,29 @@ Command(TEST_DIR + "/" + string.replace(str( stress_test_watcher_dynamic_dbg[0] 
 
 
 
-## -------------- test_misc
+# -------------- test_misc
+
+obj = release_dynamic_env.Object('test_misc_dynamic_rel', [ SRC_DIR + '/libs/os_services/test/test_misc.cpp'])
+test_misc_dynamic_rel = release_dynamic_env.Program('test_misc_' + PLATFORM_STR + '_dynamic_release', obj ) #CPPFLAGS = ['/MD'] ) 
+
+if Platform().name == 'win32':
+	release_dynamic_env.AddPostAction(test_misc_dynamic_rel, 'mt.exe -nologo -manifest ${TARGET}.manifest -outputresource:$TARGET;1')
+
+#obj = release_static_env.Object('test_misc_static_rel', [ SRC_DIR + '/libs/os_services/test/test_misc.cpp'])
+#test_misc_static_rel = release_static_env.Program('test_misc_' + PLATFORM_STR + '_static_release', obj )
 #
-#obj = release_dynamic_env.Object('test_misc_dynamic_rel', [ SRC_DIR + '/libs/os_services/test/test_kqueue.cpp'])
-#test_misc_dynamic_rel = release_dynamic_env.Program('test_misc_' + PLATFORM_STR + '_dynamic_release', obj ) #CPPFLAGS = ['/MD'] ) 
+#obj = debug_dynamic_env.Object('test_misc_dynamic_dbg', [ SRC_DIR + '/libs/os_services/test/test_misc.cpp'])
+#test_misc_dynamic_dbg = debug_dynamic_env.Program('test_misc_' + PLATFORM_STR + '_dynamic_debug', obj)
 #
 #if Platform().name == 'win32':
-#	release_dynamic_env.AddPostAction(test_misc_dynamic_rel, 'mt.exe -nologo -manifest ${TARGET}.manifest -outputresource:$TARGET;1')
+#	debug_dynamic_env.AddPostAction(test_misc_dynamic_dbg, 'mt.exe -nologo -manifest ${TARGET}.manifest -outputresource:$TARGET;1')
 #
-##obj = release_static_env.Object('test_misc_static_rel', [ SRC_DIR + '/libs/os_services/test/test_kqueue.cpp'])
-##test_misc_static_rel = release_static_env.Program('test_misc_' + PLATFORM_STR + '_static_release', obj )
-##
-##obj = debug_dynamic_env.Object('test_misc_dynamic_dbg', [ SRC_DIR + '/libs/os_services/test/test_kqueue.cpp'])
-##test_misc_dynamic_dbg = debug_dynamic_env.Program('test_misc_' + PLATFORM_STR + '_dynamic_debug', obj)
-##
-##if Platform().name == 'win32':
-##	debug_dynamic_env.AddPostAction(test_misc_dynamic_dbg, 'mt.exe -nologo -manifest ${TARGET}.manifest -outputresource:$TARGET;1')
-##
-##
-##obj = debug_static_env.Object('test_misc_static_dbg', [ SRC_DIR + '/libs/os_services/test/test_kqueue.cpp'])
-##test_misc_static_dbg = debug_static_env.Program('test_misc_' + PLATFORM_STR + '_static_debug', obj)
 #
-##Command(TEST_DIR + "/" + string.replace(str( test_misc_dynamic_rel[0] ), "_" + PLATFORM_STR + "_dynamic_release", ""), BUILD_DIR + "/" + str ( test_misc_dynamic_rel[0] ), Copy("$TARGET", "$SOURCE"))
-#Command(TEST_DIR + "/" + string.replace(str( test_misc_dynamic_dbg[0] ), "_" + PLATFORM_STR + "_dynamic_debug", ""), BUILD_DIR + "/" + str ( test_misc_dynamic_dbg[0] ), Copy("$TARGET", "$SOURCE"))
+#obj = debug_static_env.Object('test_misc_static_dbg', [ SRC_DIR + '/libs/os_services/test/test_misc.cpp'])
+#test_misc_static_dbg = debug_static_env.Program('test_misc_' + PLATFORM_STR + '_static_debug', obj)
+
+#Command(TEST_DIR + "/" + string.replace(str( test_misc_dynamic_rel[0] ), "_" + PLATFORM_STR + "_dynamic_release", ""), BUILD_DIR + "/" + str ( test_misc_dynamic_rel[0] ), Copy("$TARGET", "$SOURCE"))
+Command(TEST_DIR + "/" + string.replace(str( test_misc_dynamic_dbg[0] ), "_" + PLATFORM_STR + "_dynamic_debug", ""), BUILD_DIR + "/" + str ( test_misc_dynamic_dbg[0] ), Copy("$TARGET", "$SOURCE"))
 
 
 

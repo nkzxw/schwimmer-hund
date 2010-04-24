@@ -175,6 +175,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\libs\os_services\test\test_misc.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\libs\os_services\test\test_smart_ptrs.cpp"
 				>
 			</File>
