@@ -139,6 +139,35 @@ public:
 	{
 		std::cout << "void close( bool no_throw = false, bool close_subitems = true )" << std::endl;
 
+		//if ( this->file_descriptor_ != 0 )
+		//{
+		//	if ( close_subitems )
+		//	{
+		//		for (filesystem_item::collection_type::iterator it =  this->subitems_.begin(); it != this->subitems_.end(); ++it )
+		//		{
+		//			(*it)->close( no_throw, close_subitems );
+		//		}
+		//	}
+
+		//	int ret_value = ::close( this->file_descriptor_ ); //close
+		//	if ( ret_value == -1 )
+		//	{
+		//		if ( no_throw )
+		//		{
+		//			//Destructor -> no-throw
+		//			std::cerr << "Failed to close file descriptor - File descriptor: '" << this->file_descriptor_ << "' - File path: '" << this->path_.native_file_string() << "' - Reason: " << std::strerror(errno) << std::endl;
+		//		}
+		//		else
+		//		{
+		//			std::ostringstream oss;
+		//			oss << "Failed to close file descriptor - File descriptor: '" << this->file_descriptor_ << "' - File path: '" << this->path_.native_file_string() << "' - Reason: " << std::strerror(errno);
+		//			throw (std::runtime_error(oss.str()));					
+		//		}
+		//	}
+		//	this->file_descriptor_ = 0;
+		//}
+
+
 		if ( this->file_descriptor_ != 0 )
 		{
 			if ( close_subitems )
@@ -149,21 +178,9 @@ public:
 				}
 			}
 
-			int ret_value = ::close( this->file_descriptor_ ); //close
-			if ( ret_value == -1 )
-			{
-				if ( no_throw )
-				{
-					//Destructor -> no-throw
-					std::cerr << "Failed to close file descriptor - File descriptor: '" << this->file_descriptor_ << "' - File path: '" << this->path_.native_file_string() << "' - Reason: " << std::strerror(errno) << std::endl;
-				}
-				else
-				{
-					std::ostringstream oss;
-					oss << "Failed to close file descriptor - File descriptor: '" << this->file_descriptor_ << "' - File path: '" << this->path_.native_file_string() << "' - Reason: " << std::strerror(errno);
-					throw (std::runtime_error(oss.str()));					
-				}
-			}
+			//boost::os_services::posix_syscall_wrapper::close_file( this->file_descriptor_ );			//TODO: temporal
+			boost::os_services::posix_syscall_wrapper_dummy::close_file( this->file_descriptor_ );
+
 			this->file_descriptor_ = 0;
 		}
 	}

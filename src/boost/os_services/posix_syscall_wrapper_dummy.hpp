@@ -16,6 +16,15 @@ int open_file( const boost::filesystem::path& path )
 	return file_descriptor;
 }
 
+
+void close_file( int file_descriptor, bool no_throw = false )
+{
+	if ( file_descriptor != 0 )
+	{
+		file_descriptor = 0;
+	}
+}
+
 } // namespace posix_syscall_wrapper_dummy
 } // namespace os_services
 } // namespace boost
