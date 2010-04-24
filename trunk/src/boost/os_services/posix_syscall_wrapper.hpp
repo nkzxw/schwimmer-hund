@@ -55,7 +55,7 @@ int open_file( const boost::filesystem::path& path )
 
 void close_file( int file_descriptor, bool no_throw = false )
 {
-	std::cout << "void close( bool no_throw = false, bool close_subitems = true )" << std::endl;
+	//std::cout << "void close( bool no_throw = false, bool close_subitems = true )" << std::endl;
 
 	if ( file_descriptor != 0 )
 	{

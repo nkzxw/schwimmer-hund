@@ -137,7 +137,7 @@ public:
 	//TODO: protected o no.... ????? ver!
 	void close( bool no_throw = false, bool close_subitems = true )
 	{
-		std::cout << "void close( bool no_throw = false, bool close_subitems = true )" << std::endl;
+		//std::cout << "void close( bool no_throw = false, bool close_subitems = true )" << std::endl;
 
 		//if ( this->file_descriptor_ != 0 )
 		//{
