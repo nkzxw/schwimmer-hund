@@ -24,13 +24,8 @@
 
 #include <boost/filesystem/path.hpp>
 
-//#include <boost/os_services/details/file_inode_info.hpp>  //TODO: cambiado temporalmente al dummy
-#include <boost/os_services/details/file_inode_info_dummy.hpp>
-
-//#include <boost/os_services/posix_syscall_wrapper.hpp>  //TODO: cambiado temporalmente al dummy
-#include <boost/os_services/posix_syscall_wrapper_dummy.hpp>
-
-
+#include <boost/os_services/details/file_inode_info.hpp>
+#include <boost/os_services/posix_syscall_wrapper.hpp>
 
 
 //TODO: sacar
@@ -109,7 +104,7 @@ public:
 		return ( this->path_ == other->path_ && this->inode_info_ == other->inode_info_ );
 	}
 
-	bool is_equal(const file_inode_info_dummy& inode_info, const boost::filesystem::path& path) const //TODO: temporalmente
+	bool is_equal(const file_inode_info& inode_info, const boost::filesystem::path& path) const
 	{
 		return (  this->inode_info_ == inode_info && this->path_ == path );
 	}
@@ -129,8 +124,7 @@ public:
 		//	//throw (std::invalid_argument(oss.str()));
 		//}
 
-		//this->file_descriptor_ = boost::os_services::posix_syscall_wrapper::open_file( path_ ); //TODO: temporalmente
-		this->file_descriptor_ = boost::os_services::posix_syscall_wrapper_dummy::open_file( path_ );
+		this->file_descriptor_ = boost::os_services::posix_syscall_wrapper::open_file( path_ );
 		this->inode_info_.set( this->path_ );
 	}
 
@@ -178,8 +172,7 @@ public:
 				}
 			}
 
-			//boost::os_services::posix_syscall_wrapper::close_file( this->file_descriptor_ );			//TODO: temporal
-			boost::os_services::posix_syscall_wrapper_dummy::close_file( this->file_descriptor_ );
+			boost::os_services::posix_syscall_wrapper::close_file( this->file_descriptor_ );
 
 			this->file_descriptor_ = 0;
 		}
@@ -284,7 +277,7 @@ public: //private:
 	//TODO: ver si es necesario
 	boost::uint32_t mask_;
 	
-	file_inode_info_dummy inode_info_; //TODO: temporalmente
+	file_inode_info inode_info_;
 
 	boost::weak_ptr<filesystem_item> parent_; //avoid circular references
 	//TODO: ver que pasa si agregamos el mismo directorio como dos user_entry distintos... el open da el mismo file descriptor?
