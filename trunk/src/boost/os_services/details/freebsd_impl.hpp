@@ -119,8 +119,6 @@ public:
 		}
 
 		std::cout << "debug ~freebsd_impl() - 7" << std::endl;
-
-		std::cout << "debug ~freebsd_impl() - 8" << std::endl;
 	}
 
 
@@ -195,7 +193,6 @@ public: //private:  //TODO:
 			//parent->subitems_.push_back( watch );
 			parent->add_subitem( watch );
 		}
-
 		return watch;
 	}
 
@@ -251,7 +248,7 @@ public: //private:  //TODO:
 					begin_watch( watch, launch_events );
 				}
 			}
-			catch ( const std::exception & ex )
+			catch ( const std::exception& ex )
 			{
 				//TODO: manejar esta excepcion
 				std::cout << dir_itr->path().native_file_string() << " " << ex.what() << std::endl;
@@ -288,8 +285,11 @@ public: //private:  //TODO:
 		boost::filesystem::path root_path;
 
 		// root_path = watch->root_user_entry_->path();
-		user_entry::pointer_type root ( watch->root_user_entry_ );
-		root_path = root->path();
+
+		//user_entry::pointer_type root ( watch->root_user_entry_ );
+		//root_path = root->path();
+
+		root_path = watch->root_user_entry()->path();
 
 		if ( ! root_path.empty() )
 		{
