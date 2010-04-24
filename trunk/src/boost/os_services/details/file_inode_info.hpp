@@ -2,11 +2,9 @@
 #define BOOST_OS_SERVICES_DETAIL_FILE_INODE_INFO_HPP
 
 
-//#include <iostream>
-#include <sstream>
-#include <string>
-
-#include <cstring>	// for strerror
+//#include <sstream>
+//#include <string>
+//#include <cstring>	// for strerror
 
 #include <sys/stat.h>
 
