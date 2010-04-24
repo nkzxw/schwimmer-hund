@@ -223,7 +223,8 @@ private:
 		{
 			try
 			{
-				file_inode_info inode_info( dir_itr->path() );
+				//file_inode_info inode_info( dir_itr->path() );	//TODO: temporalmente
+				file_inode_info_dummy inode_info( dir_itr->path() );
 
 				//TODO: reemplazar por std::find o algo similar...
 				//Linear-search
@@ -300,7 +301,10 @@ private:
 			boost::filesystem::directory_iterator dir_itr( root_path );
 			for ( ; dir_itr != end_iter; ++dir_itr )
 			{
-				file_inode_info inode_info ( dir_itr->path() ); //TODO: puede arrojar una excepcion
+				//file_inode_info inode_info ( dir_itr->path() ); //TODO: puede arrojar una excepcion //TODO: temporalmente
+				file_inode_info_dummy inode_info ( dir_itr->path() ); //TODO: puede arrojar una excepcion
+
+				
 				if ( watch->inode_info_ == inode_info )
 				{
 					break;
@@ -393,7 +397,7 @@ private:
 					}
 				}
 			}
-			catch( const kevent_timeout& e )
+			catch( const kevent_timeout& ) //e )
 			{
 				//std::cout << "END kevent_timeout filesystem_item::pointer_type watch = kq_wrapper.get<filesystem_item>( event_type );" << std::endl;
 
