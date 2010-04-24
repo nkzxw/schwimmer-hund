@@ -3,18 +3,18 @@
 
 //#include <string>
 
-//// C-Std headers
-//#include <cerrno>	//TODO: probar si es necesario
-//#include <cstdio>	//TODO: probar si es necesario
-//#include <cstdlib>	//TODO: probar si es necesario
-//#include <cstring>	// for strerror
-//
-//// POSIX headers
-//#include <sys/event.h>
-//#include <sys/fcntl.h>
-//#include <sys/time.h>
-//#include <sys/types.h>
-//#include <unistd.h>
+// C-Std headers
+#include <cerrno>	//TODO: probar si es necesario
+#include <cstdio>	//TODO: probar si es necesario
+#include <cstdlib>	//TODO: probar si es necesario
+#include <cstring>	// for strerror
+
+// POSIX headers
+#include <sys/event.h>
+#include <sys/fcntl.h>
+#include <sys/time.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 //TODO: analizar bien donde deberia estar todo esto...
 
