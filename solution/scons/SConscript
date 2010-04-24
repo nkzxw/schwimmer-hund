@@ -80,13 +80,13 @@ Import('release_dynamic_env', 'release_static_env', 'debug_dynamic_env', 'debug_
 #
 #obj = release_static_env.Object('stress_test_watcher_static_rel', [ SRC_DIR + '/libs/os_services/test/stress_test_watcher.cpp'])
 #stress_test_watcher_static_rel = release_static_env.Program('stress_test_watcher_' + PLATFORM_STR + '_static_release', obj )
-
-obj = debug_dynamic_env.Object('stress_test_watcher_dynamic_dbg', [ SRC_DIR + '/libs/os_services/test/stress_test_watcher.cpp'])
-stress_test_watcher_dynamic_dbg = debug_dynamic_env.Program('stress_test_watcher_' + PLATFORM_STR + '_dynamic_debug', obj)
-
-if Platform().name == 'win32':
-	debug_dynamic_env.AddPostAction(stress_test_watcher_dynamic_dbg, 'mt.exe -nologo -manifest ${TARGET}.manifest -outputresource:$TARGET;1')
-
+#
+#obj = debug_dynamic_env.Object('stress_test_watcher_dynamic_dbg', [ SRC_DIR + '/libs/os_services/test/stress_test_watcher.cpp'])
+#stress_test_watcher_dynamic_dbg = debug_dynamic_env.Program('stress_test_watcher_' + PLATFORM_STR + '_dynamic_debug', obj)
+#
+#if Platform().name == 'win32':
+#	debug_dynamic_env.AddPostAction(stress_test_watcher_dynamic_dbg, 'mt.exe -nologo -manifest ${TARGET}.manifest -outputresource:$TARGET;1')
+#
 #obj = debug_static_env.Object('stress_test_watcher_static_dbg', [ SRC_DIR + '/libs/os_services/test/stress_test_watcher.cpp'])
 #stress_test_watcher_static_dbg = debug_static_env.Program('stress_test_watcher_' + PLATFORM_STR + '_static_debug', obj)
 
