@@ -44,8 +44,8 @@ int main()
 {
 	A a;
 
-	func_1( a.getB_1() );
-	func_2( a.getB_2() );
+	func_1( a.getB_1() ); //Esto da error en gcc //invalid initialization of non-const reference of type 'B&' from a temporary of type 'B'
+	func_2( a.getB_2() ); //Esto da error en gcc //IDEM anterior con diferencia de tipos...
 
 	return 0;
 }
