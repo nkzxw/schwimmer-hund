@@ -36,9 +36,6 @@ int open_file( const boost::filesystem::path& path )
 {
 	int file_descriptor = ::open( path.native_file_string().c_str(), O_EVTONLY );
 
-	//std::cout << "file_descriptor: " << file_descriptor << std::endl;
-	//std::cout << "path.native_file_string(): " << path.native_file_string() << std::endl;
-
 	if ( file_descriptor == -1 )
 	{
 		std::ostringstream oss;
@@ -47,9 +44,7 @@ int open_file( const boost::filesystem::path& path )
 		//throw (std::invalid_argument(oss.str()));
 	}
 
-
 	return file_descriptor;
-
 }
 
 
