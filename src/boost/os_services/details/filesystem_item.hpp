@@ -208,7 +208,7 @@ public:
 		return this->root_user_entry_.lock();
 	}
 
-	boost::shared_ptr<user_entry> root_user_entry()			//user_entry::pointer_type
+	boost::shared_ptr<user_entry>& root_user_entry()		//user_entry::pointer_type
 	{
 		//TODO: ver si usamos lock o si construimos un shared_ptr a partir del weak_ptr
 		return this->root_user_entry_.lock();
