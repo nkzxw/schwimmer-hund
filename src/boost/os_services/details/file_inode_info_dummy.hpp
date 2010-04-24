@@ -1,12 +1,17 @@
 #ifndef BOOST_OS_SERVICES_DETAIL_FILE_INODE_INFO_DUMMY_HPP
 #define BOOST_OS_SERVICES_DETAIL_FILE_INODE_INFO_DUMMY_HPP
 
-#include <sstream>
-#include <string>
-
-#include <cstring>	// for strerror
+//#include <sstream>
+//#include <string>
 
 #include <boost/filesystem/path.hpp>
+
+//from sys/stat.h
+struct stat {
+	int st_dev;               /* inode's device */
+	int st_ino;               /* inode's number */
+};
+
 
 
 namespace boost {
