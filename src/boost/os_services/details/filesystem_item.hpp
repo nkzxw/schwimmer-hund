@@ -56,8 +56,6 @@ struct user_entry;			//forward-declaration
 
 //TODO: no me gusta, ver si se puede agregar al forward declaration
 typedef boost::shared_ptr<user_entry> user_entry_pointer_type;
-//typedef boost::weak_ptr<user_entry> user_entry_pointer_type;
-
 
 //TODO: renombrar
 class filesystem_item
@@ -68,14 +66,13 @@ public:
 	typedef std::vector<pointer_type> collection_type;
 
 
-	static filesystem_item::pointer_type create( const boost::filesystem::path& path, user_entry_pointer_type root_user_entry )
+	static filesystem_item::pointer_type create( const boost::filesystem::path& path, const user_entry_pointer_type& root_user_entry )
 	{
-		//filesystem_item::pointer_type watch = new filesystem_item ( path, root_user_entry ); 
 		filesystem_item::pointer_type watch ( new filesystem_item ( path, root_user_entry ) );
 		return watch;
 	}
 
-	static filesystem_item::pointer_type create( const boost::filesystem::path& path, user_entry_pointer_type root_user_entry, filesystem_item::pointer_type parent )
+	static filesystem_item::pointer_type create( const boost::filesystem::path& path, const user_entry_pointer_type& root_user_entry, const filesystem_item::pointer_type& parent )
 	{
 		filesystem_item::pointer_type watch ( new filesystem_item ( path, root_user_entry, parent ) );
 		return watch;
@@ -88,19 +85,18 @@ public:
 		this->close( true, true ); //no-throw
 	}
 
+	//TODO: habilitar
 	//bool operator==(const fs_item& other) const
 	//{
 	//	return ( this->path_ == other.path_ && this->inode_info_ == other.inode_info_ );
 	//}
 
-
-	bool is_equal(const filesystem_item& other) const
+	bool is_equal( const filesystem_item& other ) const
 	{
 		return ( this->path_ == other.path_ && this->inode_info_ == other.inode_info_ );
 	}
 
-	//bool is_equal(const filesystem_item::pointer_type& other) const
-	bool is_equal(filesystem_item::pointer_type other) const
+	bool is_equal( const filesystem_item::pointer_type& other) const
 	{
 		return ( this->path_ == other->path_ && this->inode_info_ == other->inode_info_ );
 	}
@@ -167,7 +163,7 @@ public:
 		subitems_.push_back( subitem );
 	}
 
-	void remove_subitem( filesystem_item::pointer_type watch )
+	void remove_subitem( const filesystem_item::pointer_type& watch )
 	{
 		filesystem_item::collection_type::iterator it = subitems_.begin();
 		while ( it != subitems_.end() )
@@ -194,18 +190,20 @@ public:
 		}
 	}
 
-	void set_parent ( filesystem_item::pointer_type new_parent )
+	void set_parent ( const filesystem_item::pointer_type& new_parent )
 	{
 		this->parent_ = new_parent;
 	}
 
 	filesystem_item::pointer_type parent() const
 	{
+		//TODO: ver si usamos lock o si construimos un shared_ptr a partir del weak_ptr
 		return this->parent_.lock();
 	}
 
 	user_entry_pointer_type root_user_entry() const		//user_entry::pointer_type
 	{
+		//TODO: ver si usamos lock o si construimos un shared_ptr a partir del weak_ptr
 		return this->root_user_entry_.lock();
 	}
 
@@ -228,7 +226,7 @@ public:
 protected:
 
 	//TODO: asignar lo que el usuario quiere monitorear...
-	filesystem_item( const boost::filesystem::path& path, user_entry_pointer_type root_user_entry )
+	filesystem_item( const boost::filesystem::path& path, const user_entry_pointer_type& root_user_entry )
 		: root_user_entry_(root_user_entry), is_directory_(false), file_descriptor_(0), mask_(PN_ALL_EVENTS) //parent_(0),
 	{
 		set_path( path );
@@ -238,7 +236,7 @@ protected:
 	}
 
 	//TODO: asignar lo que el usuario quiere monitorear...
-	filesystem_item ( const boost::filesystem::path& path, user_entry_pointer_type root_user_entry, filesystem_item::pointer_type parent )
+	filesystem_item ( const boost::filesystem::path& path, const user_entry_pointer_type& root_user_entry, const filesystem_item::pointer_type& parent )
 		: root_user_entry_(root_user_entry), parent_(parent), is_directory_(false), file_descriptor_(0), mask_(PN_ALL_EVENTS)
 	{
 		set_path( path );
@@ -259,7 +257,6 @@ public: //private:
 	boost::uint32_t mask_;
 	file_inode_info inode_info_;
 
-	//filesystem_item::pointer_type parent_;
 	boost::weak_ptr<filesystem_item> parent_; //avoid circular references
 	//TODO: ver que pasa si agregamos el mismo directorio como dos user_entry distintos... el open da el mismo file descriptor?
 	boost::weak_ptr<user_entry> root_user_entry_; //avoid circular references
