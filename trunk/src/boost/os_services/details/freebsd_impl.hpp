@@ -32,6 +32,9 @@
 
 //TODO: revisar todas las clases donde se encuentre shared_ptr para crear los create function factory...
 
+
+//TODO: BOOST.TEST + MOCK OBJECTS -> Turtle: http://sourceforge.net/apps/mediawiki/turtle/index.php?title=Turtle
+
 // http://en.wikipedia.org/wiki/Kqueue
 // http://mark.heily.com/pnotify/
 /*
@@ -185,20 +188,20 @@ private:
 		return watch;
 	}
 
+	////static filesystem_item::pointer_type create_filesystem_item( const boost::filesystem::path& path, user_entry::pointer_type& entry, filesystem_item::pointer_type& parent )
+	//static filesystem_item::pointer_type create_filesystem_item( const boost::filesystem::path& path, user_entry_pointer_type& entry, filesystem_item::pointer_type& parent )
+	//{
+	//	filesystem_item::pointer_type watch = create_filesystem_item( path, entry );
+
+	//	if ( parent )
+	//	{
+	//		watch->set_parent( parent );
+	//		parent->add_subitem( watch );
+	//	}
+	//	return watch;
+	//}
 
 
-	//static filesystem_item::pointer_type create_filesystem_item( const boost::filesystem::path& path, user_entry::pointer_type& entry, filesystem_item::pointer_type& parent )
-	static filesystem_item::pointer_type create_filesystem_item( const boost::filesystem::path& path, user_entry_pointer_type& entry, filesystem_item::pointer_type& parent )
-	{
-		filesystem_item::pointer_type watch = create_filesystem_item( path, entry );
-
-		if ( parent )
-		{
-			watch->set_parent( parent );
-			parent->add_subitem( watch );
-		}
-		return watch;
-	}
 
 	//TODO: no me gusta el nombre...
 	void begin_watch( filesystem_item::pointer_type& watch, bool launch_events = false )
