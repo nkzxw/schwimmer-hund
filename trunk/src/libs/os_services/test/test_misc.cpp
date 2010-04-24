@@ -14,16 +14,28 @@ struct B
 
 struct A
 {
-	boost::shared_ptr<B> getB() const
+	B getB_1() const
 	{
-		return this->b.lock();
+		return b_1;
 	}
 
-	boost::weak_ptr<B> b;
+	boost::shared_ptr<B> getB_2() const
+	{
+		return this->b_2.lock();
+	}
+
+
+	B b_1;
+	boost::weak_ptr<B> b_2;
 };
 
-//filesystem_item::pointer_type create_filesystem_item( const boost::filesystem::path& path, user_entry_pointer_type& entry, filesystem_item::pointer_type& parent ) //static 
-void func( boost::shared_ptr<B>& b ) //static 
+void func_1( B& b ) //static 
+{
+	std::cout << b.data_ << std::endl;
+}
+
+
+void func_2( boost::shared_ptr<B>& b ) //static 
 {
 	std::cout << b->data_ << std::endl;
 }
@@ -32,7 +44,8 @@ int main()
 {
 	A a;
 
-	func( a.getB() );
+	func_1( a.getB_1() );
+	func_2( a.getB_2() );
 
 	return 0;
 }
