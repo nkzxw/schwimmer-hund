@@ -188,18 +188,19 @@ private:
 		return watch;
 	}
 
-	////static filesystem_item::pointer_type create_filesystem_item( const boost::filesystem::path& path, user_entry::pointer_type& entry, filesystem_item::pointer_type& parent )
+	//static filesystem_item::pointer_type create_filesystem_item( const boost::filesystem::path& path, user_entry::pointer_type& entry, filesystem_item::pointer_type& parent )
 	//static filesystem_item::pointer_type create_filesystem_item( const boost::filesystem::path& path, user_entry_pointer_type& entry, filesystem_item::pointer_type& parent )
-	//{
-	//	filesystem_item::pointer_type watch = create_filesystem_item( path, entry );
+	static filesystem_item::pointer_type create_filesystem_item( const boost::filesystem::path& path, user_entry::pointer_type& entry, filesystem_item::pointer_type& parent )
+	{
+		filesystem_item::pointer_type watch = create_filesystem_item( path, entry );
 
-	//	if ( parent )
-	//	{
-	//		watch->set_parent( parent );
-	//		parent->add_subitem( watch );
-	//	}
-	//	return watch;
-	//}
+		if ( parent )
+		{
+			watch->set_parent( parent );
+			parent->add_subitem( watch );
+		}
+		return watch;
+	}
 
 
 
