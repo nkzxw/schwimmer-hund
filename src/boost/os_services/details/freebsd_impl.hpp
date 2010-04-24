@@ -154,7 +154,7 @@ public:
 private:
 
 	//TODO: ver si hace falta hacer lo mismo para Windows
-	void initialize() //TODO: protected
+	void initialize()
 	{
 		if ( ! is_initialized_ )
 		{
@@ -321,9 +321,7 @@ private:
 	{
 		if ( watch->is_directory() )
 		{
-			//TODO: no está buena esta llamada... no me convence...
-			//watch->root_user_entry_->scan_directory( watch, true ); //Detectamos si es un Add o un Rename o Delete que ya fue procesado.
-			scan_directory( watch, true ); //Detectamos si es un Add o un Rename o Delete que ya fue procesado.
+			scan_directory( watch, true );
 		}
 		else
 		{
