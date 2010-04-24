@@ -100,7 +100,7 @@ public:
 
 		//lanzo siempre time-out
 		std::ostringstream oss;
-		oss << "kevent timeout - Reason: " << std::strerror(errno);
+		oss << "kevent timeout - Reason: " << "XXXXXXX";
 		throw ( kevent_timeout( oss.str() ) );
 
 
