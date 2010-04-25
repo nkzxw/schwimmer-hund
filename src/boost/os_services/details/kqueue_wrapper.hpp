@@ -111,6 +111,7 @@ public:
 
 		if ( file_descriptor_ != 0 )
 		{
+			//TODO: se puede usar el close_file de posix_wapper
 			int ret_value = ::close( file_descriptor_ );
 			if ( ret_value == -1 )
 			{
@@ -123,12 +124,18 @@ public:
 				{
 					std::ostringstream oss;
 					oss << "Failed to close kqueue file descriptor - File Descriptor: '" << file_descriptor_ << "' - Reason: " << std::strerror(errno);
+
+					
+					std::cout << "THROW - void kqueue_wrapper::close( bool no_throw = false )" << std::endl;
+
 					throw (std::runtime_error(oss.str()));					
 				}
 			}
 			file_descriptor_ = 0;
 		}
 		is_initialized_ = false;
+
+		std::cout << "void END kqueue_wrapper::close( bool no_throw = false )" << std::endl;
 	}
 
 	template <typename T>
@@ -198,6 +205,9 @@ public:
 		{
 			std::ostringstream oss;
 			oss << "kevent error: - Reason: " << std::strerror(errno);
+
+			std::cout << "THROW - void kqueue_wrapper::add_watch( const boost::shared_ptr<T>& watch )" << std::endl;
+
 			throw (std::runtime_error(oss.str()));
 		}
 	}
@@ -220,6 +230,10 @@ public:
 			std::ostringstream oss;
 			oss << "kevent error - Reason: " << std::strerror(errno);
 			//throw ( kevent_error( oss.str() ) );
+			
+			
+			std::cout << "THROW - boost::shared_ptr<T> kqueue_wrapper::get( int& event_type )" << std::endl;
+			
 			throw (std::runtime_error(oss.str()));
 		}
 		else if ( return_code == 0 ) //timeout
@@ -227,6 +241,9 @@ public:
 			std::ostringstream oss;
 			oss << "kevent timeout - Reason: " << std::strerror(errno);
 			//throw (std::runtime_error(oss.str()));
+
+			std::cout << "THROW - boost::shared_ptr<T> kqueue_wrapper::get( int& event_type ) - 2" << std::endl;
+
 			throw ( kevent_timeout( oss.str() ) );
 		}
 		else

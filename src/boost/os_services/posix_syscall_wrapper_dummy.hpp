@@ -17,7 +17,7 @@ int open_file( const boost::filesystem::path& path )
 }
 
 
-void close_file( int file_descriptor, bool no_throw = false )
+void close_file( int file_descriptor )
 {
 	if ( file_descriptor != 0 )
 	{
