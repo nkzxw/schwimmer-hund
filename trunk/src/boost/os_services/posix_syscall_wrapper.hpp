@@ -40,6 +40,10 @@ int open_file( const boost::filesystem::path& path )
 	{
 		std::ostringstream oss;
 		oss << "open failed - File: " << path.native_file_string() << " - Reason: " << std::strerror(errno);
+
+
+		std::cout << "THROW - int posix_syscall_wrapper::open_file( const boost::filesystem::path& path )" << std::endl;
+
 		throw (std::runtime_error(oss.str()));
 		//throw (std::invalid_argument(oss.str()));
 	}
@@ -48,27 +52,21 @@ int open_file( const boost::filesystem::path& path )
 }
 
 
-void close_file( int file_descriptor, bool no_throw = false )
+void close_file( int& file_descriptor )
 {
-	//std::cout << "void close( bool no_throw = false, bool close_subitems = true )" << std::endl;
-
 	if ( file_descriptor != 0 )
 	{
 		int ret_value = ::close( file_descriptor ); //close
 		if ( ret_value == -1 )
 		{
-			if ( no_throw )
-			{
-				//Destructor -> no-throw
-				//std::cerr << "Failed to close file descriptor - File descriptor: '" << file_descriptor << "' - File path: '" << this->path.native_file_string() << "' - Reason: " << std::strerror(errno) << std::endl;
-				std::cerr << "Failed to close file descriptor - File descriptor: '" << file_descriptor << "' - Reason: " << std::strerror(errno) << std::endl;
-			}
-			else
-			{
-				std::ostringstream oss;
-				oss << "Failed to close file descriptor - File descriptor: '" << file_descriptor << "' - Reason: " << std::strerror(errno);
-				throw (std::runtime_error(oss.str()));					
-			}
+			std::ostringstream oss;
+			oss << "Failed to close file descriptor - File descriptor: '" << file_descriptor << "' - Reason: " << std::strerror(errno);
+
+
+			std::cout << "THROW - void posix_syscall_wrapper::close_file( int& file_descriptor )" << std::endl;
+
+
+			throw (std::runtime_error(oss.str()));					
 		}
 		file_descriptor = 0;
 	}
@@ -77,7 +75,5 @@ void close_file( int file_descriptor, bool no_throw = false )
 } // namespace posix_syscall_wrapper
 } // namespace os_services
 } // namespace boost
-
-
 
 #endif // BOOST_OS_SERVICES_POSIX_SYSCALL_WRAPPER_HPP

@@ -93,6 +93,10 @@ public:
 		//lanzo siempre time-out
 		std::ostringstream oss;
 		oss << "kevent timeout - Reason: " << "XXXXXXX";
+
+		
+		std::cout << "THROW - boost::shared_ptr<T> kqueue_wrapper_dummy::get( int& event_type )" << std::endl;
+
 		throw ( kevent_timeout( oss.str() ) );
 
 

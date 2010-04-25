@@ -81,11 +81,15 @@ public:
 		return watch;
 	}
 
+	//TODO: proteger y poner deleter a la shared_ptr en metodo create... VER APUNTE QUE EXPLICA COMO HACERLO...
 	~filesystem_item()
 	{
 		std::cout << "~filesystem_item()" << std::endl;
 		std::cout << "~filesystem_item() - " << path_.native_file_string() << std::endl;
+
 		this->close( true, true ); //no-throw
+
+		std::cout << "END ~filesystem_item()" << std::endl;
 	}
 
 	//TODO: habilitar
@@ -111,19 +115,6 @@ public:
 
 	void open()
 	{
-		//this->file_descriptor_ = ::open( path_.native_file_string().c_str(), O_EVTONLY );
-
-		////std::cout << "this->file_descriptor_: " << this->file_descriptor_ << std::endl;
-		////std::cout << "path_.native_file_string(): " << path_.native_file_string() << std::endl;
-
-		//if ( this->file_descriptor_ == -1 )
-		//{
-		//	std::ostringstream oss;
-		//	oss << "open failed - File: " << path_.native_file_string() << " - Reason: " << std::strerror(errno);
-		//	throw (std::runtime_error(oss.str()));
-		//	//throw (std::invalid_argument(oss.str()));
-		//}
-
 		this->file_descriptor_ = boost::os_services::posix_syscall_wrapper::open_file( path_ );
 		this->inode_info_.set( this->path_ );
 	}
@@ -131,37 +122,6 @@ public:
 	//TODO: protected o no.... ????? ver!
 	void close( bool no_throw = false, bool close_subitems = true )
 	{
-		//std::cout << "void close( bool no_throw = false, bool close_subitems = true )" << std::endl;
-
-		//if ( this->file_descriptor_ != 0 )
-		//{
-		//	if ( close_subitems )
-		//	{
-		//		for (filesystem_item::collection_type::iterator it =  this->subitems_.begin(); it != this->subitems_.end(); ++it )
-		//		{
-		//			(*it)->close( no_throw, close_subitems );
-		//		}
-		//	}
-
-		//	int ret_value = ::close( this->file_descriptor_ ); //close
-		//	if ( ret_value == -1 )
-		//	{
-		//		if ( no_throw )
-		//		{
-		//			//Destructor -> no-throw
-		//			std::cerr << "Failed to close file descriptor - File descriptor: '" << this->file_descriptor_ << "' - File path: '" << this->path_.native_file_string() << "' - Reason: " << std::strerror(errno) << std::endl;
-		//		}
-		//		else
-		//		{
-		//			std::ostringstream oss;
-		//			oss << "Failed to close file descriptor - File descriptor: '" << this->file_descriptor_ << "' - File path: '" << this->path_.native_file_string() << "' - Reason: " << std::strerror(errno);
-		//			throw (std::runtime_error(oss.str()));					
-		//		}
-		//	}
-		//	this->file_descriptor_ = 0;
-		//}
-
-
 		if ( this->file_descriptor_ != 0 )
 		{
 			if ( close_subitems )
@@ -172,7 +132,28 @@ public:
 				}
 			}
 
-			boost::os_services::posix_syscall_wrapper::close_file( this->file_descriptor_ );
+			try
+			{
+				boost::os_services::posix_syscall_wrapper::close_file( this->file_descriptor_ );
+			}
+			catch ( std::runtime_error& e )
+			{
+				if ( no_throw ) //Destructor -> no-throw
+				{
+					std::cerr << e.what() << " - File path: '" << this->path_.native_file_string() << "'";
+				}
+				else
+				{
+					//TODO: ver como modificar el mensaje de una excepcion y relanzarla...
+					//      la idea no es armar otra excepcion sino usar la misma...
+					std::ostringstream oss;
+					oss << e.what() << " - File path: '" << this->path_.native_file_string() << "'";
+
+					std::cout << "THROW - void filesystem_item::close( bool no_throw = false, bool close_subitems = true )" << std::endl;
+
+					throw (std::runtime_error(oss.str()));					
+				}
+			}
 
 			this->file_descriptor_ = 0;
 		}
@@ -279,9 +260,9 @@ public: //private:
 	
 	file_inode_info inode_info_;
 
-	boost::weak_ptr<filesystem_item> parent_; //avoid circular references
+	boost::weak_ptr<filesystem_item> parent_; //to avoid circular references
 	//TODO: ver que pasa si agregamos el mismo directorio como dos user_entry distintos... el open da el mismo file descriptor?
-	boost::weak_ptr<user_entry> root_user_entry_; //avoid circular references
+	boost::weak_ptr<user_entry> root_user_entry_; //to avoid circular references
 	collection_type subitems_;
 };
 
