@@ -46,12 +46,12 @@ public:
 	//}
 
 	//TODO: agregar otro add_directory que acepte un boost::filesystem::path(?)
-	void add_directory (const std::string& dir_name) //throw (std::invalid_argument)
+	void add_directory( const std::string& dir_name ) //throw (std::invalid_argument)
 	{ 
 		implementation_->add_directory( dir_name );
 	}
 
-	void add_directory (boost::filesystem::path directory) //throw (std::invalid_argument, std::runtime_error)
+	void add_directory( const boost::filesystem::path& directory ) //throw (std::invalid_argument, std::runtime_error)
 	{ 
 		implementation_->add_directory( directory );
 	}
@@ -71,7 +71,7 @@ public:
 		return implementation_->filter_;
 	}
 
-	void set_filter(const std::string& val) 
+	void set_filter( const std::string& val ) 
 	{ 
 		implementation_->filter_ = val;
 	}
@@ -95,22 +95,22 @@ public:
 	//}
 
 	// Event Handlers Setters
-	void set_changed_event_handler(filesystem_event_handler handler)
+	void set_changed_event_handler( filesystem_event_handler handler ) //TODO: parametro const???
 	{
 		this->implementation_->changed_handler_ = handler;
 	}
 
-	void set_created_event_handler(filesystem_event_handler handler)
+	void set_created_event_handler( filesystem_event_handler handler )
 	{
 		this->implementation_->created_handler_ = handler;
 	}
 
-	void set_deleted_event_handler(filesystem_event_handler handler)
+	void set_deleted_event_handler( filesystem_event_handler handler )
 	{
 		this->implementation_->deleted_handler_ = handler;
 	}
 
-	void set_renamed_event_handler(renamed_event_handler handler)
+	void set_renamed_event_handler( renamed_event_handler handler )
 	{
 		this->implementation_->renamed_handler_ = handler;
 	}

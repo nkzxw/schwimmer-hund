@@ -17,22 +17,22 @@ using namespace boost::os_services;
 
 
 // Event Handlers
-static void OnChanged(filesystem_event_args e) // object source,
+static void on_changed( filesystem_event_args e ) // object source,
 {
 	std::cout << "Changed: '" << e.full_path << "'" << std::endl;
 }
 
-static void OnCreated(filesystem_event_args e) // object source,
+static void on_created( filesystem_event_args e ) // object source,
 {
 	std::cout << "Created: '" << e.full_path << "'" << std::endl;
 }
 
-static void OnDeleted(filesystem_event_args e) // object source,
+static void on_deleted( filesystem_event_args e ) // object source,
 {
 	std::cout << "Deleted: '" << e.full_path << "'" << std::endl;
 }
 
-static void OnRenamed(renamed_event_args e) // object source,
+static void on_renamed( renamed_event_args e ) // object source,
 {
 	std::cout << "File: '" << e.old_full_path << "' renamed to: '" << e.full_path  << "'" << std::endl;
 }
