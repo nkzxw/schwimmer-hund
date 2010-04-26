@@ -189,8 +189,9 @@ private:
 
 		std::cout << "static filesystem_item::pointer_type create_filesystem_item( const boost::filesystem::path& path, user_entry::pointer_type entry, filesystem_item::pointer_type parent )" << std::endl;
 
-		filesystem_item::pointer_type watch = create_filesystem_item( path, entry );
-
+		//filesystem_item::pointer_type watch = create_filesystem_item( path, entry );
+		filesystem_item::pointer_type watch = filesystem_item::create( path, entry );
+		entry->add_watch( watch );
 
 		//std::cout << "parent.get(): " << parent.get() << std::endl;
 
@@ -261,19 +262,19 @@ private:
 					filesystem_item::pointer_type watch = create_filesystem_item( dir_itr->path(), root_dir->root_user_entry(), root_dir );
 
 
-					last_write_item = watch;
+					//last_write_item = watch;
 
-					if ( last_write_item )
-					{
-						std::cout << "last_write_item->parent().get(): " << last_write_item->parent().get() << std::endl;
-					}
+					//if ( last_write_item )
+					//{
+					//	std::cout << "last_write_item->parent().get(): " << last_write_item->parent().get() << std::endl;
+					//}
 
 					begin_watch( watch, launch_events );
 
-					if ( last_write_item )
-					{
-						std::cout << "last_write_item->parent().get(): " << last_write_item->parent().get() << std::endl;
-					}
+					//if ( last_write_item )
+					//{
+					//	std::cout << "last_write_item->parent().get(): " << last_write_item->parent().get() << std::endl;
+					//}
 
 				}
 			}
@@ -398,7 +399,18 @@ private:
 			try
 			{
 				//std::cout << "filesystem_item::pointer_type watch = kq_wrapper.get<filesystem_item>( event_type );" << std::endl;
-				filesystem_item::pointer_type watch = kq_wrapper.get<filesystem_item>( event_type );
+				filesystem_item::pointer_type temp_watch = kq_wrapper.get<filesystem_item>( event_type );
+				filesystem_item::pointer_type watch;
+				
+				for (filesystem_item::collection_type::iterator it = temp_watch->root_user_entry()->all_watches_.begin(); it != temp_watch->root_user_entry()->all_watches_.end(); ++it )
+				{
+					if ( it->get() == temp_watch.get() )
+					{
+						watch = *it;
+						break;
+					}
+				}
+
 
 				std::cout << "END filesystem_item::pointer_type watch = kq_wrapper.get<filesystem_item>( event_type );" << std::endl;
 				std::cout << "closing_: " << closing_ << std::endl;
@@ -414,27 +426,14 @@ private:
 							std::cout << "case kqueue_event_types::remove: - 1" << std::endl;
 							handle_remove( watch );
 							std::cout << "case kqueue_event_types::remove: - 2" << std::endl;
-							std::cout << "watch->parent().get(): " << watch->parent().get() << std::endl;
-							std::cout << "queued_write_watch->parent().get(): " << queued_write_watch->parent().get() << std::endl;
-							std::cout << "queued_write_watch.use_count(): " << queued_write_watch.use_count() << std::endl;
-							std::cout << "queued_write_watch.reset() -> NULL DELETER" << std::endl;
 							queued_write_watch.reset();
-							std::cout << "watch->parent().get(): " << watch->parent().get() << std::endl;
-							//std::cout << "queued_write_watch->parent().get(): " << queued_write_watch->parent().get() << std::endl;
 							std::cout << "case kqueue_event_types::remove: - 3" << std::endl;
 							break;
 						}
 						case kqueue_event_types::rename:
 						{
 							handle_rename( watch );
-							std::cout << "watch->parent().get(): " << watch->parent().get() << std::endl;
-							std::cout << "queued_write_watch->parent().get(): " << queued_write_watch->parent().get() << std::endl;
-							std::cout << "queued_write_watch.use_count(): " << queued_write_watch.use_count() << std::endl;
-							std::cout << "queued_write_watch.reset() -> NULL DELETER" << std::endl;
 							queued_write_watch.reset();
-							std::cout << "watch->parent().get(): " << watch->parent().get() << std::endl;
-							//std::cout << "queued_write_watch->parent().get(): " << queued_write_watch->parent().get() << std::endl;
-
 							break;
 						}
 						case kqueue_event_types::write:
@@ -443,26 +442,26 @@ private:
 							{
 								handle_write( queued_write_watch );
 
-								if ( last_write_item )
-								{
-									std::cout << "last_write_item->parent().get(): " << last_write_item->parent().get() << std::endl;
-								}
+								//if ( last_write_item )
+								//{
+								//	std::cout << "last_write_item->parent().get(): " << last_write_item->parent().get() << std::endl;
+								//}
 
 								std::cout << "queued_write_watch.reset() -> NULL DELETER" << std::endl;
 								queued_write_watch.reset(); // = 0;
 
-								if ( last_write_item )
-								{
-									std::cout << "last_write_item->parent().get(): " << last_write_item->parent().get() << std::endl;
-								}
+								//if ( last_write_item )
+								//{
+								//	std::cout << "last_write_item->parent().get(): " << last_write_item->parent().get() << std::endl;
+								//}
 
 
 								handle_write( watch );
 
-								if ( last_write_item )
-								{
-									std::cout << "last_write_item->parent().get(): " << last_write_item->parent().get() << std::endl;
-								}
+								//if ( last_write_item )
+								//{
+								//	std::cout << "last_write_item->parent().get(): " << last_write_item->parent().get() << std::endl;
+								//}
 
 							}
 							else
@@ -488,24 +487,24 @@ private:
 				{
 					if ( queued_write_watch )
 					{
-						if ( last_write_item )
-						{
-							std::cout << "last_write_item->parent().get(): " << last_write_item->parent().get() << std::endl;
-						}
+						//if ( last_write_item )
+						//{
+						//	std::cout << "last_write_item->parent().get(): " << last_write_item->parent().get() << std::endl;
+						//}
 
 						handle_write( queued_write_watch );
 
-						if ( last_write_item )
-						{
-							std::cout << "last_write_item->parent().get(): " << last_write_item->parent().get() << std::endl;
-						}
+						//if ( last_write_item )
+						//{
+						//	std::cout << "last_write_item->parent().get(): " << last_write_item->parent().get() << std::endl;
+						//}
 
 						queued_write_watch.reset(); // = 0;
 
-						if ( last_write_item )
-						{
-							std::cout << "last_write_item->parent().get(): " << last_write_item->parent().get() << std::endl;
-						}
+						//if ( last_write_item )
+						//{
+						//	std::cout << "last_write_item->parent().get(): " << last_write_item->parent().get() << std::endl;
+						//}
 
 					}
 				}
@@ -577,7 +576,7 @@ private:
 
 
 
-	filesystem_item::pointer_type last_write_item;
+	//filesystem_item::pointer_type last_write_item;
 
 };
 

@@ -46,7 +46,7 @@ class kqueue_wrapper_dummy : private boost::noncopyable
 public:
 
 	kqueue_wrapper_dummy()
-		: is_initialized_( false ), file_descriptor_( 0 )
+		: is_initialized_( false ), file_descriptor_( 0 ), executor_counter_( 0 )
 	{
 		std::cout << "kqueue_wrapper_dummy()" << std::endl;
 	}
@@ -88,16 +88,43 @@ public:
 	{
 		boost::shared_ptr<T> watch;
 		event_type = kqueue_event_types::none;
-
-
-		//lanzo siempre time-out
-		std::ostringstream oss;
-		oss << "kevent timeout - Reason: " << "XXXXXXX";
-
 		
-		std::cout << "THROW - boost::shared_ptr<T> kqueue_wrapper_dummy::get( int& event_type )" << std::endl;
 
-		throw ( kevent_timeout( oss.str() ) );
+		if ( executor_counter_ == 0) 
+		{
+			void* void_pointer = (void*)0x003971a0;
+			watch = create_watch_item<T>( void_pointer ); //null deleter shared_ptr
+			std::cout << "NOTE_WRITE" << std::endl;
+			event_type = kqueue_event_types::write;
+			++executor_counter_;
+		}
+		else if ( executor_counter_ == 1) 
+		{
+			//lanzo siempre time-out
+			std::ostringstream oss;
+			oss << "kevent timeout - Reason: " << "XXXXXXX";
+			std::cout << "THROW - boost::shared_ptr<T> kqueue_wrapper_dummy::get( int& event_type )" << std::endl;
+			++executor_counter_;
+			throw ( kevent_timeout( oss.str() ) );
+		}
+		else if ( executor_counter_ == 2) 
+		{
+			void* void_pointer = (void*)0x00398c60;
+			watch = create_watch_item<T>( void_pointer ); //null deleter shared_ptr
+			std::cout << "NOTE_DELETE" << std::endl;
+			event_type = kqueue_event_types::remove;
+			++executor_counter_;
+		}
+		else
+		{
+			//lanzo siempre time-out
+			std::ostringstream oss;
+			oss << "kevent timeout - Reason: " << "XXXXXXX";
+			std::cout << "THROW - boost::shared_ptr<T> kqueue_wrapper_dummy::get( int& event_type )" << std::endl;
+			++executor_counter_;
+			throw ( kevent_timeout( oss.str() ) );
+		}
+
 
 
 
@@ -140,6 +167,9 @@ protected:
 	int file_descriptor_;
 
 	void* tempWatchAdded;
+
+
+	int executor_counter_;
 
 };
 

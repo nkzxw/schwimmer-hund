@@ -65,7 +65,6 @@ struct user_entry //: public enable_shared_from_this<user_entry>
 			std::cout << "it->use_count(): " << it->use_count() << std::endl;
 		}
 
-
 		std::cout << "~user_entry() - END" << std::endl;
 	}
 
@@ -76,36 +75,21 @@ struct user_entry //: public enable_shared_from_this<user_entry>
 
 	void remove_watch( const filesystem_item::pointer_type& watch )
 	{
-		std::cout << "void remove_watch( const filesystem_item::pointer_type& watch ) - 1" << std::endl;
-
-
 		//TODO: usar STL
 		filesystem_item::collection_type::iterator it = all_watches_.begin();
 
-		std::cout << "void remove_watch( const filesystem_item::pointer_type& watch ) - 2" << std::endl;
-
 		while ( it != all_watches_.end() )
 		{
-			std::cout << "void remove_watch( const filesystem_item::pointer_type& watch ) - 3" << std::endl;
 			if ( (*it)->is_equal( *watch ) )
 			{
-				std::cout << "void remove_watch( const filesystem_item::pointer_type& watch ) - 4" << std::endl;
-				std::cout << "it->use_count(): " << it->use_count() << std::endl;
 				it = all_watches_.erase(it);
-				std::cout << "it->use_count(): " << it->use_count() << std::endl;
-				std::cout << "void remove_watch( const filesystem_item::pointer_type& watch ) - 5" << std::endl;
-
 				break;
 			}
 			else
 			{
-				std::cout << "void remove_watch( const filesystem_item::pointer_type& watch ) - 6" << std::endl;
 				++it;
-				std::cout << "void remove_watch( const filesystem_item::pointer_type& watch ) - 7" << std::endl;
 			}
-			std::cout << "void remove_watch( const filesystem_item::pointer_type& watch ) - 8" << std::endl;
 		}
-		std::cout << "void remove_watch( const filesystem_item::pointer_type& watch ) - 9" << std::endl;
 	}
 
 	const boost::filesystem::path& path() const 
@@ -115,7 +99,7 @@ struct user_entry //: public enable_shared_from_this<user_entry>
 
 	void set_root( const filesystem_item::pointer_type& root )
 	{
-		this->root_ = root_;
+		this->root_ = root;
 	}
 
 private:
@@ -128,6 +112,9 @@ protected:
 
 	boost::filesystem::path path_;
 	filesystem_item::pointer_type root_;			//este tiene la estructura de arbol
+
+
+public: //TODO poner en private...
 	filesystem_item::collection_type all_watches_;
 };
 
