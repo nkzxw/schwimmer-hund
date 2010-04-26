@@ -64,9 +64,17 @@ public:
 
 struct null_deleter
 {
-	void operator()(void const *) const
+	void operator()(void const* pepe) const
 	{
 		std::cout << "void null_deleter::operator()(void const *) const" << std::endl;
+
+
+		std::cout << "pepe: " << pepe << std::endl;
+		filesystem_item* temp = reinterpret_cast<filesystem_item*>(pepe)
+		std::cout << "temp: " << temp << std::endl;
+		std::cout << "temp->parent().get(): " << temp->parent().get() << std::endl;
+
+		std::cout << "END void null_deleter::operator()(void const *) const" << std::endl;
 	}
 };
 
