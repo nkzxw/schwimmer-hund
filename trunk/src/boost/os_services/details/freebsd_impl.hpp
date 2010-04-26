@@ -438,6 +438,7 @@ private:
 					if ( queued_write_watch )
 					{
 						handle_write( queued_write_watch );
+						std::cout << "queued_write_watch.reset() -> NULL DELETER" << std::endl;
 						queued_write_watch.reset(); // = 0;
 					}
 				}
