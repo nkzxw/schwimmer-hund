@@ -396,6 +396,7 @@ private:
 							std::cout << "case kqueue_event_types::remove: - 2" << std::endl;
 							std::cout << "watch->parent().get(): " << watch->parent().get() << std::endl;
 							std::cout << "queued_write_watch->parent().get(): " << queued_write_watch->parent().get() << std::endl;
+							std::cout << "queued_write_watch.use_count(): " << queued_write_watch.use_count() << std::endl;
 							std::cout << "queued_write_watch.reset() -> NULL DELETER" << std::endl;
 							queued_write_watch.reset();
 							std::cout << "watch->parent().get(): " << watch->parent().get() << std::endl;
@@ -408,6 +409,7 @@ private:
 							handle_rename( watch );
 							std::cout << "watch->parent().get(): " << watch->parent().get() << std::endl;
 							std::cout << "queued_write_watch->parent().get(): " << queued_write_watch->parent().get() << std::endl;
+							std::cout << "queued_write_watch.use_count(): " << queued_write_watch.use_count() << std::endl;
 							std::cout << "queued_write_watch.reset() -> NULL DELETER" << std::endl;
 							queued_write_watch.reset();
 							std::cout << "watch->parent().get(): " << watch->parent().get() << std::endl;
@@ -423,6 +425,7 @@ private:
 
 								std::cout << "watch->parent().get(): " << watch->parent().get() << std::endl;
 								std::cout << "queued_write_watch->parent().get(): " << queued_write_watch->parent().get() << std::endl;
+								std::cout << "queued_write_watch.use_count(): " << queued_write_watch.use_count() << std::endl;
 								std::cout << "queued_write_watch.reset() -> NULL DELETER" << std::endl;
 								queued_write_watch.reset(); // = 0;
 								std::cout << "watch->parent().get(): " << watch->parent().get() << std::endl;
@@ -446,6 +449,7 @@ private:
 
 				std::cout << "watch->parent().get(): " << watch->parent().get() << std::endl;
 				std::cout << "queued_write_watch->parent().get(): " << queued_write_watch->parent().get() << std::endl;
+				std::cout << "queued_write_watch.use_count(): " << queued_write_watch.use_count() << std::endl;
 				std::cout << "watch is out of scope -> NULL DELETER" << std::endl;
 			}
 			catch( const kevent_timeout& ) //e )
@@ -458,6 +462,7 @@ private:
 					{
 						handle_write( queued_write_watch );
 						std::cout << "queued_write_watch->parent().get(): " << queued_write_watch->parent().get() << std::endl;
+						std::cout << "queued_write_watch.use_count(): " << queued_write_watch.use_count() << std::endl;
 						std::cout << "queued_write_watch.reset() -> NULL DELETER" << std::endl;
 						std::cout << "queued_write_watch->parent().get(): " << queued_write_watch->parent().get() << std::endl;
 
