@@ -32,6 +32,8 @@ namespace os_services {
 namespace posix_syscall_wrapper
 {
 
+//TODO: hacer lo mismo con WIN32API Wrapper. Los Wrapper deben acercar a las API's a la filosofia C++ -> excepciones, templates, clases, etc...
+
 int open_file( const boost::filesystem::path& path )
 {
 	int file_descriptor = ::open( path.native_file_string().c_str(), O_EVTONLY );
@@ -42,7 +44,7 @@ int open_file( const boost::filesystem::path& path )
 		oss << "open failed - File: " << path.native_file_string() << " - Reason: " << std::strerror(errno);
 
 
-		std::cout << "THROW - int posix_syscall_wrapper::open_file( const boost::filesystem::path& path )" << std::endl;
+		//std::cout << "THROW - int posix_syscall_wrapper::open_file( const boost::filesystem::path& path )" << std::endl;
 
 		throw (std::runtime_error(oss.str()));
 		//throw (std::invalid_argument(oss.str()));
@@ -57,7 +59,7 @@ void close_file( int& file_descriptor )
 	if ( file_descriptor != 0 )
 	{
 
-		std::cout << "closing FILE file_descriptor: " << file_descriptor << std::endl;
+		//std::cout << "closing FILE file_descriptor: " << file_descriptor << std::endl;
 
 
 		int ret_value = ::close( file_descriptor ); //close
@@ -67,7 +69,7 @@ void close_file( int& file_descriptor )
 			oss << "Failed to close file descriptor - File descriptor: '" << file_descriptor << "' - Reason: " << std::strerror(errno);
 
 
-			std::cout << "THROW - void posix_syscall_wrapper::close_file( int& file_descriptor )" << std::endl;
+			//std::cout << "THROW - void posix_syscall_wrapper::close_file( int& file_descriptor )" << std::endl;
 
 
 			throw (std::runtime_error(oss.str()));					
