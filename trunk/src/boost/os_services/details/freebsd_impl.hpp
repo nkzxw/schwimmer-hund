@@ -103,25 +103,17 @@ public:
 
 	~freebsd_impl()
 	{
-		//std::cout << "debug ~freebsd_impl() - 1" << std::endl;
 		closing_ = true;
-
 		//TODO: cerrar los archivos /watches
 
 		//TODO: esto se hace automaticamente en el destructor de kqueue_wrapper, ver que pasa si lo saco. Probar cuando funcione todo bien.
 		//      aparentemente si hacemos el join antes del close del file descriptor algo falla...
 		kq_wrapper.close( true ); //destructor -> no-throw
 
-
-		//std::cout << "debug ~freebsd_impl() - 4" << std::endl;
 		if ( thread_ )
 		{
-			//std::cout << "debug ~freebsd_impl() - 5" << std::endl;
 			thread_->join();
-			//std::cout << "debug ~freebsd_impl() - 6" << std::endl;
 		}
-
-		//std::cout << "debug ~freebsd_impl() - 7" << std::endl;
 	}
 
 
@@ -136,8 +128,6 @@ public:
 	}
 
 	//void remove_directory_impl(const std::string& dir_name) // throw (std::invalid_argument);
-
-
 
 	void start()
 	{
@@ -186,26 +176,14 @@ private:
 
 	static filesystem_item::pointer_type create_filesystem_item( const boost::filesystem::path& path, user_entry::pointer_type entry, filesystem_item::pointer_type parent )
 	{
-
-		//std::cout << "static filesystem_item::pointer_type create_filesystem_item( const boost::filesystem::path& path, user_entry::pointer_type entry, filesystem_item::pointer_type parent )" << std::endl;
-
-		//filesystem_item::pointer_type watch = create_filesystem_item( path, entry );
 		filesystem_item::pointer_type watch = filesystem_item::create( path, entry );
 		entry->add_watch( watch );
 
-		//std::cout << "parent.get(): " << parent.get() << std::endl;
-
 		if ( parent )
 		{
-			//std::cout << "if ( parent ) - 1" << std::endl;
-			//std::cout << "watch->parent().get(): " << watch->parent().get() << std::endl;
 			watch->set_parent( parent );
-			//std::cout << "watch->parent().get(): " << watch->parent().get() << std::endl;
-
 			parent->add_subitem( watch );
 		}
-
-		//std::cout << "watch->parent().get(): " << watch->parent().get() << std::endl;
 
 		return watch;
 	}
@@ -487,37 +465,11 @@ private:
 				{
 					if ( queued_write_watch )
 					{
-						//if ( last_write_item )
-						//{
-						//	std::cout << "last_write_item->parent().get(): " << last_write_item->parent().get() << std::endl;
-						//}
-
 						handle_write( queued_write_watch );
-
-						//if ( last_write_item )
-						//{
-						//	std::cout << "last_write_item->parent().get(): " << last_write_item->parent().get() << std::endl;
-						//}
-
-						queued_write_watch.reset(); // = 0;
-
-						//if ( last_write_item )
-						//{
-						//	std::cout << "last_write_item->parent().get(): " << last_write_item->parent().get() << std::endl;
-						//}
-
+						queued_write_watch.reset();
 					}
 				}
 			}
-			//catch( const kevent_error& e )
-			//{
-			//	std::cout << "END kevent_error filesystem_item::pointer_type watch = kq_wrapper.get<filesystem_item>( event_type );" << std::endl;
-
-			//	//TODO: para que capturo la excepcion si la voy a relanzar ????
-			//	throw; //re-throw
-			//}
-
-
 		}
 	}
 
@@ -573,11 +525,6 @@ private:
 	bool closing_;
 	user_entry::collection_type user_watches_;
 	//filesystem_item::collection_type all_watches_; //TODO: quizas haga falta contabilizar todos los watches en un solo lugar... VER
-
-
-
-	//filesystem_item::pointer_type last_write_item;
-
 };
 
 
