@@ -84,12 +84,12 @@ public:
 	//TODO: proteger y poner deleter a la shared_ptr en metodo create... VER APUNTE QUE EXPLICA COMO HACERLO...
 	~filesystem_item()
 	{
-		std::cout << "~filesystem_item()" << std::endl;
-		std::cout << "~filesystem_item() - " << path_.native_file_string() << std::endl;
+		//std::cout << "~filesystem_item()" << std::endl;
+		//std::cout << "~filesystem_item() - " << path_.native_file_string() << std::endl;
 
 		this->close( true, true ); //no-throw
 
-		std::cout << "END ~filesystem_item()" << std::endl;
+		//std::cout << "END ~filesystem_item()" << std::endl;
 	}
 
 	//TODO: habilitar
@@ -149,7 +149,7 @@ public:
 					std::ostringstream oss;
 					oss << e.what() << " - File path: '" << this->path_.native_file_string() << "'";
 
-					std::cout << "THROW - void filesystem_item::close( bool no_throw = false, bool close_subitems = true )" << std::endl;
+					//std::cout << "THROW - void filesystem_item::close( bool no_throw = false, bool close_subitems = true )" << std::endl;
 
 					throw (std::runtime_error(oss.str()));					
 				}
@@ -167,41 +167,41 @@ public:
 
 	void remove_subitem( const filesystem_item::pointer_type& watch )
 	{
-		std::cout << "void remove_subitem( const filesystem_item::pointer_type& watch ) - 1" << std::endl;
+		//std::cout << "void remove_subitem( const filesystem_item::pointer_type& watch ) - 1" << std::endl;
 
 		filesystem_item::collection_type::iterator it = subitems_.begin();
 
-		std::cout << "void remove_subitem( const filesystem_item::pointer_type& watch ) - 2" << std::endl;
+		//std::cout << "void remove_subitem( const filesystem_item::pointer_type& watch ) - 2" << std::endl;
 
 		while ( it != subitems_.end() )
 		{
-			std::cout << "void remove_subitem( const filesystem_item::pointer_type& watch ) - 3" << std::endl;
+			//std::cout << "void remove_subitem( const filesystem_item::pointer_type& watch ) - 3" << std::endl;
 
 			if ( watch->is_equal( *it ) )
 			{
-				std::cout << "void remove_subitem( const filesystem_item::pointer_type& watch ) - 4" << std::endl;
+				//std::cout << "void remove_subitem( const filesystem_item::pointer_type& watch ) - 4" << std::endl;
 
 				it = subitems_.erase(it);
 
-				std::cout << "void remove_subitem( const filesystem_item::pointer_type& watch ) - 5" << std::endl;
+				//std::cout << "void remove_subitem( const filesystem_item::pointer_type& watch ) - 5" << std::endl;
 
 				break;
 			}
 			else
 			{
-				std::cout << "void remove_subitem( const filesystem_item::pointer_type& watch ) - 6" << std::endl;
+				//std::cout << "void remove_subitem( const filesystem_item::pointer_type& watch ) - 6" << std::endl;
 
 				++it;
 
-				std::cout << "void remove_subitem( const filesystem_item::pointer_type& watch ) - 7" << std::endl;
+				//std::cout << "void remove_subitem( const filesystem_item::pointer_type& watch ) - 7" << std::endl;
 
 			}
 
-			std::cout << "void remove_subitem( const filesystem_item::pointer_type& watch ) - 8" << std::endl;
+			//std::cout << "void remove_subitem( const filesystem_item::pointer_type& watch ) - 8" << std::endl;
 
 		}
 
-		std::cout << "void remove_subitem( const filesystem_item::pointer_type& watch ) - 9" << std::endl;
+		//std::cout << "void remove_subitem( const filesystem_item::pointer_type& watch ) - 9" << std::endl;
 
 	}
 
@@ -256,8 +256,8 @@ protected:
 	{
 		set_path( path );
 
-		std::cout << "filesystem_item(...)" << std::endl;
-		std::cout << "filesystem_item(...) - " << path_.native_file_string() << std::endl;
+		//std::cout << "filesystem_item(...)" << std::endl;
+		//std::cout << "filesystem_item(...) - " << path_.native_file_string() << std::endl;
 	}
 
 	//TODO: asignar lo que el usuario quiere monitorear...
@@ -266,8 +266,8 @@ protected:
 	{
 		set_path( path );
 
-		std::cout << "filesystem_item(...)" << std::endl;
-		std::cout << "filesystem_item(...) - " << path_.native_file_string() << std::endl;
+		//std::cout << "filesystem_item(...)" << std::endl;
+		//std::cout << "filesystem_item(...) - " << path_.native_file_string() << std::endl;
 	}
 
 protected:
