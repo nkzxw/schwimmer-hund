@@ -473,7 +473,6 @@ private:
 			//	throw; //re-throw
 			//}
 
-			std::cout << "watch->parent().get(): " << watch->parent().get() << std::endl;
 			std::cout << "queued_write_watch->parent().get(): " << queued_write_watch->parent().get() << std::endl;
 
 		}
