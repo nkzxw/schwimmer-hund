@@ -5,8 +5,8 @@ if "%MSVC_VERSION%" == "" goto default
 
 @REM call scons -c
 
-cd ..\..
-svn update
+@REM cd ..\..
+@REM svn update
 
 @REM TODO: esta fijo "vc" en este caso y no debería estarlo. AGREGAR UN COMPILER_NAME
 call scons -Q PROJECT_NAME=schwimmer-hund COMPILER_NAME=vc COMPILER_VERSION=%MSVC_VERSION% 
