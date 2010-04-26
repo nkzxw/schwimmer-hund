@@ -268,6 +268,12 @@ private:
 
 		std::cout << "void remove_watch( filesystem_item::pointer_type watch ) - 1" << std::endl;
 
+
+		std::cout << "watch->parent(): " << watch->parent() << std::endl;
+		std::cout << "watch->parent_: " << watch->parent_ << std::endl;
+		std::cout << "watch->parent_.get(): " << watch->parent_.get() << std::endl;
+
+
 		//TODO: que pasa si no tiene parent... Hacer Unit Test que elimine el directorio que estamos haciendo WATCH
 		if ( watch->parent() )
 		{
