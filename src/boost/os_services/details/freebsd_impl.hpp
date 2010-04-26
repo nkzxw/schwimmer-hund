@@ -168,6 +168,8 @@ private:
 
 	static filesystem_item::pointer_type create_filesystem_item( const boost::filesystem::path& path, user_entry::pointer_type entry )
 	{
+		std::cout << "NO DEBERIA PASAR POR ACA ---- static filesystem_item::pointer_type create_filesystem_item( const boost::filesystem::path& path, user_entry::pointer_type entry )" << std::endl;
+
 		filesystem_item::pointer_type watch = filesystem_item::create( path, entry );
 		entry->set_root( watch );
 		entry->add_watch( watch );
@@ -201,6 +203,9 @@ private:
 
 			parent->add_subitem( watch );
 		}
+
+		std::cout << "watch->parent().get(): " << watch->parent().get() << std::endl;
+
 		return watch;
 	}
 
@@ -254,6 +259,10 @@ private:
 
 
 					filesystem_item::pointer_type watch = create_filesystem_item( dir_itr->path(), root_dir->root_user_entry(), root_dir );
+
+					std::cout << "XXXXXXXXXXXX watch->parent().get(): " << watch->parent().get() << std::endl;
+					std::cout << "XXXXXXXXXXXX root_dir.get(): " << root_dir.get() << std::endl;
+
 					begin_watch( watch, launch_events );
 				}
 			}
