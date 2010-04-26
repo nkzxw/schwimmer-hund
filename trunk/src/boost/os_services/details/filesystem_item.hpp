@@ -167,19 +167,42 @@ public:
 
 	void remove_subitem( const filesystem_item::pointer_type& watch )
 	{
+		std::cout << "void remove_subitem( const filesystem_item::pointer_type& watch ) - 1" << std::endl;
+
 		filesystem_item::collection_type::iterator it = subitems_.begin();
+
+		std::cout << "void remove_subitem( const filesystem_item::pointer_type& watch ) - 2" << std::endl;
+
 		while ( it != subitems_.end() )
 		{
+			std::cout << "void remove_subitem( const filesystem_item::pointer_type& watch ) - 3" << std::endl;
+
 			if ( watch->is_equal( *it ) )
 			{
+				std::cout << "void remove_subitem( const filesystem_item::pointer_type& watch ) - 4" << std::endl;
+
 				it = subitems_.erase(it);
+
+				std::cout << "void remove_subitem( const filesystem_item::pointer_type& watch ) - 5" << std::endl;
+
 				break;
 			}
 			else
 			{
+				std::cout << "void remove_subitem( const filesystem_item::pointer_type& watch ) - 6" << std::endl;
+
 				++it;
+
+				std::cout << "void remove_subitem( const filesystem_item::pointer_type& watch ) - 7" << std::endl;
+
 			}
+
+			std::cout << "void remove_subitem( const filesystem_item::pointer_type& watch ) - 8" << std::endl;
+
 		}
+
+		std::cout << "void remove_subitem( const filesystem_item::pointer_type& watch ) - 9" << std::endl;
+
 	}
 
 	void set_path ( const boost::filesystem::path& path )

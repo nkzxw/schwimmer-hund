@@ -56,6 +56,10 @@ void close_file( int& file_descriptor )
 {
 	if ( file_descriptor != 0 )
 	{
+
+		std::cout << "closing FILE file_descriptor: " << file_descriptor << std::endl;
+
+
 		int ret_value = ::close( file_descriptor ); //close
 		if ( ret_value == -1 )
 		{

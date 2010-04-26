@@ -76,20 +76,33 @@ struct user_entry //: public enable_shared_from_this<user_entry>
 
 	void remove_watch( const filesystem_item::pointer_type& watch )
 	{
+		std::cout << "void remove_watch( const filesystem_item::pointer_type& watch ) - 1" << std::endl;
+
+
 		//TODO: usar STL
 		filesystem_item::collection_type::iterator it = all_watches_.begin();
+
+		std::cout << "void remove_watch( const filesystem_item::pointer_type& watch ) - 2" << std::endl;
+
 		while ( it != all_watches_.end() )
 		{
+			std::cout << "void remove_watch( const filesystem_item::pointer_type& watch ) - 3" << std::endl;
 			if ( (*it)->is_equal( *watch ) )
 			{
+				std::cout << "void remove_watch( const filesystem_item::pointer_type& watch ) - 4" << std::endl;
 				it = all_watches_.erase(it);
+				std::cout << "void remove_watch( const filesystem_item::pointer_type& watch ) - 5" << std::endl;
 				break;
 			}
 			else
 			{
+				std::cout << "void remove_watch( const filesystem_item::pointer_type& watch ) - 6" << std::endl;
 				++it;
+				std::cout << "void remove_watch( const filesystem_item::pointer_type& watch ) - 7" << std::endl;
 			}
+			std::cout << "void remove_watch( const filesystem_item::pointer_type& watch ) - 8" << std::endl;
 		}
+		std::cout << "void remove_watch( const filesystem_item::pointer_type& watch ) - 9" << std::endl;
 	}
 
 	const boost::filesystem::path& path() const 
