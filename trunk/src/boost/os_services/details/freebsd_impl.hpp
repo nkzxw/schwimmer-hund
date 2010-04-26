@@ -264,6 +264,10 @@ private:
 					std::cout << "XXXXXXXXXXXX root_dir.get(): " << root_dir.get() << std::endl;
 
 					begin_watch( watch, launch_events );
+
+					std::cout << "YYYYYYYYYYYY watch->parent().get(): " << watch->parent().get() << std::endl;
+					std::cout << "YYYYYYYYYYYY root_dir.get(): " << root_dir.get() << std::endl;
+
 				}
 			}
 			catch ( const std::exception& ex )
