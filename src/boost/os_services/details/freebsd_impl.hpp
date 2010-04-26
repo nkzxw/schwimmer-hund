@@ -422,7 +422,7 @@ private:
 							std::cout << "queued_write_watch.reset() -> NULL DELETER" << std::endl;
 							queued_write_watch.reset();
 							std::cout << "watch->parent().get(): " << watch->parent().get() << std::endl;
-							std::cout << "queued_write_watch->parent().get(): " << queued_write_watch->parent().get() << std::endl;
+							//std::cout << "queued_write_watch->parent().get(): " << queued_write_watch->parent().get() << std::endl;
 							std::cout << "case kqueue_event_types::remove: - 3" << std::endl;
 							break;
 						}
@@ -435,7 +435,7 @@ private:
 							std::cout << "queued_write_watch.reset() -> NULL DELETER" << std::endl;
 							queued_write_watch.reset();
 							std::cout << "watch->parent().get(): " << watch->parent().get() << std::endl;
-							std::cout << "queued_write_watch->parent().get(): " << queued_write_watch->parent().get() << std::endl;
+							//std::cout << "queued_write_watch->parent().get(): " << queued_write_watch->parent().get() << std::endl;
 
 							break;
 						}
@@ -456,7 +456,7 @@ private:
 								std::cout << "queued_write_watch.reset() -> NULL DELETER" << std::endl;
 								queued_write_watch.reset(); // = 0;
 								std::cout << "watch->parent().get(): " << watch->parent().get() << std::endl;
-								std::cout << "queued_write_watch->parent().get(): " << queued_write_watch->parent().get() << std::endl;
+								//std::cout << "queued_write_watch->parent().get(): " << queued_write_watch->parent().get() << std::endl;
 
 								if ( last_write_item )
 								{
@@ -514,7 +514,7 @@ private:
 						std::cout << "queued_write_watch.use_count(): " << queued_write_watch.use_count() << std::endl;
 						std::cout << "queued_write_watch.reset() -> NULL DELETER" << std::endl;
 						queued_write_watch.reset(); // = 0;
-						std::cout << "queued_write_watch->parent().get(): " << queued_write_watch->parent().get() << std::endl;
+						//std::cout << "queued_write_watch->parent().get(): " << queued_write_watch->parent().get() << std::endl;
 
 						if ( last_write_item )
 						{
