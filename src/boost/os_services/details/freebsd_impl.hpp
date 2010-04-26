@@ -394,16 +394,25 @@ private:
 							std::cout << "case kqueue_event_types::remove: - 1" << std::endl;
 							handle_remove( watch );
 							std::cout << "case kqueue_event_types::remove: - 2" << std::endl;
+							std::cout << "watch->parent().get(): " << watch->parent().get() << std::endl;
+							std::cout << "queued_write_watch->parent().get(): " << queued_write_watch->parent().get() << std::endl;
 							std::cout << "queued_write_watch.reset() -> NULL DELETER" << std::endl;
 							queued_write_watch.reset();
+							std::cout << "watch->parent().get(): " << watch->parent().get() << std::endl;
+							std::cout << "queued_write_watch->parent().get(): " << queued_write_watch->parent().get() << std::endl;
 							std::cout << "case kqueue_event_types::remove: - 3" << std::endl;
 							break;
 						}
 						case kqueue_event_types::rename:
 						{
 							handle_rename( watch );
+							std::cout << "watch->parent().get(): " << watch->parent().get() << std::endl;
+							std::cout << "queued_write_watch->parent().get(): " << queued_write_watch->parent().get() << std::endl;
 							std::cout << "queued_write_watch.reset() -> NULL DELETER" << std::endl;
 							queued_write_watch.reset();
+							std::cout << "watch->parent().get(): " << watch->parent().get() << std::endl;
+							std::cout << "queued_write_watch->parent().get(): " << queued_write_watch->parent().get() << std::endl;
+
 							break;
 						}
 						case kqueue_event_types::write:
@@ -411,8 +420,15 @@ private:
 							if ( queued_write_watch ) //!= 0
 							{
 								handle_write( queued_write_watch );
+
+								std::cout << "watch->parent().get(): " << watch->parent().get() << std::endl;
+								std::cout << "queued_write_watch->parent().get(): " << queued_write_watch->parent().get() << std::endl;
 								std::cout << "queued_write_watch.reset() -> NULL DELETER" << std::endl;
 								queued_write_watch.reset(); // = 0;
+								std::cout << "watch->parent().get(): " << watch->parent().get() << std::endl;
+								std::cout << "queued_write_watch->parent().get(): " << queued_write_watch->parent().get() << std::endl;
+
+
 								handle_write( watch );
 							}
 							else
@@ -427,6 +443,9 @@ private:
 						}
 					}
 				}
+
+				std::cout << "watch->parent().get(): " << watch->parent().get() << std::endl;
+				std::cout << "queued_write_watch->parent().get(): " << queued_write_watch->parent().get() << std::endl;
 				std::cout << "watch is out of scope -> NULL DELETER" << std::endl;
 			}
 			catch( const kevent_timeout& ) //e )
@@ -438,7 +457,14 @@ private:
 					if ( queued_write_watch )
 					{
 						handle_write( queued_write_watch );
+						std::cout << "watch->parent().get(): " << watch->parent().get() << std::endl;
+						std::cout << "queued_write_watch->parent().get(): " << queued_write_watch->parent().get() << std::endl;
+
 						std::cout << "queued_write_watch.reset() -> NULL DELETER" << std::endl;
+
+						std::cout << "watch->parent().get(): " << watch->parent().get() << std::endl;
+						std::cout << "queued_write_watch->parent().get(): " << queued_write_watch->parent().get() << std::endl;
+
 						queued_write_watch.reset(); // = 0;
 					}
 				}
@@ -450,6 +476,10 @@ private:
 			//	//TODO: para que capturo la excepcion si la voy a relanzar ????
 			//	throw; //re-throw
 			//}
+
+			std::cout << "watch->parent().get(): " << watch->parent().get() << std::endl;
+			std::cout << "queued_write_watch->parent().get(): " << queued_write_watch->parent().get() << std::endl;
+
 		}
 	}
 
