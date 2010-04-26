@@ -421,6 +421,7 @@ private:
 						}
 					}
 				}
+				std::cout << "watch is out of scope -> NULL DELETER" << std::endl;
 			}
 			catch( const kevent_timeout& ) //e )
 			{
