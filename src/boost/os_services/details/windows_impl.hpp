@@ -7,7 +7,8 @@
 #include <boost/bind.hpp>
 #include <boost/integer.hpp> 
 #include <boost/optional.hpp>
-#include <boost/smart_ptr.hpp>
+//#include <boost/smart_ptr.hpp>
+#include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
 
 #include <boost/os_services/change_types.hpp>
@@ -32,16 +33,25 @@ void directory_info_deleter(LPDIRECTORY_INFO ptr)
 	{
 		if ( ptr->directory_handle != 0 )
 		{
-			BOOL ret_value = ::CloseHandle( ptr->directory_handle );
+			//BOOL ret_value = ::CloseHandle( ptr->directory_handle );
+			//if ( ret_value == 0 )
+			//{
+			//	//Destructor -> NO_THROW
+			//	std::cerr << "Failed to close directory port handle. Reason: " << GetLastError() << std::endl;
+			//}
 
-			if ( ret_value == 0 )
+			try
+			{
+				win32api_wrapper::close_handle( ptr->directory_handle );
+			}
+			catch ( const std::runtime_error& )
 			{
 				//Destructor -> NO_THROW
 				std::cerr << "Failed to close directory port handle. Reason: " << GetLastError() << std::endl;
 			}
 		}
 
-		free(ptr);
+		free( ptr ); //TODO: mmmmmmmmmm WRAPPEAR ESTA CLASE
 		ptr = 0;
 	}
 };
@@ -58,13 +68,24 @@ public:
 	{
 		if ( completion_port_handle_ != 0 )
 		{
-			//TODO: wrappear win32api_wrapper
-			BOOL ret_value = ::PostQueuedCompletionStatus( completion_port_handle_, 0, 0, NULL );
+			//BOOL ret_value = ::PostQueuedCompletionStatus( completion_port_handle_, 0, 0, NULL );
 
-			if ( ret_value == 0 )
+			//if ( ret_value == 0 )
+			//{
+			//	//Destructor -> NO_THROW
+			//	std::cerr << "Failed to post to completion port. Reason: " << GetLastError() << std::endl;
+			//	//TODO: Si el Post falla, el Thread nunca va a morir !!
+			//}
+
+			try
+			{
+				win32api_wrapper::post_queued_completion_status( completion_port_handle_, 0, 0, NULL );
+			}
+			catch ( const std::runtime_error& )
 			{
 				//Destructor -> NO_THROW
 				std::cerr << "Failed to post to completion port. Reason: " << GetLastError() << std::endl;
+				
 				//TODO: Si el Post falla, el Thread nunca va a morir !!
 			}
 		}
@@ -76,14 +97,24 @@ public:
 
 		if ( completion_port_handle_ != 0 )
 		{
-			//TODO: wrappear win32api_wrapper
-			BOOL ret_value = ::CloseHandle( completion_port_handle_ );
+			//BOOL ret_value = ::CloseHandle( completion_port_handle_ );
 
-			if ( ret_value == 0 )
+			//if ( ret_value == 0 )
+			//{
+			//	//Destructor -> NO_THROW
+			//	std::cerr << "Failed to close completion port handle. Reason: " << GetLastError() << std::endl;
+			//}
+
+			try
+			{
+				win32api_wrapper::close_handle( completion_port_handle_ );
+			}
+			catch ( const std::runtime_error& )
 			{
 				//Destructor -> NO_THROW
 				std::cerr << "Failed to close completion port handle. Reason: " << GetLastError() << std::endl;
 			}
+
 		}
 	}
 
@@ -106,14 +137,17 @@ public:
 		//unsigned long addr = (unsigned long) &directory_info;
 
 		//TODO: usar win32api_wrapper::create_io_completion_port
-		completion_port_handle_ = ::CreateIoCompletionPort( directory_info->directory_handle, completion_port_handle_, (DWORD) directory_info, 0 );
+		//completion_port_handle_ = ::CreateIoCompletionPort( directory_info->directory_handle, completion_port_handle_, (DWORD) directory_info, 0 );
 	
-		if ( completion_port_handle_ == 0 )
-		{
-			std::ostringstream oss;
-			oss << "Failed to monitor directory - Directory: " << dir_name << " - Reason: " << GetLastError();
-			throw (std::runtime_error(oss.str()));
-		}
+		//if ( completion_port_handle_ == 0 )
+		//{
+		//	std::ostringstream oss;
+		//	oss << "Failed to monitor directory - Directory: " << dir_name << " - Reason: " << GetLastError();
+		//	throw (std::runtime_error(oss.str()));
+		//}
+
+		completion_port_handle_ = win32api_wrapper::create_io_completion_port( directory_info->directory_handle, completion_port_handle_, (DWORD) directory_info, 0 );
+
 
 		directories_.push_back( directory_info_pointer_type( directory_info, directory_info_deleter ) );
 	}
@@ -127,15 +161,16 @@ public:
 			//TODO: BOOST_FOREACH
 			for (vector_type::const_iterator it = directories_.begin(); it!=directories_.end(); ++it)
 			{
-				//TODO: wrappear win32api_wrapper
-				BOOL ret_value = ::ReadDirectoryChangesW ( (*it)->directory_handle, (*it)->buffer, MAX_BUFFER, this->include_subdirectories_ ? 1 : 0, this->notify_filters_, &(*it)->buffer_length, &(*it)->overlapped, NULL);
+				//BOOL ret_value = ::ReadDirectoryChangesW ( (*it)->directory_handle, (*it)->buffer, MAX_BUFFER, this->include_subdirectories_ ? 1 : 0, this->notify_filters_, &(*it)->buffer_length, &(*it)->overlapped, NULL);
 
-				if ( ret_value == 0 )
-				{
-					std::ostringstream oss;
-					oss << "Failed to monitor directory - Directory: " << (*it)->directory_name << " - Reason: " << GetLastError();
-					throw (std::runtime_error(oss.str()));
-				}
+				//if ( ret_value == 0 )
+				//{
+				//	std::ostringstream oss;
+				//	oss << "Failed to monitor directory - Directory: " << (*it)->directory_name << " - Reason: " << GetLastError();
+				//	throw (std::runtime_error(oss.str()));
+				//}
+				
+				win32api_wrapper::read_directory_changes( (*it)->directory_handle, (*it)->buffer, MAX_BUFFER, this->include_subdirectories_ ? 1 : 0, this->notify_filters_, &(*it)->buffer_length, &(*it)->overlapped, NULL);
 			}
 
 			thread_.reset( new boost::thread( boost::bind(&windows_impl::handle_directory_changes, this) ) );
@@ -156,15 +191,16 @@ public: //private:  //TODO:
 
 		do
 		{
-			//TODO: wrappear win32api_wrapper
-			BOOL ret_value = ::GetQueuedCompletionStatus( this->completion_port_handle_, &num_bytes, (LPDWORD) &directory_info, &overlapped, INFINITE );
+			//BOOL ret_value = ::GetQueuedCompletionStatus( this->completion_port_handle_, &num_bytes, (LPDWORD) &directory_info, &overlapped, INFINITE );
 
-			if ( ret_value == 0 )
-			{
-				std::ostringstream oss;
-				oss << "Runtime error. Reason: " << GetLastError();
-				throw (std::runtime_error(oss.str()));
-			}
+			//if ( ret_value == 0 )
+			//{
+			//	std::ostringstream oss;
+			//	oss << "Runtime error. Reason: " << GetLastError();
+			//	throw (std::runtime_error(oss.str()));
+			//}
+		
+			win32api_wrapper::get_queued_completion_status( this->completion_port_handle_, &num_bytes, (LPDWORD) &directory_info, &overlapped, INFINITE );
 
 			if ( directory_info )
 			{
@@ -226,15 +262,16 @@ public: //private:  //TODO:
 					}
 				}
 
-				//TODO: wrappear win32api_wrapper
-				ret_value = ::ReadDirectoryChangesW ( directory_info->directory_handle, directory_info->buffer, MAX_BUFFER, this->include_subdirectories_ ? 1 : 0, this->notify_filters_, &directory_info->buffer_length, &directory_info->overlapped, NULL );
+				//ret_value = ::ReadDirectoryChangesW ( directory_info->directory_handle, directory_info->buffer, MAX_BUFFER, this->include_subdirectories_ ? 1 : 0, this->notify_filters_, &directory_info->buffer_length, &directory_info->overlapped, NULL );
 
-				if ( ret_value == 0 )
-				{
-					std::ostringstream oss;
-					oss << "Runtime error. Reason: " << GetLastError();
-					throw (std::runtime_error(oss.str()));
-				}
+				//if ( ret_value == 0 )
+				//{
+				//	std::ostringstream oss;
+				//	oss << "Runtime error. Reason: " << GetLastError();
+				//	throw (std::runtime_error(oss.str()));
+				//}
+
+				win32api_wrapper::read_directory_changes( directory_info->directory_handle, directory_info->buffer, MAX_BUFFER, this->include_subdirectories_ ? 1 : 0, this->notify_filters_, &directory_info->buffer_length, &directory_info->overlapped, NULL );
 			}
 
 		} while( directory_info );
