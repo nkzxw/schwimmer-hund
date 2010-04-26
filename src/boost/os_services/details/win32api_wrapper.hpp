@@ -1,5 +1,5 @@
-#ifndef BOOST_OS_SERVICES_WIN32API_WRAPPER_HPP
-#define BOOST_OS_SERVICES_WIN32API_WRAPPER_HPP
+#ifndef BOOST_OS_SERVICES_DETAIL_WIN32API_WRAPPER_HPP
+#define BOOST_OS_SERVICES_DETAIL_WIN32API_WRAPPER_HPP
 
 #include <string>
 
@@ -10,25 +10,19 @@
 
 namespace boost {
 namespace os_services {
+namespace detail {
 namespace win32api_wrapper
 {
 	//WINBASEAPI BOOL WINAPI CreateDirectoryA(__in     LPCSTR lpPathName, /*__in_opt*/ LPSECURITY_ATTRIBUTES security_attributes );
-	int CreateDirectory ( const std::string& pathName, LPSECURITY_ATTRIBUTES securityAttributes )
+	int create_directory ( const std::string& path_name, LPSECURITY_ATTRIBUTES security_attributes )
 	{
-		return ::CreateDirectoryA( pathName.c_str(), securityAttributes );
+		return ::CreateDirectoryA( path_name.c_str(), security_attributes );
+
+		//TODO: CreateDirectoryW ????
+		//TODO: throw
 	}
 
-	//void* CreateFile ( const std::string& file_name, unsigned long desired_access, unsigned long share_mode, LPSECURITY_ATTRIBUTES security_attributes, unsigned long creation_disposition, unsigned long flags_and_attributes, void* template_file )
-	//{
-	//	#ifdef UNICODE
-	//	//#define CreateFile  CreateFileW
-	//		return ::CreateFileW( file_name.c_str(), desired_access, share_mode, security_attributes, creation_disposition, flags_and_attributes, template_file );
-	//	#else
-	//		return ::CreateFileA( file_name.c_str(), desired_access, share_mode, security_attributes, creation_disposition, flags_and_attributes, template_file );
-	//	#endif // !UNICODE
-	//}
-
-	void* CreateFile ( const std::string& file_name, unsigned long desired_access, unsigned long share_mode, LPSECURITY_ATTRIBUTES security_attributes, unsigned long creation_disposition, unsigned long flags_and_attributes, void* template_file )
+	void* create_file ( const std::string& file_name, unsigned long desired_access, unsigned long share_mode, LPSECURITY_ATTRIBUTES security_attributes, unsigned long creation_disposition, unsigned long flags_and_attributes, void* template_file )
 	{
 		void* file_handle;
 
@@ -51,13 +45,27 @@ namespace win32api_wrapper
 		return file_handle;
 	}
 
+	void* create_io_completion_port( HANDLE FileHandle, HANDLE ExistingCompletionPort, ULONG_PTR CompletionKey, DWORD NumberOfConcurrentThreads )
+	{
+		void* handle = ::CreateIoCompletionPort ( FileHandle, ExistingCompletionPort, CompletionKey, NumberOfConcurrentThreads );
+
+		if ( handle == 0 )
+		{
+			std::ostringstream oss;
+			oss << "CreateIoCompletionPort Win32API failed - Reason: " << GetLastError();
+			throw ( std::runtime_error(oss.str()) );
+		}
+	}
+
+
 
 
 
 } // namespace win32api_wrapper
+} // namespace detail
 } // namespace os_services
 } // namespace boost
 
 
 
-#endif // BOOST_OS_SERVICES_WIN32API_WRAPPER_HPP
+#endif // BOOST_OS_SERVICES_DETAIL_WIN32API_WRAPPER_HPP

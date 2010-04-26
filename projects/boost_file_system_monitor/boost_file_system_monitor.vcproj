@@ -248,11 +248,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\boost\os_services\posix_syscall_wrapper.hpp"
+				RelativePath="..\..\src\boost\os_services\details\posix_syscall_wrapper.hpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\boost\os_services\posix_syscall_wrapper_dummy.hpp"
+				RelativePath="..\..\src\boost\os_services\details\posix_syscall_wrapper_dummy.hpp"
 				>
 			</File>
 			<File
@@ -272,7 +272,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\boost\os_services\win32api_wrapper.hpp"
+				RelativePath="..\..\src\boost\os_services\details\win32api_wrapper.hpp"
 				>
 			</File>
 			<File
