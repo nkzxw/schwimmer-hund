@@ -56,16 +56,6 @@ struct user_entry //: public enable_shared_from_this<user_entry>
 	////TODO: eliminar este destructor. Verificar que destructores hay y cuales deberian ser virtuales...
 	//~user_entry()
 	//{
-	//	//std::cout << "~user_entry()" << std::endl;
-	//	//std::cout << "all_watches_.size(): " << all_watches_.size()	 << std::endl;
-
-	//	//for (filesystem_item::collection_type::iterator it = all_watches_.begin(); it != all_watches_.end(); ++it )
-	//	//{
-	//	//	std::cout << "(*it)->path().native_file_string(): " << (*it)->path().native_file_string() << std::endl;
-	//	//	std::cout << "it->use_count(): " << it->use_count() << std::endl;
-	//	//}
-
-	//	//std::cout << "~user_entry() - END" << std::endl;
 	//}
 
 	void add_watch( const filesystem_item::pointer_type& item )
