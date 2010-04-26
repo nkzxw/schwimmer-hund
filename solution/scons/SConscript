@@ -44,12 +44,12 @@ Import('release_dynamic_env', 'release_static_env', 'debug_dynamic_env', 'debug_
 
 # -------------- stress_random_instruction_interpreter
 
-#obj = release_dynamic_env.Object('stress_random_instruction_interpreter_dynamic_rel', [ SRC_DIR + '/libs/os_services/test/stress_test_random_instruction_interpreter.cpp'])
-#stress_random_instruction_interpreter_dynamic_rel = release_dynamic_env.Program('stress_random_instruction_interpreter_' + PLATFORM_STR + '_dynamic_release', obj ) #CPPFLAGS = ['/MD'] )
-#
-#if Platform().name == 'win32':
-#	release_dynamic_env.AddPostAction(stress_random_instruction_interpreter_dynamic_rel, 'mt.exe -nologo -manifest ${TARGET}.manifest -outputresource:$TARGET;1')
-#
+obj = release_dynamic_env.Object('stress_random_instruction_interpreter_dynamic_rel', [ SRC_DIR + '/libs/os_services/test/stress_test_random_instruction_interpreter.cpp'])
+stress_random_instruction_interpreter_dynamic_rel = release_dynamic_env.Program('stress_random_instruction_interpreter_' + PLATFORM_STR + '_dynamic_release', obj ) #CPPFLAGS = ['/MD'] )
+
+if Platform().name == 'win32':
+	release_dynamic_env.AddPostAction(stress_random_instruction_interpreter_dynamic_rel, 'mt.exe -nologo -manifest ${TARGET}.manifest -outputresource:$TARGET;1')
+
 #obj = release_static_env.Object('stress_random_instruction_interpreter_static_rel', [ SRC_DIR + '/libs/os_services/test/stress_test_random_instruction_interpreter.cpp'])
 #stress_random_instruction_interpreter_static_rel = release_static_env.Program('stress_random_instruction_interpreter_' + PLATFORM_STR + '_static_release', obj )
 #
@@ -62,9 +62,9 @@ Import('release_dynamic_env', 'release_static_env', 'debug_dynamic_env', 'debug_
 #
 #obj = debug_static_env.Object('stress_random_instruction_interpreter_static_dbg', [ SRC_DIR + '/libs/os_services/test/stress_test_random_instruction_interpreter.cpp'])
 #stress_random_instruction_interpreter_static_dbg = debug_static_env.Program('stress_random_instruction_interpreter_' + PLATFORM_STR + '_static_debug', obj)
-#
-##Command(TEST_DIR + "/" + string.replace(str( stress_random_instruction_interpreter_dynamic_rel[0] ), "_" + PLATFORM_STR + "_dynamic_release", ""), BUILD_DIR + "/" + str ( stress_random_instruction_interpreter_dynamic_rel[0] ), Copy("$TARGET", "$SOURCE"))
-#Command(TEST_DIR + "/" + string.replace(str( stress_random_instruction_interpreter_dynamic_dbg[0] ), "_" + PLATFORM_STR + "_dynamic_debug", ""), BUILD_DIR + "/" + str ( stress_random_instruction_interpreter_dynamic_dbg[0] ), Copy("$TARGET", "$SOURCE"))
+
+Command(TEST_DIR + "/" + string.replace(str( stress_random_instruction_interpreter_dynamic_rel[0] ), "_" + PLATFORM_STR + "_dynamic_release", ""), BUILD_DIR + "/" + str ( stress_random_instruction_interpreter_dynamic_rel[0] ), Copy("$TARGET", "$SOURCE"))
+##Command(TEST_DIR + "/" + string.replace(str( stress_random_instruction_interpreter_dynamic_dbg[0] ), "_" + PLATFORM_STR + "_dynamic_debug", ""), BUILD_DIR + "/" + str ( stress_random_instruction_interpreter_dynamic_dbg[0] ), Copy("$TARGET", "$SOURCE"))
 
 
 
@@ -72,27 +72,27 @@ Import('release_dynamic_env', 'release_static_env', 'debug_dynamic_env', 'debug_
 
 # -------------- stress_test_watcher
 
-#obj = release_dynamic_env.Object('stress_test_watcher_dynamic_rel', [ SRC_DIR + '/libs/os_services/test/stress_test_watcher.cpp'])
-#stress_test_watcher_dynamic_rel = release_dynamic_env.Program('stress_test_watcher_' + PLATFORM_STR + '_dynamic_release', obj ) #CPPFLAGS = ['/MD'] )
-#
-#if Platform().name == 'win32':
-#	release_dynamic_env.AddPostAction(stress_test_watcher_dynamic_rel, 'mt.exe -nologo -manifest ${TARGET}.manifest -outputresource:$TARGET;1')
-#
+obj = release_dynamic_env.Object('stress_test_watcher_dynamic_rel', [ SRC_DIR + '/libs/os_services/test/stress_test_watcher.cpp'])
+stress_test_watcher_dynamic_rel = release_dynamic_env.Program('stress_test_watcher_' + PLATFORM_STR + '_dynamic_release', obj ) #CPPFLAGS = ['/MD'] )
+
+if Platform().name == 'win32':
+	release_dynamic_env.AddPostAction(stress_test_watcher_dynamic_rel, 'mt.exe -nologo -manifest ${TARGET}.manifest -outputresource:$TARGET;1')
+
 #obj = release_static_env.Object('stress_test_watcher_static_rel', [ SRC_DIR + '/libs/os_services/test/stress_test_watcher.cpp'])
 #stress_test_watcher_static_rel = release_static_env.Program('stress_test_watcher_' + PLATFORM_STR + '_static_release', obj )
 #
-obj = debug_dynamic_env.Object('stress_test_watcher_dynamic_dbg', [ SRC_DIR + '/libs/os_services/test/stress_test_watcher.cpp'])
-stress_test_watcher_dynamic_dbg = debug_dynamic_env.Program('stress_test_watcher_' + PLATFORM_STR + '_dynamic_debug', obj)
-
-if Platform().name == 'win32':
-	debug_dynamic_env.AddPostAction(stress_test_watcher_dynamic_dbg, 'mt.exe -nologo -manifest ${TARGET}.manifest -outputresource:$TARGET;1')
-
+#obj = debug_dynamic_env.Object('stress_test_watcher_dynamic_dbg', [ SRC_DIR + '/libs/os_services/test/stress_test_watcher.cpp'])
+#stress_test_watcher_dynamic_dbg = debug_dynamic_env.Program('stress_test_watcher_' + PLATFORM_STR + '_dynamic_debug', obj)
+#
+#if Platform().name == 'win32':
+#	debug_dynamic_env.AddPostAction(stress_test_watcher_dynamic_dbg, 'mt.exe -nologo -manifest ${TARGET}.manifest -outputresource:$TARGET;1')
+#
 #obj = debug_static_env.Object('stress_test_watcher_static_dbg', [ SRC_DIR + '/libs/os_services/test/stress_test_watcher.cpp'])
 #stress_test_watcher_static_dbg = debug_static_env.Program('stress_test_watcher_' + PLATFORM_STR + '_static_debug', obj)
 #
 
-#Command(TEST_DIR + "/" + string.replace(str( stress_test_watcher_dynamic_rel[0] ), "_" + PLATFORM_STR + "_dynamic_release", ""), BUILD_DIR + "/" + str ( stress_test_watcher_dynamic_rel[0] ), Copy("$TARGET", "$SOURCE"))
-Command(TEST_DIR + "/" + string.replace(str( stress_test_watcher_dynamic_dbg[0] ), "_" + PLATFORM_STR + "_dynamic_debug", ""), BUILD_DIR + "/" + str ( stress_test_watcher_dynamic_dbg[0] ), Copy("$TARGET", "$SOURCE"))
+Command(TEST_DIR + "/" + string.replace(str( stress_test_watcher_dynamic_rel[0] ), "_" + PLATFORM_STR + "_dynamic_release", ""), BUILD_DIR + "/" + str ( stress_test_watcher_dynamic_rel[0] ), Copy("$TARGET", "$SOURCE"))
+#Command(TEST_DIR + "/" + string.replace(str( stress_test_watcher_dynamic_dbg[0] ), "_" + PLATFORM_STR + "_dynamic_debug", ""), BUILD_DIR + "/" + str ( stress_test_watcher_dynamic_dbg[0] ), Copy("$TARGET", "$SOURCE"))
 
 
 
