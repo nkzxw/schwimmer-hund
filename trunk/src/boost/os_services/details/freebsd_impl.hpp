@@ -192,19 +192,19 @@ private:
 		filesystem_item::pointer_type watch = create_filesystem_item( path, entry );
 
 
-		std::cout << "parent.get(): " << parent.get() << std::endl;
+		//std::cout << "parent.get(): " << parent.get() << std::endl;
 
 		if ( parent )
 		{
-			std::cout << "if ( parent ) - 1" << std::endl;
-			std::cout << "watch->parent().get(): " << watch->parent().get() << std::endl;
+			//std::cout << "if ( parent ) - 1" << std::endl;
+			//std::cout << "watch->parent().get(): " << watch->parent().get() << std::endl;
 			watch->set_parent( parent );
-			std::cout << "watch->parent().get(): " << watch->parent().get() << std::endl;
+			//std::cout << "watch->parent().get(): " << watch->parent().get() << std::endl;
 
 			parent->add_subitem( watch );
 		}
 
-		std::cout << "watch->parent().get(): " << watch->parent().get() << std::endl;
+		//std::cout << "watch->parent().get(): " << watch->parent().get() << std::endl;
 
 		return watch;
 	}
@@ -260,22 +260,20 @@ private:
 
 					filesystem_item::pointer_type watch = create_filesystem_item( dir_itr->path(), root_dir->root_user_entry(), root_dir );
 
-					std::cout << "XXXXXXXXXXXX watch.use_count(): " << watch.use_count() << std::endl;
 
 					last_write_item = watch;
-					std::cout << "XXXXXXXXXXXX watch.use_count(): " << watch.use_count() << std::endl;
-					std::cout << "XXXXXXXXXXXX last_write_item.use_count(): " << last_write_item.use_count() << std::endl;
 
-					std::cout << "last_write_item->parent().get(): " << last_write_item->parent().get() << std::endl;
-
-					std::cout << "XXXXXXXXXXXX watch->parent().get(): " << watch->parent().get() << std::endl;
-					std::cout << "XXXXXXXXXXXX root_dir.get(): " << root_dir.get() << std::endl;
+					if ( last_write_item )
+					{
+						std::cout << "last_write_item->parent().get(): " << last_write_item->parent().get() << std::endl;
+					}
 
 					begin_watch( watch, launch_events );
 
-					std::cout << "last_write_item->parent().get(): " << last_write_item->parent().get() << std::endl;
-					std::cout << "YYYYYYYYYYYY watch->parent().get(): " << watch->parent().get() << std::endl;
-					std::cout << "YYYYYYYYYYYY root_dir.get(): " << root_dir.get() << std::endl;
+					if ( last_write_item )
+					{
+						std::cout << "last_write_item->parent().get(): " << last_write_item->parent().get() << std::endl;
+					}
 
 				}
 			}
@@ -450,13 +448,8 @@ private:
 									std::cout << "last_write_item->parent().get(): " << last_write_item->parent().get() << std::endl;
 								}
 
-								std::cout << "watch->parent().get(): " << watch->parent().get() << std::endl;
-								std::cout << "queued_write_watch->parent().get(): " << queued_write_watch->parent().get() << std::endl;
-								std::cout << "queued_write_watch.use_count(): " << queued_write_watch.use_count() << std::endl;
 								std::cout << "queued_write_watch.reset() -> NULL DELETER" << std::endl;
 								queued_write_watch.reset(); // = 0;
-								std::cout << "watch->parent().get(): " << watch->parent().get() << std::endl;
-								//std::cout << "queued_write_watch->parent().get(): " << queued_write_watch->parent().get() << std::endl;
 
 								if ( last_write_item )
 								{
@@ -485,9 +478,6 @@ private:
 					}
 				}
 
-				std::cout << "watch->parent().get(): " << watch->parent().get() << std::endl;
-				std::cout << "queued_write_watch->parent().get(): " << queued_write_watch->parent().get() << std::endl;
-				std::cout << "queued_write_watch.use_count(): " << queued_write_watch.use_count() << std::endl;
 				std::cout << "watch is out of scope -> NULL DELETER" << std::endl;
 			}
 			catch( const kevent_timeout& ) //e )
@@ -510,11 +500,7 @@ private:
 							std::cout << "last_write_item->parent().get(): " << last_write_item->parent().get() << std::endl;
 						}
 
-						std::cout << "ZZZZZZZZZZZZZZZZZZZZZZ - queued_write_watch->parent().get(): " << queued_write_watch->parent().get() << std::endl;
-						std::cout << "queued_write_watch.use_count(): " << queued_write_watch.use_count() << std::endl;
-						std::cout << "queued_write_watch.reset() -> NULL DELETER" << std::endl;
 						queued_write_watch.reset(); // = 0;
-						//std::cout << "queued_write_watch->parent().get(): " << queued_write_watch->parent().get() << std::endl;
 
 						if ( last_write_item )
 						{
