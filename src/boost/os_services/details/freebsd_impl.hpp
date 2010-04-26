@@ -184,11 +184,21 @@ private:
 
 	static filesystem_item::pointer_type create_filesystem_item( const boost::filesystem::path& path, user_entry::pointer_type entry, filesystem_item::pointer_type parent )
 	{
+
+		std::cout << "static filesystem_item::pointer_type create_filesystem_item( const boost::filesystem::path& path, user_entry::pointer_type entry, filesystem_item::pointer_type parent )" << std::endl;
+
 		filesystem_item::pointer_type watch = create_filesystem_item( path, entry );
+
+
+		std::cout << "parent.get(): " << parent.get() << std::endl;
 
 		if ( parent )
 		{
+			std::cout << "if ( parent ) - 1" << std::endl;
+			std::cout << "watch->parent().get(): " << watch->parent().get() << std::endl;
 			watch->set_parent( parent );
+			std::cout << "watch->parent().get(): " << watch->parent().get() << std::endl;
+
 			parent->add_subitem( watch );
 		}
 		return watch;
