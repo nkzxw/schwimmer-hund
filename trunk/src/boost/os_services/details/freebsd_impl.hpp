@@ -457,12 +457,8 @@ private:
 					if ( queued_write_watch )
 					{
 						handle_write( queued_write_watch );
-						std::cout << "watch->parent().get(): " << watch->parent().get() << std::endl;
 						std::cout << "queued_write_watch->parent().get(): " << queued_write_watch->parent().get() << std::endl;
-
 						std::cout << "queued_write_watch.reset() -> NULL DELETER" << std::endl;
-
-						std::cout << "watch->parent().get(): " << watch->parent().get() << std::endl;
 						std::cout << "queued_write_watch->parent().get(): " << queued_write_watch->parent().get() << std::endl;
 
 						queued_write_watch.reset(); // = 0;
