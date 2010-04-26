@@ -28,7 +28,7 @@ public:
 	filesystem_event_handler deleted_handler_;
 	renamed_event_handler renamed_handler_;
 
-	void add_directory (const std::string& dir_name) //throw (std::invalid_argument, std::runtime_error)
+	void add_directory( const std::string& dir_name ) //throw (std::invalid_argument, std::runtime_error)
 	{ 
 		if ( !utils::directory_exists(dir_name) )
 		{
@@ -40,7 +40,7 @@ public:
 		static_cast<Type*>(this)->add_directory_impl(dir_name);
 	}
 
-	void add_directory (boost::filesystem::path directory) //throw (std::invalid_argument, std::runtime_error)
+	void add_directory( const boost::filesystem::path& directory ) //throw (std::invalid_argument, std::runtime_error)
 	{ 
 		if ( !utils::directory_exists(directory) )
 		{

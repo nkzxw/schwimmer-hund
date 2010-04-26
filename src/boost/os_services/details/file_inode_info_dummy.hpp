@@ -23,26 +23,26 @@ namespace detail {
 struct file_inode_info_dummy
 {
 	//TODO: public, protected, private ?????
-	file_inode_info_dummy ( )
+	file_inode_info_dummy()
 		: device_id_(0), inode_number_(0)
 	{}
 
-	file_inode_info_dummy ( int device_id, int inode_number )
+	file_inode_info_dummy( int device_id, int inode_number )
 		: device_id_(device_id), inode_number_(inode_number)
 	{}
 
-	file_inode_info_dummy ( const boost::filesystem::path& path )
+	file_inode_info_dummy( const boost::filesystem::path& path )
 	{
-		set ( path );
+		set( path );
 	}
 
-	file_inode_info_dummy ( const file_inode_info_dummy& other )
+	file_inode_info_dummy( const file_inode_info_dummy& other )
 	{
 		this->device_id_ = other.device_id_;
 		this->inode_number_ = other.inode_number_;
 	}
 
-	file_inode_info_dummy& operator=(const file_inode_info_dummy& other)
+	file_inode_info_dummy& operator=( const file_inode_info_dummy& other )
 	{
 		if ( this != &other )
 		{
@@ -70,7 +70,7 @@ struct file_inode_info_dummy
 		this->inode_number_ = 1;
 	}
 
-	bool operator==(const file_inode_info_dummy& other) const
+	bool operator==( const file_inode_info_dummy& other ) const
 	{
 		return ( this->device_id_ == other.device_id_ && this->inode_number_ == other.inode_number_ );
 	}

@@ -21,23 +21,23 @@ collection_type file_collection;
 
 
 // Event Handlers
-//static void OnChanged(filesystem_event_args e) // object source,
+//static void OnChanged( filesystem_event_args e ) // object source,
 //{
 //	std::cout << "Changed: '" << e.full_path << "'" << std::endl;
 //}
 
-static void OnCreated(filesystem_event_args e) // object source,
+static void on_created( filesystem_event_args e ) // object source,
 {
 	file_collection.push_back(e.name);
 	//std::cout << "Created: '" << e.full_path << "'" << std::endl;
 }
 
-//static void OnDeleted(filesystem_event_args e) // object source,
+//static void OnDeleted( filesystem_event_args e ) // object source,
 //{
 //	std::cout << "Deleted: '" << e.full_path << "'" << std::endl;
 //}
 
-//static void OnRenamed(renamed_event_args e) // object source,
+//static void OnRenamed( renamed_event_args e ) // object source,
 //{
 //	std::cout << "File: '" << e.old_full_path << "' renamed to: '" << e.full_path  << "'" << std::endl;
 //}
@@ -80,10 +80,10 @@ int main(int argc, char* argv[] )
 
 			monitor->set_notify_filters( notify_filters::last_access | notify_filters::last_write | notify_filters::file_name | notify_filters::directory_name );
 			monitor->set_filter("*.txt"); //TODO: implementar este filtro
-			//monitor->set_changed_event_handler(OnChanged);
-			monitor->set_created_event_handler(OnCreated);
-			//monitor->set_deleted_event_handler(OnDeleted);
-			//monitor->set_renamed_event_handler(OnRenamed);
+			//monitor->set_changed_event_handler( OnChanged );
+			monitor->set_created_event_handler( on_created );
+			//monitor->set_deleted_event_handler( OnDeleted );
+			//monitor->set_renamed_event_handler( OnRenamed );
 
 			monitor->start();
 

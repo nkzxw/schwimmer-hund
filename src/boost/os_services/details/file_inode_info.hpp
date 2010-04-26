@@ -20,26 +20,26 @@ namespace detail {
 struct file_inode_info
 {
 	//TODO: public, protected, private ?????
-	file_inode_info ( )
+	file_inode_info()
 		: device_id_(0), inode_number_(0)
 	{}
 
-	file_inode_info ( dev_t device_id, ino_t inode_number )
+	file_inode_info( dev_t device_id, ino_t inode_number )
 		: device_id_(device_id), inode_number_(inode_number)
 	{}
 
-	file_inode_info ( const boost::filesystem::path& path )
+	file_inode_info( const boost::filesystem::path& path )
 	{
-		set ( path );
+		set( path );
 	}
 
-	file_inode_info ( const file_inode_info& other )
+	file_inode_info( const file_inode_info& other )
 	{
 		this->device_id_ = other.device_id_;
 		this->inode_number_ = other.inode_number_;
 	}
 
-	file_inode_info& operator=(const file_inode_info& other)
+	file_inode_info& operator=( const file_inode_info& other )
 	{
 		if ( this != &other )
 		{
@@ -49,19 +49,19 @@ struct file_inode_info
 		return *this;
 	}
 
-	void set ( dev_t device_id, ino_t inode_number )
+	void set( dev_t device_id, ino_t inode_number )
 	{
 		this->device_id_ = device_id;
 		this->inode_number_ = inode_number;
 	}
 
-	void set ( const struct stat& st )
+	void set( const struct stat& st )
 	{
 		this->device_id_ = st.st_dev;
 		this->inode_number_ = st.st_ino;
 	}
 
-	void set ( const boost::filesystem::path& path )
+	void set( const boost::filesystem::path& path )
 	{
 		struct stat st;
 
@@ -77,16 +77,16 @@ struct file_inode_info
 		}
 		else
 		{
-			set ( st );
+			set( st );
 		}
 	}
 
-	bool operator==(const file_inode_info& other) const
+	bool operator==( const file_inode_info& other ) const
 	{
 		return ( this->device_id_ == other.device_id_ && this->inode_number_ == other.inode_number_ );
 	}
 
-	bool operator==(const struct stat& other) const
+	bool operator==( const struct stat& other ) const
 	{
 		return ( this->device_id_ == other.st_dev && this->inode_number_ == other.st_ino );
 	}
