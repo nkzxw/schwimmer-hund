@@ -230,7 +230,7 @@ public:
 
 		int return_code = kevent ( file_descriptor_, NULL, 0, &event, 1, &timeout );
 
-		if ( return_code == -1 || event.flags & EV_ERROR) //< 0
+		if ( return_code == -1 || event.flags & EV_ERROR ) //< 0
 		{
 			std::ostringstream oss;
 			oss << "kevent error - Reason: " << std::strerror(errno);
@@ -239,6 +239,7 @@ public:
 			std::cout << "kevent error - Reason: " << std::strerror(errno) << std::endl;
 			std::cout << "return_code: " << return_code << std::endl;
 			std::cout << "event.flags: " << event.flags << std::endl;
+			std::cout << "EV_ERROR: " << EV_ERROR << std::endl;
 			std::cout << "file_descriptor_: " << file_descriptor_ << std::endl;
 
 			
