@@ -236,7 +236,7 @@ public:
 
 		int return_code = kevent ( file_descriptor_, NULL, 0, &event, 1, &timeout );
 
-		if ( return_code == -1 || event.flags & EV_ERROR ) //< 0
+		if ( return_code == -1 )
 		{
 			std::ostringstream oss;
 			oss << "kevent error - Reason: " << std::strerror(errno);
@@ -247,11 +247,13 @@ public:
 			std::cout << "event.flags: " << event.flags << std::endl;
 			std::cout << "EV_ERROR: " << EV_ERROR << std::endl;
 			std::cout << "file_descriptor_: " << file_descriptor_ << std::endl;
+			std::cout << "event.udata: " << event.udata << std::endl;
 
-			
 			std::cout << "THROW - boost::shared_ptr<T> kqueue_wrapper::get( int& event_type )" << std::endl;
-			
-			throw (std::runtime_error(oss.str()));
+			throw (std::runtime_error(oss.str())); 
+			//std::cerr << oss.str() << std::endl; //incluir para probar
+
+
 		}
 		else if ( return_code == 0 ) //timeout
 		{
@@ -265,34 +267,56 @@ public:
 		}
 		else
 		{
-			watch = create_watch_item<T>( event.udata ); //null deleter shared_ptr
 
-			std::cout << "event.udata: " << event.udata << std::endl;
-			std::cout << "watch->path().native_file_string(): " << watch->path().native_file_string() << std::endl;
-			std::cout << "watch.use_count() ----- 2: " << watch.use_count() << std::endl;
-
-			if ( event.fflags & NOTE_DELETE )
+			if ( event.flags & EV_ERROR )
 			{
-				std::cout << "NOTE_DELETE" << std::endl;
-				event_type = kqueue_event_types::remove;
-			}
-			else if ( event.fflags & NOTE_RENAME )
-			{
-				std::cout << "NOTE_RENAME" << std::endl;
-				event_type = kqueue_event_types::rename;
-			}
-			else if ( event.fflags & NOTE_WRITE )
-			{
-				std::cout << "NOTE_WRITE" << std::endl;
-				event_type = kqueue_event_types::write;
-			}
+				std::ostringstream oss;
+				oss << "kevent flags error (EV_ERROR) - Flags: " <<  event.flags;
+				//throw ( kevent_error( oss.str() ) );
 
-			//NOTE_TRUNCATE
-			//NOTE_EXTEND
-			//NOTE_ATTRIB
-			//NOTE_REVOKE
-			//NOTE_LINK
+				std::cout << "kevent error - Reason: " << std::strerror(errno) << std::endl;
+				std::cout << "return_code: " << return_code << std::endl;
+				std::cout << "event.flags: " << event.flags << std::endl;
+				std::cout << "EV_ERROR: " << EV_ERROR << std::endl;
+				std::cout << "file_descriptor_: " << file_descriptor_ << std::endl;
+				std::cout << "event.udata: " << event.udata << std::endl;
 
+				std::cout << "THROW - boost::shared_ptr<T> kqueue_wrapper::get( int& event_type )" << std::endl;
+
+				throw (std::runtime_error(oss.str()));
+				//std::cerr << oss.str() << std::endl; //incluir para probar
+
+			}
+			else
+			{
+				watch = create_watch_item<T>( event.udata ); //null deleter shared_ptr
+
+				std::cout << "event.udata: " << event.udata << std::endl;
+				std::cout << "watch->path().native_file_string(): " << watch->path().native_file_string() << std::endl;
+				std::cout << "watch.use_count() ----- 2: " << watch.use_count() << std::endl;
+
+				if ( event.fflags & NOTE_DELETE )
+				{
+					std::cout << "NOTE_DELETE" << std::endl;
+					event_type = kqueue_event_types::remove;
+				}
+				else if ( event.fflags & NOTE_RENAME )
+				{
+					std::cout << "NOTE_RENAME" << std::endl;
+					event_type = kqueue_event_types::rename;
+				}
+				else if ( event.fflags & NOTE_WRITE )
+				{
+					std::cout << "NOTE_WRITE" << std::endl;
+					event_type = kqueue_event_types::write;
+				}
+
+				//NOTE_TRUNCATE
+				//NOTE_EXTEND
+				//NOTE_ATTRIB
+				//NOTE_REVOKE
+				//NOTE_LINK
+			}
 		}
 
 		return watch;
