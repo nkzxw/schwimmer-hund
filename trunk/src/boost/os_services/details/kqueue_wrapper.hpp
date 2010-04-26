@@ -70,7 +70,7 @@ struct null_deleter
 
 
 		std::cout << "pepe: " << pepe << std::endl;
-		filesystem_item* temp = reinterpret_cast<filesystem_item*>(pepe)
+		filesystem_item* temp = reinterpret_cast<filesystem_item*>(pepe);
 		std::cout << "temp: " << temp << std::endl;
 		std::cout << "temp->parent().get(): " << temp->parent().get() << std::endl;
 
