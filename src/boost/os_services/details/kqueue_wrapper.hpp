@@ -87,6 +87,7 @@ public:
 	{
 		std::cout << "~kqueue_wrapper()" << std::endl;
 		close( true );
+		std::cout << "END ~kqueue_wrapper()" << std::endl;
 	}
 
 	void initialize()
@@ -111,6 +112,10 @@ public:
 
 		if ( file_descriptor_ != 0 )
 		{
+
+			std::cout << "closing kqueue file_descriptor_: " << file_descriptor_ << std::endl;
+
+
 			//TODO: se puede usar el close_file de posix_wapper
 			int ret_value = ::close( file_descriptor_ );
 			if ( ret_value == -1 )
@@ -231,6 +236,11 @@ public:
 			oss << "kevent error - Reason: " << std::strerror(errno);
 			//throw ( kevent_error( oss.str() ) );
 			
+			std::cout << "kevent error - Reason: " << std::strerror(errno) << std::endl;
+			std::cout << "return_code: " << return_code << std::endl;
+			std::cout << "event.flags: " << event.flags << std::endl;
+			std::cout << "file_descriptor_: " << file_descriptor_ << std::endl;
+
 			
 			std::cout << "THROW - boost::shared_ptr<T> kqueue_wrapper::get( int& event_type )" << std::endl;
 			

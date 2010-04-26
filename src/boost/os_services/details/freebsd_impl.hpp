@@ -265,13 +265,22 @@ private:
 		//std::cout << "watch->path().native_file_string(): " << watch->path().native_file_string() << std::endl;
 		//std::cout << "watch->parent_->path().native_file_string(): " << watch->parent_->path().native_file_string() << std::endl;
 
+
+		std::cout << "void remove_watch( filesystem_item::pointer_type watch ) - 1" << std::endl;
+
 		//TODO: que pasa si no tiene parent... Hacer Unit Test que elimine el directorio que estamos haciendo WATCH
 		if ( watch->parent() )
 		{
+			std::cout << "void remove_watch( filesystem_item::pointer_type watch ) - 2" << std::endl;
 			watch->parent()->remove_subitem( watch );
+			std::cout << "void remove_watch( filesystem_item::pointer_type watch ) - 3" << std::endl;
 		}
 
+		std::cout << "void remove_watch( filesystem_item::pointer_type watch ) - 4" << std::endl;
+
 		watch->root_user_entry()->remove_watch( watch );
+
+		std::cout << "void remove_watch( filesystem_item::pointer_type watch ) - 5" << std::endl;
 
 		//TODO: llamar a metodo que lanza el evento...
 
@@ -318,8 +327,16 @@ private:
 
 	void handle_remove( filesystem_item::pointer_type watch )
 	{
+		std::cout << "void handle_remove( filesystem_item::pointer_type watch ) - 1" << std::endl;
+
 		notify_file_system_event_args( change_types::deleted, watch->path() );
+
+		std::cout << "void handle_remove( filesystem_item::pointer_type watch ) - 2" << std::endl;
+
 		remove_watch( watch );
+
+		std::cout << "void handle_remove( filesystem_item::pointer_type watch ) - 3" << std::endl;
+
 	}
 
 	void handle_write( filesystem_item::pointer_type watch )
@@ -358,8 +375,11 @@ private:
 					{
 						case kqueue_event_types::remove:
 						{
+							std::cout << "case kqueue_event_types::remove: - 1" << std::endl;
 							handle_remove( watch );
+							std::cout << "case kqueue_event_types::remove: - 2" << std::endl;
 							queued_write_watch.reset();
+							std::cout << "case kqueue_event_types::remove: - 3" << std::endl;
 							break;
 						}
 						case kqueue_event_types::rename:
