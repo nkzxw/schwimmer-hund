@@ -103,7 +103,7 @@ public:
 
 	~freebsd_impl()
 	{
-		std::cout << "debug ~freebsd_impl() - 1" << std::endl;
+		//std::cout << "debug ~freebsd_impl() - 1" << std::endl;
 		closing_ = true;
 
 		//TODO: cerrar los archivos /watches
@@ -113,15 +113,15 @@ public:
 		kq_wrapper.close( true ); //destructor -> no-throw
 
 
-		std::cout << "debug ~freebsd_impl() - 4" << std::endl;
+		//std::cout << "debug ~freebsd_impl() - 4" << std::endl;
 		if ( thread_ )
 		{
-			std::cout << "debug ~freebsd_impl() - 5" << std::endl;
+			//std::cout << "debug ~freebsd_impl() - 5" << std::endl;
 			thread_->join();
-			std::cout << "debug ~freebsd_impl() - 6" << std::endl;
+			//std::cout << "debug ~freebsd_impl() - 6" << std::endl;
 		}
 
-		std::cout << "debug ~freebsd_impl() - 7" << std::endl;
+		//std::cout << "debug ~freebsd_impl() - 7" << std::endl;
 	}
 
 
@@ -168,7 +168,7 @@ private:
 
 	static filesystem_item::pointer_type create_filesystem_item( const boost::filesystem::path& path, user_entry::pointer_type entry )
 	{
-		std::cout << "NO DEBERIA PASAR POR ACA ---- static filesystem_item::pointer_type create_filesystem_item( const boost::filesystem::path& path, user_entry::pointer_type entry )" << std::endl;
+		//std::cout << "NO DEBERIA PASAR POR ACA ---- static filesystem_item::pointer_type create_filesystem_item( const boost::filesystem::path& path, user_entry::pointer_type entry )" << std::endl;
 
 		filesystem_item::pointer_type watch = filesystem_item::create( path, entry );
 		entry->set_root( watch );
@@ -187,7 +187,7 @@ private:
 	static filesystem_item::pointer_type create_filesystem_item( const boost::filesystem::path& path, user_entry::pointer_type entry, filesystem_item::pointer_type parent )
 	{
 
-		std::cout << "static filesystem_item::pointer_type create_filesystem_item( const boost::filesystem::path& path, user_entry::pointer_type entry, filesystem_item::pointer_type parent )" << std::endl;
+		//std::cout << "static filesystem_item::pointer_type create_filesystem_item( const boost::filesystem::path& path, user_entry::pointer_type entry, filesystem_item::pointer_type parent )" << std::endl;
 
 		//filesystem_item::pointer_type watch = create_filesystem_item( path, entry );
 		filesystem_item::pointer_type watch = filesystem_item::create( path, entry );
@@ -297,27 +297,27 @@ private:
 		//std::cout << "watch->parent_->path().native_file_string(): " << watch->parent_->path().native_file_string() << std::endl;
 
 
-		std::cout << "void remove_watch( filesystem_item::pointer_type watch ) - 1" << std::endl;
+		//std::cout << "void remove_watch( filesystem_item::pointer_type watch ) - 1" << std::endl;
 
 
 		//std::cout << "watch->parent(): " << watch->parent() << std::endl;
 		//std::cout << "watch->parent_: " << watch->parent_ << std::endl;
-		std::cout << "watch->parent().get(): " << watch->parent().get() << std::endl;
+		//std::cout << "watch->parent().get(): " << watch->parent().get() << std::endl;
 
 
 		//TODO: que pasa si no tiene parent... Hacer Unit Test que elimine el directorio que estamos haciendo WATCH
 		if ( watch->parent() )
 		{
-			std::cout << "void remove_watch( filesystem_item::pointer_type watch ) - 2" << std::endl;
+			//std::cout << "void remove_watch( filesystem_item::pointer_type watch ) - 2" << std::endl;
 			watch->parent()->remove_subitem( watch );
-			std::cout << "void remove_watch( filesystem_item::pointer_type watch ) - 3" << std::endl;
+			//std::cout << "void remove_watch( filesystem_item::pointer_type watch ) - 3" << std::endl;
 		}
 
-		std::cout << "void remove_watch( filesystem_item::pointer_type watch ) - 4" << std::endl;
+		//std::cout << "void remove_watch( filesystem_item::pointer_type watch ) - 4" << std::endl;
 
 		watch->root_user_entry()->remove_watch( watch );
 
-		std::cout << "void remove_watch( filesystem_item::pointer_type watch ) - 5" << std::endl;
+		//std::cout << "void remove_watch( filesystem_item::pointer_type watch ) - 5" << std::endl;
 
 		//TODO: llamar a metodo que lanza el evento...
 
@@ -364,15 +364,15 @@ private:
 
 	void handle_remove( filesystem_item::pointer_type watch )
 	{
-		std::cout << "void handle_remove( filesystem_item::pointer_type watch ) - 1" << std::endl;
+		//std::cout << "void handle_remove( filesystem_item::pointer_type watch ) - 1" << std::endl;
 
 		notify_file_system_event_args( change_types::deleted, watch->path() );
 
-		std::cout << "void handle_remove( filesystem_item::pointer_type watch ) - 2" << std::endl;
+		//std::cout << "void handle_remove( filesystem_item::pointer_type watch ) - 2" << std::endl;
 
 		remove_watch( watch );
 
-		std::cout << "void handle_remove( filesystem_item::pointer_type watch ) - 3" << std::endl;
+		//std::cout << "void handle_remove( filesystem_item::pointer_type watch ) - 3" << std::endl;
 
 	}
 
@@ -412,10 +412,10 @@ private:
 				}
 
 
-				std::cout << "END filesystem_item::pointer_type watch = kq_wrapper.get<filesystem_item>( event_type );" << std::endl;
-				std::cout << "closing_: " << closing_ << std::endl;
-				std::cout << "event_type: " << event_type << std::endl;
-				std::cout << "watch.use_count() ----- 3: " << watch.use_count() << std::endl;
+				//std::cout << "END filesystem_item::pointer_type watch = kq_wrapper.get<filesystem_item>( event_type );" << std::endl;
+				//std::cout << "closing_: " << closing_ << std::endl;
+				//std::cout << "event_type: " << event_type << std::endl;
+				//std::cout << "watch.use_count() ----- 3: " << watch.use_count() << std::endl;
 
 				if ( ! closing_ )
 				{
@@ -423,11 +423,11 @@ private:
 					{
 						case kqueue_event_types::remove:
 						{
-							std::cout << "case kqueue_event_types::remove: - 1" << std::endl;
+							//std::cout << "case kqueue_event_types::remove: - 1" << std::endl;
 							handle_remove( watch );
-							std::cout << "case kqueue_event_types::remove: - 2" << std::endl;
+							//std::cout << "case kqueue_event_types::remove: - 2" << std::endl;
 							queued_write_watch.reset();
-							std::cout << "case kqueue_event_types::remove: - 3" << std::endl;
+							//std::cout << "case kqueue_event_types::remove: - 3" << std::endl;
 							break;
 						}
 						case kqueue_event_types::rename:
@@ -447,7 +447,7 @@ private:
 								//	std::cout << "last_write_item->parent().get(): " << last_write_item->parent().get() << std::endl;
 								//}
 
-								std::cout << "queued_write_watch.reset() -> NULL DELETER" << std::endl;
+								//std::cout << "queued_write_watch.reset() -> NULL DELETER" << std::endl;
 								queued_write_watch.reset(); // = 0;
 
 								//if ( last_write_item )
@@ -467,17 +467,17 @@ private:
 							else
 							{
 								//Encolamos un solo evento WRITE ya que siempre viene WRITE+RENAME... hacemos que primero se procese el evento rename y luego el write
-								std::cout << "watch.use_count() ----- XX1: " << watch.use_count() << std::endl;
-								std::cout << "Encolando watch en queued_write_watch" << std::endl;
+								//std::cout << "watch.use_count() ----- XX1: " << watch.use_count() << std::endl;
+								//std::cout << "Encolando watch en queued_write_watch" << std::endl;
 								queued_write_watch = watch;
-								std::cout << "watch.use_count() ----- XX2: " << watch.use_count() << std::endl;
+								//std::cout << "watch.use_count() ----- XX2: " << watch.use_count() << std::endl;
 							}
 							break;
 						}
 					}
 				}
 
-				std::cout << "watch is out of scope -> NULL DELETER" << std::endl;
+				//std::cout << "watch is out of scope -> NULL DELETER" << std::endl;
 			}
 			catch( const kevent_timeout& ) //e )
 			{

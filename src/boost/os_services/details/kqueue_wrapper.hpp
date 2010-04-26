@@ -86,14 +86,14 @@ public:
 	kqueue_wrapper()
 		: is_initialized_( false ), file_descriptor_( 0 )
 	{
-		std::cout << "kqueue_wrapper()" << std::endl;
+		//std::cout << "kqueue_wrapper()" << std::endl;
 	}
 
 	~kqueue_wrapper()
 	{
-		std::cout << "~kqueue_wrapper()" << std::endl;
+		//std::cout << "~kqueue_wrapper()" << std::endl;
 		close( true );
-		std::cout << "END ~kqueue_wrapper()" << std::endl;
+		//std::cout << "END ~kqueue_wrapper()" << std::endl;
 	}
 
 	void initialize()
@@ -114,12 +114,12 @@ public:
 
 	void close( bool no_throw = false )
 	{
-		std::cout << "void kqueue_wrapper::close( bool no_throw = false )" << std::endl;
+		//std::cout << "void kqueue_wrapper::close( bool no_throw = false )" << std::endl;
 
 		if ( file_descriptor_ != 0 )
 		{
 
-			std::cout << "closing kqueue file_descriptor_: " << file_descriptor_ << std::endl;
+			//std::cout << "closing kqueue file_descriptor_: " << file_descriptor_ << std::endl;
 
 
 			//TODO: se puede usar el close_file de posix_wapper
@@ -137,7 +137,7 @@ public:
 					oss << "Failed to close kqueue file descriptor - File Descriptor: '" << file_descriptor_ << "' - Reason: " << std::strerror(errno);
 
 					
-					std::cout << "THROW - void kqueue_wrapper::close( bool no_throw = false )" << std::endl;
+					//std::cout << "THROW - void kqueue_wrapper::close( bool no_throw = false )" << std::endl;
 
 					throw (std::runtime_error(oss.str()));					
 				}
@@ -146,7 +146,7 @@ public:
 		}
 		is_initialized_ = false;
 
-		std::cout << "void END kqueue_wrapper::close( bool no_throw = false )" << std::endl;
+		//std::cout << "void END kqueue_wrapper::close( bool no_throw = false )" << std::endl;
 	}
 
 	template <typename T>
@@ -217,7 +217,7 @@ public:
 			std::ostringstream oss;
 			oss << "kevent error: - Reason: " << std::strerror(errno);
 
-			std::cout << "THROW - void kqueue_wrapper::add_watch( const boost::shared_ptr<T>& watch )" << std::endl;
+			//std::cout << "THROW - void kqueue_wrapper::add_watch( const boost::shared_ptr<T>& watch )" << std::endl;
 
 			throw (std::runtime_error(oss.str()));
 		}
@@ -242,14 +242,14 @@ public:
 			oss << "kevent error - Reason: " << std::strerror(errno);
 			//throw ( kevent_error( oss.str() ) );
 			
-			std::cout << "kevent error - Reason: " << std::strerror(errno) << std::endl;
-			std::cout << "return_code: " << return_code << std::endl;
-			std::cout << "event.flags: " << event.flags << std::endl;
-			std::cout << "EV_ERROR: " << EV_ERROR << std::endl;
-			std::cout << "file_descriptor_: " << file_descriptor_ << std::endl;
-			std::cout << "event.udata: " << event.udata << std::endl;
+			//std::cout << "kevent error - Reason: " << std::strerror(errno) << std::endl;
+			//std::cout << "return_code: " << return_code << std::endl;
+			//std::cout << "event.flags: " << event.flags << std::endl;
+			//std::cout << "EV_ERROR: " << EV_ERROR << std::endl;
+			//std::cout << "file_descriptor_: " << file_descriptor_ << std::endl;
+			//std::cout << "event.udata: " << event.udata << std::endl;
+			//std::cout << "THROW - boost::shared_ptr<T> kqueue_wrapper::get( int& event_type )" << std::endl;
 
-			std::cout << "THROW - boost::shared_ptr<T> kqueue_wrapper::get( int& event_type )" << std::endl;
 			throw (std::runtime_error(oss.str())); 
 			//std::cerr << oss.str() << std::endl; //incluir para probar
 
@@ -260,9 +260,7 @@ public:
 			std::ostringstream oss;
 			oss << "kevent timeout - Reason: " << std::strerror(errno);
 			//throw (std::runtime_error(oss.str()));
-
-			std::cout << "THROW - boost::shared_ptr<T> kqueue_wrapper::get( int& event_type ) - 2" << std::endl;
-
+			//std::cout << "THROW - boost::shared_ptr<T> kqueue_wrapper::get( int& event_type ) - 2" << std::endl;
 			throw ( kevent_timeout( oss.str() ) );
 		}
 		else
@@ -274,14 +272,13 @@ public:
 				oss << "kevent flags error (EV_ERROR) - Flags: " <<  event.flags;
 				//throw ( kevent_error( oss.str() ) );
 
-				std::cout << "kevent error - Reason: " << std::strerror(errno) << std::endl;
-				std::cout << "return_code: " << return_code << std::endl;
-				std::cout << "event.flags: " << event.flags << std::endl;
-				std::cout << "EV_ERROR: " << EV_ERROR << std::endl;
-				std::cout << "file_descriptor_: " << file_descriptor_ << std::endl;
-				std::cout << "event.udata: " << event.udata << std::endl;
-
-				std::cout << "THROW - boost::shared_ptr<T> kqueue_wrapper::get( int& event_type )" << std::endl;
+				//std::cout << "kevent error - Reason: " << std::strerror(errno) << std::endl;
+				//std::cout << "return_code: " << return_code << std::endl;
+				//std::cout << "event.flags: " << event.flags << std::endl;
+				//std::cout << "EV_ERROR: " << EV_ERROR << std::endl;
+				//std::cout << "file_descriptor_: " << file_descriptor_ << std::endl;
+				//std::cout << "event.udata: " << event.udata << std::endl;
+				//std::cout << "THROW - boost::shared_ptr<T> kqueue_wrapper::get( int& event_type )" << std::endl;
 
 				throw (std::runtime_error(oss.str()));
 				//std::cerr << oss.str() << std::endl; //incluir para probar
@@ -291,23 +288,23 @@ public:
 			{
 				watch = create_watch_item<T>( event.udata ); //null deleter shared_ptr
 
-				std::cout << "event.udata: " << event.udata << std::endl;
-				std::cout << "watch->path().native_file_string(): " << watch->path().native_file_string() << std::endl;
-				std::cout << "watch.use_count() ----- 2: " << watch.use_count() << std::endl;
+				//std::cout << "event.udata: " << event.udata << std::endl;
+				//std::cout << "watch->path().native_file_string(): " << watch->path().native_file_string() << std::endl;
+				//std::cout << "watch.use_count() ----- 2: " << watch.use_count() << std::endl;
 
 				if ( event.fflags & NOTE_DELETE )
 				{
-					std::cout << "NOTE_DELETE" << std::endl;
+					//std::cout << "NOTE_DELETE" << std::endl;
 					event_type = kqueue_event_types::remove;
 				}
 				else if ( event.fflags & NOTE_RENAME )
 				{
-					std::cout << "NOTE_RENAME" << std::endl;
+					//std::cout << "NOTE_RENAME" << std::endl;
 					event_type = kqueue_event_types::rename;
 				}
 				else if ( event.fflags & NOTE_WRITE )
 				{
-					std::cout << "NOTE_WRITE" << std::endl;
+					//std::cout << "NOTE_WRITE" << std::endl;
 					event_type = kqueue_event_types::write;
 				}
 
@@ -328,7 +325,7 @@ protected:
 	static boost::shared_ptr<T> create_watch_item ( void* raw_pointer )
 	{
 		boost::shared_ptr<T> px( reinterpret_cast<T*>( raw_pointer ), null_deleter() );
-		std::cout << "px.use_count() ----- 1: " << px.use_count() << std::endl;
+		//std::cout << "px.use_count() ----- 1: " << px.use_count() << std::endl;
 		return px;
 	}
 

@@ -71,7 +71,7 @@ struct file_inode_info
 			std::ostringstream oss;
 			oss << "lstat error - File: " << path.native_file_string() << " - Reason: " << std::strerror(errno);
 
-			std::cout << "THROW - void file_inode_info::set ( const boost::filesystem::path& path )" << std::endl;
+			//std::cout << "THROW - void file_inode_info::set ( const boost::filesystem::path& path )" << std::endl;
 
 			throw (std::runtime_error(oss.str()));
 		}
