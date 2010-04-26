@@ -394,6 +394,7 @@ private:
 							std::cout << "case kqueue_event_types::remove: - 1" << std::endl;
 							handle_remove( watch );
 							std::cout << "case kqueue_event_types::remove: - 2" << std::endl;
+							std::cout << "queued_write_watch.reset() -> NULL DELETER" << std::endl;
 							queued_write_watch.reset();
 							std::cout << "case kqueue_event_types::remove: - 3" << std::endl;
 							break;
@@ -401,6 +402,7 @@ private:
 						case kqueue_event_types::rename:
 						{
 							handle_rename( watch );
+							std::cout << "queued_write_watch.reset() -> NULL DELETER" << std::endl;
 							queued_write_watch.reset();
 							break;
 						}
@@ -409,13 +411,17 @@ private:
 							if ( queued_write_watch ) //!= 0
 							{
 								handle_write( queued_write_watch );
+								std::cout << "queued_write_watch.reset() -> NULL DELETER" << std::endl;
 								queued_write_watch.reset(); // = 0;
 								handle_write( watch );
 							}
 							else
 							{
 								//Encolamos un solo evento WRITE ya que siempre viene WRITE+RENAME... hacemos que primero se procese el evento rename y luego el write
+								std::cout << "watch.use_count() ----- XX1: " << watch.use_count() << std::endl;
+								std::cout << "Encolando watch en queued_write_watch" << std::endl;
 								queued_write_watch = watch;
+								std::cout << "watch.use_count() ----- XX2: " << watch.use_count() << std::endl;
 							}
 							break;
 						}
