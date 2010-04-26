@@ -42,12 +42,7 @@ int open_file( const boost::filesystem::path& path )
 	{
 		std::ostringstream oss;
 		oss << "open failed - File: " << path.native_file_string() << " - Reason: " << std::strerror(errno);
-
-
-		//std::cout << "THROW - int posix_syscall_wrapper::open_file( const boost::filesystem::path& path )" << std::endl;
-
 		throw (std::runtime_error(oss.str()));
-		//throw (std::invalid_argument(oss.str()));
 	}
 
 	return file_descriptor;
@@ -58,20 +53,11 @@ void close_file( int& file_descriptor )
 {
 	if ( file_descriptor != 0 )
 	{
-
-		//std::cout << "closing FILE file_descriptor: " << file_descriptor << std::endl;
-
-
 		int ret_value = ::close( file_descriptor ); //close
 		if ( ret_value == -1 )
 		{
 			std::ostringstream oss;
 			oss << "Failed to close file descriptor - File descriptor: '" << file_descriptor << "' - Reason: " << std::strerror(errno);
-
-
-			//std::cout << "THROW - void posix_syscall_wrapper::close_file( int& file_descriptor )" << std::endl;
-
-
 			throw (std::runtime_error(oss.str()));					
 		}
 		file_descriptor = 0;
