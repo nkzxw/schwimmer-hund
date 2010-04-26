@@ -12,9 +12,9 @@
 
 #include <boost/os_services/change_types.hpp>
 #include <boost/os_services/details/base_impl.hpp>
+#include <boost/os_services/details/win32api_wrapper.hpp>
 #include <boost/os_services/notify_filters.hpp>
 #include <boost/os_services/utils.hpp> //TODO: deberia estar detro del directorio details
-#include <boost/os_services/win32api_wrapper.hpp>
 #include <boost/os_services/win32_legacy.hpp>		// directoryInfo
 
 
@@ -58,6 +58,7 @@ public:
 	{
 		if ( completion_port_handle_ != 0 )
 		{
+			//TODO: wrappear win32api_wrapper
 			BOOL ret_value = ::PostQueuedCompletionStatus( completion_port_handle_, 0, 0, NULL );
 
 			if ( ret_value == 0 )
@@ -75,6 +76,7 @@ public:
 
 		if ( completion_port_handle_ != 0 )
 		{
+			//TODO: wrappear win32api_wrapper
 			BOOL ret_value = ::CloseHandle( completion_port_handle_ );
 
 			if ( ret_value == 0 )
@@ -85,25 +87,26 @@ public:
 		}
 	}
 
-	void add_directory_impl (const std::string& dir_name) //throw (std::invalid_argument, std::runtime_error)
+	void add_directory_impl( const std::string& dir_name ) //throw (std::invalid_argument, std::runtime_error)
 	{ 
 		LPDIRECTORY_INFO directory_info = (LPDIRECTORY_INFO) malloc(sizeof(DIRECTORY_INFO));
 		memset(directory_info, 0, sizeof(DIRECTORY_INFO));
 
-		directory_info->directory_handle = win32api_wrapper::CreateFile( dir_name, FILE_LIST_DIRECTORY, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OVERLAPPED, NULL );
+		directory_info->directory_handle = win32api_wrapper::create_file( dir_name, FILE_LIST_DIRECTORY, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OVERLAPPED, NULL );
+		//if ( directory_info->directory_handle == INVALID_HANDLE_VALUE )
+		//{
+		//	std::ostringstream oss;
+		//	oss << "Failed to monitor directory - Directory: " << dir_name << " - Reason: " << GetLastError();
+		//	throw (std::invalid_argument(oss.str()));
+		//}
 
-		if ( directory_info->directory_handle == INVALID_HANDLE_VALUE )
-		{
-			std::ostringstream oss;
-			oss << "Failed to monitor directory - Directory: " << dir_name << " - Reason: " << GetLastError();
-			throw (std::invalid_argument(oss.str()));
-		}
-
+		//TODO: esto no me gusta
 		lstrcpy( directory_info->directory_name, dir_name.c_str() );
 
 		//unsigned long addr = (unsigned long) &directory_info;
 
-		completion_port_handle_ = ::CreateIoCompletionPort ( directory_info->directory_handle, completion_port_handle_, (DWORD) directory_info, 0 );
+		//TODO: usar win32api_wrapper::create_io_completion_port
+		completion_port_handle_ = ::CreateIoCompletionPort( directory_info->directory_handle, completion_port_handle_, (DWORD) directory_info, 0 );
 	
 		if ( completion_port_handle_ == 0 )
 		{
@@ -124,6 +127,7 @@ public:
 			//TODO: BOOST_FOREACH
 			for (vector_type::const_iterator it = directories_.begin(); it!=directories_.end(); ++it)
 			{
+				//TODO: wrappear win32api_wrapper
 				BOOL ret_value = ::ReadDirectoryChangesW ( (*it)->directory_handle, (*it)->buffer, MAX_BUFFER, this->include_subdirectories_ ? 1 : 0, this->notify_filters_, &(*it)->buffer_length, &(*it)->overlapped, NULL);
 
 				if ( ret_value == 0 )
@@ -152,6 +156,7 @@ public: //private:  //TODO:
 
 		do
 		{
+			//TODO: wrappear win32api_wrapper
 			BOOL ret_value = ::GetQueuedCompletionStatus( this->completion_port_handle_, &num_bytes, (LPDWORD) &directory_info, &overlapped, INFINITE );
 
 			if ( ret_value == 0 )
@@ -221,6 +226,7 @@ public: //private:  //TODO:
 					}
 				}
 
+				//TODO: wrappear win32api_wrapper
 				ret_value = ::ReadDirectoryChangesW ( directory_info->directory_handle, directory_info->buffer, MAX_BUFFER, this->include_subdirectories_ ? 1 : 0, this->notify_filters_, &directory_info->buffer_length, &directory_info->overlapped, NULL );
 
 				if ( ret_value == 0 )
