@@ -90,8 +90,11 @@ struct user_entry //: public enable_shared_from_this<user_entry>
 			if ( (*it)->is_equal( *watch ) )
 			{
 				std::cout << "void remove_watch( const filesystem_item::pointer_type& watch ) - 4" << std::endl;
+				std::cout << "it->use_count(): " << it->use_count() << std::endl;
 				it = all_watches_.erase(it);
+				std::cout << "it->use_count(): " << it->use_count() << std::endl;
 				std::cout << "void remove_watch( const filesystem_item::pointer_type& watch ) - 5" << std::endl;
+
 				break;
 			}
 			else
