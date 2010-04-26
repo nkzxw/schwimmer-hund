@@ -68,11 +68,9 @@ struct file_inode_info
 		int return_code = lstat( path.native_file_string().c_str(), &st);
 		if ( return_code == -1) //TODO: pasar "-1" como una macro SYSTEM_CALL_ERROR o algo así...
 		{
+			//TODO: en todos los throw's usar un lexical_cast<>() en ves de un stream...
 			std::ostringstream oss;
 			oss << "lstat error - File: " << path.native_file_string() << " - Reason: " << std::strerror(errno);
-
-			//std::cout << "THROW - void file_inode_info::set ( const boost::filesystem::path& path )" << std::endl;
-
 			throw (std::runtime_error(oss.str()));
 		}
 		else
