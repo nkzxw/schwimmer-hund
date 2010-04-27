@@ -15,6 +15,73 @@ namespace win32api_wrapper
 {
 	//TODO: agregar las variantes NO-THROW de cada una de estas funciones... Ver si es apropiado conceptualmente, ya que justamente estas variantes NO-THROW son las API directamente...
 
+	std::string get_last_string_error() 
+	{ 
+		void far* message_buffer = 0;
+		unsigned long last_error = GetLastError(); 
+
+		unsigned long size = ::FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL, last_error, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPTSTR) &message_buffer, 0, NULL );
+
+		if ( message_buffer == 0 )
+		{
+			//unsigned long fme = GetLastError();
+
+			//if (fme)
+			//	Message.Format("FormatMessage error code %u", fme);
+			//else
+			//	Message.Format("unknown error code %u", e);
+
+			return "";
+		}
+		else
+		{
+			if ( size == 0)
+			{
+				LocalFree(message_buffer);
+				return "";
+			}
+			else	
+			{
+				//std::string message(message_buffer);	//Message = lpMsgBuf;
+				std::string message( (char*)message_buffer, size );	//Message = lpMsgBuf;
+
+				//string( const Char* str, size_type length );
+
+				LocalFree(message_buffer);
+				return message;
+
+			}
+
+
+		}
+
+		//void far* message_buffer;
+		//void far* lpDisplayBuf;
+		//unsigned long last_error = GetLastError(); 
+
+		//FormatMessage
+		//(
+		//	FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+		//	NULL,
+		//	last_error,
+		//	MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+		//	(LPTSTR) &message_buffer,
+		//	0, 
+		//	NULL )
+		//;
+
+		//// Display the error message and exit the process
+
+		//display_buffer = (void far*)LocalAlloc(LMEM_ZEROINIT, (lstrlen((LPCTSTR)message_buffer) + lstrlen((LPCTSTR)lpszFunction) + 40) * sizeof(TCHAR)); 
+		//StringCchPrintf((LPTSTR)display_buffer, LocalSize(display_buffer) / sizeof(TCHAR), TEXT("%s failed with error %d: %s"), lpszFunction, last_error, message_buffer); 
+		//MessageBox(NULL, (LPCTSTR)display_buffer, TEXT("Error"), MB_OK); 
+
+		//LocalFree(message_buffer);
+		//LocalFree(display_buffer);
+		//ExitProcess(last_error);  //TODO: que hace estooooo ????
+	}
+
+
 	//WINBASEAPI BOOL WINAPI CreateDirectoryA(__in     LPCSTR lpPathName, /*__in_opt*/ LPSECURITY_ATTRIBUTES security_attributes );
 	int create_directory ( const std::string& path_name, LPSECURITY_ATTRIBUTES security_attributes )
 	{
@@ -38,7 +105,8 @@ namespace win32api_wrapper
 		{
 			std::ostringstream oss;
 			//oss << "Failed to monitor directory - Directory: " << dir_name << " - Reason: " << GetLastError();
-			oss << "CreateFile Win32API failed - Directory: " << file_name << " - Reason: " << GetLastError();
+			//oss << "CreateFile Win32API failed - Directory: " << file_name << " - Reason: " << GetLastError();
+			oss << "CreateFile Win32API failed - Directory: " << file_name << " - Reason: " << win32api_wrapper::get_last_string_error();
 			throw ( std::invalid_argument(oss.str()) );
 		}
 
@@ -53,7 +121,8 @@ namespace win32api_wrapper
 		if ( handle == 0 ) //TODO: poner CERO como # define
 		{
 			std::ostringstream oss;
-			oss << "CreateIoCompletionPort Win32API failed - Reason: " << GetLastError();
+			//oss << "CreateIoCompletionPort Win32API failed - Reason: " << GetLastError();
+			oss << "CreateIoCompletionPort Win32API failed - Reason: " << win32api_wrapper::get_last_string_error();
 			throw ( std::runtime_error(oss.str()) ); //TODO: analizar si conviene lanzar un runtime_error o excepciones personalizadas para win32Api
 		}
 
@@ -69,7 +138,8 @@ namespace win32api_wrapper
 		{
 			//std::cerr << "Failed to close directory port handle. Reason: " << GetLastError() << std::endl;
 			std::ostringstream oss;
-			oss << "CloseHandle Win32API failed - Reason: " << GetLastError();
+			//oss << "CloseHandle Win32API failed - Reason: " << GetLastError();
+			oss << "CloseHandle Win32API failed - Reason: " << win32api_wrapper::get_last_string_error();
 			throw ( std::runtime_error(oss.str()) ); //TODO: analizar si conviene lanzar un runtime_error o excepciones personalizadas para win32Api
 
 		}
@@ -85,7 +155,8 @@ namespace win32api_wrapper
 		{
 			//std::cerr << "Failed to close directory port handle. Reason: " << GetLastError() << std::endl;
 			std::ostringstream oss;
-			oss << "PostQueuedCompletionStatus Win32API failed - Reason: " << GetLastError();
+			//oss << "PostQueuedCompletionStatus Win32API failed - Reason: " << GetLastError();
+			oss << "PostQueuedCompletionStatus Win32API failed - Reason: " << win32api_wrapper::get_last_string_error();
 			throw ( std::runtime_error(oss.str()) ); //TODO: analizar si conviene lanzar un runtime_error o excepciones personalizadas para win32Api
 		}
 
@@ -102,7 +173,8 @@ namespace win32api_wrapper
 		if ( ret_value == 0 )
 		{
 			std::ostringstream oss;
-			oss << "ReadDirectoryChangesW Win32API failed - Reason: " << GetLastError();
+			//oss << "ReadDirectoryChangesW Win32API failed - Reason: " << GetLastError();
+			oss << "ReadDirectoryChangesW Win32API failed - Reason: " << win32api_wrapper::get_last_string_error();
 			throw ( std::runtime_error(oss.str()) );
 		}
 
@@ -118,12 +190,16 @@ namespace win32api_wrapper
 		if ( ret_value == 0 )
 		{
 			std::ostringstream oss;
-			oss << "GetQueuedCompletionStatus Win32API failed - Reason: " << GetLastError();
+			//oss << "GetQueuedCompletionStatus Win32API failed - Reason: " << GetLastError();
+			oss << "GetQueuedCompletionStatus Win32API failed - Reason: " << win32api_wrapper::get_last_string_error();
 			throw ( std::runtime_error(oss.str()) );
 		}
 
 		return ret_value;
 	}
+
+
+
 
 
 

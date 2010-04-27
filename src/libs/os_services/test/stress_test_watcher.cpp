@@ -83,14 +83,13 @@ int main(int argc, char* argv[] )
 	//dir = "/home/fernando/temp1";
 	//std::cout << "dir: " << dir << std::endl;
 
-
-	
-	log_file.open ("log_file_watcher.txt");
+	log_file.open( "log_file_watcher.txt" );
 
 	{
 		//file_collection.reserve(max_files);
 
 
+		//TODO: hacer un file_system_monitor::create()
 		boost::shared_ptr<file_system_monitor> monitor;
 
 		try
