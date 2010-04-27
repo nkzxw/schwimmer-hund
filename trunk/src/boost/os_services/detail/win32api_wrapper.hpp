@@ -1,6 +1,7 @@
 #ifndef BOOST_OS_SERVICES_DETAIL_WIN32API_WRAPPER_HPP
 #define BOOST_OS_SERVICES_DETAIL_WIN32API_WRAPPER_HPP
 
+#include <sstream>
 #include <string>
 
 #include "windows.h"
@@ -42,43 +43,19 @@ namespace win32api_wrapper
 			}
 			else	
 			{
-				//std::string message(message_buffer);	//Message = lpMsgBuf;
-				std::string message( (char*)message_buffer, size );	//Message = lpMsgBuf;
 
-				//string( const Char* str, size_type length );
+				std::ostringstream oss;
+				oss << "CreateFile Win32API failed - Directory: " << file_name << " - Reason: " << win32api_wrapper::get_last_string_error();
+				throw ( std::invalid_argument(oss.str()) );
+
+
+				std::string message( (char*)message_buffer, size );
 
 				LocalFree(message_buffer);
 				return message;
 
 			}
-
-
 		}
-
-		//void far* message_buffer;
-		//void far* lpDisplayBuf;
-		//unsigned long last_error = GetLastError(); 
-
-		//FormatMessage
-		//(
-		//	FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-		//	NULL,
-		//	last_error,
-		//	MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-		//	(LPTSTR) &message_buffer,
-		//	0, 
-		//	NULL )
-		//;
-
-		//// Display the error message and exit the process
-
-		//display_buffer = (void far*)LocalAlloc(LMEM_ZEROINIT, (lstrlen((LPCTSTR)message_buffer) + lstrlen((LPCTSTR)lpszFunction) + 40) * sizeof(TCHAR)); 
-		//StringCchPrintf((LPTSTR)display_buffer, LocalSize(display_buffer) / sizeof(TCHAR), TEXT("%s failed with error %d: %s"), lpszFunction, last_error, message_buffer); 
-		//MessageBox(NULL, (LPCTSTR)display_buffer, TEXT("Error"), MB_OK); 
-
-		//LocalFree(message_buffer);
-		//LocalFree(display_buffer);
-		//ExitProcess(last_error);  //TODO: que hace estooooo ????
 	}
 
 
