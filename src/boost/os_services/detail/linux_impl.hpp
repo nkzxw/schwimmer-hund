@@ -29,7 +29,7 @@
 #include <boost/thread.hpp>
 
 #include <boost/os_services/change_types.hpp>
-#include <boost/os_services/details/base_impl.hpp>
+#include <boost/os_services/detail/base_impl.hpp>
 #include <boost/os_services/notify_filters.hpp>
 
 //TODO: ver como arreglamos esto... No quiero tener un buffer seteado de esta forma.

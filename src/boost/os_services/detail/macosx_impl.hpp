@@ -4,7 +4,7 @@
 #ifndef BOOST_OS_SERVICES_DETAIL_MACOSX_IMPL_HPP
 #define BOOST_OS_SERVICES_DETAIL_MACOSX_IMPL_HPP
 
-#include <boost/os_services/details/base_impl.hpp>
+#include <boost/os_services/detail/base_impl.hpp>
 
 namespace boost {
 namespace os_services {
