@@ -143,7 +143,7 @@ public:
 		//struct inotify_event* event = ( struct inotify_event * ) &buffer_[ buffer_current_index_ ]; //TODO:
 
 		T* event = (T*) &buffer_[ buffer_current_index_ ]; //TODO:
-		buffer_current_index_++;
+		buffer_current_index_ += EVENT_SIZE + event->len;
 
 		return event;
 	}

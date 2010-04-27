@@ -201,93 +201,61 @@ public: //private:  //TODO:
 	//}
 
 
-
 	void handle_directory_changes()
 	{
 		boost::optional<std::string> old_name;
 
 		while ( !closing_ )
 		{
-			char buffer[BUF_LEN];
-			int i = 0;
-
-			int length = ::read( file_descriptor_, buffer, BUF_LEN );
+			struct inotify_event* event inotify.get<struct inotify_event>();
 
 			if ( ! closing_ )
 			{
-				if ( length < 0 )
+
+				//if ( event->len != 0) //TODO: que espera hacer acá?, mala práctica
+				if ( event->len ) //TODO: que espera hacer acá?, mala práctica
 				{
-					//TODO:
-					perror( "read" );
-				}
+					std::string directory_name;
+					std::string file_name( event->name );
 
-				std::string directory_name;
-
-				while ( i < length )
-				{
-
-					struct inotify_event* event = ( struct inotify_event * ) &buffer[ i ]; //TODO:
-					//event = reinterpret_cast<struct inotify_event*> (buffer_ + bytes_processed);
-
-					//if ( event->len != 0) //TODO: que espera hacer acá?, mala práctica
-					if ( event->len ) //TODO: que espera hacer acá?, mala práctica
+					watch_descriptors_type::const_iterator it = std::find_if( watch_descriptors_.begin(), watch_descriptors_.end(), boost::bind( &pair_type::second, _1 ) == event->wd );
+					if ( it != watch_descriptors_.end() )
 					{
-
-						std::string file_name( event->name );
-
-						watch_descriptors_type::const_iterator it = std::find_if( watch_descriptors_.begin(), watch_descriptors_.end(), boost::bind( &pair_type::second, _1 ) == event->wd );
-
-						if ( it != watch_descriptors_.end() )
-						{
-							directory_name = it->first;
-						}
-						else
-						{
-							//TODO: que pasa si no lo encontramos en la lista... DEBERIA SER UN RUN-TIME ERROR
-						}
-
-						if ( event->mask & IN_MOVED_FROM )
-						{
-							old_name.reset( file_name );
-						}
-						else if ( event->mask & IN_MOVED_TO )
-						{
-							if ( old_name )
-							{
-								notify_rename_event_args(change_types::renamed, directory_name, file_name, *old_name);
-								old_name.reset();
-							}
-							else
-							{
-								notify_rename_event_args(change_types::renamed, directory_name, file_name, "");
-								old_name.reset();
-							}
-						}
-						else
-						{
-							if ( old_name )
-							{
-								//std::cout << "------------- VER -------------" << std::endl;
-								//std::cout << "file_name: '" << file_name << "'" << std::endl;
-								//std::cout << "*old_name: '" << *old_name << "'" << std::endl;
-
-								//TODO: en este caso puede ser que se haya movido a otro directorio no monitoreada, entonces sería un DELETE?
-								//notify_rename_event_args(change_types::renamed, directory_name, "", *old_name);
-								notify_file_system_event_args( change_types::deleted, directory_name, *old_name);
-								old_name.reset();
-							}
-
-							//if ( event->mask & IN_MODIFY )
-							//{
-							//	std::cout << "------------- IN_MODIFY -----------------" << std::endl;
-							//}
-
-							notify_file_system_event_args( event->mask, directory_name, file_name);
-						}
+						directory_name = it->first;
+					}
+					else
+					{
+						//TODO: que pasa si no lo encontramos en la lista... DEBERIA SER UN RUN-TIME ERROR
 					}
 
-					i += EVENT_SIZE + event->len;
-					//printf("--- while end -- i: %d\n", i);
+					if ( event->mask & IN_MOVED_FROM )
+					{
+						old_name.reset( file_name );
+					}
+					else if ( event->mask & IN_MOVED_TO )
+					{
+						if ( old_name )
+						{
+							notify_rename_event_args(change_types::renamed, directory_name, file_name, *old_name);
+							old_name.reset();
+						}
+						else
+						{
+							notify_rename_event_args(change_types::renamed, directory_name, file_name, "");
+							old_name.reset();
+						}
+					}
+					else
+					{
+						if ( old_name )
+						{
+							//TODO: en este caso puede ser que se haya movido a otro directorio no monitoreada, entonces sería un DELETE?
+							//notify_rename_event_args(change_types::renamed, directory_name, "", *old_name);
+							notify_file_system_event_args( change_types::deleted, directory_name, *old_name);
+							old_name.reset();
+						}
+						notify_file_system_event_args( event->mask, directory_name, file_name);
+					}
 				}
 			}
 		}
