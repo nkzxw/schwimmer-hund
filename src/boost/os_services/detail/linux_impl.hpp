@@ -31,11 +31,6 @@
 #include <boost/os_services/detail/inotify_wrapper.hpp>
 #include <boost/os_services/notify_filters.hpp>
 
-//TODO: ver como arreglamos esto... No quiero tener un buffer seteado de esta forma.
-//TODO: ver la posibilidad de que el buffer pueda ser seteado desde afuera...
-#define EVENT_SIZE  ( sizeof (struct inotify_event) )
-//#define BUF_LEN     ( 1024 * ( EVENT_SIZE + 16 ) ) //TODO: ver si el +16 es a nivel de evento o a nivel general. Es raro que sume 16 por cada evento...
-#define BUF_LEN     ( 4096 * ( EVENT_SIZE + 16 ) )	//TODO: problema de multiples CHANGE consecutivos. Vamos a probar con un buffer considerablemente más grande.
 
 namespace boost {
 namespace os_services {
@@ -125,23 +120,24 @@ public:
 			std::cerr << e.what() << std::endl;
 		}
 
-		
-
 		if ( thread_ )
 		{
 			thread_->join(); //TODO: darle un timeout al close, sino llegó a cerrarse hacer un kill...
 		}
 	}
 
-	//TODO: agregar
-	//void add_watch_impl( const boost::filesystem::path& dir ) //throw (std::invalid_argument, std::runtime_error)
-
-	void add_watch_impl ( const std::string& dir_name ) //throw (std::invalid_argument, std::runtime_error)
+	void add_watch_impl( const std::string& dir_name ) //throw (std::invalid_argument, std::runtime_error)
 	{
-		watch_descriptors_.push_back(std::make_pair(dir_name, 0));
+		watch_descriptors_.push_back( std::make_pair( dir_name, 0 ) );
 	}
 
-	//void remove_directory_impl(const std::string& dir_name) // throw (std::invalid_argument);
+	void add_watch_impl( const boost::filesystem::path& dir ) //throw (std::invalid_argument, std::runtime_error)
+	{
+		watch_descriptors_.push_back( std::make_pair( dir, 0 ) );
+	}
+
+	//TODO: agregar + la variante de boost::path
+	//void remove_watch_impl( const std::string& dir_name ) // throw (std::invalid_argument);
 
 	//TODO: ver si hace falta hacer lo mismo para Windows
 	void initialize() //private
@@ -457,7 +453,6 @@ protected:
 
 		do_callback(renamed_handler_, renamed_event_args(action, directory, name, old_name));
 	}
-
 
 	thread_type thread_;
 

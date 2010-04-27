@@ -29,9 +29,11 @@
 #include <boost/os_services/detail/posix_syscall_wrapper.hpp>
 
 
-//TODO: problema de multiples CHANGE consecutivos. Vamos a probar con un buffer considerablemente más grande.
+//TODO: ver como arreglamos esto... No quiero tener un buffer seteado de esta forma.
+//TODO: ver la posibilidad de que el buffer pueda ser seteado desde afuera...
 #define EVENT_SIZE  ( sizeof (struct inotify_event) )
-#define BUF_LEN     ( 4096 * ( EVENT_SIZE + 16 ) )	
+//#define BUF_LEN     ( 1024 * ( EVENT_SIZE + 16 ) ) //TODO: ver si el +16 es a nivel de evento o a nivel general. Es raro que sume 16 por cada evento...
+#define BUF_LEN     ( 4096 * ( EVENT_SIZE + 16 ) )	//TODO: problema de multiples CHANGE consecutivos. Vamos a probar con un buffer considerablemente más grande.
 
 
 namespace boost {
