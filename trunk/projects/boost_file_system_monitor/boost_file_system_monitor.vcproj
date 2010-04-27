@@ -188,11 +188,15 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\src\boost\os_services\details\base_impl.hpp"
+				RelativePath="..\..\src\boost\os_services\detail\base_impl.hpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\src\boost\os_services\change_types.hpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\boost\os_services\detail\Copy of freebsd_impl.hpp"
 				>
 			</File>
 			<File
@@ -204,11 +208,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\boost\os_services\details\file_inode_info.hpp"
+				RelativePath="..\..\src\boost\os_services\detail\file_inode_info.hpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\boost\os_services\details\file_inode_info_dummy.hpp"
+				RelativePath="..\..\src\boost\os_services\detail\file_inode_info_dummy.hpp"
 				>
 			</File>
 			<File
@@ -216,31 +220,39 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\boost\os_services\details\filesystem_item.hpp"
+				RelativePath="..\..\src\boost\os_services\detail\filesystem_item.hpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\boost\os_services\details\freebsd_impl.hpp"
+				RelativePath="..\..\src\boost\os_services\detail\freebsd_impl - Copy.hpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\boost\os_services\details\impl_selector.hpp"
+				RelativePath="..\..\src\boost\os_services\detail\freebsd_impl.hpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\boost\os_services\details\kqueue_wrapper.hpp"
+				RelativePath="..\..\src\boost\os_services\detail\impl_selector.hpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\boost\os_services\details\kqueue_wrapper_dummy.hpp"
+				RelativePath="..\..\src\boost\os_services\detail\kqueue_watch_item.hpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\boost\os_services\details\linux_impl.hpp"
+				RelativePath="..\..\src\boost\os_services\detail\kqueue_wrapper.hpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\boost\os_services\details\macosx_impl.hpp"
+				RelativePath="..\..\src\boost\os_services\detail\kqueue_wrapper_dummy.hpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\boost\os_services\detail\linux_impl.hpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\boost\os_services\detail\macosx_impl.hpp"
 				>
 			</File>
 			<File
@@ -248,19 +260,23 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\boost\os_services\details\posix_syscall_wrapper.hpp"
+				RelativePath="..\..\src\boost\os_services\detail\posix_syscall_wrapper.hpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\boost\os_services\details\posix_syscall_wrapper_dummy.hpp"
+				RelativePath="..\..\src\boost\os_services\detail\posix_syscall_wrapper_dummy.hpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\boost\os_services\details\unsupported_impl.hpp"
+				RelativePath="..\..\src\boost\os_services\detail\solaris_impl.hpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\boost\os_services\details\user_entry.hpp"
+				RelativePath="..\..\src\boost\os_services\detail\unsupported_impl.hpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\boost\os_services\detail\user_entry.hpp"
 				>
 			</File>
 			<File
@@ -272,11 +288,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\boost\os_services\details\win32api_wrapper.hpp"
+				RelativePath="..\..\src\boost\os_services\detail\win32api_wrapper.hpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\boost\os_services\details\windows_impl.hpp"
+				RelativePath="..\..\src\boost\os_services\detail\windows_impl.hpp"
 				>
 			</File>
 		</Filter>
