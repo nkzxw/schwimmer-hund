@@ -9,8 +9,8 @@ namespace boost {
 namespace os_services {
 
 //TODO: falta el object sender que podría ser implementado mediante boost::any
-typedef boost::function<void (filesystem_event_args e)> filesystem_event_handler;
-typedef boost::function<void (renamed_event_args e)> renamed_event_handler;
+typedef boost::function<void ( const filesystem_event_args& e )> filesystem_event_handler;
+typedef boost::function<void ( const renamed_event_args& e )> renamed_event_handler;
 
 } // namespace os_services
 } // namespace boost
