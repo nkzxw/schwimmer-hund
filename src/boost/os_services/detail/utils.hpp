@@ -13,12 +13,12 @@ namespace utils {
 
 bool directory_exists( const boost::filesystem::path& full_path )
 {
-	if ( !boost::filesystem::exists( full_path ) )
+	if ( ! boost::filesystem::exists( full_path ) )
 	{
 		return false;
 	}
 
-	if ( !boost::filesystem::is_directory( full_path ) )
+	if ( ! boost::filesystem::is_directory( full_path ) )
 	{
 		return false;
 	}
