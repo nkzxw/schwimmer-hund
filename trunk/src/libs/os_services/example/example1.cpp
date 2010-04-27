@@ -115,8 +115,8 @@
 //	{
 //		monitor.reset(new file_system_monitor);
 //
-//		monitor->add_directory(path1);
-//		monitor->add_directory(path2);
+//		monitor->add_watch( path1 );
+//		monitor->add_watch( path2 );
 //
 //		//TODO: mapear los notify filters de Windows con otras plataformas...
 //
@@ -169,8 +169,8 @@
 //		//std::cout << "invalid_path_1: " << invalid_path_1 << std::endl;
 //		//std::cout << "invalid_path_2: " << invalid_path_2 << std::endl;
 //
-//		monitor->add_directory(invalid_path_1);
-//		monitor->add_directory(invalid_path_2);
+//		monitor->add_watch( invalid_path_1 );
+//		monitor->add_watch( invalid_path_2 );
 //
 //		monitor->set_notify_filters( notify_filters::last_access | notify_filters::last_write | notify_filters::file_name | notify_filters::directory_name );
 //		monitor->set_filter("*.txt"); //TODO: implementar este filtro
@@ -208,8 +208,8 @@
 //	{
 //		monitor.reset(new file_system_monitor);
 //
-//		monitor->add_directory(invalid_path_1);
-//		monitor->add_directory(invalid_path_2);
+//		monitor->add_watch( invalid_path_1 );
+//		monitor->add_watch( invalid_path_2 );
 //
 //		monitor->set_notify_filters( notify_filters::last_access | notify_filters::last_write | notify_filters::file_name | notify_filters::directory_name );
 //		monitor->set_filter("*.txt"); //TODO: implementar este filtro
@@ -247,8 +247,8 @@
 //	{
 //		monitor.reset(new file_system_monitor);
 //
-//		monitor->add_directory(invalid_path_1);
-//		monitor->add_directory(invalid_path_2);
+//		monitor->add_watch( invalid_path_1 );
+//		monitor->add_watch( invalid_path_2 );
 //
 //		monitor->set_notify_filters( notify_filters::last_access | notify_filters::last_write | notify_filters::file_name | notify_filters::directory_name );
 //		monitor->set_filter("*.txt"); //TODO: implementar este filtro
@@ -291,8 +291,8 @@
 //	{
 //		monitor.reset(new file_system_monitor);
 //
-//		monitor->add_directory(invalid_path_1);
-//		monitor->add_directory(invalid_path_2);
+//		monitor->add_watch( invalid_path_1 );
+//		monitor->add_watch( invalid_path_2 );
 //
 //		monitor->set_notify_filters( notify_filters::last_access | notify_filters::last_write | notify_filters::file_name | notify_filters::directory_name );
 //		monitor->set_filter("*.txt"); //TODO: implementar este filtro
@@ -334,8 +334,8 @@
 //	{
 //		monitor.reset(new file_system_monitor);
 //
-//		monitor->add_directory(invalid_path_1);
-//		monitor->add_directory(invalid_path_2);
+//		monitor->add_watch( invalid_path_1 );
+//		monitor->add_watch( invalid_path_2 );
 //
 //		monitor->set_notify_filters( notify_filters::last_access | notify_filters::last_write | notify_filters::file_name | notify_filters::directory_name );
 //		monitor->set_filter("*.txt"); //TODO: implementar este filtro
@@ -378,8 +378,8 @@
 //	{
 //		monitor.reset(new file_system_monitor);
 //
-//		monitor->add_directory(invalid_path_1);
-//		monitor->add_directory(invalid_path_2);
+//		monitor->add_watch( invalid_path_1 );
+//		monitor->add_watch( invalid_path_2 );
 //
 //		monitor->set_notify_filters( notify_filters::last_access | notify_filters::last_write | notify_filters::file_name | notify_filters::directory_name );
 //		monitor->set_filter("*.txt"); //TODO: implementar este filtro
@@ -421,8 +421,8 @@
 //	{
 //		monitor.reset(new file_system_monitor);
 //
-//		monitor->add_directory(invalid_path_1);
-//		monitor->add_directory(invalid_path_2);
+//		monitor->add_watch( invalid_path_1 );
+//		monitor->add_watch( invalid_path_2 );
 //
 //		monitor->set_notify_filters( notify_filters::last_access | notify_filters::last_write | notify_filters::file_name | notify_filters::directory_name );
 //		monitor->set_filter("*.txt"); //TODO: implementar este filtro

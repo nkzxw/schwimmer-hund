@@ -50,18 +50,18 @@ int open_file( const boost::filesystem::path& path )
 }
 
 
-void close_file( int& file_descriptor )
+void close( int& descriptor )
 {
-	if ( file_descriptor != 0 )
+	if ( descriptor != 0 )
 	{
-		int ret_value = ::close( file_descriptor ); //close
+		int ret_value = ::close( descriptor ); //close
 		if ( ret_value == -1 )
 		{
 			std::ostringstream oss;
-			oss << "Failed to close file descriptor - File descriptor: '" << file_descriptor << "' - Reason: " << std::strerror(errno);
+			oss << "close error - Descriptor: '" << descriptor << "' - Reason: " << std::strerror(errno);
 			throw (std::runtime_error(oss.str()));					
 		}
-		file_descriptor = 0;
+		descriptor = 0;
 	}
 }
 
