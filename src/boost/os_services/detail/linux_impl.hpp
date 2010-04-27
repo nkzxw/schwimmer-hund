@@ -5,21 +5,15 @@
 
 //TODO: Anteriormente a iNotify existía dNotify. Ver de usarlo cuando la version de Linux sea la indicada. http://en.wikipedia.org/wiki/Dnotify
 
-
 #ifndef BOOST_OS_SERVICES_DETAIL_LINUX_IMPL_HPP
 #define BOOST_OS_SERVICES_DETAIL_LINUX_IMPL_HPP
 
+#if defined(_MSC_VER) && (_MSC_VER >= 1200)
+# pragma once
+#endif
+
 #include <string>
 
-//// C-Std Headers
-//#include <cerrno>
-//#include <cstdio>
-//#include <cstdlib>
-//#include <cstring>		// for strerror
-
-
-//#include <boost/bimap.hpp>
-//#include <boost/bimap/list_of.hpp>
 #include <boost/bind.hpp>
 #include <boost/foreach.hpp>
 #include <boost/integer.hpp>
@@ -139,25 +133,7 @@ public:
 	//TODO: agregar + la variante de boost::path
 	//void remove_watch_impl( const std::string& dir_name ) // throw (std::invalid_argument);
 
-	//TODO: ver si hace falta hacer lo mismo para Windows
-	void initialize() //private
-	{
-		if (!is_initialized_)
-		{
-			//file_descriptor_ = ::inotify_init();
-			//if (file_descriptor_ < 0)
-			//{
-			//	std::ostringstream oss;
-			//	oss << "Failed to initialize monitor (inotify_init) - Reason: " << std::strerror(errno);
-			//	throw (std::runtime_error(oss.str()));
-			//}
 
-			inotify.initialize();
-
-			is_initialized_ = true;
-		}
-
-	}
 
 	void start()
 	{
@@ -207,6 +183,26 @@ public:
 	}
 
 public: //private:  //TODO:
+
+	//TODO: ver si hace falta hacer lo mismo para Windows
+	void initialize() //private
+	{
+		if (!is_initialized_)
+		{
+			//file_descriptor_ = ::inotify_init();
+			//if (file_descriptor_ < 0)
+			//{
+			//	std::ostringstream oss;
+			//	oss << "Failed to initialize monitor (inotify_init) - Reason: " << std::strerror(errno);
+			//	throw (std::runtime_error(oss.str()));
+			//}
+
+			inotify.initialize();
+
+			is_initialized_ = true;
+		}
+
+	}
 
 	//void print_buffer(char* buffer, unsigned long num_bytes) //, DWORD buffer_length)
 	//{
