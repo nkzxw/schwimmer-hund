@@ -10,11 +10,13 @@
 #include <cstring>	// for strerror
 
 // POSIX headers
-#include <sys/event.h>
-#include <sys/fcntl.h>
-#include <sys/time.h>
-#include <sys/types.h>
-#include <unistd.h>
+//#include <sys/event.h>
+//#include <sys/fcntl.h>
+//#include <sys/time.h>
+//#include <sys/types.h>
+//#include <unistd.h>
+
+//TODO: volver a compilar en FreeBSD
 
 //TODO: analizar bien donde deberia estar todo esto...
 
