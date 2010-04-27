@@ -19,7 +19,7 @@
 #include <boost/filesystem/path.hpp>
 #include <boost/noncopyable.hpp>
 
-#include <boost/os_services/details/impl_selector.hpp>
+#include <boost/os_services/detail/impl_selector.hpp>
 #include <boost/os_services/utils.hpp>
 
 namespace boost {
