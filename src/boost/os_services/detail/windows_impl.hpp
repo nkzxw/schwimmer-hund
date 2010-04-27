@@ -99,7 +99,12 @@ public:
 		}
 	}
 
-	void add_directory_impl( const std::string& dir_name ) //throw (std::invalid_argument, std::runtime_error)
+
+	//TODO: agregar
+	//void add_watch_impl( const boost::filesystem::path& dir ) //throw (std::invalid_argument, std::runtime_error)
+
+
+	void add_watch_impl( const std::string& dir_name ) //throw (std::invalid_argument, std::runtime_error)
 	{ 
 		LPDIRECTORY_INFO directory_info = (LPDIRECTORY_INFO) malloc(sizeof(DIRECTORY_INFO));
 		memset(directory_info, 0, sizeof(DIRECTORY_INFO));
