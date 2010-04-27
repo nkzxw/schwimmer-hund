@@ -1,10 +1,8 @@
 #ifndef BOOST_OS_SERVICES_DETAIL_FILE_INODE_INFO_HPP
 #define BOOST_OS_SERVICES_DETAIL_FILE_INODE_INFO_HPP
 
-
-//#include <sstream>
-//#include <string>
-//#include <cstring>	// for strerror
+#include <sstream>
+#include <cstring>	// for strerror
 
 #include <sys/stat.h>
 
@@ -16,10 +14,9 @@ namespace os_services {
 namespace detail {
 
 	
-//TODO: class
-struct file_inode_info
+class file_inode_info
 {
-	//TODO: public, protected, private ?????
+public:
 	file_inode_info()
 		: device_id_(0), inode_number_(0)
 	{}
@@ -89,6 +86,7 @@ struct file_inode_info
 		return ( this->device_id_ == other.st_dev && this->inode_number_ == other.st_ino );
 	}
 
+protected:
 	dev_t device_id_;
 	ino_t inode_number_;
 };

@@ -15,7 +15,7 @@
 #ifndef BOOST_OS_SERVICES_FILE_SYSTEM_MONITOR_HPP
 #define BOOST_OS_SERVICES_FILE_SYSTEM_MONITOR_HPP
 
-#include <boost/bimap.hpp>
+//#include <boost/bimap.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/noncopyable.hpp>
 
@@ -45,15 +45,14 @@ public:
 	//}
 
 	//TODO: poder monitorear cualquier archivo, no solo directorios...
-	//TODO: agregar otro add_directory que acepte un boost::filesystem::path(?)
-	void add_directory( const std::string& dir_name ) //throw (std::invalid_argument)
+	void add_watch( const std::string& dir_name ) //throw (std::invalid_argument)
 	{ 
-		implementation_->add_directory( dir_name );
+		implementation_->add_watch( dir_name );
 	}
 
-	void add_directory( const boost::filesystem::path& directory ) //throw (std::invalid_argument, std::runtime_error)
+	void add_watch( const boost::filesystem::path& directory ) //throw (std::invalid_argument, std::runtime_error)
 	{ 
-		implementation_->add_directory( directory );
+		implementation_->add_watch( directory );
 	}
 
 	int get_notify_filters() const

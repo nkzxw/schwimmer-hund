@@ -18,11 +18,10 @@ namespace boost {
 namespace os_services {
 namespace detail {
 
-	
-//TODO: class
-struct file_inode_info_dummy
+
+class file_inode_info_dummy
 {
-	//TODO: public, protected, private ?????
+public:
 	file_inode_info_dummy()
 		: device_id_(0), inode_number_(0)
 	{}

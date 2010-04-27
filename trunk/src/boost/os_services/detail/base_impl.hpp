@@ -13,8 +13,6 @@ namespace boost {
 namespace os_services {
 namespace detail {
 
-
-
 //TODO: el nombre base_impl es relativo porque la base no es una implementacion...
 //TODO: el typename Type no me gusta el nombre... ver como se resuelve en en idiom PImpl
 template <typename Type>
@@ -28,44 +26,38 @@ public:
 	filesystem_event_handler deleted_handler_;
 	renamed_event_handler renamed_handler_;
 
-	void add_directory( const std::string& dir_name ) //throw (std::invalid_argument, std::runtime_error)
+	void add_watch( const std::string& dir_name ) //throw (std::invalid_argument, std::runtime_error)
 	{ 
 		if ( !utils::directory_exists(dir_name) )
 		{
-			//throw std::runtime_error("InvalidDirName");
-			////throw new ArgumentException(SR.GetString("InvalidDirName", new object[] { path }));
-			throw (std::invalid_argument("'" + dir_name + "' is not a valid directory."));
+			throw (std::invalid_argument("'" + dir_name + "' is not a valid file or directory."));
 		}
 
-		static_cast<Type*>(this)->add_directory_impl(dir_name);
+		static_cast<Type*>(this)->add_watch_impl(dir_name);
 	}
 
-	void add_directory( const boost::filesystem::path& directory ) //throw (std::invalid_argument, std::runtime_error)
+	void add_watch( const boost::filesystem::path& directory ) //throw (std::invalid_argument, std::runtime_error)
 	{ 
 		if ( !utils::directory_exists(directory) )
 		{
-			throw (std::invalid_argument("'" + directory.native_file_string() + "' is not a valid directory."));
+			throw (std::invalid_argument("'" + directory.native_file_string() + "' is not a valid file or directory."));
 		}
 			
-		static_cast<Type*>(this)->add_directory_impl( directory.native_file_string() );
+		static_cast<Type*>(this)->add_watch_impl( directory.native_file_string() );
 	}
 
 	//TODO: ver si es necesario el metodo start() en base y start_impl() en *_impl
 	//void start() {}
-
-
 	//TODO: cada metodo publico debe ser expuesto por via esta clase...
 	
 
 public: // private: //TODO:
-
 	//TODO: estos tres atributos son a nivel de watch o user_entry
 	int notify_filters_;			//TODO: deberia ser un enum
 	std::string filter_;
 	bool include_subdirectories_;	
 
 protected:
-
 	template <typename Callback, typename Args>
 	inline void do_callback(Callback callback, Args args )
 	{

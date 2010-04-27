@@ -6,8 +6,6 @@
 namespace boost {
 namespace os_services {
 
-//TODO: no me gusta el nombre
-
 struct filesystem_event_args
 {
 	filesystem_event_args( int _change_type, const std::string& _directory, const std::string& _name )

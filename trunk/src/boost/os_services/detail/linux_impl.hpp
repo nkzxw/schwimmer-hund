@@ -88,10 +88,12 @@ public:
 		{
 			thread_->join(); //TODO: darle un timeout al close, sino llegó a cerrarse hacer un kill...
 		}
-
 	}
 
-	void add_directory_impl ( const std::string& dir_name ) //throw (std::invalid_argument, std::runtime_error)
+	//TODO: agregar
+	//void add_watch_impl( const boost::filesystem::path& dir ) //throw (std::invalid_argument, std::runtime_error)
+
+	void add_watch_impl ( const std::string& dir_name ) //throw (std::invalid_argument, std::runtime_error)
 	{
 		watch_descriptors_.push_back(std::make_pair(dir_name, 0));
 	}
@@ -101,8 +103,6 @@ public:
 	//TODO: ver si hace falta hacer lo mismo para Windows
 	void initialize() //private
 	{
-		//std::cout << "void initialize()" << std::endl;
-
 		if (!is_initialized_)
 		{
 			file_descriptor_ = ::inotify_init();
