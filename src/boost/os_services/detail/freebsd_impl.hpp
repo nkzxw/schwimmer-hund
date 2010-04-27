@@ -188,8 +188,6 @@ private:
 		return watch;
 	}
 
-
-
 	//TODO: no me gusta el nombre...
 	void begin_watch( filesystem_item::pointer_type watch, bool launch_events = false )
 	{
@@ -255,34 +253,12 @@ private:
 	
 	void remove_watch( filesystem_item::pointer_type watch ) 
 	{
-		//std::cout << "watch->path().native_file_string(): " << watch->path().native_file_string() << std::endl;
-		//std::cout << "watch->parent_->path().native_file_string(): " << watch->parent_->path().native_file_string() << std::endl;
-
-
-		//std::cout << "void remove_watch( filesystem_item::pointer_type watch ) - 1" << std::endl;
-
-
-		//std::cout << "watch->parent(): " << watch->parent() << std::endl;
-		//std::cout << "watch->parent_: " << watch->parent_ << std::endl;
-		//std::cout << "watch->parent().get(): " << watch->parent().get() << std::endl;
-
-
 		//TODO: que pasa si no tiene parent... Hacer Unit Test que elimine el directorio que estamos haciendo WATCH
 		if ( watch->parent() )
 		{
-			//std::cout << "void remove_watch( filesystem_item::pointer_type watch ) - 2" << std::endl;
 			watch->parent()->remove_subitem( watch );
-			//std::cout << "void remove_watch( filesystem_item::pointer_type watch ) - 3" << std::endl;
 		}
-
-		//std::cout << "void remove_watch( filesystem_item::pointer_type watch ) - 4" << std::endl;
-
 		watch->root_user_entry()->remove_watch( watch );
-
-		//std::cout << "void remove_watch( filesystem_item::pointer_type watch ) - 5" << std::endl;
-
-		//TODO: llamar a metodo que lanza el evento...
-
 	}
 
 	void handle_rename( filesystem_item::pointer_type watch )
@@ -326,16 +302,8 @@ private:
 
 	void handle_remove( filesystem_item::pointer_type watch )
 	{
-		//std::cout << "void handle_remove( filesystem_item::pointer_type watch ) - 1" << std::endl;
-
 		notify_file_system_event_args( change_types::deleted, watch->path() );
-
-		//std::cout << "void handle_remove( filesystem_item::pointer_type watch ) - 2" << std::endl;
-
 		remove_watch( watch );
-
-		//std::cout << "void handle_remove( filesystem_item::pointer_type watch ) - 3" << std::endl;
-
 	}
 
 	void handle_write( filesystem_item::pointer_type watch )
@@ -360,7 +328,6 @@ private:
 
 			try
 			{
-				//std::cout << "filesystem_item::pointer_type watch = kq_wrapper.get<filesystem_item>( event_type );" << std::endl;
 				filesystem_item::pointer_type temp_watch = kq_wrapper.get<filesystem_item>( event_type );
 				filesystem_item::pointer_type watch;
 				
@@ -373,7 +340,6 @@ private:
 					}
 				}
 
-
 				//std::cout << "END filesystem_item::pointer_type watch = kq_wrapper.get<filesystem_item>( event_type );" << std::endl;
 				//std::cout << "closing_: " << closing_ << std::endl;
 				//std::cout << "event_type: " << event_type << std::endl;
@@ -385,11 +351,8 @@ private:
 					{
 						case kqueue_event_types::remove:
 						{
-							//std::cout << "case kqueue_event_types::remove: - 1" << std::endl;
 							handle_remove( watch );
-							//std::cout << "case kqueue_event_types::remove: - 2" << std::endl;
 							queued_write_watch.reset();
-							//std::cout << "case kqueue_event_types::remove: - 3" << std::endl;
 							break;
 						}
 						case kqueue_event_types::rename:
@@ -403,28 +366,8 @@ private:
 							if ( queued_write_watch ) //!= 0
 							{
 								handle_write( queued_write_watch );
-
-								//if ( last_write_item )
-								//{
-								//	std::cout << "last_write_item->parent().get(): " << last_write_item->parent().get() << std::endl;
-								//}
-
-								//std::cout << "queued_write_watch.reset() -> NULL DELETER" << std::endl;
 								queued_write_watch.reset(); // = 0;
-
-								//if ( last_write_item )
-								//{
-								//	std::cout << "last_write_item->parent().get(): " << last_write_item->parent().get() << std::endl;
-								//}
-
-
 								handle_write( watch );
-
-								//if ( last_write_item )
-								//{
-								//	std::cout << "last_write_item->parent().get(): " << last_write_item->parent().get() << std::endl;
-								//}
-
 							}
 							else
 							{
@@ -438,13 +381,9 @@ private:
 						}
 					}
 				}
-
-				//std::cout << "watch is out of scope -> NULL DELETER" << std::endl;
 			}
 			catch( const kevent_timeout& ) //e )
 			{
-				//std::cout << "END kevent_timeout filesystem_item::pointer_type watch = kq_wrapper.get<filesystem_item>( event_type );" << std::endl;
-
 				if ( ! closing_ )
 				{
 					if ( queued_write_watch )
