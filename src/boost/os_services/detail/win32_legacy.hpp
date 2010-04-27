@@ -1,5 +1,5 @@
-#ifndef BOOST_OS_SERVICES_WIN32_LEGACY_HPP
-#define BOOST_OS_SERVICES_WIN32_LEGACY_HPP
+#ifndef BOOST_OS_SERVICES_DETAIL_WIN32_LEGACY_HPP
+#define BOOST_OS_SERVICES_DETAIL_WIN32_LEGACY_HPP
 
 //TODO: no me gusta haber separado en este arhivo, para ello tenemos el windows_impl
 
@@ -33,4 +33,4 @@ DIRECTORY_INFO  directory_info_array[MAX_DIRS];        // Buffer for all of the 
 
 
 //----------------------------------------------------------------------------------------------------------------
-#endif // BOOST_OS_SERVICES_WIN32_LEGACY_HPP
+#endif // BOOST_OS_SERVICES_DETAIL_WIN32_LEGACY_HPP

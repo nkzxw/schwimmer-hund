@@ -115,7 +115,8 @@ public:
 
 	void open()
 	{
-		this->file_descriptor_ = boost::os_services::posix_syscall_wrapper::open_file( path_ );
+		
+		this->file_descriptor_ = posix_syscall_wrapper::open_file( path_ );
 		this->inode_info_.set( this->path_ );
 	}
 
@@ -134,7 +135,7 @@ public:
 
 			try
 			{
-				boost::os_services::posix_syscall_wrapper::close_file( this->file_descriptor_ );
+				posix_syscall_wrapper::close_file( this->file_descriptor_ );
 			}
 			catch ( std::runtime_error& e )
 			{
