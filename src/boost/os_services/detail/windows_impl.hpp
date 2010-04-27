@@ -33,13 +33,6 @@ void directory_info_deleter(LPDIRECTORY_INFO ptr)
 	{
 		if ( ptr->directory_handle != 0 )
 		{
-			//BOOL ret_value = ::CloseHandle( ptr->directory_handle );
-			//if ( ret_value == 0 )
-			//{
-			//	//Destructor -> NO_THROW
-			//	std::cerr << "Failed to close directory port handle. Reason: " << GetLastError() << std::endl;
-			//}
-
 			try
 			{
 				win32api_wrapper::close_handle( ptr->directory_handle );
@@ -99,44 +92,29 @@ public:
 		}
 	}
 
-
-	//TODO: agregar
-	//void add_watch_impl( const boost::filesystem::path& dir ) //throw (std::invalid_argument, std::runtime_error)
-
-
-	void add_watch_impl( const std::string& dir_name ) //throw (std::invalid_argument, std::runtime_error)
+	void add_watch_impl( const std::string& path ) //throw (std::invalid_argument, std::runtime_error)
 	{ 
 		LPDIRECTORY_INFO directory_info = (LPDIRECTORY_INFO) malloc(sizeof(DIRECTORY_INFO));
 		memset(directory_info, 0, sizeof(DIRECTORY_INFO));
 
-		directory_info->directory_handle = win32api_wrapper::create_file( dir_name, FILE_LIST_DIRECTORY, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OVERLAPPED, NULL );
-		//if ( directory_info->directory_handle == INVALID_HANDLE_VALUE )
-		//{
-		//	std::ostringstream oss;
-		//	oss << "Failed to monitor directory - Directory: " << dir_name << " - Reason: " << GetLastError();
-		//	throw (std::invalid_argument(oss.str()));
-		//}
+		directory_info->directory_handle = win32api_wrapper::create_file( path, FILE_LIST_DIRECTORY, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OVERLAPPED, NULL );
 
 		//TODO: esto no me gusta
-		lstrcpy( directory_info->directory_name, dir_name.c_str() );
+		lstrcpy( directory_info->directory_name, path.c_str() );
 
 		//unsigned long addr = (unsigned long) &directory_info;
 
-		//TODO: usar win32api_wrapper::create_io_completion_port
-		//completion_port_handle_ = ::CreateIoCompletionPort( directory_info->directory_handle, completion_port_handle_, (DWORD) directory_info, 0 );
-	
-		//if ( completion_port_handle_ == 0 )
-		//{
-		//	std::ostringstream oss;
-		//	oss << "Failed to monitor directory - Directory: " << dir_name << " - Reason: " << GetLastError();
-		//	throw (std::runtime_error(oss.str()));
-		//}
-
 		completion_port_handle_ = win32api_wrapper::create_io_completion_port( directory_info->directory_handle, completion_port_handle_, (DWORD) directory_info, 0 );
-
 
 		directories_.push_back( directory_info_pointer_type( directory_info, directory_info_deleter ) );
 	}
+
+
+	void add_watch_impl( const boost::filesystem::path& path ) //throw (std::invalid_argument, std::runtime_error)
+	{
+		add_watch_impl( path.native_file_string() );
+	}
+
 
 	//TODO: revisar que hacer con las EXCEPTION-SPECIFICATION
 	void start() //throw (std::runtime_error)
@@ -147,18 +125,9 @@ public:
 			//TODO: BOOST_FOREACH
 			for (vector_type::const_iterator it = directories_.begin(); it!=directories_.end(); ++it)
 			{
-				//BOOL ret_value = ::ReadDirectoryChangesW ( (*it)->directory_handle, (*it)->buffer, MAX_BUFFER, this->include_subdirectories_ ? 1 : 0, this->notify_filters_, &(*it)->buffer_length, &(*it)->overlapped, NULL);
-
-				//if ( ret_value == 0 )
-				//{
-				//	std::ostringstream oss;
-				//	oss << "Failed to monitor directory - Directory: " << (*it)->directory_name << " - Reason: " << GetLastError();
-				//	throw (std::runtime_error(oss.str()));
-				//}
-				
+				//TODO: ver como hacer para monitorear los cambios en un archivo especifico
 				win32api_wrapper::read_directory_changes( (*it)->directory_handle, (*it)->buffer, MAX_BUFFER, this->include_subdirectories_ ? 1 : 0, this->notify_filters_, &(*it)->buffer_length, &(*it)->overlapped, NULL);
 			}
-
 			thread_.reset( new boost::thread( boost::bind(&windows_impl::handle_directory_changes, this) ) );
 
 		//	is_started_ = true;
