@@ -23,8 +23,6 @@ namespace change_types
 
 //#ifdef BOOST_WINDOWS
 #if defined(linux) || defined(__linux) || defined(__linux__) || defined(__GNU__) || defined(__GLIBC__) 
-
-
 	//static const int created = IN_CREATE;
 	//static const int deleted = IN_DELETE;
 	//static const int changed = IN_MODIFY;
