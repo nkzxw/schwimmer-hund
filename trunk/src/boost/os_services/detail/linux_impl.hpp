@@ -49,59 +49,83 @@ class linux_impl : public base_impl<linux_impl>
 public:
 
 	linux_impl()
-		: is_initialized_(false), closing_(false), file_descriptor_(0)
+		: is_initialized_(false), closing_(false) //, file_descriptor_(0)
 	{}
 
 	~linux_impl()
 	{
 		closing_ = true;
 
-		if ( file_descriptor_ != 0 )
+		//if ( file_descriptor_ != 0 )
+		//{
+		//	BOOST_FOREACH(pair_type p, watch_descriptors_)
+		//	{
+		//		if ( p.second != 0 )
+		//		{
+		//			//int ret_value = ::inotify_rm_watch( file_descriptor_, p.second );
+
+		//			//if ( ret_value == -1 ) //TODO: constante POSIX_ERROR o algo asi... IDEM FreeBSD
+		//			//{
+		//			//	//Destructor -> NO_THROW
+		//			//	std::cerr << "Failed to remove watch - Reason: " << std::strerror(errno) << std::endl;
+		//			//}
+
+		//			try
+		//			{
+		//				inotify.remove_watch( p.second );
+		//			}
+		//			catch ( const std::runtime_error& e )
+		//			{
+		//				//Destructor -> NO_THROW
+		//				std::cerr << e.what() << std::endl;
+		//			}
+		//		}
+		//	}
+
+		BOOST_FOREACH(pair_type p, watch_descriptors_)
 		{
-			BOOST_FOREACH(pair_type p, watch_descriptors_)
+			if ( p.second != 0 )
 			{
-				if ( p.second != 0 )
+				//int ret_value = ::inotify_rm_watch( file_descriptor_, p.second );
+
+				//if ( ret_value == -1 ) //TODO: constante POSIX_ERROR o algo asi... IDEM FreeBSD
+				//{
+				//	//Destructor -> NO_THROW
+				//	std::cerr << "Failed to remove watch - Reason: " << std::strerror(errno) << std::endl;
+				//}
+
+				try
 				{
-					//int ret_value = ::inotify_rm_watch( file_descriptor_, p.second );
-
-					//if ( ret_value == -1 ) //TODO: constante POSIX_ERROR o algo asi... IDEM FreeBSD
-					//{
-					//	//Destructor -> NO_THROW
-					//	std::cerr << "Failed to remove watch - Reason: " << std::strerror(errno) << std::endl;
-					//}
-
-					try
-					{
-						inotify.remove_watch( p.second );
-					}
-					catch ( const std::runtime_error& e )
-					{
-						//Destructor -> NO_THROW
-						std::cerr << e.what() << std::endl;
-					}
+					inotify.remove_watch( p.second );
+				}
+				catch ( const std::runtime_error& e )
+				{
+					//Destructor -> NO_THROW
+					std::cerr << e.what() << std::endl;
 				}
 			}
-
-			//// TODO: parece que close(0) cierra el standard input (CIN / stdin)
-			//int ret_value = ::close( file_descriptor_ );
-
-			//if ( ret_value < 0 )
-			//{
-			//	//Destructor -> NO_THROW
-			//	std::cerr << "Failed to close inotify file descriptor - Reason: " << std::strerror(errno) << std::endl;
-			//}
-
-			try
-			{
-				inotify.close();
-			}
-			catch ( const std::runtime_error& e )
-			{
-				//Destructor -> NO_THROW
-				std::cerr << e.what() << std::endl;
-			}
-
 		}
+
+		//// TODO: parece que close(0) cierra el standard input (CIN / stdin)
+		//int ret_value = ::close( file_descriptor_ );
+
+		//if ( ret_value < 0 )
+		//{
+		//	//Destructor -> NO_THROW
+		//	std::cerr << "Failed to close inotify file descriptor - Reason: " << std::strerror(errno) << std::endl;
+		//}
+
+		try
+		{
+			inotify.close();
+		}
+		catch ( const std::runtime_error& e )
+		{
+			//Destructor -> NO_THROW
+			std::cerr << e.what() << std::endl;
+		}
+
+		
 
 		if ( thread_ )
 		{
@@ -132,7 +156,7 @@ public:
 			//	throw (std::runtime_error(oss.str()));
 			//}
 
-			file_descriptor_ = inotify.initialize();
+			inotify.initialize();
 
 			is_initialized_ = true;
 		}
@@ -207,7 +231,7 @@ public: //private:  //TODO:
 
 		while ( !closing_ )
 		{
-			struct inotify_event* event inotify.get<struct inotify_event>();
+			struct inotify_event* event = inotify.get<struct inotify_event>();
 
 			if ( ! closing_ )
 			{
@@ -438,7 +462,7 @@ protected:
 	thread_type thread_;
 
 	bool is_initialized_;
-	int file_descriptor_; // file descriptor
+	//int file_descriptor_; // file descriptor
 	bool closing_;
 
 	typedef std::pair<std::string, boost::uint32_t> pair_type;
