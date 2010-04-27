@@ -37,7 +37,6 @@ public:
 		//TODO: donde setear estos datos?????
 		//, notify_filters_(notify_filters::last_write | notify_filters::directory_name | notify_filters::file_name)
 		//, filter_("*.*")
-
 	}
 
 	//TODO: ver que todos los destructores sean virtuales...
@@ -45,6 +44,7 @@ public:
 	//{
 	//}
 
+	//TODO: poder monitorear cualquier archivo, no solo directorios...
 	//TODO: agregar otro add_directory que acepte un boost::filesystem::path(?)
 	void add_directory( const std::string& dir_name ) //throw (std::invalid_argument)
 	{ 
@@ -61,8 +61,9 @@ public:
 		return implementation_->notify_filters_;
 	}
 
-	void set_notify_filters(int val) 
+	void set_notify_filters( int val )
 	{ 
+		//TODO: assert
 		implementation_->notify_filters_ = val;
 	}
 
@@ -95,22 +96,22 @@ public:
 	//}
 
 	// Event Handlers Setters
-	void set_changed_event_handler( filesystem_event_handler handler ) //TODO: parametro const???
+	void set_changed_event_handler( const filesystem_event_handler& handler ) //TODO: parametro const???
 	{
 		this->implementation_->changed_handler_ = handler;
 	}
 
-	void set_created_event_handler( filesystem_event_handler handler )
+	void set_created_event_handler( const filesystem_event_handler& handler )
 	{
 		this->implementation_->created_handler_ = handler;
 	}
 
-	void set_deleted_event_handler( filesystem_event_handler handler )
+	void set_deleted_event_handler( const filesystem_event_handler& handler )
 	{
 		this->implementation_->deleted_handler_ = handler;
 	}
 
-	void set_renamed_event_handler( renamed_event_handler handler )
+	void set_renamed_event_handler( const renamed_event_handler& handler )
 	{
 		this->implementation_->renamed_handler_ = handler;
 	}
