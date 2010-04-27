@@ -1,68 +1,79 @@
-#include <iostream>
-#include <string>
-#include <vector>
-#include <boost/shared_ptr.hpp>
 
-struct A
-{
-	int file_descriptor_;
-	std::string name_;
-};
-
-typedef boost::shared_ptr<A> a_pointer_type;
-typedef std::vector<a_pointer_type> collection_type;
-
-struct X
-{
-
-	void add( a_pointer_type item )
-	{
-		a_collection.push_back( item );
-
-		register_event_system_call ( item->file_descriptor_, item.get() ); // boost::shared_ptr<A>::get() retorna A*
-
-		// int register_event_system_call (int file_descriptor, void* data);
-		// Supongamos que "register_event_system_call" registra un evento en el sistema operativo para este monitoree si el archivo "file_descriptor_" fue modificado.
-		// A esta misma funcion se le pasa un void* que es un dato que será retornado cuando el evento sea capturado ...
-	}
-
-	void notify ( a_pointer_type item )
-	{
-		std::cout << "el archivo " << item->name_ << " ha cambiado." << std::endl;
-	}
-
-	void do_work( )
-	{
-		void* data;
-		
-		while ( true )
-		{
-			get_notification_system_call ( data );
-			// get_notification_system_call es una funcion que aguarda a que se produzca un evento (sistema operativo) y retorna un void* que se relaciona con el "void* data" pasado a la funcion "register_event_system_call" que es llamada más arriba
-
-			//*1 - Notificar que "data" cambio...
-
-			a_pointer_type item; // ¿Como relaciono data con item?????
-			
-			notify ( item );
-		}
-
-	}
-
-	collection_type a_collection;
-};
+//--------------------------------------------------------------------------------------------------------
 
 int main( int /*argc*/, char** /*argv*/ )
 {
-	X x;
-	
-	a_pointer_type a (new A);
-
-	x.add( a );
-	x.do_work();
-
 	return 0;
 }
+
+
+//--------------------------------------------------------------------------------------------------------
+
+//#include <iostream>
+//#include <string>
+//#include <vector>
+//#include <boost/shared_ptr.hpp>
+//
+//struct A
+//{
+//	int file_descriptor_;
+//	std::string name_;
+//};
+//
+//typedef boost::shared_ptr<A> a_pointer_type;
+//typedef std::vector<a_pointer_type> collection_type;
+//
+//struct X
+//{
+//
+//	void add( a_pointer_type item )
+//	{
+//		a_collection.push_back( item );
+//
+//		register_event_system_call ( item->file_descriptor_, item.get() ); // boost::shared_ptr<A>::get() retorna A*
+//
+//		// int register_event_system_call (int file_descriptor, void* data);
+//		// Supongamos que "register_event_system_call" registra un evento en el sistema operativo para este monitoree si el archivo "file_descriptor_" fue modificado.
+//		// A esta misma funcion se le pasa un void* que es un dato que será retornado cuando el evento sea capturado ...
+//	}
+//
+//	void notify ( a_pointer_type item )
+//	{
+//		std::cout << "el archivo " << item->name_ << " ha cambiado." << std::endl;
+//	}
+//
+//	void do_work( )
+//	{
+//		void* data;
+//		
+//		while ( true )
+//		{
+//			get_notification_system_call ( data );
+//			// get_notification_system_call es una funcion que aguarda a que se produzca un evento (sistema operativo) y retorna un void* que se relaciona con el "void* data" pasado a la funcion "register_event_system_call" que es llamada más arriba
+//
+//			//*1 - Notificar que "data" cambio...
+//
+//			a_pointer_type item; // ¿Como relaciono data con item?????
+//			
+//			notify ( item );
+//		}
+//
+//	}
+//
+//	collection_type a_collection;
+//};
+//
+//int main( int /*argc*/, char** /*argv*/ )
+//{
+//	X x;
+//	
+//	a_pointer_type a (new A);
+//
+//	x.add( a );
+//	x.do_work();
+//
+//	return 0;
+//}
 
 
 
