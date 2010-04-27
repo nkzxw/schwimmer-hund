@@ -73,7 +73,7 @@ int main(int argc, char* argv[] )
 		{
 			monitor.reset(new file_system_monitor);
 
-			monitor->add_directory( dir );
+			monitor->add_watch( dir );
 			
 
 			//TODO: mapear los notify filters de Windows con otras plataformas...

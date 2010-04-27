@@ -11,14 +11,12 @@
 
 #include <string>
 
-// C-Std Headers
-#include <cerrno>
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>		// for strerror
+//// C-Std Headers
+//#include <cerrno>
+//#include <cstdio>
+//#include <cstdlib>
+//#include <cstring>		// for strerror
 
-#include <sys/inotify.h>
-#include <sys/types.h>
 
 //#include <boost/bimap.hpp>
 //#include <boost/bimap/list_of.hpp>
@@ -30,6 +28,7 @@
 
 #include <boost/os_services/change_types.hpp>
 #include <boost/os_services/detail/base_impl.hpp>
+#include <boost/os_services/detail/inotify_wrapper.hpp>
 #include <boost/os_services/notify_filters.hpp>
 
 //TODO: ver como arreglamos esto... No quiero tener un buffer seteado de esta forma.
@@ -63,25 +62,45 @@ public:
 			{
 				if ( p.second != 0 )
 				{
-					int ret_value = ::inotify_rm_watch( file_descriptor_, p.second );
+					//int ret_value = ::inotify_rm_watch( file_descriptor_, p.second );
 
-					if ( ret_value == -1 ) //TODO: constante POSIX_ERROR o algo asi... IDEM FreeBSD
+					//if ( ret_value == -1 ) //TODO: constante POSIX_ERROR o algo asi... IDEM FreeBSD
+					//{
+					//	//Destructor -> NO_THROW
+					//	std::cerr << "Failed to remove watch - Reason: " << std::strerror(errno) << std::endl;
+					//}
+
+					try
+					{
+						inotify.remove_watch( p.second );
+					}
+					catch ( const std::runtime_error& e )
 					{
 						//Destructor -> NO_THROW
-						std::cerr << "Failed to remove watch - Reason: " << std::strerror(errno) << std::endl;
+						std::cerr << e.what() << std::endl;
 					}
-
 				}
 			}
 
-			// TODO: parece que close(0) cierra el standard input (CIN / stdin)
-			int ret_value = ::close( file_descriptor_ );
+			//// TODO: parece que close(0) cierra el standard input (CIN / stdin)
+			//int ret_value = ::close( file_descriptor_ );
 
-			if ( ret_value < 0 )
+			//if ( ret_value < 0 )
+			//{
+			//	//Destructor -> NO_THROW
+			//	std::cerr << "Failed to close inotify file descriptor - Reason: " << std::strerror(errno) << std::endl;
+			//}
+
+			try
+			{
+				inotify.close();
+			}
+			catch ( const std::runtime_error& e )
 			{
 				//Destructor -> NO_THROW
-				std::cerr << "Failed to close inotify file descriptor - Reason: " << std::strerror(errno) << std::endl;
+				std::cerr << e.what() << std::endl;
 			}
+
 		}
 
 		if ( thread_ )
@@ -105,15 +124,16 @@ public:
 	{
 		if (!is_initialized_)
 		{
-			file_descriptor_ = ::inotify_init();
-			//std::cout << "file_descriptor_: " << file_descriptor_ << std::endl;
+			//file_descriptor_ = ::inotify_init();
+			//if (file_descriptor_ < 0)
+			//{
+			//	std::ostringstream oss;
+			//	oss << "Failed to initialize monitor (inotify_init) - Reason: " << std::strerror(errno);
+			//	throw (std::runtime_error(oss.str()));
+			//}
 
-			if (file_descriptor_ < 0)
-			{
-				std::ostringstream oss;
-				oss << "Failed to initialize monitor (inotify_init) - Reason: " << std::strerror(errno);
-				throw (std::runtime_error(oss.str()));
-			}
+			file_descriptor_ = inotify.initialize();
+
 			is_initialized_ = true;
 		}
 
@@ -142,19 +162,17 @@ public:
 		for (watch_descriptors_type::iterator it =  watch_descriptors_.begin(); it != watch_descriptors_.end(); ++it )
 		{
 			//TODO: ver si estos atributos como "IN_MODIFY" deben ir fijos o seteados desde afuera. Tienen que ser asignados por el usuario de acuerdo a lo que quiere monitorear... IDEM Windows... ver como se hace para espeficarle esto en Windows...
-			boost::uint32_t watch_descriptor = ::inotify_add_watch(file_descriptor_, it->first.c_str(), IN_CREATE | IN_DELETE | IN_MODIFY | IN_MOVED_FROM | IN_MOVED_TO);
-			//std::cout << "watch_descriptor: " << watch_descriptor << std::endl;
+			//boost::uint32_t watch_descriptor = ::inotify_add_watch(file_descriptor_, it->first.c_str(), IN_CREATE | IN_DELETE | IN_MODIFY | IN_MOVED_FROM | IN_MOVED_TO);
+			//if ( watch_descriptor == -1 )
+			//{
+			//	std::ostringstream oss;
+			//	oss << "Failed to monitor directory - Directory: " << it->first << " - Reason: " << std::strerror(errno);
+			//	throw (std::invalid_argument(oss.str()));
+			//}
+			//it->second = watch_descriptor;
 
-			//if (watch_descriptor == -1)
-			if (watch_descriptor < 0)
-			{
-				std::ostringstream oss;
-				oss << "Failed to monitor directory - Directory: " << it->first << " - Reason: " << std::strerror(errno);
-				throw (std::invalid_argument(oss.str()));
-			}
+			it->second = inotify.add_watch( it->first.c_str() );
 
-			//std::cout << "watch_descriptor: " << watch_descriptor << std::endl;
-			it->second = watch_descriptor;
 		}
 
 
@@ -182,24 +200,18 @@ public: //private:  //TODO:
 	//	printf("\n");
 	//}
 
+
+
 	void handle_directory_changes()
 	{
 		boost::optional<std::string> old_name;
 
 		while ( !closing_ )
 		{
-			//printf("-- antes del read --\n");
 			char buffer[BUF_LEN];
 			int i = 0;
 
-			//boost::system_time time = boost::get_system_time();
-			//time += boost::posix_time::milliseconds(3000);
-			//boost::thread::sleep(time);
-
 			int length = ::read( file_descriptor_, buffer, BUF_LEN );
-
-			//printf("length: %d\n", length);
-			//print_buffer(buffer, length);
 
 			if ( ! closing_ )
 			{
@@ -211,46 +223,11 @@ public: //private:  //TODO:
 
 				std::string directory_name;
 
-
-				//printf("i: %d\n", i);
 				while ( i < length )
 				{
-					//printf("dentro de ... while ( i < length ) \n");
 
-					struct inotify_event *event = ( struct inotify_event * ) &buffer[ i ]; //TODO:
+					struct inotify_event* event = ( struct inotify_event * ) &buffer[ i ]; //TODO:
 					//event = reinterpret_cast<struct inotify_event*> (buffer_ + bytes_processed);
-
-					//printf("event: %d\n", (void*)event);
-//					printf("event->wd: %d\n", event->wd);
-//					printf("event->mask: %u\n", event->mask);
-//					printf("event->cookie: %u\n", event->cookie);
-//					printf("event->len: %u\n", event->len);
-//					printf("event->name: %s\n", event->name);
-
-//					if ( event->mask & IN_MOVED_FROM )
-//					{
-//						std::cout << "MOVED FROM" << std::endl;
-//					}
-//					else if ( event->mask & IN_MOVED_TO )
-//					{
-//						std::cout << "MOVED TO" << std::endl;
-//					}
-//					else if ( event->mask & IN_CREATE )
-//					{
-//						std::cout << "CREATE" << std::endl;
-//					}
-//					else if ( event->mask & IN_DELETE )
-//					{
-//						std::cout << "DELETE" << std::endl;
-//					}
-//					else if ( event->mask & IN_MODIFY )
-//					{
-//						std::cout << "MODIFY" << std::endl;
-//					}
-//					else
-//					{
-//						std::cout << "... NOTHING ..." << std::endl;
-//					}
 
 					//if ( event->len != 0) //TODO: que espera hacer acá?, mala práctica
 					if ( event->len ) //TODO: que espera hacer acá?, mala práctica
@@ -315,6 +292,98 @@ public: //private:  //TODO:
 			}
 		}
 	}
+
+
+	//void handle_directory_changes()
+	//{
+	//	boost::optional<std::string> old_name;
+
+	//	while ( !closing_ )
+	//	{
+	//		char buffer[BUF_LEN];
+	//		int i = 0;
+
+	//		int length = ::read( file_descriptor_, buffer, BUF_LEN );
+
+	//		if ( ! closing_ )
+	//		{
+	//			if ( length < 0 )
+	//			{
+	//				//TODO:
+	//				perror( "read" );
+	//			}
+
+	//			std::string directory_name;
+
+	//			while ( i < length )
+	//			{
+
+	//				struct inotify_event* event = ( struct inotify_event * ) &buffer[ i ]; //TODO:
+	//				//event = reinterpret_cast<struct inotify_event*> (buffer_ + bytes_processed);
+
+	//				//if ( event->len != 0) //TODO: que espera hacer acá?, mala práctica
+	//				if ( event->len ) //TODO: que espera hacer acá?, mala práctica
+	//				{
+
+	//					std::string file_name( event->name );
+
+	//					watch_descriptors_type::const_iterator it = std::find_if( watch_descriptors_.begin(), watch_descriptors_.end(), boost::bind( &pair_type::second, _1 ) == event->wd );
+
+	//					if ( it != watch_descriptors_.end() )
+	//					{
+	//						directory_name = it->first;
+	//					}
+	//					else
+	//					{
+	//						//TODO: que pasa si no lo encontramos en la lista... DEBERIA SER UN RUN-TIME ERROR
+	//					}
+
+	//					if ( event->mask & IN_MOVED_FROM )
+	//					{
+	//						old_name.reset( file_name );
+	//					}
+	//					else if ( event->mask & IN_MOVED_TO )
+	//					{
+	//						if ( old_name )
+	//						{
+	//							notify_rename_event_args(change_types::renamed, directory_name, file_name, *old_name);
+	//							old_name.reset();
+	//						}
+	//						else
+	//						{
+	//							notify_rename_event_args(change_types::renamed, directory_name, file_name, "");
+	//							old_name.reset();
+	//						}
+	//					}
+	//					else
+	//					{
+	//						if ( old_name )
+	//						{
+	//							//std::cout << "------------- VER -------------" << std::endl;
+	//							//std::cout << "file_name: '" << file_name << "'" << std::endl;
+	//							//std::cout << "*old_name: '" << *old_name << "'" << std::endl;
+
+	//							//TODO: en este caso puede ser que se haya movido a otro directorio no monitoreada, entonces sería un DELETE?
+	//							//notify_rename_event_args(change_types::renamed, directory_name, "", *old_name);
+	//							notify_file_system_event_args( change_types::deleted, directory_name, *old_name);
+	//							old_name.reset();
+	//						}
+
+	//						//if ( event->mask & IN_MODIFY )
+	//						//{
+	//						//	std::cout << "------------- IN_MODIFY -----------------" << std::endl;
+	//						//}
+
+	//						notify_file_system_event_args( event->mask, directory_name, file_name);
+	//					}
+	//				}
+
+	//				i += EVENT_SIZE + event->len;
+	//				//printf("--- while end -- i: %d\n", i);
+	//			}
+	//		}
+	//	}
+	//}
 
 protected:
 
@@ -408,7 +477,11 @@ protected:
 	typedef std::vector<pair_type> watch_descriptors_type;
 	
 	watch_descriptors_type watch_descriptors_;
-	
+
+
+protected:
+
+	inotify_wrapper inotify;
 };
 
 

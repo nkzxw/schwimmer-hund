@@ -91,8 +91,8 @@ BOOST_AUTO_TEST_CASE( test_invalid_platform_path )
 
 	boost::shared_ptr<file_system_monitor> monitor(new file_system_monitor);
 
-	BOOST_CHECK_THROW( monitor->add_directory(invalid_path_1), std::invalid_argument );
-	BOOST_CHECK_THROW( monitor->add_directory(invalid_path_2), std::invalid_argument );
+	BOOST_CHECK_THROW( monitor->add_watch(invalid_path_1), std::invalid_argument );
+	BOOST_CHECK_THROW( monitor->add_watch(invalid_path_2), std::invalid_argument );
 
 }
 
@@ -103,8 +103,8 @@ BOOST_AUTO_TEST_CASE( test_empty_string_path )
 
 	boost::shared_ptr<file_system_monitor> monitor(new file_system_monitor);
 
-	BOOST_CHECK_THROW( monitor->add_directory(invalid_path_1), std::invalid_argument );
-	BOOST_CHECK_THROW( monitor->add_directory(invalid_path_2), std::invalid_argument );
+	BOOST_CHECK_THROW( monitor->add_watch( invalid_path_1 ), std::invalid_argument );
+	BOOST_CHECK_THROW( monitor->add_watch( invalid_path_2 ), std::invalid_argument );
 }
 
 
@@ -135,8 +135,8 @@ BOOST_AUTO_TEST_SUITE_END() //Paths
 //	{
 //		monitor.reset(new file_system_monitor);
 //
-//		BOOST_CHECK_NO_THROW( monitor->add_directory(path1) );
-//		BOOST_CHECK_NO_THROW( monitor->add_directory(path2) );
+//		BOOST_CHECK_NO_THROW( monitor->add_watch( path1 ) );
+//		BOOST_CHECK_NO_THROW( monitor->add_watch( path2 ) );
 //		
 //
 //		//TODO: mapear los notify filters de Windows con otras plataformas...
@@ -181,8 +181,8 @@ BOOST_AUTO_TEST_SUITE_END() //Paths
 //	{
 //		monitor.reset(new file_system_monitor);
 //
-//		monitor->add_directory(invalid_path_1);
-//		monitor->add_directory(invalid_path_2);
+//		monitor->add_watch( invalid_path_1 );
+//		monitor->add_watch( invalid_path_2 );
 //
 //		monitor->set_notify_filters( notify_filters::last_access | notify_filters::last_write | notify_filters::file_name | notify_filters::directory_name );
 //		monitor->set_filter("*.txt"); //TODO: implementar este filtro
@@ -226,8 +226,8 @@ BOOST_AUTO_TEST_SUITE_END() //Paths
 //	{
 //		monitor.reset(new file_system_monitor);
 //
-//		monitor->add_directory(invalid_path_1);
-//		monitor->add_directory(invalid_path_2);
+//		monitor->add_watch( invalid_path_1 );
+//		monitor->add_watch( invalid_path_2 );
 //
 //		monitor->set_notify_filters( notify_filters::last_access | notify_filters::last_write | notify_filters::file_name | notify_filters::directory_name );
 //		monitor->set_filter("*.txt"); //TODO: implementar este filtro
@@ -271,8 +271,8 @@ BOOST_AUTO_TEST_SUITE_END() //Paths
 //	{
 //		monitor.reset(new file_system_monitor);
 //
-//		monitor->add_directory(invalid_path_1);
-//		monitor->add_directory(invalid_path_2);
+//		monitor->add_watch( invalid_path_1 );
+//		monitor->add_watch( invalid_path_2 );
 //
 //		monitor->set_notify_filters( notify_filters::last_access | notify_filters::last_write | notify_filters::file_name | notify_filters::directory_name );
 //		monitor->set_filter("*.txt"); //TODO: implementar este filtro
@@ -316,8 +316,8 @@ BOOST_AUTO_TEST_SUITE_END() //Paths
 //	{
 //		monitor.reset(new file_system_monitor);
 //
-//		monitor->add_directory(invalid_path_1);
-//		monitor->add_directory(invalid_path_2);
+//		monitor->add_watch( invalid_path_1 );
+//		monitor->add_watch( invalid_path_2 );
 //
 //		monitor->set_notify_filters( notify_filters::last_access | notify_filters::last_write | notify_filters::file_name | notify_filters::directory_name );
 //		monitor->set_filter("*.txt"); //TODO: implementar este filtro
@@ -361,8 +361,8 @@ BOOST_AUTO_TEST_SUITE_END() //Paths
 //	{
 //		monitor.reset(new file_system_monitor);
 //
-//		monitor->add_directory(invalid_path_1);
-//		monitor->add_directory(invalid_path_2);
+//		monitor->add_watch( invalid_path_1 );
+//		monitor->add_watch( invalid_path_2 );
 //
 //		monitor->set_notify_filters( notify_filters::last_access | notify_filters::last_write | notify_filters::file_name | notify_filters::directory_name );
 //		monitor->set_filter("*.txt"); //TODO: implementar este filtro
