@@ -24,10 +24,17 @@ namespace change_types
 //#ifdef BOOST_WINDOWS
 #if defined(linux) || defined(__linux) || defined(__linux__) || defined(__GNU__) || defined(__GLIBC__) 
 
-	static const int created = IN_CREATE;
-	static const int deleted = IN_DELETE;
-	static const int changed = IN_MODIFY;
-	static const int renamed = IN_MOVE;
+
+	//static const int created = IN_CREATE;
+	//static const int deleted = IN_DELETE;
+	//static const int changed = IN_MODIFY;
+	//static const int renamed = IN_MOVE;
+
+	//TODO: no me gusta esto...
+	static const int created = 0x00000100;
+	static const int deleted = 0x00000200;
+	static const int changed = 0x00000002;
+	static const int renamed =  (0x00000040 | 0x00000080);
 	static const int all = (created | deleted | changed | renamed); //(IN_CREATE | IN_DELETE | IN_MODIFY | IN_MOVE);
 
 #elif defined(__FreeBSD__) // || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__DragonFly__)
