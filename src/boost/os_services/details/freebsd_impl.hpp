@@ -68,7 +68,7 @@ There are platforms that are not supported due to lack of developer resources. I
 #include <vector>
 
 #include <boost/bind.hpp>
-#include <boost/enable_shared_from_this.hpp>
+//#include <boost/enable_shared_from_this.hpp>
 #include <boost/filesystem/path.hpp>
 //#include <boost/foreach.hpp>
 #include <boost/function.hpp>
@@ -222,7 +222,7 @@ private:
 				bool found = false;
 				for (filesystem_item::collection_type::iterator it = root_dir->subitems_.begin(); it != root_dir->subitems_.end(); ++it )
 				{
-					if (  (*it)->is_equal( inode_info, dir_itr->path() ) )
+					if ( (*it)->is_equal( inode_info, dir_itr->path() ) )
 					{
 						found = true;
 						break;
@@ -236,24 +236,8 @@ private:
 						notify_file_system_event_args( change_types::created, dir_itr->path() );
 					}
 
-
 					filesystem_item::pointer_type watch = create_filesystem_item( dir_itr->path(), root_dir->root_user_entry(), root_dir );
-
-
-					//last_write_item = watch;
-
-					//if ( last_write_item )
-					//{
-					//	std::cout << "last_write_item->parent().get(): " << last_write_item->parent().get() << std::endl;
-					//}
-
 					begin_watch( watch, launch_events );
-
-					//if ( last_write_item )
-					//{
-					//	std::cout << "last_write_item->parent().get(): " << last_write_item->parent().get() << std::endl;
-					//}
-
 				}
 			}
 			catch ( const std::exception& ex )
