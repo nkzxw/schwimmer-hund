@@ -21,7 +21,7 @@
 //#include <boost/noncopyable.hpp>
 //
 //#include <boost/os_services/detail/impl_selector.hpp>
-//#include <boost/os_services/utils.hpp>
+//#include <boost/os_services/detail/utils.hpp>
 //
 //#include <string>
 //
