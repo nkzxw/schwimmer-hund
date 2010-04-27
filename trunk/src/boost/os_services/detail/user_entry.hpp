@@ -3,7 +3,7 @@
 
 #include <boost/filesystem/path.hpp>
 
-#include <boost/os_services/details/filesystem_item.hpp>
+#include <boost/os_services/detail/filesystem_item.hpp>
 
 
 namespace boost {

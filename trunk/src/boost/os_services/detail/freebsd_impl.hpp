@@ -76,11 +76,11 @@ There are platforms that are not supported due to lack of developer resources. I
 #include <boost/thread.hpp>
 
 #include <boost/os_services/change_types.hpp>
-#include <boost/os_services/details/base_impl.hpp>
-#include <boost/os_services/details/file_inode_info.hpp>
-#include <boost/os_services/details/filesystem_item.hpp>
-#include <boost/os_services/details/kqueue_wrapper.hpp>
-#include <boost/os_services/details/user_entry.hpp>
+#include <boost/os_services/detail/base_impl.hpp>
+#include <boost/os_services/detail/file_inode_info.hpp>
+#include <boost/os_services/detail/filesystem_item.hpp>
+#include <boost/os_services/detail/kqueue_wrapper.hpp>
+#include <boost/os_services/detail/user_entry.hpp>
 #include <boost/os_services/notify_filters.hpp>
 
 

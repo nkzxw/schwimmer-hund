@@ -24,7 +24,7 @@
 
 #include <boost/filesystem/path.hpp>
 
-#include <boost/os_services/details/file_inode_info.hpp>
+#include <boost/os_services/detail/file_inode_info.hpp>
 #include <boost/os_services/posix_syscall_wrapper.hpp>
 
 
