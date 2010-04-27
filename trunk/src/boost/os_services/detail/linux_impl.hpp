@@ -17,7 +17,8 @@
 #include <boost/bind.hpp>
 #include <boost/foreach.hpp>
 #include <boost/integer.hpp>
-#include <boost/smart_ptr.hpp>
+//#include <boost/smart_ptr.hpp>
+#include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
 
 #include <boost/os_services/change_types.hpp>
@@ -120,18 +121,21 @@ public:
 		}
 	}
 
-	void add_watch_impl( const std::string& dir_name ) //throw (std::invalid_argument, std::runtime_error)
+	void add_watch_impl( const std::string& path ) //throw (std::invalid_argument, std::runtime_error)
 	{
-		watch_descriptors_.push_back( std::make_pair( dir_name, 0 ) );
+		//static_cast<Type*>(this)->add_watch_impl( path.native_file_string() );
+
+		watch_descriptors_.push_back( std::make_pair( path, 0 ) );
 	}
 
-	void add_watch_impl( const boost::filesystem::path& dir ) //throw (std::invalid_argument, std::runtime_error)
+	void add_watch_impl( const boost::filesystem::path& path ) //throw (std::invalid_argument, std::runtime_error)
 	{
-		watch_descriptors_.push_back( std::make_pair( dir, 0 ) );
+		add_watch_impl( path.native_file_string() ); 
+		//watch_descriptors_.push_back( std::make_pair( path, 0 ) );
 	}
 
 	//TODO: agregar + la variante de boost::path
-	//void remove_watch_impl( const std::string& dir_name ) // throw (std::invalid_argument);
+	//void remove_watch_impl( const std::string& path ) // throw (std::invalid_argument);
 
 
 
