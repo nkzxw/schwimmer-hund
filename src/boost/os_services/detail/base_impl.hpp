@@ -5,9 +5,9 @@
 
 #include <boost/filesystem/path.hpp>
 
+#include <boost/os_services/detail/utils.hpp>
 #include <boost/os_services/event_args.hpp>
 #include <boost/os_services/event_handlers.hpp>
-#include <boost/os_services/utils.hpp> //TODO: deberia estar detro del directorio details
 
 namespace boost {
 namespace os_services {

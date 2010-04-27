@@ -20,16 +20,16 @@
 //#include <boost/filesystem/path.hpp>
 //#include <boost/noncopyable.hpp>
 //
-//#include <boost/os_services/details/impl_selector.hpp>
+//#include <boost/os_services/detail/impl_selector.hpp>
 //#include <boost/os_services/utils.hpp>
 //
 //#include <string>
 //
 //#include <boost/filesystem/path.hpp>
 //
+//#include <boost/os_services/detail/utils.hpp>
 //#include <boost/os_services/event_args.hpp>
 //#include <boost/os_services/event_handlers.hpp>
-//#include <boost/os_services/utils.hpp> //TODO: deberia estar detro del directorio details
 //
 //#include <string>
 //
@@ -51,7 +51,7 @@
 //#include <boost/thread.hpp>
 //
 //#include <boost/os_services/change_types.hpp>
-//#include <boost/os_services/details/base_impl.hpp>
+//#include <boost/os_services/detail/base_impl.hpp>
 //#include <boost/os_services/notify_filters.hpp>
 //
 //

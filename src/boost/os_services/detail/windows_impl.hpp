@@ -13,9 +13,9 @@
 
 #include <boost/os_services/change_types.hpp>
 #include <boost/os_services/detail/base_impl.hpp>
+#include <boost/os_services/detail/utils.hpp>
 #include <boost/os_services/detail/win32api_wrapper.hpp>
 #include <boost/os_services/notify_filters.hpp>
-#include <boost/os_services/utils.hpp> //TODO: deberia estar detro del directorio details
 #include <boost/os_services/win32_legacy.hpp>		// directoryInfo
 
 
