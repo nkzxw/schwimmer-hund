@@ -196,10 +196,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\boost\os_services\detail\Copy of freebsd_impl.hpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\boost\os_services\event_args.hpp"
 				>
 			</File>
@@ -221,10 +217,6 @@
 			</File>
 			<File
 				RelativePath="..\..\src\boost\os_services\detail\filesystem_item.hpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\boost\os_services\detail\freebsd_impl - Copy.hpp"
 				>
 			</File>
 			<File
