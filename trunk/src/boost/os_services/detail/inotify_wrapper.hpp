@@ -44,7 +44,7 @@ class inotify_wrapper : private boost::noncopyable
 public:
 
 	inotify_wrapper()
-		: is_initialized_( false ), file_descriptor_( 0 ), buffer_current_index_( 0 )
+		: is_initialized_( false ), file_descriptor_( 0 ), buffer_current_index_( 0 ), last_length_( 0 )
 	{
 		memset( buffer_, 0, BUF_LEN );
 	}
@@ -125,12 +125,12 @@ public:
 	template <typename T>
 	T* get()
 	{
-		if ( buffer_current_index_ >= length )
+		if ( buffer_current_index_ >= last_length_ )
 		{
 			buffer_current_index_ = 0;
-			int length = ::read( file_descriptor_, buffer_, BUF_LEN );
+			last_length_ = ::read( file_descriptor_, buffer_, BUF_LEN );
 
-			if ( length == -1 )
+			if ( last_length_ == -1 )
 			{
 				std::ostringstream oss;
 				oss << "read error - File Descriptor: '" << file_descriptor_ << "' - Reason: " << std::strerror(errno);
@@ -155,6 +155,7 @@ protected:
 
 	char buffer_[BUF_LEN];
 	int buffer_current_index_;
+	int last_length_;
 };
 
 
