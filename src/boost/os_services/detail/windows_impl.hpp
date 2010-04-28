@@ -99,7 +99,7 @@ public:
 	void add_directory_impl( const std::string& path ) //throw (std::invalid_argument, std::runtime_error)
 	{ 
 		//TODO: solo agregar el path a una lista de win32::user_entry o algo asi...
-
+		//      luego en start() se llamara a iocp_wrapper donde se hara el create_file, create_io_completion_port y el read_directory_changes
 		LPDIRECTORY_INFO directory_info = (LPDIRECTORY_INFO) malloc(sizeof(DIRECTORY_INFO));
 		memset(directory_info, 0, sizeof(DIRECTORY_INFO));
 

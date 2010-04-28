@@ -68,13 +68,15 @@ public:
 
 		completion_port_handle_ = win32api_wrapper::create_io_completion_port( directory_info->directory_handle, completion_port_handle_, (DWORD) directory_info, 0 );
 
-		directories_.push_back( directory_info_pointer_type( directory_info, directory_info_deleter ) );
+		win32api_wrapper::read_directory_changes( (*it)->directory_handle, (*it)->buffer, MAX_BUFFER, this->include_subdirectories_ ? 1 : 0, this->notify_filters_, &(*it)->buffer_length, &(*it)->overlapped, NULL);
+
 	}
 
 
-	void remove_watch( boost::uint32_t& watch_descriptor ) const
-	{
-	}
+	//void remove_watch( boost::uint32_t& watch_descriptor ) const
+	//{
+	//	//TODO:
+	//}
 
 	void close( bool no_throw = false )
 	{
