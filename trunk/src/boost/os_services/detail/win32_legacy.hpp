@@ -21,7 +21,7 @@ typedef struct _DIRECTORY_INFO
 	OVERLAPPED  overlapped;
 } DIRECTORY_INFO, *PDIRECTORY_INFO, *LPDIRECTORY_INFO;
 
-DIRECTORY_INFO  directory_info_array[MAX_DIRS];        // Buffer for all of the directories
+//DIRECTORY_INFO  directory_info_array[MAX_DIRS];        // Buffer for all of the directories
 //boost::array<DIRECTORY_INFO, MAX_DIRS> directory_info_array;
 
 //DIRECTORY_INFO  directoryInfo;
