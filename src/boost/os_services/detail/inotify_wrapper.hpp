@@ -123,7 +123,6 @@ public:
 
 
 	//boost::shared_ptr<T> get( int& event_type )
-
 	template <typename T>
 	T* get()
 	{
@@ -139,7 +138,6 @@ public:
 				throw ( std::runtime_error(oss.str()) );	
 			}
 		}
-
 		
 		//event = reinterpret_cast<struct inotify_event*> (buffer_ + bytes_processed);
 		//struct inotify_event* event = ( struct inotify_event * ) &buffer_[ buffer_current_index_ ]; //TODO:
@@ -154,7 +152,6 @@ protected:
 
 	bool is_initialized_;
 	int file_descriptor_;
-
 	char buffer_[BUF_LEN];
 	int buffer_current_index_;
 	int last_length_;

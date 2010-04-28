@@ -7,7 +7,6 @@
 #include <boost/bind.hpp>
 #include <boost/integer.hpp> 
 #include <boost/optional.hpp>
-//#include <boost/smart_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
 
@@ -20,6 +19,8 @@
 
 
 //TODO: ver de usar ASIO... hay varias cosas que se denominan IOCP
+
+//TODO: reemplazar los threads por llamadas asincronicas al sistema operativo... User Threads vs Kernel Threads
 
 namespace boost {
 namespace os_services {
@@ -37,10 +38,11 @@ void directory_info_deleter(LPDIRECTORY_INFO ptr)
 			{
 				win32api_wrapper::close_handle( ptr->directory_handle );
 			}
-			catch ( const std::runtime_error& )
+			catch ( const std::runtime_error& e)
 			{
 				//Destructor -> NO_THROW
-				std::cerr << "Failed to close directory port handle. Reason: " << GetLastError() << std::endl;
+				//std::cerr << "Failed to close directory port handle. Reason: " << GetLastError() << std::endl;
+				std::cerr << e.what() << std::endl;
 			}
 		}
 
@@ -54,7 +56,7 @@ class windows_impl : public base_impl<windows_impl>
 {
 public:
 	windows_impl()
-		: completion_port_handle_(0) //, is_started_(false)
+		: completion_port_handle_( 0 ) //, is_started_(false)
 	{}
 
 	~windows_impl() //virtual -> deberíamos impedir que esta clase sea heredada.
@@ -65,10 +67,11 @@ public:
 			{
 				win32api_wrapper::post_queued_completion_status( completion_port_handle_, 0, 0, NULL );
 			}
-			catch ( const std::runtime_error& )
+			catch ( const std::runtime_error& e )
 			{
 				//Destructor -> NO_THROW
-				std::cerr << "Failed to post to completion port. Reason: " << GetLastError() << std::endl;
+				//std::cerr << "Failed to post to completion port. Reason: " << GetLastError() << std::endl;
+				std::cerr << e.what() << std::endl;
 				//TODO: Si el Post falla, el Thread nunca va a morir !!
 			}
 		}
@@ -84,16 +87,19 @@ public:
 			{
 				win32api_wrapper::close_handle( completion_port_handle_ );
 			}
-			catch ( const std::runtime_error& )
+			catch ( const std::runtime_error& e)
 			{
 				//Destructor -> NO_THROW
-				std::cerr << "Failed to close completion port handle. Reason: " << GetLastError() << std::endl;
+				//std::cerr << "Failed to close completion port handle. Reason: " << GetLastError() << std::endl;
+				std::cerr << e.what() << std::endl;
 			}
 		}
 	}
 
-	void add_watch_impl( const std::string& path ) //throw (std::invalid_argument, std::runtime_error)
+	void add_directory_impl( const std::string& path ) //throw (std::invalid_argument, std::runtime_error)
 	{ 
+		//TODO: solo agregar el path a una lista de win32::user_entry o algo asi...
+
 		LPDIRECTORY_INFO directory_info = (LPDIRECTORY_INFO) malloc(sizeof(DIRECTORY_INFO));
 		memset(directory_info, 0, sizeof(DIRECTORY_INFO));
 
@@ -110,9 +116,9 @@ public:
 	}
 
 
-	void add_watch_impl( const boost::filesystem::path& path ) //throw (std::invalid_argument, std::runtime_error)
+	void add_directory_impl( const boost::filesystem::path& path ) //throw (std::invalid_argument, std::runtime_error)
 	{
-		add_watch_impl( path.native_file_string() );
+		add_directory_impl( path.native_file_string() );
 	}
 
 
@@ -122,10 +128,9 @@ public:
 		//TODO: is_started_ debe ser protegida con MUTEX.
 		//if (!is_started_)
 		//{
-			//TODO: BOOST_FOREACH
+			//TODO: BOOST_FOREACH o std::transform o std::for_each
 			for (vector_type::const_iterator it = directories_.begin(); it!=directories_.end(); ++it)
 			{
-				//TODO: ver como hacer para monitorear los cambios en un archivo especifico
 				win32api_wrapper::read_directory_changes( (*it)->directory_handle, (*it)->buffer, MAX_BUFFER, this->include_subdirectories_ ? 1 : 0, this->notify_filters_, &(*it)->buffer_length, &(*it)->overlapped, NULL);
 			}
 			thread_.reset( new boost::thread( boost::bind(&windows_impl::handle_directory_changes, this) ) );
@@ -277,7 +282,7 @@ protected:
 
 	HANDLE completion_port_handle_; //HANDLE -> void*
 	thread_type thread_;
-	//bool is_started_;
+	//bool is_started_; //TODO: es el is_initialized de linux y freebsd
 };
 
 } // namespace detail

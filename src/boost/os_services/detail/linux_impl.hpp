@@ -17,7 +17,6 @@
 #include <boost/bind.hpp>
 #include <boost/foreach.hpp>
 #include <boost/integer.hpp>
-//#include <boost/smart_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
 
@@ -39,7 +38,7 @@ class linux_impl : public base_impl<linux_impl>
 public:
 
 	linux_impl()
-		: is_initialized_(false), closing_(false) //, file_descriptor_(0)
+		: is_initialized_( false ), closing_( false ) //, file_descriptor_(0)
 	{}
 
 	~linux_impl()
@@ -72,7 +71,7 @@ public:
 		//		}
 		//	}
 
-		BOOST_FOREACH(pair_type p, watch_descriptors_)
+		BOOST_FOREACH ( pair_type p, watch_descriptors_ )
 		{
 			if ( p.second != 0 )
 			{
@@ -121,17 +120,16 @@ public:
 		}
 	}
 
-	void add_watch_impl( const std::string& path ) //throw (std::invalid_argument, std::runtime_error)
+	void add_directory_impl( const std::string& dir_name ) //throw (std::invalid_argument, std::runtime_error)
 	{
-		//static_cast<Type*>(this)->add_watch_impl( path.native_file_string() );
+		//static_cast<Type*>(this)->add_directory_impl( path.native_file_string() );
 
-		watch_descriptors_.push_back( std::make_pair( path, 0 ) );
+		watch_descriptors_.push_back( std::make_pair( dir_name, 0 ) );
 	}
 
-	void add_watch_impl( const boost::filesystem::path& path ) //throw (std::invalid_argument, std::runtime_error)
+	void add_directory_impl( const boost::filesystem::path& directory ) //throw (std::invalid_argument, std::runtime_error)
 	{
-		add_watch_impl( path.native_file_string() ); 
-		//watch_descriptors_.push_back( std::make_pair( path, 0 ) );
+		add_directory_impl( directory.native_file_string() ); 
 	}
 
 	//TODO: agregar + la variante de boost::path

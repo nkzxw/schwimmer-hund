@@ -19,43 +19,36 @@ namespace win32api_wrapper
 	std::string get_last_string_error() 
 	{ 
 		void far* message_buffer = 0;
-		unsigned long last_error = GetLastError(); 
+		unsigned long last_error_number = GetLastError(); 
 
-		unsigned long size = ::FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL, last_error, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPTSTR) &message_buffer, 0, NULL );
+		unsigned long size = ::FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL, last_error_number, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPTSTR) &message_buffer, 0, NULL );
+
+		std::ostringstream oss;
+
 
 		if ( message_buffer == 0 )
 		{
-			//unsigned long fme = GetLastError();
-
-			//if (fme)
-			//	Message.Format("FormatMessage error code %u", fme);
-			//else
-			//	Message.Format("unknown error code %u", e);
-
-			return "";
+			unsigned long format_message_error_number = GetLastError(); 
+			if ( format_message_error_number == 0)
+			{
+				oss << "unknown error code " << last_error_number;
+			}
+			else
+			{
+				oss << "FormatMessage error code: " << format_message_error_number;
+			}
 		}
 		else
 		{
-			if ( size == 0)
+			if ( size != 0)
 			{
-				LocalFree(message_buffer);
-				return "";
+				oss << "Error number: " << last_error_number << " - Error Description: " << std::string( (char*)message_buffer, size );
 			}
-			else	
-			{
 
-				std::ostringstream oss;
-				oss << "CreateFile Win32API failed - Directory: " << file_name << " - Reason: " << win32api_wrapper::get_last_string_error();
-				throw ( std::invalid_argument(oss.str()) );
-
-
-				std::string message( (char*)message_buffer, size );
-
-				LocalFree(message_buffer);
-				return message;
-
-			}
+			LocalFree( message_buffer );
 		}
+
+		return oss.str();
 	}
 
 
