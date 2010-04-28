@@ -239,6 +239,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\src\boost\os_services\detail\iocp_wrapper.hpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\boost\os_services\detail\kqueue_watch_item.hpp"
 					>
 				</File>

@@ -250,8 +250,8 @@ public: //private:
 	int file_descriptor_;
 	//TODO: ver si es necesario
 	boost::uint32_t mask_;
-	
 	file_inode_info inode_info_;
+
 
 	boost::weak_ptr<filesystem_item> parent_; //to avoid circular references
 	//TODO: ver que pasa si agregamos el mismo directorio como dos user_entry distintos... el open da el mismo file descriptor?

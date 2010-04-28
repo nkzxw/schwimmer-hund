@@ -56,6 +56,21 @@ public:
 	template <typename T>
 	void add_watch( const boost::shared_ptr<T>& watch )
 	{
+		//TODO: datos necesarios para crear el watch
+		//      const std::string& path					// OK -> Dato
+		//		this->include_subdirectories_			// OK -> Dato
+		//		this->notify_filters_,					// OK -> Dato
+
+		//		completion_port_handle_					// pertenece a la clase
+		//		directory_info->directory_handle,		// Se crea acá mismo
+		//		directory_info
+		//		&(*it)->overlapped
+		//		(*it)->buffer,							// Un buffer por directorio???????????? Probar usando uno independiente...
+		//		MAX_BUFFER, 
+		//		&(*it)->buffer_length, 
+
+
+
 		LPDIRECTORY_INFO directory_info = (LPDIRECTORY_INFO) malloc(sizeof(DIRECTORY_INFO));
 		memset(directory_info, 0, sizeof(DIRECTORY_INFO));
 
@@ -68,7 +83,7 @@ public:
 
 		completion_port_handle_ = win32api_wrapper::create_io_completion_port( directory_info->directory_handle, completion_port_handle_, (DWORD) directory_info, 0 );
 
-		win32api_wrapper::read_directory_changes( (*it)->directory_handle, (*it)->buffer, MAX_BUFFER, this->include_subdirectories_ ? 1 : 0, this->notify_filters_, &(*it)->buffer_length, &(*it)->overlapped, NULL);
+		win32api_wrapper::read_directory_changes( (*it)->directory_handle, (*it)->buffer, MAX_BUFFER, this->include_subdirectories_ ? 1 : 0, this->notify_filters_, &(*it)->buffer_length, &(*it)->overlapped, NULL );
 
 	}
 

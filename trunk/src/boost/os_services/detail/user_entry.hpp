@@ -31,7 +31,13 @@ namespace detail {
 //};
 
 
+
+//TODO: agregar otra clase para implementar el user_entry de freebsd...
+//TODO: diferenciar entre user_entry (entrada del usuario) y una clase de uso interno con todos los otros datos necesarios para el watch
+
+
 //TODO: class
+//TODO: cambiar el nombre a esta clase... a lo sumo se tiene que llamar watch, pero no user_entry, ya que es obvio que es una entrada de datos del usuario
 struct user_entry //: public enable_shared_from_this<user_entry>
 {
 	typedef boost::shared_ptr<user_entry> pointer_type;
@@ -101,11 +107,17 @@ private:
 protected:
 
 	boost::filesystem::path path_;
-	filesystem_item::pointer_type root_;			//este tiene la estructura de arbol
+	filesystem_item::pointer_type root_;			//este tiene la estructura de arbol	//TODO: solo para freebsd
+
+
+//TODO: agregar datos:
+	//		this->include_subdirectories_			// OK -> Dato
+	//		this->notify_filters_,					// OK -> Dato
+	//		monitor->set_filter("*.txt");			// OK -> Dato
 
 
 public: //TODO poner en private...
-	filesystem_item::collection_type all_watches_;
+	filesystem_item::collection_type all_watches_;	//TODO: solo para freebsd
 };
 
 
