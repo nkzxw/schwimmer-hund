@@ -3,7 +3,7 @@
 
 //TODO: no me gusta haber separado en este arhivo, para ello tenemos el windows_impl
 
-#include <boost/array.hpp>
+//#include <boost/array.hpp>
 
 //----------------------------------------------------------------------------------------------------------------
 // TODO: Legacy-Code, me gustaría reemplazarlo por código C++
@@ -26,11 +26,36 @@ typedef struct _DIRECTORY_INFO
 
 //DIRECTORY_INFO  directoryInfo;
 //TCHAR           FileList[MAX_FILES*MAX_PATH];        // Buffer for all of the files
-
 //DWORD           numDirs;	// TODO: global... hay que sacarla...
 
 
 
+
+struct directory_info
+{
+
+	directory_info()
+	{
+		directory_handle = 0;
+
+		memset( directory_name, 0, sizeof(directory_name) );
+		memset( buffer, 0, sizeof(buffer) );
+
+		buffer_length = 0;
+		
+		memset( (void*) &overlapped , 0, sizeof(overlapped ) );
+		//memset( overlapped, 0, sizeof(OVERLAPPED) );
+
+	}
+
+
+
+	HANDLE      directory_handle;
+	TCHAR       directory_name[MAX_PATH];
+	CHAR        buffer[MAX_BUFFER];
+	DWORD       buffer_length;
+	OVERLAPPED  overlapped;
+};
 
 //----------------------------------------------------------------------------------------------------------------
 #endif // BOOST_OS_SERVICES_DETAIL_WIN32_LEGACY_HPP
