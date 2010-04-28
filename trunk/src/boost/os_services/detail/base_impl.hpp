@@ -26,45 +26,25 @@ public:
 	filesystem_event_handler deleted_handler_;
 	renamed_event_handler renamed_handler_;
 
-	void add_watch( const std::string& path ) //throw (std::invalid_argument, std::runtime_error)
+	void add_directory( const std::string& dir_name ) //throw (std::invalid_argument, std::runtime_error)
 	{ 
-		if ( ! boost::filesystem::exists( path ) ) //quizas de error de compilacion...
+		if ( ! utils::directory_exists( dir_name ) )
 		{
-			throw( std::invalid_argument("'" + path + "' is not a valid file or directory.") );
+			throw( std::invalid_argument("'" + dir_name + "' is not a valid directory.") );
 		}
 
-		static_cast<Type*>(this)->add_watch_impl( path );
+		static_cast<Type*>(this)->add_directory_impl( dir_name );
 	}
 
-	void add_watch( const boost::filesystem::path& path ) //throw (std::invalid_argument, std::runtime_error)
+	void add_directory( const boost::filesystem::path& directory ) //throw (std::invalid_argument, std::runtime_error)
 	{ 
-		if ( ! boost::filesystem::exists( path ) )
+		if ( ! utils::directory_exists( directory ) )
 		{
-			throw( std::invalid_argument("'" + path.native_file_string() + "' is not a valid file or directory.") );
+			throw( std::invalid_argument("'" + directory.native_file_string() + "' is not a valid directory.") );
 		}
 
-		static_cast<Type*>(this)->add_watch_impl( path );
+		static_cast<Type*>(this)->add_directory_impl( directory );
 	}
-
-	//void add_watch( const std::string& dir_name ) //throw (std::invalid_argument, std::runtime_error)
-	//{ 
-	//	if ( !utils::directory_exists(dir_name) )
-	//	{
-	//		throw( std::invalid_argument("'" + dir_name + "' is not a valid file or directory.") );
-	//	}
-
-	//	static_cast<Type*>(this)->add_watch_impl(dir_name);
-	//}
-
-	//void add_watch( const boost::filesystem::path& directory ) //throw (std::invalid_argument, std::runtime_error)
-	//{ 
-	//	if ( !utils::directory_exists(directory) )
-	//	{
-	//		throw( std::invalid_argument("'" + directory.native_file_string() + "' is not a valid file or directory.") );
-	//	}
-	//		
-	//	static_cast<Type*>(this)->add_watch_impl( directory.native_file_string() );
-	//}
 
 	//TODO: ver si es necesario el metodo start() en base y start_impl() en *_impl
 	//void start() {}

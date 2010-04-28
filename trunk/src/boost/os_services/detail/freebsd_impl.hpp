@@ -116,15 +116,14 @@ public:
 		}
 	}
 
-
-	void add_watch_impl( const std::string& dir_name ) //TODO: revisar que es factible que se lance... //throw (std::invalid_argument, std::runtime_error)
+	void add_directory_impl( const std::string& dir_name ) //TODO: revisar que es factible que se lance... //throw (std::invalid_argument, std::runtime_error)
 	{
 		//TODO: asignar mask
 		user_entry::pointer_type item = user_entry::create( dir_name );
 		user_watches_.push_back(item);
 	}
 
-	void add_watch_impl( const boost::filesystem::path& dir ) //throw (std::invalid_argument, std::runtime_error)
+	void add_directory_impl( const boost::filesystem::path& dir ) //throw (std::invalid_argument, std::runtime_error)
 	{
 		//TODO: asignar mask
 		user_entry::pointer_type item = user_entry::create( dir );

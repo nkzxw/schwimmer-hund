@@ -44,15 +44,16 @@ public:
 	//{
 	//}
 
-	//TODO: poder monitorear cualquier archivo, no solo directorios...
-	void add_watch( const std::string& dir_name ) //throw (std::invalid_argument)
+	
+	// solo se pueden monitorear directorios por una limitacion de las API de Windows
+	void add_directory( const std::string& dir_name ) //throw (std::invalid_argument)
 	{ 
-		implementation_->add_watch( dir_name );
+		implementation_->add_directory( dir_name );
 	}
 
-	void add_watch( const boost::filesystem::path& directory ) //throw (std::invalid_argument, std::runtime_error)
+	void add_directory( const boost::filesystem::path& directory ) //throw (std::invalid_argument, std::runtime_error)
 	{ 
-		implementation_->add_watch( directory );
+		implementation_->add_directory( directory );
 	}
 
 	int get_notify_filters() const
