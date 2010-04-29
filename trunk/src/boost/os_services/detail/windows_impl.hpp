@@ -13,7 +13,7 @@
 #include <boost/os_services/change_types.hpp>
 #include <boost/os_services/detail/base_impl.hpp>
 
-#include <boost/os_services/detail/shared_ptr_manager.hpp>
+#include <boost/os_services/detail/smart_ptr_manager.hpp>
 
 #include <boost/os_services/detail/utils.hpp>
 #include <boost/os_services/detail/win32api_wrapper.hpp>
@@ -106,41 +106,9 @@ public:
 
 		//directory_info_pointer_type dir_info ( new directory_info( path ) );
 
-		//TODO: crear unit test para probar shared_ptr_manager
+
+		//TODO: crear unit test para probar smart_ptr_manager
 		directory_info_pointer_type dir_info = smart_ptr_manager<directory_info>::add( new directory_info( path ) );
-
-		smart_ptr_manager<int>::pointer_type temp_int = smart_ptr_manager<int>::add( new int( 1 ) );
-		smart_ptr_manager<int>::pointer_type temp_int_2 = smart_ptr_manager<int>::add( new int( 2 ) );
-
-
-		if ( smart_ptr_manager<int>::exists( (unsigned long) temp_int.get() ) )
-		{
-			smart_ptr_manager<int>::pointer_type temp_int_3 = smart_ptr_manager<int>::get( (unsigned long) temp_int.get() );		
-		}
-
-		if ( smart_ptr_manager<int>::exists( (unsigned long) temp_int.get() ) )
-		{
-			smart_ptr_manager<int>::pointer_type temp_int_4 = smart_ptr_manager<int>::release( (unsigned long) temp_int.get() );
-		}
-
-
-		if ( smart_ptr_manager<int>::exists( temp_int_2 ) )
-		{
-			smart_ptr_manager<int>::pointer_type temp_int_5 = smart_ptr_manager<int>::release( temp_int_2 );
-		}
-
-
-		if ( smart_ptr_manager<int>::exists( 123 ) )
-		{
-			smart_ptr_manager<int>::pointer_type temp_int_6 = smart_ptr_manager<int>::get( 123 );
-		}
-
-
-		if ( smart_ptr_manager<int>::exists( 456 ) )
-		{
-			smart_ptr_manager<int>::pointer_type temp_int_7 = smart_ptr_manager<int>::release( 456 );
-		}
-
 
 		dir_info->handle_ = win32api_wrapper::create_file( path, FILE_LIST_DIRECTORY, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OVERLAPPED, NULL );
 
@@ -181,7 +149,7 @@ public: //private:  //TODO:
 		unsigned long offset;
 		
 		//LPDIRECTORY_INFO dir_info;
-		directory_info* dir_info;
+		directory_info* dir_info = 0;
 
 		LPOVERLAPPED overlapped;
 		PFILE_NOTIFY_INFORMATION notify_information;
@@ -191,78 +159,75 @@ public: //private:  //TODO:
 			//win32api_wrapper::get_queued_completion_status( this->completion_port_handle_, &num_bytes, (LPDWORD) &dir_info, &overlapped, INFINITE );
 
 			unsigned long address = 0;
-
 			win32api_wrapper::get_queued_completion_status( this->completion_port_handle_, &num_bytes, &address, &overlapped, INFINITE );
 
+			if ( address != 0)
 			{
-				//directory_info_pointer_type dir_info = spm_.get( address );
-				directory_info_pointer_type dir_info = smart_ptr_manager<directory_info>::get( address );
-
-				
-			}
-			
-
-			if ( dir_info ) //TODO: esta pregunta no está bueno siendo un puntero raw
-			{
-				if ( num_bytes > 0 )
 				{
-					notify_information = (PFILE_NOTIFY_INFORMATION)dir_info->buffer;
-					//notify_information = static_cast<PFILE_NOTIFY_INFORMATION>(dir_info->buffer);
+					directory_info_pointer_type dir_info = smart_ptr_manager<directory_info>::get( address );
+				}
 
-					boost::optional<std::string> old_name;
-
-					do
+				if ( dir_info ) //TODO: esta pregunta no está bueno siendo un puntero raw
+				{
+					if ( num_bytes > 0 )
 					{
-						offset = notify_information->NextEntryOffset;
+						notify_information = (PFILE_NOTIFY_INFORMATION)dir_info->buffer;
+						//notify_information = static_cast<PFILE_NOTIFY_INFORMATION>(dir_info->buffer);
 
-						//if( fni->Action == FILE_ACTION_MODIFIED )
-						//      CheckChangedFile( di, fni ); //TODO: chequear en FWATCH
+						boost::optional<std::string> old_name;
 
-						//TODO: no me gusta, ver de cambiarlo
-						std::string file_name(notify_information->FileName, notify_information->FileName + (notify_information->FileNameLength/sizeof(WCHAR)) ); 
-
-						if (notify_information->Action == FILE_ACTION_RENAMED_OLD_NAME)
+						do
 						{
-							old_name.reset( file_name );
-						}
-						else if (notify_information->Action == FILE_ACTION_RENAMED_NEW_NAME)
-						{
-							if ( old_name )
+							offset = notify_information->NextEntryOffset;
+
+							//if( fni->Action == FILE_ACTION_MODIFIED )
+							//      CheckChangedFile( di, fni ); //TODO: chequear en FWATCH
+
+							//TODO: no me gusta, ver de cambiarlo
+							std::string file_name(notify_information->FileName, notify_information->FileName + (notify_information->FileNameLength/sizeof(WCHAR)) ); 
+
+							if (notify_information->Action == FILE_ACTION_RENAMED_OLD_NAME)
 							{
-								notify_rename_event_args(change_types::renamed, dir_info->path_, file_name, *old_name);
-								old_name.reset();
+								old_name.reset( file_name );
+							}
+							else if (notify_information->Action == FILE_ACTION_RENAMED_NEW_NAME)
+							{
+								if ( old_name )
+								{
+									notify_rename_event_args(change_types::renamed, dir_info->path_, file_name, *old_name);
+									old_name.reset();
+								}
+								else
+								{
+									notify_rename_event_args(change_types::renamed, dir_info->path_, file_name, "");
+									old_name.reset();
+								}
 							}
 							else
 							{
-								notify_rename_event_args(change_types::renamed, dir_info->path_, file_name, "");
-								old_name.reset();
+								if (old_name)
+								{
+									notify_rename_event_args(change_types::renamed, dir_info->path_, "", *old_name);
+									old_name.reset();
+								}
+
+								notify_file_system_event_args(notify_information->Action, dir_info->path_, file_name);
+
 							}
-						}
-						else
+
+							notify_information = (PFILE_NOTIFY_INFORMATION)((LPBYTE) notify_information + offset);
+
+						} while( offset );
+
+						//TODO: esto ocasionaba problemas en Linux. Habria que evaluar si tambien pasa en Windows.
+						if (old_name)
 						{
-							if (old_name)
-							{
-								notify_rename_event_args(change_types::renamed, dir_info->path_, "", *old_name);
-								old_name.reset();
-							}
-
-							notify_file_system_event_args(notify_information->Action, dir_info->path_, file_name);
-
+							notify_rename_event_args(change_types::renamed, dir_info->path_, "", *old_name);
+							old_name.reset();
 						}
-
-						notify_information = (PFILE_NOTIFY_INFORMATION)((LPBYTE) notify_information + offset);
-
-					} while( offset );
-
-					//TODO: esto ocasionaba problemas en Linux. Habria que evaluar si tambien pasa en Windows.
-					if (old_name)
-					{
-						notify_rename_event_args(change_types::renamed, dir_info->path_, "", *old_name);
-						old_name.reset();
 					}
+					win32api_wrapper::read_directory_changes( dir_info->handle_, dir_info->buffer, MAX_BUFFER, this->include_subdirectories_ ? 1 : 0, this->notify_filters_, &dir_info->buffer_length, &dir_info->overlapped, NULL );
 				}
-
-				win32api_wrapper::read_directory_changes( dir_info->handle_, dir_info->buffer, MAX_BUFFER, this->include_subdirectories_ ? 1 : 0, this->notify_filters_, &dir_info->buffer_length, &dir_info->overlapped, NULL );
 			}
 
 		} while( dir_info );

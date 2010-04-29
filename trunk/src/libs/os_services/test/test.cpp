@@ -124,6 +124,61 @@ BOOST_AUTO_TEST_SUITE_END() //Paths
 
 
 
+/*
+
+//smart_ptr_manager<int>::pointer_type temp_int = smart_ptr_manager<int>::add( new int( 1 ) );
+//smart_ptr_manager<int>::pointer_type temp_int_2 = smart_ptr_manager<int>::add( new int( 2 ) );
+
+
+//if ( smart_ptr_manager<int>::exists( (unsigned long) temp_int.get() ) )
+//{
+//	smart_ptr_manager<int>::pointer_type temp_int_3 = smart_ptr_manager<int>::get( (unsigned long) temp_int.get() );		
+//}
+
+//if ( smart_ptr_manager<int>::exists( (unsigned long) temp_int.get() ) )
+//{
+//	smart_ptr_manager<int>::pointer_type temp_int_4 = smart_ptr_manager<int>::release( (unsigned long) temp_int.get() );
+//}
+
+
+//if ( smart_ptr_manager<int>::exists( temp_int_2 ) )
+//{
+//	smart_ptr_manager<int>::pointer_type temp_int_5 = smart_ptr_manager<int>::release( temp_int_2 );
+//}
+
+
+//if ( smart_ptr_manager<int>::exists( 123 ) )
+//{
+//	smart_ptr_manager<int>::pointer_type temp_int_6 = smart_ptr_manager<int>::get( 123 );
+//}
+
+
+//if ( smart_ptr_manager<int>::exists( 456 ) )
+//{
+//	smart_ptr_manager<int>::pointer_type temp_int_7 = smart_ptr_manager<int>::release( 456 );
+//}
+
+
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
