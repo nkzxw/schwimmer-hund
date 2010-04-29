@@ -153,9 +153,15 @@ public:
 
 		win32api_wrapper::get_queued_completion_status( handle_, &num_bytes, &address, &overlapped, INFINITE );
 
-		if ( address != 0) //TODO: &&  if ( num_bytes > 0 )
+		if ( address != 0 && num_bytes > 0 )
 		{
 			dir_info = smart_ptr_manager<T>::get( address );
+
+			//if ( dir_info )
+			//{
+			//	PFILE_NOTIFY_INFORMATION notify_information = (PFILE_NOTIFY_INFORMATION)dir_info->buffer;
+			//	//notify_information = static_cast<PFILE_NOTIFY_INFORMATION>(dir_info->buffer);
+			//}
 		}
 
 		return dir_info;

@@ -57,44 +57,52 @@ class windows_impl : public base_impl<windows_impl>
 {
 public:
 	windows_impl()
-		: completion_port_handle_( 0 ) //, is_started_(false)
+		//: completion_port_handle_( 0 ) //, is_started_(false)
 	{}
 
 	~windows_impl() //virtual -> deberíamos impedir que esta clase sea heredada.
 	{
-		if ( completion_port_handle_ != 0 )
-		{
-			try
-			{
-				win32api_wrapper::post_queued_completion_status( completion_port_handle_, 0, 0, NULL );
-			}
-			catch ( const std::runtime_error& e )
-			{
-				//Destructor -> NO_THROW
-				//std::cerr << "Failed to post to completion port. Reason: " << GetLastError() << std::endl;
-				std::cerr << e.what() << std::endl;
-				//TODO: Si el Post falla, el Thread nunca va a morir !!
-			}
-		}
+		iocp_.close();
 
 		if ( thread_ )
 		{
 			thread_->join();
 		}
 
-		if ( completion_port_handle_ != 0 )
-		{
-			try
-			{
-				win32api_wrapper::close_handle( completion_port_handle_ );
-			}
-			catch ( const std::runtime_error& e)
-			{
-				//Destructor -> NO_THROW
-				//std::cerr << "Failed to close completion port handle. Reason: " << GetLastError() << std::endl;
-				std::cerr << e.what() << std::endl;
-			}
-		}
+
+		//if ( completion_port_handle_ != 0 )
+		//{
+		//	try
+		//	{
+		//		win32api_wrapper::post_queued_completion_status( completion_port_handle_, 0, 0, NULL );
+		//	}
+		//	catch ( const std::runtime_error& e )
+		//	{
+		//		//Destructor -> NO_THROW
+		//		//std::cerr << "Failed to post to completion port. Reason: " << GetLastError() << std::endl;
+		//		std::cerr << e.what() << std::endl;
+		//		//TODO: Si el Post falla, el Thread nunca va a morir !!
+		//	}
+		//}
+
+		//if ( thread_ )
+		//{
+		//	thread_->join();
+		//}
+
+		//if ( completion_port_handle_ != 0 )
+		//{
+		//	try
+		//	{
+		//		win32api_wrapper::close_handle( completion_port_handle_ );
+		//	}
+		//	catch ( const std::runtime_error& e)
+		//	{
+		//		//Destructor -> NO_THROW
+		//		//std::cerr << "Failed to close completion port handle. Reason: " << GetLastError() << std::endl;
+		//		std::cerr << e.what() << std::endl;
+		//	}
+		//}
 	}
 
 	void add_directory_impl( const std::string& path ) //throw (std::invalid_argument, std::runtime_error)
@@ -375,7 +383,7 @@ protected:
 	typedef std::vector<directory_info_pointer_type> vector_type;
 	vector_type directories_;
 
-	HANDLE completion_port_handle_; //HANDLE -> void*
+	//HANDLE completion_port_handle_; //HANDLE -> void*
 	thread_type thread_;
 	//bool is_started_; //TODO: es el is_initialized de linux y freebsd
 
