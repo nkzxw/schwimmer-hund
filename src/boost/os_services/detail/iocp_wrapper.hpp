@@ -5,11 +5,16 @@
 # pragma once
 #endif
 
-//TODO: revisar los headers
-
 
 #include <boost/noncopyable.hpp>
 
+#include <boost/os_services/detail/smart_ptr_manager.hpp>
+#include <boost/os_services/detail/win32api_wrapper.hpp>
+
+
+//TODO: sacar de todos los otros lugares donde esté repetido
+//TODO: como cambiarlo en tiempo de ejecución?
+#define MAX_BUFFER  8192 //4096	
 
 namespace boost {
 namespace os_services {
@@ -39,20 +44,22 @@ public:
 		}
 	}
 
-	boost::uint32_t add_watch( const std::string& file_name )
-	{
-		boost::uint32_t watch_descriptor = ::inotify_add_watch( handle_, file_name.c_str(), IN_CREATE | IN_DELETE | IN_MODIFY | IN_MOVED_FROM | IN_MOVED_TO );
-		
-		if ( watch_descriptor == -1 )
-		{
-			std::ostringstream oss;
-			oss << "inotify_add_watch error - File: " << file_name << " - Reason: " << std::strerror(errno);
-			throw ( std::invalid_argument(oss.str()) );
-		}
-	}
+	//boost::uint32_t add_watch( const std::string& file_name )
+	//{
+	//	boost::uint32_t watch_descriptor = ::inotify_add_watch( handle_, file_name.c_str(), IN_CREATE | IN_DELETE | IN_MODIFY | IN_MOVED_FROM | IN_MOVED_TO );
+	//	
+	//	if ( watch_descriptor == -1 )
+	//	{
+	//		std::ostringstream oss;
+	//		oss << "inotify_add_watch error - File: " << file_name << " - Reason: " << std::strerror(errno);
+	//		throw ( std::invalid_argument(oss.str()) );
+	//	}
+	//}
 
 	//TODO:
 	//	void* add_watch( const std::string& path ) //throw (std::invalid_argument, std::runtime_error)
+
+	//TODO: podemos aplicar la misma tecnica de "template template" usada en smart_ptr_manager para evitar acoplarnos con shared_ptr
 	template <typename T>
 	void add_watch( const boost::shared_ptr<T>& watch )
 	{
@@ -71,19 +78,29 @@ public:
 
 
 
-		LPDIRECTORY_INFO directory_info = (LPDIRECTORY_INFO) malloc(sizeof(DIRECTORY_INFO));
-		memset(directory_info, 0, sizeof(DIRECTORY_INFO));
+		//LPDIRECTORY_INFO directory_info = (LPDIRECTORY_INFO) malloc(sizeof(DIRECTORY_INFO));
+		//memset(directory_info, 0, sizeof(DIRECTORY_INFO));
 
-		directory_info->directory_handle = win32api_wrapper::create_file( path, FILE_LIST_DIRECTORY, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OVERLAPPED, NULL );
+		//directory_info->directory_handle = win32api_wrapper::create_file( path, FILE_LIST_DIRECTORY, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OVERLAPPED, NULL );
 
-		//TODO: esto no me gusta
-		lstrcpy( directory_info->directory_name, path.c_str() );
+		////TODO: esto no me gusta
+		//lstrcpy( directory_info->directory_name, path.c_str() );
 
-		//unsigned long addr = (unsigned long) &directory_info;
+		////unsigned long addr = (unsigned long) &directory_info;
 
-		completion_port_handle_ = win32api_wrapper::create_io_completion_port( directory_info->directory_handle, completion_port_handle_, (DWORD) directory_info, 0 );
+		//completion_port_handle_ = win32api_wrapper::create_io_completion_port( directory_info->directory_handle, completion_port_handle_, (DWORD) directory_info, 0 );
 
-		win32api_wrapper::read_directory_changes( (*it)->directory_handle, (*it)->buffer, MAX_BUFFER, this->include_subdirectories_ ? 1 : 0, this->notify_filters_, &(*it)->buffer_length, &(*it)->overlapped, NULL );
+		//win32api_wrapper::read_directory_changes( (*it)->directory_handle, (*it)->buffer, MAX_BUFFER, this->include_subdirectories_ ? 1 : 0, this->notify_filters_, &(*it)->buffer_length, &(*it)->overlapped, NULL );
+
+		smart_ptr_manager<T>::add( watch );
+		watch->handle_ = win32api_wrapper::create_file( watch->path_, FILE_LIST_DIRECTORY, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OVERLAPPED, NULL );
+		handle_ = win32api_wrapper::create_io_completion_port( watch->handle_, handle_, (DWORD) watch.get(), 0 );
+
+
+		//TODO: this->include_subdirectories_
+		//TODO: this->notify_filters_
+		//win32api_wrapper::read_directory_changes( watch->handle_, watch->buffer, MAX_BUFFER, this->include_subdirectories_ ? 1 : 0, this->notify_filters_, &watch->buffer_length, &watch->overlapped, NULL );
+		win32api_wrapper::read_directory_changes( watch->handle_, watch->buffer, MAX_BUFFER, true ? 1 : 0, 51, &watch->buffer_length, &watch->overlapped, NULL );
 
 	}
 
@@ -121,16 +138,34 @@ public:
 	}
 
 
-	//boost::shared_ptr<T> get( int& event_type )
+	//TODO: podemos aplicar la misma tecnica de "template template" usada en smart_ptr_manager para evitar acoplarnos con shared_ptr
 	template <typename T>
-	T* get()
+	boost::shared_ptr<T> get()
 	{
+		unsigned long num_bytes;
+		unsigned long address = 0;
+		LPOVERLAPPED overlapped;
+		boost::shared_ptr<T> dir_info;
+
+		//unsigned long offset;
+		//directory_info* dir_info = 0;
+		//PFILE_NOTIFY_INFORMATION notify_information;
+
+		win32api_wrapper::get_queued_completion_status( handle_, &num_bytes, &address, &overlapped, INFINITE );
+
+		if ( address != 0) //TODO: &&  if ( num_bytes > 0 )
+		{
+			dir_info = smart_ptr_manager<T>::get( address );
+		}
+
+		return dir_info;
 	}
 
 protected:
 
 	bool is_initialized_;
-	int handle_;
+	//int handle_;
+	void* handle_;
 };
 
 

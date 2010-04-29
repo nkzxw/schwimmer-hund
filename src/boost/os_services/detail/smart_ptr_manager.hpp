@@ -9,6 +9,9 @@ namespace os_services {
 namespace detail 
 {
 
+//TODO: evitar que se agregue un nullptr
+//TODO: chequear la validez del smart_ptr
+
 template < typename T, template <typename> class SmartPtr = boost::shared_ptr >
 class smart_ptr_manager
 {
