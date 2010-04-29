@@ -12,6 +12,9 @@
 
 #include <boost/os_services/change_types.hpp>
 #include <boost/os_services/detail/base_impl.hpp>
+
+#include <boost/os_services/detail/shared_ptr_manager.hpp>
+
 #include <boost/os_services/detail/utils.hpp>
 #include <boost/os_services/detail/win32api_wrapper.hpp>
 #include <boost/os_services/detail/win32_legacy.hpp>		// directoryInfo
@@ -28,28 +31,28 @@ namespace detail {
 
 typedef boost::shared_ptr<boost::thread> thread_type;
 
-void directory_info_deleter(LPDIRECTORY_INFO ptr)
-{
-	if (ptr != 0)
-	{
-		if ( ptr->directory_handle != 0 )
-		{
-			try
-			{
-				win32api_wrapper::close_handle( ptr->directory_handle );
-			}
-			catch ( const std::runtime_error& e)
-			{
-				//Destructor -> NO_THROW
-				//std::cerr << "Failed to close directory port handle. Reason: " << GetLastError() << std::endl;
-				std::cerr << e.what() << std::endl;
-			}
-		}
-
-		free( ptr ); //TODO: mmmmmmmmmm WRAPPEAR ESTA CLASE
-		ptr = 0;
-	}
-};
+//void directory_info_deleter(LPDIRECTORY_INFO ptr)
+//{
+//	if (ptr != 0)
+//	{
+//		if ( ptr->directory_handle != 0 )
+//		{
+//			try
+//			{
+//				win32api_wrapper::close_handle( ptr->directory_handle );
+//			}
+//			catch ( const std::runtime_error& e)
+//			{
+//				//Destructor -> NO_THROW
+//				//std::cerr << "Failed to close directory port handle. Reason: " << GetLastError() << std::endl;
+//				std::cerr << e.what() << std::endl;
+//			}
+//		}
+//
+//		free( ptr ); //TODO: mmmmmmmmmm WRAPPEAR ESTA CLASE
+//		ptr = 0;
+//	}
+//};
 
 
 class windows_impl : public base_impl<windows_impl>
@@ -101,22 +104,14 @@ public:
 		//TODO: solo agregar el path a una lista de win32::user_entry o algo asi...
 		//      luego en start() se llamara a iocp_wrapper donde se hara el create_file, create_io_completion_port y el read_directory_changes
 
+		directory_info_pointer_type dir_info ( new directory_info( path ) );
+		//dir_info->path_ = path;
 
-		//LPDIRECTORY_INFO dir_info = (LPDIRECTORY_INFO) malloc(sizeof(DIRECTORY_INFO));
-		//memset(dir_info, 0, sizeof(DIRECTORY_INFO));
-		directory_info* dir_info = new directory_info;
+		dir_info->handle_ = win32api_wrapper::create_file( path, FILE_LIST_DIRECTORY, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OVERLAPPED, NULL );
 
-		dir_info->directory_handle = win32api_wrapper::create_file( path, FILE_LIST_DIRECTORY, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OVERLAPPED, NULL );
+		completion_port_handle_ = win32api_wrapper::create_io_completion_port( dir_info->handle_, completion_port_handle_, (DWORD) dir_info.get(), 0 );
 
-		//TODO: esto no me gusta
-		lstrcpy( dir_info->directory_name, path.c_str() );
-
-		//unsigned long addr = (unsigned long) &dir_info;
-
-		completion_port_handle_ = win32api_wrapper::create_io_completion_port( dir_info->directory_handle, completion_port_handle_, (DWORD) dir_info, 0 );
-
-		//directories_.push_back( directory_info_pointer_type( dir_info, directory_info_deleter ) );
-		directories_.push_back( directory_info_pointer_type( dir_info ) );
+		directories_.push_back( dir_info );
 	}
 
 
@@ -135,7 +130,7 @@ public:
 			//TODO: BOOST_FOREACH o std::transform o std::for_each
 			for (vector_type::const_iterator it = directories_.begin(); it!=directories_.end(); ++it)
 			{
-				win32api_wrapper::read_directory_changes( (*it)->directory_handle, (*it)->buffer, MAX_BUFFER, this->include_subdirectories_ ? 1 : 0, this->notify_filters_, &(*it)->buffer_length, &(*it)->overlapped, NULL);
+				win32api_wrapper::read_directory_changes( (*it)->handle_, (*it)->buffer, MAX_BUFFER, this->include_subdirectories_ ? 1 : 0, this->notify_filters_, &(*it)->buffer_length, &(*it)->overlapped, NULL);
 			}
 			thread_.reset( new boost::thread( boost::bind(&windows_impl::handle_directory_changes, this) ) );
 
@@ -187,12 +182,12 @@ public: //private:  //TODO:
 						{
 							if ( old_name )
 							{
-								notify_rename_event_args(change_types::renamed, dir_info->directory_name, file_name, *old_name);
+								notify_rename_event_args(change_types::renamed, dir_info->path_, file_name, *old_name);
 								old_name.reset();
 							}
 							else
 							{
-								notify_rename_event_args(change_types::renamed, dir_info->directory_name, file_name, "");
+								notify_rename_event_args(change_types::renamed, dir_info->path_, file_name, "");
 								old_name.reset();
 							}
 						}
@@ -200,11 +195,11 @@ public: //private:  //TODO:
 						{
 							if (old_name)
 							{
-								notify_rename_event_args(change_types::renamed, dir_info->directory_name, "", *old_name);
+								notify_rename_event_args(change_types::renamed, dir_info->path_, "", *old_name);
 								old_name.reset();
 							}
 
-							notify_file_system_event_args(notify_information->Action, dir_info->directory_name, file_name);
+							notify_file_system_event_args(notify_information->Action, dir_info->path_, file_name);
 
 						}
 
@@ -215,12 +210,12 @@ public: //private:  //TODO:
 					//TODO: esto ocasionaba problemas en Linux. Habria que evaluar si tambien pasa en Windows.
 					if (old_name)
 					{
-						notify_rename_event_args(change_types::renamed, dir_info->directory_name, "", *old_name);
+						notify_rename_event_args(change_types::renamed, dir_info->path_, "", *old_name);
 						old_name.reset();
 					}
 				}
 
-				win32api_wrapper::read_directory_changes( dir_info->directory_handle, dir_info->buffer, MAX_BUFFER, this->include_subdirectories_ ? 1 : 0, this->notify_filters_, &dir_info->buffer_length, &dir_info->overlapped, NULL );
+				win32api_wrapper::read_directory_changes( dir_info->handle_, dir_info->buffer, MAX_BUFFER, this->include_subdirectories_ ? 1 : 0, this->notify_filters_, &dir_info->buffer_length, &dir_info->overlapped, NULL );
 			}
 
 		} while( dir_info );

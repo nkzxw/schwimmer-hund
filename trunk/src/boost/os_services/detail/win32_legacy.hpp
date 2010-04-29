@@ -3,23 +3,14 @@
 
 //TODO: no me gusta haber separado en este arhivo, para ello tenemos el windows_impl
 
+#include <string>
+
 //#include <boost/array.hpp>
 
-//----------------------------------------------------------------------------------------------------------------
-// TODO: Legacy-Code, me gustaría reemplazarlo por código C++
-// WIN32
+#include <boost/os_services/detail/win32api_wrapper.hpp>
 
 #define MAX_DIRS    256
 #define MAX_BUFFER  8192 //4096	//TODO: como cambiarlo en tiempo de ejecución?
-
-typedef struct _DIRECTORY_INFO 
-{
-	HANDLE      directory_handle;
-	TCHAR       directory_name[MAX_PATH];
-	CHAR        buffer[MAX_BUFFER];
-	DWORD       buffer_length;
-	OVERLAPPED  overlapped;
-} DIRECTORY_INFO, *PDIRECTORY_INFO, *LPDIRECTORY_INFO;
 
 //DIRECTORY_INFO  directory_info_array[MAX_DIRS];        // Buffer for all of the directories
 //boost::array<DIRECTORY_INFO, MAX_DIRS> directory_info_array;
@@ -29,33 +20,60 @@ typedef struct _DIRECTORY_INFO
 //DWORD           numDirs;	// TODO: global... hay que sacarla...
 
 
+//TODO: namespace
 
 
 struct directory_info
 {
 
 	directory_info()
+		: handle_ ( 0 ), buffer_length ( 0 )
 	{
-		directory_handle = 0;
+		initialize();
+	}
 
-		memset( directory_name, 0, sizeof(directory_name) );
+	directory_info( const std::string& path )
+		: path_( path ), handle_ ( 0 ), buffer_length ( 0 )
+	{
+		initialize();
+	}
+
+	~directory_info()
+	{
+		close( true );
+	}
+
+	void initialize()
+	{
 		memset( buffer, 0, sizeof(buffer) );
-
-		buffer_length = 0;
-		
 		memset( (void*) &overlapped , 0, sizeof(overlapped ) );
-		//memset( overlapped, 0, sizeof(OVERLAPPED) );
-
 	}
 
 
+	void close( bool no_throw = false )
+	{
+		if ( handle_ != 0 )
+		{
+			try
+			{
+				boost::os_services::detail::win32api_wrapper::close_handle( handle_ );
+			}
+			catch ( const std::runtime_error& e)
+			{
+				//Destructor -> NO_THROW
+				std::cerr << e.what() << std::endl;
+			}
+		}
+	}
 
-	HANDLE      directory_handle;
-	TCHAR       directory_name[MAX_PATH];
+
+	HANDLE      handle_;
+	std::string path_;
+
 	CHAR        buffer[MAX_BUFFER];
 	DWORD       buffer_length;
 	OVERLAPPED  overlapped;
 };
 
-//----------------------------------------------------------------------------------------------------------------
+
 #endif // BOOST_OS_SERVICES_DETAIL_WIN32_LEGACY_HPP

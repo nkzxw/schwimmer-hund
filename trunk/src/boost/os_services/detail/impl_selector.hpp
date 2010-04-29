@@ -6,9 +6,26 @@
 //#elif defined(BOOST_ASIO_HAS_KQUEUE)
 
 
-// Aparentemente MAXOSX, NETBSD, OPENBSD, etc todos son iguales...
 
-//TODO: ver como hacer para tirar un error en tiempo de compilacion...
+/*
+
+//TODO: chequear...
+
+#include <boost/config.hpp>
+
+#if defined(BOOST_MSVC)
+
+
+#if (BOOST_MSVC >= 1310)
+#pragma warning(disable: 4675)  // resolved overload found with Koenig lookup
+#endif
+
+#endif
+
+*/
+
+
+//TODO: Aparentemente MAXOSX, NETBSD, OPENBSD, etc todos son iguales...
 //TODO: Agregar OpenSolaris
 //TODO: ver OpenBSD y NetBSD
 //TODO: ver que hacemos con IBM AIX, HP-UX y ver que otra opcion puede haber
