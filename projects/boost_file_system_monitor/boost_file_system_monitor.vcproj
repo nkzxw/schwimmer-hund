@@ -271,7 +271,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\boost\os_services\detail\shared_ptr_manager.hpp"
+					RelativePath="..\..\src\boost\os_services\detail\smart_ptr_manager.hpp"
 					>
 				</File>
 				<File

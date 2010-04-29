@@ -9,14 +9,13 @@ namespace os_services {
 namespace detail 
 {
 
-
-template <typename T>
+template < typename T, template <typename> class SmartPtr = boost::shared_ptr >
 class smart_ptr_manager
 {
 public:
 
-	typedef boost::shared_ptr<T> pointer_type;
-	typedef unsigned long address_type;			//TODO: encontrar de alguna forma cual es el tipo que coincide con sizeof(void*)
+	typedef SmartPtr<T> pointer_type;
+	typedef unsigned long address_type;		//TODO: encontrar de alguna forma cual es el tipo que coincide con sizeof(void*)
 
 	static void add( const pointer_type& pointer )
 	{
@@ -60,15 +59,13 @@ public:
 	}
 
 private:
-	typedef boost::unordered_map<address_type, pointer_type> collection_type;
 
+	typedef boost::unordered_map<address_type, pointer_type> collection_type;
 	static collection_type pointers_; 
 };
 
-
-template <typename T>
-boost::unordered_map<typename smart_ptr_manager<T>::address_type, typename smart_ptr_manager<T>::pointer_type> smart_ptr_manager<T>::pointers_; 
-
+template < typename T, template <typename> class SmartPtr >
+boost::unordered_map<typename smart_ptr_manager<T, SmartPtr>::address_type, typename smart_ptr_manager<T, SmartPtr>::pointer_type> smart_ptr_manager<T, SmartPtr>::pointers_; 
 
 } // namespace detail
 } // namespace os_services
