@@ -26,7 +26,7 @@ std::ofstream log_file;
 
 
 // Event Handlers
-static void on_changed( filesystem_event_args e ) // object source,
+static void on_changed( const filesystem_event_args& e ) // object source,
 {
 	//std::cout << "Changed: '" << e.full_path << "'" << std::endl;
 	ptime now = microsec_clock::local_time();
@@ -34,7 +34,7 @@ static void on_changed( filesystem_event_args e ) // object source,
 	log_file << " - Action: CHANGED - File: '" << e.full_path << "'" << std::endl;
 }
 
-static void on_created( filesystem_event_args e ) // object source,
+static void on_created( const filesystem_event_args& e ) // object source,
 {
 	//file_collection.push_back(e.name);
 	//std::cout << "Created: '" << e.full_path << "'" << std::endl;
@@ -43,7 +43,7 @@ static void on_created( filesystem_event_args e ) // object source,
 	log_file << " - Action: CREATED - File: '" << e.full_path << "'" << std::endl;
 }
 
-static void on_deleted( filesystem_event_args e ) // object source,
+static void on_deleted( const filesystem_event_args& e ) // object source,
 {
 	//std::cout << "Deleted: '" << e.full_path << "'" << std::endl;
 	ptime now = microsec_clock::local_time();
@@ -51,7 +51,7 @@ static void on_deleted( filesystem_event_args e ) // object source,
 	log_file << " - Action: REMOVED - File: '" << e.full_path << "'" << std::endl;
 }
 
-static void on_renamed( renamed_event_args e ) // object source,
+static void on_renamed( const renamed_event_args& e ) // object source,
 {
 	//std::cout << "File: '" << e.old_full_path << "' renamed to: '" << e.full_path  << "'" << std::endl;
 	ptime now = microsec_clock::local_time();
@@ -62,7 +62,7 @@ static void on_renamed( renamed_event_args e ) // object source,
 
 
 
-int main(int argc, char* argv[] )
+int main( int argc, char* argv[] )
 {
 	std::string dir = default_dir;
 	int max_files = default_max_files;

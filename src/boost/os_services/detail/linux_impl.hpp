@@ -5,8 +5,8 @@
 
 //TODO: Anteriormente a iNotify existía dNotify. Ver de usarlo cuando la version de Linux sea la indicada. http://en.wikipedia.org/wiki/Dnotify
 
-#ifndef BOOST_OS_SERVICES_DETAIL_LINUX_IMPL_HPP
-#define BOOST_OS_SERVICES_DETAIL_LINUX_IMPL_HPP
+#ifndef BOOST_OS_SERVICES_DETAIL_LINUX_IMPL_HPP_INCLUDED
+#define BOOST_OS_SERVICES_DETAIL_LINUX_IMPL_HPP_INCLUDED
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -474,4 +474,4 @@ protected:
 } // namespace os_services
 } // namespace boost
 
-#endif // BOOST_OS_SERVICES_DETAIL_LINUX_IMPL_HPP
+#endif // BOOST_OS_SERVICES_DETAIL_LINUX_IMPL_HPP_INCLUDED

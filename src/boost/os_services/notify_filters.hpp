@@ -1,5 +1,5 @@
-#ifndef BOOST_OS_SERVICES_NOTIFY_FILTERS_HPP
-#define BOOST_OS_SERVICES_NOTIFY_FILTERS_HPP
+#ifndef BOOST_OS_SERVICES_NOTIFY_FILTERS_HPP_INCLUDED
+#define BOOST_OS_SERVICES_NOTIFY_FILTERS_HPP_INCLUDED
 
 //enum NotifyFilters
 //TODO: por ahora muy atado a Win32
@@ -21,4 +21,4 @@ namespace notify_filters
 } // namespace os_services
 } // namespace boost
 
-#endif // BOOST_OS_SERVICES_NOTIFY_FILTERS_HPP
+#endif // BOOST_OS_SERVICES_NOTIFY_FILTERS_HPP_INCLUDED

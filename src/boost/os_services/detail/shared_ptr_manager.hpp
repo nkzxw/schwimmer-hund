@@ -1,5 +1,7 @@
-#ifndef BOOST_OS_SERVICES_DETAIL_SHARED_PTR_MANAGER_HPP
-#define BOOST_OS_SERVICES_DETAIL_SHARED_PTR_MANAGER_HPP
+#ifndef BOOST_OS_SERVICES_DETAIL_SMART_PTR_MANAGER_HPP_INCLUDED
+#define BOOST_OS_SERVICES_DETAIL_SMART_PTR_MANAGER_HPP_INCLUDED
+
+#include <vector>
 
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_map.hpp>
@@ -11,7 +13,7 @@ namespace detail
 
 
 template <typename T>
-class shared_ptr_manager
+class smart_ptr_manager
 {
 public:
 
@@ -25,6 +27,10 @@ public:
 
 	static pointer_type add( T* raw_pointer )
 	{
+		std::vector<std::string> temp;
+		temp.push_back("hola");
+
+
 		pointer_type pointer( raw_pointer );
 		add( pointer );
 		return pointer;
@@ -67,11 +73,11 @@ private:
 
 
 template <typename T>
-boost::unordered_map<typename shared_ptr_manager<T>::address_type, typename shared_ptr_manager<T>::pointer_type> shared_ptr_manager<T>::pointers_; 
+boost::unordered_map<typename smart_ptr_manager<T>::address_type, typename smart_ptr_manager<T>::pointer_type> smart_ptr_manager<T>::pointers_; 
 
 
 } // namespace detail
 } // namespace os_services
 } // namespace boost
 
-#endif // BOOST_OS_SERVICES_DETAIL_SHARED_PTR_MANAGER_HPP
+#endif // BOOST_OS_SERVICES_DETAIL_SMART_PTR_MANAGER_HPP_INCLUDED

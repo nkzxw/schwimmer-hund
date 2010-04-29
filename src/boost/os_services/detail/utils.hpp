@@ -1,5 +1,5 @@
-#ifndef BOOST_OS_SERVICES_DETAIL_UTILS_HPP
-#define BOOST_OS_SERVICES_DETAIL_UTILS_HPP
+#ifndef BOOST_OS_SERVICES_DETAIL_UTILS_HPP_INCLUDED
+#define BOOST_OS_SERVICES_DETAIL_UTILS_HPP_INCLUDED
 
 #include <string>
 
@@ -43,4 +43,4 @@ bool directory_exists( const std::string& str_path )
 } // namespace os_services
 } // namespace boost
 
-#endif // BOOST_OS_SERVICES_DETAIL_UTILS_HPP
+#endif // BOOST_OS_SERVICES_DETAIL_UTILS_HPP_INCLUDED

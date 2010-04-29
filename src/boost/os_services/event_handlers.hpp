@@ -1,5 +1,5 @@
-#ifndef BOOST_OS_SERVICES_EVENT_HANDLERS_HPP
-#define BOOST_OS_SERVICES_EVENT_HANDLERS_HPP
+#ifndef BOOST_OS_SERVICES_EVENT_HANDLERS_HPP_INCLUDED
+#define BOOST_OS_SERVICES_EVENT_HANDLERS_HPP_INCLUDED
 
 #include <boost/function.hpp>
 
@@ -15,4 +15,4 @@ typedef boost::function<void ( const renamed_event_args& e )> renamed_event_hand
 } // namespace os_services
 } // namespace boost
 
-#endif // BOOST_OS_SERVICES_EVENT_HANDLERS_HPP
+#endif // BOOST_OS_SERVICES_EVENT_HANDLERS_HPP_INCLUDED

@@ -54,8 +54,8 @@ There are platforms that are not supported due to lack of developer resources. I
 
 
 
-#ifndef BOOST_OS_SERVICES_DETAIL_FREEBSD_IMPL_HPP
-#define BOOST_OS_SERVICES_DETAIL_FREEBSD_IMPL_HPP
+#ifndef BOOST_OS_SERVICES_DETAIL_FREEBSD_IMPL_HPP_INCLUDED
+#define BOOST_OS_SERVICES_DETAIL_FREEBSD_IMPL_HPP_INCLUDED
 
 //TODO: agregar a todos los archivos fuente... quizas este freebsd y etc no, es al pedo
 //TODO: chequear que librerias BOOST lo usan...
@@ -459,4 +459,4 @@ private:
 } // namespace os_services
 } // namespace boost
 
-#endif // BOOST_OS_SERVICES_DETAIL_FREEBSD_IMPL_HPP
+#endif // BOOST_OS_SERVICES_DETAIL_FREEBSD_IMPL_HPP_INCLUDED

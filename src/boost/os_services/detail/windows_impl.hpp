@@ -1,5 +1,5 @@
-#ifndef BOOST_OS_SERVICES_DETAIL_WINDOWS_IMPL_HPP
-#define BOOST_OS_SERVICES_DETAIL_WINDOWS_IMPL_HPP
+#ifndef BOOST_OS_SERVICES_DETAIL_WINDOWS_IMPL_HPP_INCLUDED
+#define BOOST_OS_SERVICES_DETAIL_WINDOWS_IMPL_HPP_INCLUDED
 
 #include <sstream>
 #include <string>
@@ -107,38 +107,38 @@ public:
 		//directory_info_pointer_type dir_info ( new directory_info( path ) );
 
 		//TODO: crear unit test para probar shared_ptr_manager
-		directory_info_pointer_type dir_info = shared_ptr_manager<directory_info>::add( new directory_info( path ) );
+		directory_info_pointer_type dir_info = smart_ptr_manager<directory_info>::add( new directory_info( path ) );
 
-		shared_ptr_manager<int>::pointer_type temp_int = shared_ptr_manager<int>::add( new int( 1 ) );
-		shared_ptr_manager<int>::pointer_type temp_int_2 = shared_ptr_manager<int>::add( new int( 2 ) );
+		smart_ptr_manager<int>::pointer_type temp_int = smart_ptr_manager<int>::add( new int( 1 ) );
+		smart_ptr_manager<int>::pointer_type temp_int_2 = smart_ptr_manager<int>::add( new int( 2 ) );
 
 
-		if ( shared_ptr_manager<int>::exists( (unsigned long) temp_int.get() ) )
+		if ( smart_ptr_manager<int>::exists( (unsigned long) temp_int.get() ) )
 		{
-			shared_ptr_manager<int>::pointer_type temp_int_3 = shared_ptr_manager<int>::get( (unsigned long) temp_int.get() );		
+			smart_ptr_manager<int>::pointer_type temp_int_3 = smart_ptr_manager<int>::get( (unsigned long) temp_int.get() );		
 		}
 
-		if ( shared_ptr_manager<int>::exists( (unsigned long) temp_int.get() ) )
+		if ( smart_ptr_manager<int>::exists( (unsigned long) temp_int.get() ) )
 		{
-			shared_ptr_manager<int>::pointer_type temp_int_4 = shared_ptr_manager<int>::release( (unsigned long) temp_int.get() );
-		}
-
-
-		if ( shared_ptr_manager<int>::exists( temp_int_2 ) )
-		{
-			shared_ptr_manager<int>::pointer_type temp_int_5 = shared_ptr_manager<int>::release( temp_int_2 );
+			smart_ptr_manager<int>::pointer_type temp_int_4 = smart_ptr_manager<int>::release( (unsigned long) temp_int.get() );
 		}
 
 
-		if ( shared_ptr_manager<int>::exists( 123 ) )
+		if ( smart_ptr_manager<int>::exists( temp_int_2 ) )
 		{
-			shared_ptr_manager<int>::pointer_type temp_int_6 = shared_ptr_manager<int>::get( 123 );
+			smart_ptr_manager<int>::pointer_type temp_int_5 = smart_ptr_manager<int>::release( temp_int_2 );
 		}
 
 
-		if ( shared_ptr_manager<int>::exists( 456 ) )
+		if ( smart_ptr_manager<int>::exists( 123 ) )
 		{
-			shared_ptr_manager<int>::pointer_type temp_int_7 = shared_ptr_manager<int>::release( 456 );
+			smart_ptr_manager<int>::pointer_type temp_int_6 = smart_ptr_manager<int>::get( 123 );
+		}
+
+
+		if ( smart_ptr_manager<int>::exists( 456 ) )
+		{
+			smart_ptr_manager<int>::pointer_type temp_int_7 = smart_ptr_manager<int>::release( 456 );
 		}
 
 
@@ -196,7 +196,7 @@ public: //private:  //TODO:
 
 			{
 				//directory_info_pointer_type dir_info = spm_.get( address );
-				directory_info_pointer_type dir_info = shared_ptr_manager<directory_info>::get( address );
+				directory_info_pointer_type dir_info = smart_ptr_manager<directory_info>::get( address );
 
 				
 			}
@@ -351,4 +351,4 @@ protected:
 //	printf("\n");
 //}
 
-#endif // BOOST_OS_SERVICES_DETAIL_WINDOWS_IMPL_HPP
+#endif // BOOST_OS_SERVICES_DETAIL_WINDOWS_IMPL_HPP_INCLUDED
