@@ -1,8 +1,6 @@
 #ifndef BOOST_OS_SERVICES_DETAIL_SMART_PTR_MANAGER_HPP_INCLUDED
 #define BOOST_OS_SERVICES_DETAIL_SMART_PTR_MANAGER_HPP_INCLUDED
 
-#include <vector>
-
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_map.hpp>
 
@@ -27,10 +25,6 @@ public:
 
 	static pointer_type add( T* raw_pointer )
 	{
-		std::vector<std::string> temp;
-		temp.push_back("hola");
-
-
 		pointer_type pointer( raw_pointer );
 		add( pointer );
 		return pointer;
