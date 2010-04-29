@@ -178,7 +178,10 @@ protected:
 
 	bool is_initialized_;
 	void* handle_;
+
 	unsigned long offset_;
+	PFILE_NOTIFY_INFORMATION last_notify_information_;
+
 };
 
 
