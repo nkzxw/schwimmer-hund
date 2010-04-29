@@ -1,8 +1,8 @@
 ////TODO: sacar si no es necesario
 //
 //
-//#ifndef BOOST_OS_SERVICES_DETAIL_KQUEUE_WATCH_ITEM_HPP
-//#define BOOST_OS_SERVICES_DETAIL_KQUEUE_WATCH_ITEM_HPP
+//#ifndef BOOST_OS_SERVICES_DETAIL_KQUEUE_WATCH_ITEM_HPP_INCLUDED
+//#define BOOST_OS_SERVICES_DETAIL_KQUEUE_WATCH_ITEM_HPP_INCLUDED
 //
 //#if defined(_MSC_VER) && (_MSC_VER >= 1200)
 //# pragma once
@@ -47,4 +47,4 @@
 //} // namespace os_services
 //} // namespace boost
 //
-//#endif // BOOST_OS_SERVICES_DETAIL_KQUEUE_WATCH_ITEM_HPP
+//#endif // BOOST_OS_SERVICES_DETAIL_KQUEUE_WATCH_ITEM_HPP_INCLUDED

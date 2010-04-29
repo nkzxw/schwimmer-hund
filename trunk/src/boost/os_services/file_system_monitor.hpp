@@ -12,8 +12,8 @@
 
 //----------------------------------------------------------------------------// 
 
-#ifndef BOOST_OS_SERVICES_FILE_SYSTEM_MONITOR_HPP
-#define BOOST_OS_SERVICES_FILE_SYSTEM_MONITOR_HPP
+#ifndef BOOST_OS_SERVICES_FILE_SYSTEM_MONITOR_HPP_INCLUDED
+#define BOOST_OS_SERVICES_FILE_SYSTEM_MONITOR_HPP_INCLUDED
 
 //#include <boost/bimap.hpp>
 #include <boost/filesystem/path.hpp>
@@ -134,7 +134,7 @@ private:
 } // namespace boost
 
 
-#endif // BOOST_OS_SERVICES_FILE_SYSTEM_MONITOR_HPP
+#endif // BOOST_OS_SERVICES_FILE_SYSTEM_MONITOR_HPP_INCLUDED
 
 
 

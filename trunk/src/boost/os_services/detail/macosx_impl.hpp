@@ -1,8 +1,8 @@
 //TODO: ver http://en.wikipedia.org/wiki/FSEvents
 
 
-#ifndef BOOST_OS_SERVICES_DETAIL_MACOSX_IMPL_HPP
-#define BOOST_OS_SERVICES_DETAIL_MACOSX_IMPL_HPP
+#ifndef BOOST_OS_SERVICES_DETAIL_MACOSX_IMPL_HPP_INCLUDED
+#define BOOST_OS_SERVICES_DETAIL_MACOSX_IMPL_HPP_INCLUDED
 
 #include <boost/os_services/detail/base_impl.hpp>
 
@@ -22,4 +22,4 @@ struct macosx_impl : public base_impl<macosx_impl>
 } // namespace os_services
 } // namespace boost
 
-#endif // BOOST_OS_SERVICES_DETAIL_MACOSX_IMPL_HPP
+#endif // BOOST_OS_SERVICES_DETAIL_MACOSX_IMPL_HPP_INCLUDED

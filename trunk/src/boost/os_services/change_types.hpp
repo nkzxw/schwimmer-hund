@@ -1,5 +1,5 @@
-#ifndef BOOST_OS_SERVICES_CHANGE_TYPES_HPP
-#define BOOST_OS_SERVICES_CHANGE_TYPES_HPP
+#ifndef BOOST_OS_SERVICES_CHANGE_TYPES_HPP_INCLUDED
+#define BOOST_OS_SERVICES_CHANGE_TYPES_HPP_INCLUDED
 
 //#define IN_ACCESS	 0x00000001	/* File was accessed.  */
 //#define IN_ATTRIB	 0x00000004	/* Metadata changed.  */
@@ -65,4 +65,4 @@ namespace change_types
 } // namespace os_services
 } // namespace boost
 
-#endif // BOOST_OS_SERVICES_CHANGE_TYPES_HPP
+#endif // BOOST_OS_SERVICES_CHANGE_TYPES_HPP_INCLUDED

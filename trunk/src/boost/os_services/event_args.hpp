@@ -1,5 +1,5 @@
-#ifndef BOOST_OS_SERVICES_EVENT_ARGS_HPP
-#define BOOST_OS_SERVICES_EVENT_ARGS_HPP
+#ifndef BOOST_OS_SERVICES_EVENT_ARGS_HPP_INCLUDED
+#define BOOST_OS_SERVICES_EVENT_ARGS_HPP_INCLUDED
 
 #include <boost/filesystem/path.hpp>
 
@@ -64,4 +64,4 @@ struct renamed_event_args : public filesystem_event_args
 } // namespace os_services
 } // namespace boost
 
-#endif // BOOST_OS_SERVICES_EVENT_ARGS_HPP
+#endif // BOOST_OS_SERVICES_EVENT_ARGS_HPP_INCLUDED
