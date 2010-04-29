@@ -117,8 +117,10 @@ public:
 		//completion_port_handle_ = win32api_wrapper::create_io_completion_port( dir_info->handle_, completion_port_handle_, (DWORD) dir_info.get(), 0 );
 		//directories_.push_back( dir_info );
 
-		directory_info_pointer_type dir_info = directory_info_pointer_type( new directory_info( path ) );
-		iocp_.add_watch( dir_info );
+		directories_.push_back( path );
+
+		//directory_info_pointer_type dir_info = directory_info_pointer_type( new directory_info( path ) );
+		//iocp_.add_watch( dir_info );
 	}
 
 
@@ -135,7 +137,7 @@ public:
 		////if (!is_started_)
 		////{
 		//	//TODO: BOOST_FOREACH o std::transform o std::for_each
-		//	for (vector_type::const_iterator it = directories_.begin(); it!=directories_.end(); ++it)
+		//	for (collection_type::const_iterator it = directories_.begin(); it!=directories_.end(); ++it)
 		//	{
 		//		win32api_wrapper::read_directory_changes( (*it)->handle_, (*it)->buffer, MAX_BUFFER, this->include_subdirectories_ ? 1 : 0, this->notify_filters_, &(*it)->buffer_length, &(*it)->overlapped, NULL);
 		//	}
@@ -143,6 +145,16 @@ public:
 
 		////	is_started_ = true;
 		////}
+
+
+		for (collection_type::const_iterator it = directories_.begin(); it!=directories_.end(); ++it)
+		{
+			//win32api_wrapper::read_directory_changes( (*it)->handle_, (*it)->buffer, MAX_BUFFER, this->include_subdirectories_ ? 1 : 0, this->notify_filters_, &(*it)->buffer_length, &(*it)->overlapped, NULL);
+
+			directory_info_pointer_type dir_info = directory_info_pointer_type( new directory_info( *it ) );
+			iocp_.add_watch( dir_info );
+		}
+
 
 
 		//TODO: acá es donde tengo que hacer los add_watch de todos los directorios agregados por el usuario...
@@ -153,40 +165,35 @@ public: //private:  //TODO:
 
 	void handle_directory_changes() //throw (std::runtime_error)
 	{
-		unsigned long offset;
-
-		LPOVERLAPPED overlapped;
-		PFILE_NOTIFY_INFORMATION notify_information;
+		//unsigned long offset;
+		//LPOVERLAPPED overlapped;
+		//PFILE_NOTIFY_INFORMATION notify_information;
 
 		directory_info_pointer_type dir_info;
-
+		boost::optional<std::string> old_name;
 
 		do
 		{
-			dir_info = iocp_.get<directory_info>();
+			std::string file_name;
+			unsigned long action;
+
+			dir_info = iocp_.get<directory_info>( file_name, action );
 
 			if ( dir_info )
 			{
-				notify_information = (PFILE_NOTIFY_INFORMATION)dir_info->buffer;
-				//notify_information = static_cast<PFILE_NOTIFY_INFORMATION>(dir_info->buffer);
-
-				boost::optional<std::string> old_name;
 
 				do
 				{
-					offset = notify_information->NextEntryOffset;
-
 					//if( fni->Action == FILE_ACTION_MODIFIED )
 					//      CheckChangedFile( di, fni ); //TODO: chequear en FWATCH
 
 					//TODO: no me gusta, ver de cambiarlo
-					std::string file_name(notify_information->FileName, notify_information->FileName + (notify_information->FileNameLength/sizeof(WCHAR)) ); 
 
-					if (notify_information->Action == FILE_ACTION_RENAMED_OLD_NAME)
+					if ( action == FILE_ACTION_RENAMED_OLD_NAME )
 					{
 						old_name.reset( file_name );
 					}
-					else if (notify_information->Action == FILE_ACTION_RENAMED_NEW_NAME)
+					else if ( action == FILE_ACTION_RENAMED_NEW_NAME )
 					{
 						if ( old_name )
 						{
@@ -207,7 +214,7 @@ public: //private:  //TODO:
 							old_name.reset();
 						}
 
-						notify_file_system_event_args(notify_information->Action, dir_info->path_, file_name);
+						notify_file_system_event_args( action, dir_info->path_, file_name );
 
 					}
 
@@ -380,8 +387,9 @@ protected:
 	//typedef boost::shared_ptr<DIRECTORY_INFO> directory_info_pointer_type;
 	typedef boost::shared_ptr<directory_info> directory_info_pointer_type;
 
-	typedef std::vector<directory_info_pointer_type> vector_type;
-	vector_type directories_;
+	//typedef std::vector<directory_info_pointer_type> collection_type;
+	typedef std::vector< std::string > collection_type;
+	collection_type directories_;
 
 	//HANDLE completion_port_handle_; //HANDLE -> void*
 	thread_type thread_;
