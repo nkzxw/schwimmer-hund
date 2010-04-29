@@ -271,6 +271,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\src\boost\os_services\detail\shared_ptr_manager.hpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\boost\os_services\detail\solaris_impl.hpp"
 					>
 				</File>
