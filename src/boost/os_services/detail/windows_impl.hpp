@@ -20,7 +20,6 @@
 #include <boost/os_services/detail/win32_legacy.hpp>		// directoryInfo
 #include <boost/os_services/notify_filters.hpp>
 
-
 //TODO: ver de usar ASIO... hay varias cosas que se denominan IOCP
 
 //TODO: reemplazar los threads por llamadas asincronicas al sistema operativo... User Threads vs Kernel Threads
@@ -104,8 +103,44 @@ public:
 		//TODO: solo agregar el path a una lista de win32::user_entry o algo asi...
 		//      luego en start() se llamara a iocp_wrapper donde se hara el create_file, create_io_completion_port y el read_directory_changes
 
-		directory_info_pointer_type dir_info ( new directory_info( path ) );
-		//dir_info->path_ = path;
+
+		//directory_info_pointer_type dir_info ( new directory_info( path ) );
+
+		//TODO: crear unit test para probar shared_ptr_manager
+		directory_info_pointer_type dir_info = shared_ptr_manager<directory_info>::add( new directory_info( path ) );
+
+		shared_ptr_manager<int>::pointer_type temp_int = shared_ptr_manager<int>::add( new int( 1 ) );
+		shared_ptr_manager<int>::pointer_type temp_int_2 = shared_ptr_manager<int>::add( new int( 2 ) );
+
+
+		if ( shared_ptr_manager<int>::exists( (unsigned long) temp_int.get() ) )
+		{
+			shared_ptr_manager<int>::pointer_type temp_int_3 = shared_ptr_manager<int>::get( (unsigned long) temp_int.get() );		
+		}
+
+		if ( shared_ptr_manager<int>::exists( (unsigned long) temp_int.get() ) )
+		{
+			shared_ptr_manager<int>::pointer_type temp_int_4 = shared_ptr_manager<int>::release( (unsigned long) temp_int.get() );
+		}
+
+
+		if ( shared_ptr_manager<int>::exists( temp_int_2 ) )
+		{
+			shared_ptr_manager<int>::pointer_type temp_int_5 = shared_ptr_manager<int>::release( temp_int_2 );
+		}
+
+
+		if ( shared_ptr_manager<int>::exists( 123 ) )
+		{
+			shared_ptr_manager<int>::pointer_type temp_int_6 = shared_ptr_manager<int>::get( 123 );
+		}
+
+
+		if ( shared_ptr_manager<int>::exists( 456 ) )
+		{
+			shared_ptr_manager<int>::pointer_type temp_int_7 = shared_ptr_manager<int>::release( 456 );
+		}
+
 
 		dir_info->handle_ = win32api_wrapper::create_file( path, FILE_LIST_DIRECTORY, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OVERLAPPED, NULL );
 
@@ -153,7 +188,19 @@ public: //private:  //TODO:
 
 		do
 		{
-			win32api_wrapper::get_queued_completion_status( this->completion_port_handle_, &num_bytes, (LPDWORD) &dir_info, &overlapped, INFINITE );
+			//win32api_wrapper::get_queued_completion_status( this->completion_port_handle_, &num_bytes, (LPDWORD) &dir_info, &overlapped, INFINITE );
+
+			unsigned long address = 0;
+
+			win32api_wrapper::get_queued_completion_status( this->completion_port_handle_, &num_bytes, &address, &overlapped, INFINITE );
+
+			{
+				//directory_info_pointer_type dir_info = spm_.get( address );
+				directory_info_pointer_type dir_info = shared_ptr_manager<directory_info>::get( address );
+
+				
+			}
+			
 
 			if ( dir_info ) //TODO: esta pregunta no está bueno siendo un puntero raw
 			{

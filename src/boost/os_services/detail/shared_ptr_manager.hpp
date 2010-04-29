@@ -1,9 +1,6 @@
 #ifndef BOOST_OS_SERVICES_DETAIL_SHARED_PTR_MANAGER_HPP
 #define BOOST_OS_SERVICES_DETAIL_SHARED_PTR_MANAGER_HPP
 
-//#include <string>
-//#include <vector>
-
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_map.hpp>
 
@@ -14,37 +11,63 @@ namespace detail
 
 
 template <typename T>
-struct shared_ptr_manager
+class shared_ptr_manager
 {
+public:
+
 	typedef boost::shared_ptr<T> pointer_type;
-	typedef int address_type;
+	typedef unsigned long address_type;			//TODO: encontrar de alguna forma cual es el tipo que coincide con sizeof(void*)
 
 	static void add( const pointer_type& pointer )
 	{
-		pointers_.insert( pointer.get(), pointer );
+		pointers_.insert( std::make_pair( reinterpret_cast<address_type>( pointer.get() ), pointer ) );
+	}
+
+	static pointer_type add( T* raw_pointer )
+	{
+		pointer_type pointer( raw_pointer );
+		add( pointer );
+		return pointer;
 	}
 
 	static pointer_type get( address_type address )
 	{
-		return pointers_[address];
+		return pointers_.at( address );
 	}
-	
+
+	static bool exists( address_type address )
+	{
+		collection_type::const_iterator it = pointers_.find( address );
+		return ( it != pointers_.end() );
+	}
+
+	static bool exists( const pointer_type& pointer )
+	{
+		collection_type::const_iterator it = pointers_.find( reinterpret_cast<address_type>( pointer.get() ) );
+		return ( it != pointers_.end() );
+	}
+
 	static pointer_type release( address_type address )
 	{
-		pointer_type pointer = pointers_[address];
-
+		pointer_type pointer = pointers_.at( address );
 		pointers_.erase( address );
-
 		return pointer;
 	}
 
 	static pointer_type release( const pointer_type& pointer )
 	{
-		return release( pointer.get() );
+		return release( reinterpret_cast<address_type>( pointer.get() ) );
 	}
 
-	static boost::unordered_map<address_type, pointer_type> pointers_;
+private:
+	typedef boost::unordered_map<address_type, pointer_type> collection_type;
+
+	static collection_type pointers_; 
 };
+
+
+template <typename T>
+boost::unordered_map<typename shared_ptr_manager<T>::address_type, typename shared_ptr_manager<T>::pointer_type> shared_ptr_manager<T>::pointers_; 
 
 
 } // namespace detail
