@@ -26,7 +26,7 @@ class iocp_wrapper : private boost::noncopyable
 public:
 
 	iocp_wrapper()
-		: is_initialized_( false ), handle_( 0 )
+		: is_initialized_( false ), handle_( 0 ), offset_( 0 )
 	{
 	}
 
@@ -140,7 +140,7 @@ public:
 
 	//TODO: podemos aplicar la misma tecnica de "template template" usada en smart_ptr_manager para evitar acoplarnos con shared_ptr
 	template <typename T>
-	boost::shared_ptr<T> get()
+	boost::shared_ptr<T> get( std::string& file_name, unsigned long& action ) //TODO: file_name y action podrian incluirse en una clase que contenga todos los datos del evento necesarios...
 	{
 		unsigned long num_bytes;
 		unsigned long address = 0;
@@ -157,11 +157,18 @@ public:
 		{
 			dir_info = smart_ptr_manager<T>::get( address );
 
-			//if ( dir_info )
-			//{
-			//	PFILE_NOTIFY_INFORMATION notify_information = (PFILE_NOTIFY_INFORMATION)dir_info->buffer;
-			//	//notify_information = static_cast<PFILE_NOTIFY_INFORMATION>(dir_info->buffer);
-			//}
+			if ( dir_info )
+			{
+				//PFILE_NOTIFY_INFORMATION notify_information = (PFILE_NOTIFY_INFORMATION)dir_info->buffer;
+				//notify_information = static_cast<PFILE_NOTIFY_INFORMATION>(dir_info->buffer);
+
+				PFILE_NOTIFY_INFORMATION notify_information = reinterpret_cast<PFILE_NOTIFY_INFORMATION>( dir_info->buffer );
+
+				std::string temp(notify_information->FileName, notify_information->FileName + (notify_information->FileNameLength/sizeof(WCHAR)) );
+				file_name = temp;
+				action = notify_information->Action;
+				offset_ = notify_information->NextEntryOffset;
+			}
 		}
 
 		return dir_info;
@@ -170,8 +177,8 @@ public:
 protected:
 
 	bool is_initialized_;
-	//int handle_;
 	void* handle_;
+	unsigned long offset_;
 };
 
 
