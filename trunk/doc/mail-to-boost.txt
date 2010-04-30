@@ -1,0 +1,50 @@
+boost@lists.boost.org
+
+DotNet FileSystemWatcher like library proposal.
+
+Hello all,
+
+I am working on a library like DotNet FileSystemWatcher ( http://msdn.microsoft.com/en-us/library/system.io.filesystemwatcher%28VS.80%29.aspx )
+
+Basically the library monitors for file system changes and notifies throwing events.
+
+First, it will support the following platforms:
+	- Windows NT 5.0 (Windows 2000) or higher using O/I Completion Port.
+	- Linux 2.6.13 or higher using inotify.
+	- FreeBSD 4.1 or higher using kqueue.
+	- NetBSD 2.0 or higher using kqueue.
+  - OpenBSD 3.6 higher using kqueue.	(Not sure which version supports it)
+	- MacOS/X 10.4 higher using kqueue. (Not sure which version supports it)
+
+Future supported platforms:
+	- Linux from 2.4.0-test9 2.6.12 using dnotify.
+	- Sun OpenSolaris using FEM API.
+
+Testing:
+	I am testing the library on FreeBSD 7.2, Linux 2.6.31, Windows XP (Windows NT 5.1).
+	I need help to test on older versions of these operating systems. 
+	Also in NetBSD, OpenBSD and mainly on MacOSX because I do not have the necessary hardware.
+
+I would like to include this library in Boost, I think would be useful.
+What do you think? If so, I would like to have a mentor (like GSoC) and experienced in Boost development.
+
+Thanks and regards,
+Fernando Pelliccioni
+
+
+
+References:
+
+	- O/I Completion Port:
+			http://msdn.microsoft.com/en-us/library/aa365198%28VS.85%29.aspx
+			http://en.wikipedia.org/wiki/Input/output_completion_port
+			
+	- inotify:
+			http://en.wikipedia.org/wiki/Inotify
+			
+	- kqueue:
+			http://people.freebsd.org/~jlemon/papers/kqueue.pdf
+			http://en.wikipedia.org/wiki/Kqueue
+			
+	- dnotify:
+			http://en.wikipedia.org/wiki/Dnotify

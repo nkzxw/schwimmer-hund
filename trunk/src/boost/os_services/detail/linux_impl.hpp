@@ -223,7 +223,7 @@ public: //private:  //TODO:
 	{
 		boost::optional<std::string> old_name;
 
-		while ( !closing_ )
+		while ( ! closing_ )
 		{
 			struct inotify_event* event = inotify.get<struct inotify_event>();
 
