@@ -57,11 +57,13 @@ class windows_impl : public base_impl<windows_impl>
 {
 public:
 	windows_impl()
-		//: completion_port_handle_( 0 ) //, is_started_(false)
+		: closing_( false )			//: completion_port_handle_( 0 ) //, is_started_(false)
 	{}
 
 	~windows_impl() //virtual -> deberíamos impedir que esta clase sea heredada.
 	{
+		closing_ = true;
+
 		iocp_.close();
 
 		if ( thread_ )
@@ -165,75 +167,77 @@ public: //private:  //TODO:
 
 	void handle_directory_changes() //throw (std::runtime_error)
 	{
-		//unsigned long offset;
-		//LPOVERLAPPED overlapped;
-		//PFILE_NOTIFY_INFORMATION notify_information;
-
-		directory_info_pointer_type dir_info;
+		//directory_info_pointer_type dir_info;
 		boost::optional<std::string> old_name;
+		std::string directory_path;
+		std::string file_name;
+		unsigned long action;
 
-		do
+
+		while ( ! closing_ )
 		{
-			std::string file_name;
-			unsigned long action;
+			//dir_info = iocp_.get<directory_info>( file_name, action );
+			bool result_ok = iocp_.get( directory_path, file_name, action );
 
-			dir_info = iocp_.get<directory_info>( file_name, action );
-
-			if ( dir_info )
+			if ( ! closing_ && result_ok )
 			{
+				//if( fni->Action == FILE_ACTION_MODIFIED )
+				//      CheckChangedFile( di, fni ); //TODO: chequear en FWATCH
 
-				do
+				//TODO: no me gusta, ver de cambiarlo
+
+				if ( action == FILE_ACTION_RENAMED_OLD_NAME )
 				{
-					//if( fni->Action == FILE_ACTION_MODIFIED )
-					//      CheckChangedFile( di, fni ); //TODO: chequear en FWATCH
-
-					//TODO: no me gusta, ver de cambiarlo
-
-					if ( action == FILE_ACTION_RENAMED_OLD_NAME )
+					old_name.reset( file_name );
+				}
+				else if ( action == FILE_ACTION_RENAMED_NEW_NAME )
+				{
+					if ( old_name )
 					{
-						old_name.reset( file_name );
-					}
-					else if ( action == FILE_ACTION_RENAMED_NEW_NAME )
-					{
-						if ( old_name )
-						{
-							notify_rename_event_args(change_types::renamed, dir_info->path_, file_name, *old_name);
-							old_name.reset();
-						}
-						else
-						{
-							notify_rename_event_args(change_types::renamed, dir_info->path_, file_name, "");
-							old_name.reset();
-						}
+						//notify_rename_event_args(change_types::renamed, dir_info->path_, file_name, *old_name);
+						notify_rename_event_args(change_types::renamed, directory_path, file_name, *old_name);
+						old_name.reset();
 					}
 					else
 					{
-						if (old_name)
-						{
-							notify_rename_event_args(change_types::renamed, dir_info->path_, "", *old_name);
-							old_name.reset();
-						}
-
-						notify_file_system_event_args( action, dir_info->path_, file_name );
-
+						//notify_rename_event_args(change_types::renamed, dir_info->path_, file_name, "");
+						notify_rename_event_args(change_types::renamed, directory_path, file_name, "");
+						old_name.reset();
+					}
+				}
+				else
+				{
+					if (old_name)
+					{
+						//TODO: este caso deberia ser igual en Linux, Windows, FreeBSD, etc... buscar un criterio y aplicarlo por igual en todas las plataformas...
+						//notify_rename_event_args(change_types::renamed, dir_info->path_, "", *old_name);
+						notify_rename_event_args(change_types::renamed, directory_path, "", *old_name);
+						old_name.reset();
 					}
 
-					notify_information = (PFILE_NOTIFY_INFORMATION)((LPBYTE) notify_information + offset);
-
-				} while( offset );
-
-				//TODO: esto ocasionaba problemas en Linux. Habria que evaluar si tambien pasa en Windows.
-				if (old_name)
-				{
-					notify_rename_event_args(change_types::renamed, dir_info->path_, "", *old_name);
-					old_name.reset();
+					//notify_file_system_event_args( action, dir_info->path_, file_name );
+					notify_file_system_event_args( action, directory_path, file_name );
 				}
-				
-				win32api_wrapper::read_directory_changes( dir_info->handle_, dir_info->buffer, MAX_BUFFER, this->include_subdirectories_ ? 1 : 0, this->notify_filters_, &dir_info->buffer_length, &dir_info->overlapped, NULL );
-				
 			}
+		}
 
-		} while( dir_info );
+		//do
+		//{
+		//	if ( result_ok )
+		//	{
+		//		//TODO: esto ocasionaba problemas en Linux. Habria que evaluar si tambien pasa en Windows.
+		//		if (old_name)
+		//		{
+		//			//notify_rename_event_args(change_types::renamed, dir_info->path_, "", *old_name);
+		//			notify_rename_event_args(change_types::renamed, directory_path, "", *old_name);
+		//			old_name.reset();
+		//		}
+		//		
+		//		//win32api_wrapper::read_directory_changes( dir_info->handle_, dir_info->buffer, MAX_BUFFER, this->include_subdirectories_ ? 1 : 0, this->notify_filters_, &dir_info->buffer_length, &dir_info->overlapped, NULL );
+		//	}
+		//} while( dir_info );
+
+
 	}
 
 
@@ -397,7 +401,12 @@ protected:
 
 
 
-	iocp_wrapper iocp_;
+	//iocp_wrapper iocp_;
+	iocp_wrapper<directory_info> iocp_;
+
+
+	bool closing_;
+	
 };
 
 } // namespace detail

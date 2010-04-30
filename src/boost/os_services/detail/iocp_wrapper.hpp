@@ -20,13 +20,15 @@ namespace boost {
 namespace os_services {
 namespace detail {
 
-
+template <typename T>
 class iocp_wrapper : private boost::noncopyable
 {
 public:
 
+	typedef boost::shared_ptr<T> pointer_type; //TODO: cambiar el nombre del typedef... no me gusta...
+
 	iocp_wrapper()
-		: is_initialized_( false ), handle_( 0 ), offset_( 0 )
+		: is_initialized_( false ), handle_( 0 ), last_notify_information_( 0 ) //offset_( 0 ), 
 	{
 	}
 
@@ -60,8 +62,11 @@ public:
 	//	void* add_watch( const std::string& path ) //throw (std::invalid_argument, std::runtime_error)
 
 	//TODO: podemos aplicar la misma tecnica de "template template" usada en smart_ptr_manager para evitar acoplarnos con shared_ptr
-	template <typename T>
-	void add_watch( const boost::shared_ptr<T>& watch )
+
+	//template <typename T>
+	//void add_watch( const boost::shared_ptr<T>& watch )
+
+	void add_watch( const pointer_type& watch )
 	{
 		//TODO: datos necesarios para crear el watch
 		//      const std::string& path					// OK -> Dato
@@ -139,48 +144,84 @@ public:
 
 
 	//TODO: podemos aplicar la misma tecnica de "template template" usada en smart_ptr_manager para evitar acoplarnos con shared_ptr
-	template <typename T>
-	boost::shared_ptr<T> get( std::string& file_name, unsigned long& action ) //TODO: file_name y action podrian incluirse en una clase que contenga todos los datos del evento necesarios...
+	//template <typename T>
+	//boost::shared_ptr<T> get( std::string& directory_path, std::string& file_name, unsigned long& action ) //TODO: file_name y action podrian incluirse en una clase que contenga todos los datos del evento necesarios...
+
+
+	bool get( std::string& directory_path, std::string& file_name, unsigned long& action ) //TODO: file_name y action podrian incluirse en una clase que contenga todos los datos del evento necesarios...
 	{
-		unsigned long num_bytes;
-		unsigned long address = 0;
-		LPOVERLAPPED overlapped;
-		boost::shared_ptr<T> dir_info;
+		//boost::shared_ptr<T> dir_info;
 
-		//unsigned long offset;
-		//directory_info* dir_info = 0;
-		//PFILE_NOTIFY_INFORMATION notify_information;
-
-		win32api_wrapper::get_queued_completion_status( handle_, &num_bytes, &address, &overlapped, INFINITE );
-
-		if ( address != 0 && num_bytes > 0 )
+		if ( last_notify_information_ == 0 ) //(offset_ == 0 )
 		{
-			dir_info = smart_ptr_manager<T>::get( address );
+			unsigned long num_bytes;
+			unsigned long address = 0;
+			LPOVERLAPPED overlapped;
 
-			if ( dir_info )
+
+			win32api_wrapper::get_queued_completion_status( handle_, &num_bytes, &address, &overlapped, INFINITE );
+
+			if ( address != 0 && num_bytes > 0 )
 			{
-				//PFILE_NOTIFY_INFORMATION notify_information = (PFILE_NOTIFY_INFORMATION)dir_info->buffer;
-				//notify_information = static_cast<PFILE_NOTIFY_INFORMATION>(dir_info->buffer);
+				last_dir_info_ = smart_ptr_manager<T>::get( address );
 
-				PFILE_NOTIFY_INFORMATION notify_information = reinterpret_cast<PFILE_NOTIFY_INFORMATION>( dir_info->buffer );
+				if ( last_dir_info_ )
+				{
+					//TODO: opciones...
+					//win32api_wrapper::read_directory_changes( last_dir_info_->handle_, last_dir_info_->buffer, MAX_BUFFER, this->include_subdirectories_ ? 1 : 0, this->notify_filters_, &last_dir_info_->buffer_length, &last_dir_info_->overlapped, NULL );
+					win32api_wrapper::read_directory_changes( last_dir_info_->handle_, last_dir_info_->buffer, MAX_BUFFER, true ? 1 : 0, 51, &last_dir_info_->buffer_length, &last_dir_info_->overlapped, NULL );
 
-				std::string temp(notify_information->FileName, notify_information->FileName + (notify_information->FileNameLength/sizeof(WCHAR)) );
-				file_name = temp;
-				action = notify_information->Action;
-				offset_ = notify_information->NextEntryOffset;
+
+					//PFILE_NOTIFY_INFORMATION notify_information = (PFILE_NOTIFY_INFORMATION)dir_info->buffer;
+					//PFILE_NOTIFY_INFORMATION notify_information = reinterpret_cast<PFILE_NOTIFY_INFORMATION>( dir_info->buffer );
+					last_notify_information_ = reinterpret_cast<PFILE_NOTIFY_INFORMATION>( last_dir_info_->buffer );
+				} 
 			}
 		}
 
-		return dir_info;
+		if ( last_notify_information_ != 0 )
+		{
+			//std::string temp(last_notify_information_->FileName, last_notify_information_->FileName + (last_notify_information_->FileNameLength/sizeof(WCHAR)) );
+			//file_name = temp;
+
+			//TODO: ver si hay algun metodo en std::string que permita hacer esto sin construir otro objeto...
+			file_name = std::string(last_notify_information_->FileName, last_notify_information_->FileName + (last_notify_information_->FileNameLength/sizeof(WCHAR)) );
+
+			directory_path = last_dir_info_->path_;
+			action = last_notify_information_->Action;
+			//offset_ = last_notify_information_->NextEntryOffset;
+
+			if ( last_notify_information_->NextEntryOffset == 0 )
+			{
+
+				last_notify_information_ = 0;
+			}
+			else
+			{
+				last_notify_information_ = (PFILE_NOTIFY_INFORMATION)((LPBYTE) last_notify_information_ + last_notify_information_->NextEntryOffset);
+			}
+
+
+			//while( offset );//
+
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+
+
+		//return last_dir_info_;
 	}
 
 protected:
 
 	bool is_initialized_;
 	void* handle_;
-
-	unsigned long offset_;
+	//unsigned long offset_;
 	PFILE_NOTIFY_INFORMATION last_notify_information_;
+	pointer_type last_dir_info_;	//TODO: cambiar el nombre de last_dir_info...
 
 };
 
