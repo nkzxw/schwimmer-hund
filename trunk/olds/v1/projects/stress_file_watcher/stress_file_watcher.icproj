@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Intel C++ Project"
+	Version="11.1"
+	Name="stress_file_watcher"
+	ProjectGUID="{FD6C5EDE-D18C-4136-B96B-8688548D5848}"
+	VCNestedProjectGUID="{440727A9-CFA5-4261-A06D-7AB6C8E4EF20}"
+	VCNestedProjectFileName="stress_file_watcher.vcproj">
+	<Configurations/>
+	<Files/>
+</VisualStudioProject>
