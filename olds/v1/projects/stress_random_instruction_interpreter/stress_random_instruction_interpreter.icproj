@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Intel C++ Project"
+	Version="11.1"
+	Name="stress_random_instruction_interpreter"
+	ProjectGUID="{DF7825AF-73BF-493C-B457-7135CC2367D1}"
+	VCNestedProjectGUID="{F359963C-0AD3-49C3-B33D-F18036B28350}"
+	VCNestedProjectFileName="stress_random_instruction_interpreter.vcproj">
+	<Configurations/>
+	<Files/>
+</VisualStudioProject>

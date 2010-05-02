@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Intel C++ Project"
+	Version="11.1"
+	Name="boost_file_system_monitor"
+	ProjectGUID="{D1538330-6878-478A-95C4-681619C7EA71}"
+	VCNestedProjectGUID="{C4B51495-4336-4947-8771-EAECC512FCC8}"
+	VCNestedProjectFileName="boost_file_system_monitor.vcproj">
+	<Configurations/>
+	<Files/>
+</VisualStudioProject>

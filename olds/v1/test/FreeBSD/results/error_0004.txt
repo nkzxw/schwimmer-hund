@@ -1,0 +1,142 @@
+[fernando@pcbsd-8062 ~/dev/schwimmer-hund/test/FreeBSD]$ ./stress_test_watcher
+Press Enter to Stop Monitoring...
+STAT ERROR
+STAT ERROR
+STAT ERROR
+STAT ERROR
+STAT ERROR
+STAT ERROR
+STAT ERROR
+STAT ERROR
+STAT ERROR
+STAT ERROR
+STAT ERROR
+STAT ERROR
+STAT ERROR
+STAT ERROR
+STAT ERROR
+STAT ERROR
+STAT ERROR
+STAT ERROR
+STAT ERROR
+STAT ERROR
+STAT ERROR
+STAT ERROR
+STAT ERROR
+STAT ERROR
+STAT ERROR
+STAT ERROR
+NOTE_DELETE -> PN_DELETE
+watch: 0x28585500
+watch->fd: 0
+watch->wd: 0
+watch->parent_wd: 0
+Segmentation fault: 11
+
+------------------------------------------------------------------------------------------------------------------------
+
+[fernando@pcbsd-8062 ~/dev/schwimmer-hund/test/FreeBSD]$ ./stress_test_watcher
+Press Enter to Stop Monitoring...
+STAT ERROR
+STAT ERROR
+STAT ERROR
+NOTE_DELETE -> PN_DELETE
+watch: 0x28585180
+watch->fd: 0
+watch->wd: 0
+watch->parent_wd: 0
+Segmentation fault: 11
+
+
+------------------------------------------------------------------------------------------------------------------------
+
+[fernando@pcbsd-8062 ~/dev/schwimmer-hund/test/FreeBSD]$ ./stress_test_watcher
+Press Enter to Stop Monitoring...
+STAT ERROR - Reason: No such file or directory
+dir_itr->path().native_file_string(): ./test_dir/temp1/a5199.txt
+STAT ERROR - Reason: No such file or directory
+dir_itr->path().native_file_string(): ./test_dir/temp1/a5130.txt
+STAT ERROR - Reason: No such file or directory
+dir_itr->path().native_file_string(): ./test_dir/temp1/a4973.txt
+STAT ERROR - Reason: No such file or directory
+watch->path.native_file_string(): ./test_dir/temp1/a5199.txt
+STAT ERROR - Reason: No such file or directory
+watch->path.native_file_string(): ./test_dir/temp1/a5130.txt
+STAT ERROR - Reason: No such file or directory
+watch->path.native_file_string(): ./test_dir/temp1/a4973.txt
+Segmentation fault: 11
+[fernando@pcbsd-8062 ~/dev/schwimmer-hund/test/FreeBSD]$
+                                                          
+                                                          
+------------------------------------------------------------------------------------------------------------------------
+                                                          
+                                                          
+[fernando@pcbsd-8062 ~/dev/schwimmer-hund/test/FreeBSD]$ ./stress_test_watcher
+Press Enter to Stop Monitoring...
+
+STAT ERROR -- 3 -- - Reason: No such file or directory
+dir_itr->path().native_file_string(): ./test_dir/temp1/a5056.txt
+
+STAT ERROR -- 3 -- - Reason: No such file or directory
+dir_itr->path().native_file_string(): ./test_dir/temp1/a4891.txt
+
+STAT ERROR -- 3 -- - Reason: No such file or directory
+dir_itr->path().native_file_string(): ./test_dir/temp1/a5089.txt
+
+STAT ERROR -- 3 -- - Reason: No such file or directory
+dir_itr->path().native_file_string(): ./test_dir/temp1/a5090.txt
+
+STAT ERROR -- 3 -- - Reason: No such file or directory
+dir_itr->path().native_file_string(): ./test_dir/temp1/a5015.txt
+
+STAT ERROR -- 3 -- - Reason: No such file or directory
+dir_itr->path().native_file_string(): ./test_dir/temp1/a5064.txt
+
+STAT ERROR -- 3 -- - Reason: No such file or directory
+dir_itr->path().native_file_string(): ./test_dir/temp1/a4899.txt
+
+STAT ERROR -- 3 -- - Reason: No such file or directory
+dir_itr->path().native_file_string(): ./test_dir/temp1/a4930.txt
+
+STAT ERROR -- 3 -- - Reason: No such file or directory
+dir_itr->path().native_file_string(): ./test_dir/temp1/a4951.txt
+
+STAT ERROR -- 1 -- - Reason: No such file or directory
+watch->path.native_file_string(): ./test_dir/temp1/a5090.txt
+
+STAT ERROR -- 1 -- - Reason: No such file or directory
+watch->path.native_file_string(): ./test_dir/temp1/a5015.txt
+
+STAT ERROR -- 1 -- - Reason: No such file or directory
+watch->path.native_file_string(): ./test_dir/temp1/a4930.txt
+
+STAT ERROR -- 1 -- - Reason: No such file or directory
+watch->path.native_file_string(): ./test_dir/temp1/a4951.txt
+
+NOTE_DELETE -> PN_DELETE
+watch: 0x285855c0
+watch->fd: 0
+watch->wd: 0
+watch->parent_wd: 0
+Segmentation fault: 11
+
+------------------------------------------------------------------------------------------------------------------------
+      
+
+[fernando@pcbsd-8062 ~/dev/schwimmer-hund/test/FreeBSD]$ ./stress_test_watcher
+Press Enter to Stop Monitoring...
+STAT ERROR -- 3 -- - Reason: No such file or directory
+dir_itr->path().native_file_string(): ./test_dir/temp1/a2321.txt
+2010-Apr-16 17:26:41
+STAT ERROR -- 3 -- - Reason: No such file or directory
+dir_itr->path().native_file_string(): ./test_dir/temp1/a2406.txt
+2010-Apr-16 17:26:41
+STAT ERROR -- 1 -- - Reason: No such file or directory
+watch->path.native_file_string(): ./test_dir/temp1/a2321.txt
+2010-Apr-16 17:26:41
+NOTE_DELETE -> PN_DELETE
+watch: 0x28585480
+watch->fd: 0
+watch->wd: 0
+watch->parent_wd: 0
+Segmentation fault: 11
