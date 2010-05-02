@@ -1,3 +1,7 @@
+//TODO: ver esta documentacion sobre inotify
+//			http://www.win.tue.nl/~aeb/linux/lk/lk-12.html
+//			http://inotify.aiken.cz/?section=inotify&page=faq&lang=en
+
 #ifndef BOOST_OS_SERVICES_DETAIL_INOTIFY_WRAPPER_HPP_INCLUDED
 #define BOOST_OS_SERVICES_DETAIL_INOTIFY_WRAPPER_HPP_INCLUDED
 
