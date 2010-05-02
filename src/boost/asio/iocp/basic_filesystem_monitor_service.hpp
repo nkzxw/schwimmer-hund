@@ -46,13 +46,13 @@ public:
             dirname(d), 
             impl(i) 
         { 
-            ZeroMemory(&overlapped, sizeof(overlapped)); 
+            ZeroMemory( &overlapped, sizeof(overlapped) );
         } 
 
         HANDLE handle; 
         std::string dirname; 
         boost::weak_ptr<FileSystemMonitorImplementation> impl; 
-        char buffer[1024]; 
+        char buffer[1024]; //TODO: buffer customizable... VER SI LA VERSION ASINCRONICA NECESITA BUFFER...
         OVERLAPPED overlapped; 
     }; 
 
