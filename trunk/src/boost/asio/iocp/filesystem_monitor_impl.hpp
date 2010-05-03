@@ -5,82 +5,91 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt) 
 // 
 
-#ifndef BOOST_ASIO_DIR_MONITOR_IMPL_HPP 
-#define BOOST_ASIO_DIR_MONITOR_IMPL_HPP 
+#ifndef BOOST_ASIO_FILESYSTEM_MONITOR_IMPL_HPP_INCLUDED
+#define BOOST_ASIO_FILESYSTEM_MONITOR_IMPL_HPP_INCLUDED
+
+#include <deque> 
+#include <string> 
+
+#include <windows.h> 
 
 #include <boost/noncopyable.hpp> 
 #include <boost/ptr_container/ptr_unordered_map.hpp> 
 #include <boost/thread.hpp> 
-#include <string> 
-#include <deque> 
-#include <windows.h> 
 
 namespace boost { 
 namespace asio { 
 
-class dir_monitor_impl 
+	
+class filesystem_monitor_impl 
 { 
 public: 
-    class windows_handle 
-        : public boost::noncopyable 
+    class windows_handle : public boost::noncopyable 
     { 
     public: 
-        windows_handle(HANDLE handle) 
-            : handle_(handle) 
-        { 
-        } 
+        windows_handle( HANDLE handle )
+            : handle_( handle )
+        {} 
 
-        ~windows_handle() 
+        ~windows_handle()
         { 
-            CloseHandle(handle_); 
+            CloseHandle( handle_ ); 
         } 
 
     private: 
         HANDLE handle_; 
     }; 
 
-    dir_monitor_impl() 
+    filesystem_monitor_impl() 
         : run_(true) 
+    {} 
+
+    void add_directory( std::string dirname, HANDLE handle ) //TODO: const reference????
     { 
+        dirs_.insert( dirname, new windows_handle(handle) );
     } 
 
-    void add_directory(std::string dirname, HANDLE handle) 
+    void remove_directory( const std::string& dirname )
     { 
-        dirs_.insert(dirname, new windows_handle(handle)); 
+        dirs_.erase( dirname ); 
     } 
 
-    void remove_directory(const std::string &dirname) 
+    void destroy()
     { 
-        dirs_.erase(dirname); 
+        boost::unique_lock<boost::mutex> lock( events_mutex_ );
+        run_ = false;
+        events_cond_.notify_all();
     } 
 
-    void destroy() 
+    filesystem_monitor_event popfront_event( boost::system::error_code& ec )
     { 
-        boost::unique_lock<boost::mutex> lock(events_mutex_); 
-        run_ = false; 
-        events_cond_.notify_all(); 
-    } 
+        boost::unique_lock<boost::mutex> lock(events_mutex_);
 
-    dir_monitor_event popfront_event(boost::system::error_code &ec) 
-    { 
-        boost::unique_lock<boost::mutex> lock(events_mutex_); 
-        while (run_ && events_.empty()) 
+        while (run_ && events_.empty())
+		{
             events_cond_.wait(lock); 
-        dir_monitor_event ev; 
-        if (!events_.empty()) 
+		}
+
+        filesystem_monitor_event ev; 
+        
+		if (!events_.empty()) 
         { 
             ec = boost::system::error_code(); 
             ev = events_.front(); 
             events_.pop_front(); 
         } 
         else 
-            ec = boost::asio::error::operation_aborted; 
+		{
+            ec = boost::asio::error::operation_aborted;
+		}
+
+
         return ev; 
     } 
 
-    void pushback_event(dir_monitor_event ev) 
+    void pushback_event( filesystem_monitor_event ev ) 
     { 
-        boost::unique_lock<boost::mutex> lock(events_mutex_); 
+        boost::unique_lock<boost::mutex> lock( events_mutex_ ); 
         if (run_) 
         { 
             events_.push_back(ev); 
@@ -93,10 +102,10 @@ private:
     boost::mutex events_mutex_; 
     boost::condition_variable events_cond_; 
     bool run_; 
-    std::deque<dir_monitor_event> events_; 
+    std::deque<filesystem_monitor_event> events_; 
 }; 
 
-} 
-} 
+} // namespace asio
+} // namespace boost
 
-#endif 
+#endif // BOOST_ASIO_FILESYSTEM_MONITOR_IMPL_HPP_INCLUDED
