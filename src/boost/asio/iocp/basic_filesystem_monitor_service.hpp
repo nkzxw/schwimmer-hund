@@ -41,16 +41,14 @@ class basic_filesystem_monitor_service : public boost::asio::io_service::service
 public: 
     struct completion_key 
     { 
-        completion_key(HANDLE h, const std::string &d, boost::shared_ptr<FileSystemMonitorImplementation> &i) 
-            : handle(h), 
-            dirname(d), 
-            impl(i) 
+        completion_key(HANDLE h, const std::string& d, boost::shared_ptr<FileSystemMonitorImplementation>& i) 
+            : handle(h), dir_name(d), impl(i) 
         { 
             ZeroMemory( &overlapped, sizeof(overlapped) );
         } 
 
         HANDLE handle; 
-        std::string dirname; 
+        std::string dir_name; 
         boost::weak_ptr<FileSystemMonitorImplementation> impl; 
         char buffer[1024]; //TODO: buffer customizable... VER SI LA VERSION ASINCRONICA NECESITA BUFFER...
         OVERLAPPED overlapped; 
@@ -58,14 +56,17 @@ public:
 
     static boost::asio::io_service::id id; 
 
-    explicit basic_filesystem_monitor_service(boost::asio::io_service &io_service) 
-        : boost::asio::io_service::service(io_service), 
-        iocp_(init_iocp()), 
-        run_(true), 
-        work_thread_(&boost::asio::basic_filesystem_monitor_service<FileSystemMonitorImplementation>::work_thread, this), 
-        async_monitor_work_(new boost::asio::io_service::work(async_monitor_io_service_)), 
-        async_monitor_thread_(boost::bind(&boost::asio::io_service::run, &async_monitor_io_service_)) 
+	
+
+	//TODO: uso de "this" en initializer list... INCORRECTO...
+    explicit basic_filesystem_monitor_service(boost::asio::io_service& io_service) 
+        : boost::asio::io_service::service(io_service), iocp_(init_iocp()), run_(true), 
+			work_thread_(&boost::asio::basic_filesystem_monitor_service<FileSystemMonitorImplementation>::work_thread, this), 
+			async_monitor_work_(new boost::asio::io_service::work(async_monitor_io_service_)), 
+			async_monitor_thread_(boost::bind(&boost::asio::io_service::run, &async_monitor_io_service_)) 
     { 
+		
+		//work_thread_.reset(&boost::asio::basic_filesystem_monitor_service<FileSystemMonitorImplementation>::work_thread, this), 
     } 
 
     ~basic_filesystem_monitor_service() 
@@ -91,12 +92,12 @@ public:
 
     typedef boost::shared_ptr<FileSystemMonitorImplementation> implementation_type; 
 
-    void construct(implementation_type &impl) 
+    void construct(implementation_type& impl) 
     { 
         impl.reset(new FileSystemMonitorImplementation()); 
     } 
 
-    void destroy(implementation_type &impl) 
+    void destroy(implementation_type& impl) 
     { 
         // If an asynchronous call is currently waiting for an event 
         // we must interrupt the blocked call to make sure it returns. 
@@ -105,10 +106,12 @@ public:
         impl.reset(); 
     } 
 
-    void add_directory(implementation_type &impl, const std::string &dirname) 
+    void add_directory(implementation_type& impl, const std::string& dirname) 
     { 
-        if (!boost::filesystem::is_directory(dirname)) 
+        if ( ! boost::filesystem::is_directory( dirname ) )
+		{
             throw std::invalid_argument("boost::asio::basic_filesystem_monitor_service::add_directory: " + dirname + " is not a valid directory entry"); 
+		}
 
         HANDLE handle = CreateFileA(dirname.c_str(), FILE_LIST_DIRECTORY, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OVERLAPPED, NULL); 
         if (handle == INVALID_HANDLE_VALUE) 
@@ -120,7 +123,7 @@ public:
 
         // No smart pointer can be used as the pointer must travel as a completion key 
         // through the I/O completion port module. 
-        completion_key *ck = new completion_key(handle, dirname, impl); 
+        completion_key* ck = new completion_key(handle, dirname, impl); 
         iocp_ = CreateIoCompletionPort(ck->handle, iocp_, reinterpret_cast<unsigned long>(ck), 0); 
         if (iocp_ == NULL) 
         { 
@@ -143,7 +146,7 @@ public:
         impl->add_directory(dirname, ck->handle); 
     } 
 
-    void remove_directory(implementation_type &impl, const std::string &dirname) 
+    void remove_directory(implementation_type& impl, const std::string& dirname) 
     { 
         // Removing the directory from the implementation will automatically close the associated file handle. 
         // Closing the file handle again will make GetQueuedCompletionStatus() return where the completion key 
@@ -151,7 +154,7 @@ public:
         impl->remove_directory(dirname); 
     } 
 
-    filesystem_monitor_event monitor(implementation_type &impl, boost::system::error_code &ec) 
+    filesystem_monitor_event monitor(implementation_type& impl, boost::system::error_code& ec) 
     { 
         return impl->popfront_event(ec); 
     } 
@@ -160,7 +163,7 @@ public:
     class monitor_operation 
     { 
     public: 
-        monitor_operation(implementation_type &impl, boost::asio::io_service &io_service, Handler handler) 
+        monitor_operation(implementation_type& impl, boost::asio::io_service& io_service, Handler handler) 
             : impl_(impl), 
             io_service_(io_service), 
             work_(io_service), 
@@ -185,13 +188,13 @@ public:
 
     private: 
         boost::weak_ptr<FileSystemMonitorImplementation> impl_; 
-        boost::asio::io_service &io_service_; 
+        boost::asio::io_service& io_service_; 
         boost::asio::io_service::work work_; 
         Handler handler_; 
     }; 
 
     template <typename Handler> 
-    void async_monitor(implementation_type &impl, Handler handler) 
+    void async_monitor(implementation_type& impl, Handler handler) 
     { 
         this->async_monitor_io_service_.post(monitor_operation<Handler>(impl, this->get_io_service(), handler)); 
     } 
@@ -218,8 +221,8 @@ private:
         while (running()) 
         { 
             DWORD bytes_transferred; 
-            completion_key *ck; 
-            OVERLAPPED *overlapped; 
+            completion_key* ck; 
+            OVERLAPPED* overlapped; 
             BOOL res = GetQueuedCompletionStatus(iocp_, &bytes_transferred, reinterpret_cast<unsigned long*>(&ck), &overlapped, INFINITE); 
             if (!res) 
             { 
@@ -260,7 +263,7 @@ private:
                             case FILE_ACTION_RENAMED_OLD_NAME: type = filesystem_monitor_event::renamed_old_name; break; 
                             case FILE_ACTION_RENAMED_NEW_NAME: type = filesystem_monitor_event::renamed_new_name; break; 
                             } 
-                            impl->pushback_event(filesystem_monitor_event(ck->dirname, to_utf8(fni->FileName, fni->FileNameLength / sizeof(WCHAR)), type)); 
+                            impl->pushback_event(filesystem_monitor_event(ck->dir_name, to_utf8(fni->FileName, fni->FileNameLength / sizeof(WCHAR)), type)); 
                             offset += fni->NextEntryOffset; 
                         } 
                         while (fni->NextEntryOffset); 
@@ -304,7 +307,7 @@ private:
         } 
     } 
 
-    std::string to_utf8(WCHAR *filename, DWORD length) 
+    std::string to_utf8(WCHAR* filename, DWORD length) 
     { 
         int size = WideCharToMultiByte(CP_UTF8, 0, filename, length, NULL, 0, NULL, NULL); 
         if (!size) 
@@ -316,17 +319,18 @@ private:
 
         char buffer[1024]; 
         boost::scoped_array<char> dynbuffer; 
-        if (size > sizeof(buffer)) 
+        
+		if ( size > sizeof(buffer) )
         { 
-            dynbuffer.reset(new char[size]); 
-            size = WideCharToMultiByte(CP_UTF8, 0, filename, length, dynbuffer.get(), size, NULL, NULL); 
+            dynbuffer.reset(new char[size]);
+            size = WideCharToMultiByte(CP_UTF8, 0, filename, length, dynbuffer.get(), size, NULL, NULL);
         } 
-        else 
+        else
         { 
-            size = WideCharToMultiByte(CP_UTF8, 0, filename, length, buffer, sizeof(buffer), NULL, NULL); 
-        } 
+            size = WideCharToMultiByte(CP_UTF8, 0, filename, length, buffer, sizeof(buffer), NULL, NULL);
+        }
 
-        if (!size) 
+        if ( ! size )
         { 
             DWORD last_error = GetLastError(); 
             boost::system::system_error e(boost::system::error_code(last_error, boost::system::get_system_category()), "boost::asio::basic_filesystem_monitor_service::to_utf8: WideCharToMultiByte failed"); 
@@ -337,12 +341,13 @@ private:
     } 
 
     HANDLE iocp_; 
-    boost::mutex work_thread_mutex_; 
     bool run_; 
-    boost::thread work_thread_; 
     boost::asio::io_service async_monitor_io_service_; 
-    boost::scoped_ptr<boost::asio::io_service::work> async_monitor_work_; 
-    boost::thread async_monitor_thread_; 
+    boost::scoped_ptr< boost::asio::io_service::work > async_monitor_work_; 
+
+	boost::mutex work_thread_mutex_; 
+	boost::thread async_monitor_thread_; 
+	boost::thread work_thread_; 
 }; 
 
 template <typename FileSystemMonitorImplementation> 
