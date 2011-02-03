@@ -5,6 +5,57 @@
 
 //#elif defined(BOOST_ASIO_HAS_KQUEUE)
 
+//TODO: ver en boost
+			//# if defined(BOOST_CYGWIN_PATH)
+			//#   if defined(BOOST_POSIX_PATH)
+			//#     error BOOST_POSIX_PATH is invalid when BOOST_CYGWIN_PATH is defined
+			//#   endif
+			//#   if defined(BOOST_WINDOWS_API)
+			//#     error BOOST_WINDOWS_API is invalid when BOOST_CYGWIN_PATH is defined
+			//#   endif
+			//#   define BOOST_WINDOWS_PATH
+			//#   define BOOST_POSIX_API
+			//# endif
+
+
+
+//TODO: ver
+//#if (defined(__MACH__) && defined(__APPLE__)) \
+//	|| defined(__NetBSD__) || defined(__FreeBSD__) || defined(__OpenBSD__)
+//
+//// Define this to indicate that kqueue is supported on the target platform.
+//#define BOOST_ASIO_HAS_KQUEUE 1
+
+
+
+//TODO: OVERLAPPED
+//			'C:\Program Files\Boost\boost_1_42_0\boost\asio\detail\win_iocp_overlapped_ptr.hpp':
+//			'C:\Program Files\Boost\boost_1_42_0\boost\asio\windows\overlapped_ptr.hpp':
+
+
+//TODO: kqueue
+//			Boost ASIO -> kqueue_reactor.hpp
+
+
+
+//TODO: Boost ASIO
+
+/*
+
+#if defined(BOOST_ASIO_HAS_IOCP)
+typedef detail::win_iocp_io_service impl_type;
+friend class detail::win_iocp_overlapped_ptr;
+#elif defined(BOOST_ASIO_HAS_EPOLL)
+typedef detail::task_io_service<detail::epoll_reactor<false> > impl_type;
+#elif defined(BOOST_ASIO_HAS_KQUEUE)
+typedef detail::task_io_service<detail::kqueue_reactor<false> > impl_type;
+#elif defined(BOOST_ASIO_HAS_DEV_POLL)
+typedef detail::task_io_service<detail::dev_poll_reactor<false> > impl_type;
+#else
+typedef detail::task_io_service<detail::select_reactor<false> > impl_type;
+#endif
+*/
+
 
 
 /*
